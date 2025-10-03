@@ -1,0 +1,224 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { CourseCard } from '@/components/course-card';
+import { CourseFormDialog } from '@/components/course-form-dialog';
+import { CourseDetailsDialog } from '@/components/course-details-dialog';
+import { Course } from '@/types';
+import { Loader2, Plus, BookOpen } from 'lucide-react';
+
+export default function CoursesPage() {
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const [editingCourse, setEditingCourse] = useState<Course | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+
+  // Fetch courses on mount
+  useEffect(() => {
+    fetchCourses();
+  }, []);
+
+  const fetchCourses = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/courses');
+      if (!response.ok) {
+        throw new Error('Failed to fetch courses');
+      }
+      const data = await response.json();
+      setCourses(data.courses);
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCreateCourse = async (courseData: {
+    title: string;
+    description: string;
+    studentCount: number;
+  }) => {
+    try {
+      const response = await fetch('/api/courses', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...courseData,
+          name: courseData.title.toLowerCase().replace(/\s+/g, '-'),
+          professorId: 'prof-123',
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create course');
+      }
+
+      await fetchCourses();
+      setIsFormOpen(false);
+    } catch (error) {
+      console.error('Error creating course:', error);
+      throw error;
+    }
+  };
+
+  const handleUpdateCourse = async (courseData: {
+    title: string;
+    description: string;
+    studentCount: number;
+  }) => {
+    if (!editingCourse) return;
+
+    try {
+      const response = await fetch('/api/courses', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: editingCourse.id,
+          ...courseData,
+          name: courseData.title.toLowerCase().replace(/\s+/g, '-'),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update course');
+      }
+
+      await fetchCourses();
+      setIsFormOpen(false);
+      setEditingCourse(null);
+    } catch (error) {
+      console.error('Error updating course:', error);
+      throw error;
+    }
+  };
+
+  const handleDeleteCourse = async (courseId: string) => {
+    if (!confirm('Are you sure you want to delete this course? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/courses', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: courseId }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete course');
+      }
+
+      await fetchCourses();
+    } catch (error) {
+      console.error('Error deleting course:', error);
+    }
+  };
+
+  const handleViewDetails = (course: Course) => {
+    setSelectedCourse(course);
+    setIsDetailsOpen(true);
+  };
+
+  const handleEdit = (course: Course) => {
+    setEditingCourse(course);
+    setIsFormOpen(true);
+  };
+
+  const handleOpenCreateForm = () => {
+    setEditingCourse(null);
+    setIsFormOpen(true);
+  };
+
+  const handleCloseForm = () => {
+    setIsFormOpen(false);
+    setEditingCourse(null);
+  };
+
+  return (
+    <div className="flex flex-1 flex-col">
+      {/* Header */}
+      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="flex h-14 items-center justify-between px-6">
+          <div className="flex items-center gap-3">
+            <BookOpen className="h-5 w-5 text-muted-foreground" />
+            <div>
+              <h1 className="text-lg font-semibold">Courses</h1>
+              <p className="text-sm text-muted-foreground">
+                Manage your courses and check student emails
+              </p>
+            </div>
+          </div>
+          <Button onClick={handleOpenCreateForm} size="sm">
+            <Plus className="mr-2 h-4 w-4" />
+            Create Course
+          </Button>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 p-6">
+        {/* Loading State */}
+        {isLoading && (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!isLoading && courses.length === 0 && (
+          <div className="text-center py-20 border-2 border-dashed rounded-lg">
+            <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+            <h2 className="text-2xl font-semibold mb-2">No courses yet</h2>
+            <p className="text-muted-foreground mb-6">
+              Create your first course to get started
+            </p>
+            <Button onClick={handleOpenCreateForm} size="lg">
+              <Plus className="mr-2 h-5 w-5" />
+              Create Your First Course
+            </Button>
+          </div>
+        )}
+
+        {/* Course Grid */}
+        {!isLoading && courses.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {courses.map((course) => (
+              <CourseCard
+                key={course.id}
+                course={course}
+                onViewDetails={handleViewDetails}
+                onEdit={handleEdit}
+                onDelete={handleDeleteCourse}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Course Form Dialog */}
+      <CourseFormDialog
+        open={isFormOpen}
+        onOpenChange={handleCloseForm}
+        course={editingCourse}
+        onSubmit={editingCourse ? handleUpdateCourse : handleCreateCourse}
+      />
+
+      {/* Course Details Dialog */}
+      <CourseDetailsDialog
+        open={isDetailsOpen}
+        onOpenChange={setIsDetailsOpen}
+        course={selectedCourse}
+      />
+    </div>
+  );
+}
