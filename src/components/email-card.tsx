@@ -54,15 +54,45 @@ const emailTypeConfig = {
     variant: 'warning' as const,
     icon: '👨‍🏫',
   },
+  administrative: {
+    label: 'Administrative',
+    variant: 'secondary' as const,
+    icon: '📋',
+  },
+  assignment_submission: {
+    label: 'Assignment Submission',
+    variant: 'info' as const,
+    icon: '📝',
+  },
+  grade_inquiry: {
+    label: 'Grade Inquiry',
+    variant: 'warning' as const,
+    icon: '📊',
+  },
+  office_hours: {
+    label: 'Office Hours',
+    variant: 'info' as const,
+    icon: '🕐',
+  },
+  course_feedback: {
+    label: 'Course Feedback',
+    variant: 'secondary' as const,
+    icon: '💬',
+  },
+  technical_support: {
+    label: 'Technical Support',
+    variant: 'warning' as const,
+    icon: '🔧',
+  },
+  parent_communication: {
+    label: 'Parent Communication',
+    variant: 'info' as const,
+    icon: '👪',
+  },
   general: {
     label: 'General',
     variant: 'secondary' as const,
     icon: '📧',
-  },
-  administrative: {
-    label: 'Administrative',
-    variant: 'outline' as const,
-    icon: '📋',
   },
 };
 
