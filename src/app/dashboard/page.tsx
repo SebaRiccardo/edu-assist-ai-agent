@@ -128,7 +128,7 @@ export default function DashboardPage() {
   return (
     <div className="max-w-7xl mx-auto flex flex-1 flex-col gap-4">
           {/* Hero Header */}
-          <div className="mt-20 rounded-3xl bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="rounded-3xl bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="px-8 py-8">
               <div className="flex items-start justify-between mb-6">
                 <div>
@@ -260,7 +260,7 @@ export default function DashboardPage() {
                 <section>
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="text-xl font-semibold">Your Courses</h2>
-                    <Button variant="ghost" size="sm" onClick={handleOpenCreateForm}>
+                    <Button variant="ghost" size="sm" onClick={() => router.push('/dashboard/courses')}>
                       See More
                       <ChevronRight className="ml-1 h-4 w-4" />
                     </Button>

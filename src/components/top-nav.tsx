@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { 
+import {
   User,
   Settings,
   LogOut,
@@ -22,7 +22,7 @@ import {
   Users,
   BarChart3,
   HelpCircle,
-  Sparkles
+  Sparkles,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -33,14 +33,14 @@ export function TopNav() {
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
     { name: 'Courses', href: '/dashboard/courses', icon: BookOpen },
-    { name: 'Email Management', href: '/dashboard/emails', icon: Mail },
-    { name: 'Students', href: '/dashboard/students', icon: Users },
-    { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
+    // { name: 'Email Management', href: '/dashboard/emails', icon: Mail },
+    // { name: 'Students', href: '/dashboard/students', icon: Users },
+    // { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
   ];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-card/80 backdrop-blur-xl supports-[backdrop-filter]:bg-card/60 shadow-sm">
-      <div className="flex h-16 items-center justify-between px-6 max-w-[1600px] mx-auto">
+      <div className="flex h-20 items-center justify-between px-6 max-w-7xl mx-auto">
         {/* Logo and Brand */}
         <div className="flex items-center gap-8">
           <Link href="/dashboard" className="flex items-center gap-3 group">
@@ -48,15 +48,19 @@ export function TopNav() {
               <Sparkles className="h-5 w-5" />
             </div>
             <div className="flex flex-col">
-              <span className="text-base font-bold leading-none">EduAssist AI</span>
-              <span className="text-xs text-muted-foreground leading-none mt-0.5">Professor Portal</span>
+              <span className="text-base font-bold leading-none">
+                EduAssist AI
+              </span>
             </div>
           </Link>
 
           {/* Main Navigation */}
           <nav className="hidden lg:flex items-center gap-1">
-            {navigation.map((item) => {
-              const isActive = pathname === item.href || (pathname.startsWith(item.href + '/') && item.href !== '/dashboard');
+            {navigation.map(item => {
+              const isActive =
+                pathname === item.href ||
+                (pathname.startsWith(item.href + '/') &&
+                  item.href !== '/dashboard');
               return (
                 <Link
                   key={item.name}
@@ -78,9 +82,9 @@ export function TopNav() {
         {/* Right Side Actions */}
         <div className="flex items-center gap-2">
           {/* Search Button */}
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             className="hidden md:flex gap-2 text-muted-foreground hover:text-foreground"
           >
             <Search className="h-4 w-4" />
@@ -91,8 +95,8 @@ export function TopNav() {
           </Button>
 
           {/* Help */}
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             size="icon"
             className="text-muted-foreground hover:text-foreground"
           >
@@ -100,9 +104,9 @@ export function TopNav() {
           </Button>
 
           {/* Notifications */}
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
+            variant="ghost"
+            size="icon"
             className="relative text-muted-foreground hover:text-foreground"
           >
             <Bell className="h-5 w-5" />
@@ -112,7 +116,10 @@ export function TopNav() {
           {/* User Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-9 w-9 rounded-full hover:bg-accent">
+              <Button
+                variant="ghost"
+                className="relative h-9 w-9 rounded-full hover:bg-accent"
+              >
                 <Avatar className="h-9 w-9">
                   <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-semibold">
                     PJ
@@ -130,7 +137,9 @@ export function TopNav() {
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col">
-                      <p className="text-sm font-semibold leading-none">Prof. Johnson</p>
+                      <p className="text-sm font-semibold leading-none">
+                        Prof. Johnson
+                      </p>
                       <p className="text-xs leading-none text-muted-foreground mt-1">
                         professor@university.edu
                       </p>

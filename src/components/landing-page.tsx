@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { BookOpen, CheckCircle, Clock, FileText, MessageSquare, Sparkles, User } from 'lucide-react';
-
+import { AuroraBackground } from './aurora-background';
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -81,63 +81,69 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
-      <nav className="border-b border-border bg-card sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
-              <Sparkles className="w-8 h-8 text-primary" />
-              <span className="text-xl font-bold text-foreground">EduAssist AI</span>
+    <div className="min-h-screen">
+      <AuroraBackground showRadialGradient={false}>
+        <div className="relative w-full h-full flex flex-col">
+          {/* Navigation */}
+          <nav className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 border-b border-border/40">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between items-center h-16">
+                <div className="flex items-center space-x-2">
+                  <Sparkles className="w-8 h-8 text-primary" />
+                  <span className="text-xl font-bold text-foreground">EduAssist AI</span>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={onGetStarted}
+                    className="text-foreground hover:text-primary px-4 py-2 rounded-lg hover:bg-accent/50 transition-colors"
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    onClick={onGetStarted}
+                    className="bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:opacity-90 transition-opacity shadow-sm"
+                  >
+                    Get Started
+                  </button>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={onGetStarted}
-                className="text-foreground hover:text-primary px-4 py-2 rounded-lg hover:bg-accent transition-colors"
-              >
-                Sign In
-              </button>
-              <button
-                onClick={onGetStarted}
-                className="bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:opacity-90 transition-opacity"
-              >
-                Get Started
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+          </nav>
 
-      <section className="pt-20 pb-24 px-4 sm:px-6 lg:px-8">
+          {/* Hero Section */}
+          <section className="flex-1 pt-20 pb-24 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+              <div className="text-center max-w-3xl mx-auto">
+                <h1 className="text-5xl sm:text-6xl font-bold text-foreground mb-6 leading-tight">
+                  Your AI Teaching Assistant for
+                  <span className="text-primary"> Modern Education</span>
+                </h1>
+                <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+                  Save hours every week with intelligent assignment grading, personalized student feedback,
+                  and automated administrative tasks. Focus on what matters most - teaching.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <button
+                    onClick={onGetStarted}
+                    className="bg-primary text-primary-foreground px-8 py-4 rounded-xl text-lg font-semibold hover:opacity-90 transition-all shadow-lg hover:shadow-xl"
+                  >
+                    Start Free Trial
+                  </button>
+                  <button
+                    onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 text-foreground border border-border/40 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-background/80 transition-all shadow-sm"
+                  >
+                    View Pricing
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </AuroraBackground>
+
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-5xl sm:text-6xl font-bold text-foreground mb-6 leading-tight">
-              Your AI Teaching Assistant for
-              <span className="text-primary"> Modern Education</span>
-            </h1>
-            <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-              Save hours every week with intelligent assignment grading, personalized student feedback,
-              and automated administrative tasks. Focus on what matters most - teaching.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                onClick={onGetStarted}
-                className="bg-primary text-primary-foreground px-8 py-4 rounded-lg text-lg font-semibold hover:opacity-90 transition-opacity shadow-lg hover:shadow-xl"
-              >
-                Start Free Trial
-              </button>
-              <button
-                onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
-                className="bg-card text-primary border-2 border-primary px-8 py-4 rounded-lg text-lg font-semibold hover:bg-accent transition-colors"
-              >
-                View Pricing
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 bg-muted/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
               Everything You Need to Excel
@@ -148,7 +154,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-card p-8 rounded-xl border border-border shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-8 rounded-2xl border-none shadow-none hover:bg-background/80 transition-all">
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                 <FileText className="w-6 h-6 text-primary" />
               </div>
@@ -159,7 +165,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
               </p>
             </div>
 
-            <div className="bg-card p-8 rounded-xl border border-border shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-8 rounded-2xl border-none shadow-none hover:bg-background/80 transition-all">
               <div className="w-12 h-12 bg-chart-2/20 rounded-lg flex items-center justify-center mb-4">
                 <MessageSquare className="w-6 h-6 text-chart-2" />
               </div>
@@ -169,7 +175,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
               </p>
             </div>
 
-            <div className="bg-card p-8 rounded-xl border border-border shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-8 rounded-2xl border-none shadow-none hover:bg-background/80 transition-all">
               <div className="w-12 h-12 bg-chart-1/20 rounded-lg flex items-center justify-center mb-4">
                 <Clock className="w-6 h-6 text-chart-1" />
               </div>
@@ -179,7 +185,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
               </p>
             </div>
 
-            <div className="bg-card p-8 rounded-xl border border-border shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-8 rounded-2xl border-none shadow-none hover:bg-background/80 transition-all">
               <div className="w-12 h-12 bg-destructive/20 rounded-lg flex items-center justify-center mb-4">
                 <BookOpen className="w-6 h-6 text-destructive" />
               </div>
@@ -189,7 +195,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
               </p>
             </div>
 
-            <div className="bg-card p-8 rounded-xl border border-border shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-8 rounded-2xl border-none shadow-none hover:bg-background/80 transition-all">
               <div className="w-12 h-12 bg-chart-3/20 rounded-lg flex items-center justify-center mb-4">
                 <CheckCircle className="w-6 h-6 text-chart-3" />
               </div>
@@ -199,7 +205,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
               </p>
             </div>
 
-            <div className="bg-card p-8 rounded-xl border border-border shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-8 rounded-2xl border-none shadow-none hover:bg-background/80 transition-all">
               <div className="w-12 h-12 bg-chart-4/20 rounded-lg flex items-center justify-center mb-4">
                 <User className="w-6 h-6 text-chart-4" />
               </div>
@@ -212,8 +218,8 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
         </div>
       </section>
 
-      <section id="pricing" className="py-20 bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
               Choose Your Plan
@@ -227,10 +233,10 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
             {plans.map((plan) => (
               <div
                 key={plan.name}
-                className={`rounded-xl p-8 ${
+                className={`rounded-2xl p-8 ${
                   plan.highlighted
-                    ? 'bg-primary text-primary-foreground shadow-xl ring-4 ring-primary/20 scale-105'
-                    : 'bg-card border-2 border-border'
+                    ? 'bg-primary text-primary-foreground shadow-lg ring-2 ring-primary/30 scale-105'
+                    : 'bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-none shadow-none'
                 }`}
               >
                 <h3 className={`text-2xl font-bold mb-2 ${plan.highlighted ? 'text-primary-foreground' : 'text-foreground'}`}>
@@ -263,10 +269,10 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                 </ul>
                 <button
                   onClick={onGetStarted}
-                  className={`w-full py-3 px-6 rounded-lg font-semibold transition-opacity ${
+                  className={`w-full py-3 px-6 rounded-xl font-semibold transition-all ${
                     plan.highlighted
-                      ? 'bg-card text-foreground hover:opacity-90'
-                      : 'bg-primary text-primary-foreground hover:opacity-90'
+                      ? 'bg-background/95 backdrop-blur text-foreground hover:bg-background/80 shadow-sm'
+                      : 'bg-primary text-primary-foreground hover:opacity-90 shadow-sm'
                   }`}
                 >
                   {plan.cta}
@@ -277,7 +283,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
         </div>
       </section>
 
-      <footer className="bg-card border-t border-border py-12">
+      <footer className="bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t border-border/40 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
@@ -290,8 +296,6 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
           </div>
         </div>
       </footer>
-
-     
     </div>
   );
 }

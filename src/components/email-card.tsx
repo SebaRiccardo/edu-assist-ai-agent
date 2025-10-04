@@ -19,6 +19,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import {
   Mail,
   MoreVertical,
   Tag,
@@ -26,6 +31,9 @@ import {
   Trash2,
   ExternalLink,
   CheckCircle,
+  Star,
+  Sparkles,
+  ChevronsUpDown,
 } from 'lucide-react';
 
 interface EmailCardProps {
@@ -68,15 +76,16 @@ export function EmailCard({
   const confidencePercentage = Math.round(email.confidence * 100);
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className="bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-none shadow-none hover:bg-background/70 transition-all">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1 space-y-1">
-            <div className="flex items-center gap-2">
-              <Mail className="h-4 w-4 text-muted-foreground" />
+            <div className="flex items-start gap-2">
+              <Mail className="text-red-500 size-5" />
               <CardTitle className="text-base font-semibold">
                 {email.subject}
               </CardTitle>
+
               {email.isUnread && (
                 <Badge variant="default" className="ml-2">
                   New
@@ -87,44 +96,9 @@ export function EmailCard({
               From: {email.from}
             </CardDescription>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <MoreVertical className="h-4 w-4" />
-                <span className="sr-only">More actions</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {email.isUnread && onMarkAsRead && (
-                <DropdownMenuItem onClick={() => onMarkAsRead(email.id)}>
-                  <CheckCircle className="mr-2 h-4 w-4" />
-                  Mark as read
-                </DropdownMenuItem>
-              )}
-              <DropdownMenuItem>
-                <ExternalLink className="mr-2 h-4 w-4" />
-                Open in Gmail
-              </DropdownMenuItem>
-              {onArchive && (
-                <DropdownMenuItem onClick={() => onArchive(email.id)}>
-                  <Archive className="mr-2 h-4 w-4" />
-                  Archive
-                </DropdownMenuItem>
-              )}
-              <DropdownMenuSeparator />
-              {onDelete && (
-                <DropdownMenuItem
-                  onClick={() => onDelete(email.id)}
-                  className="text-red-600"
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Delete
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="text-sm text-muted-foreground">
+            {new Date(email.receivedAt).toLocaleString()}
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -137,6 +111,7 @@ export function EmailCard({
             <Tag className="h-3 w-3 text-muted-foreground" />
             <span className="text-xs text-muted-foreground">Labels:</span>
           </div>
+
           <Badge variant="success">{email.courseName}</Badge>
           <Badge variant={typeConfig.variant}>
             <span className="mr-1">{typeConfig.icon}</span>
@@ -147,9 +122,41 @@ export function EmailCard({
           </Badge>
         </div>
 
-        <div className="pt-2 text-xs text-muted-foreground">
-          {new Date(email.receivedAt).toLocaleString()}
-        </div>
+        <Collapsible className="w-full">
+          <div className="flex items-center gap-2 pt-2">
+            <CollapsibleTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="hover:text-blue-500 hover:bg-transparent"
+              >
+                <Sparkles className="size-4 mr-1" />
+                Explain reasoning
+                <ChevronsUpDown className="size-4 ml-1" />
+              </Button>
+            </CollapsibleTrigger>
+            <Button variant="link" size="sm">
+              <ExternalLink className="h-4 w-4 mr-1" />
+              Open on Gmail
+            </Button>
+          </div>
+
+          <CollapsibleContent className="data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down overflow-hidden transition-all duration-300">
+            <div className="mt-3 rounded-lg border bg-background/50 p-4">
+              <div className="flex items-start gap-2">
+                <Sparkles className="size-4 text-primary mt-0.5 flex-shrink-0" />
+                <div className="space-y-2">
+                  <p className="text-sm font-semibold text-foreground">
+                    AI Reasoning
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {email.reasoning}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
       </CardContent>
     </Card>
   );
