@@ -1,0 +1,16 @@
+import { TopNav } from '@/components/top-nav';
+
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="min-h-screen bg-gradient-to-bl from-pink-100 to-blue-200">
+      <TopNav />
+      <main className="relative">
+        {children}
+      </main>
+    </div>
+  );
+}
