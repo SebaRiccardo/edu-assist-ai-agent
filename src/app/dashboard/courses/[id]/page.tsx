@@ -18,6 +18,8 @@ export default function CourseDetailsPage() {
   const [emails, setEmails] = useState<CategorizedEmail[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isChecking, setIsChecking] = useState(false);
+  const [isSendingReply, setIsSendingReply] = useState(false);
+  const [replyingToEmailId, setReplyingToEmailId] = useState<string | null>(null);
   const [gmailAuthRequired, setGmailAuthRequired] = useState(false);
   const [gmailAuthUrl, setGmailAuthUrl] = useState<string | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
@@ -160,6 +162,66 @@ export default function CourseDetailsPage() {
     }
   };
 
+  const handleAutoReply = async (emailId: string) => {
+    if (!course) return;
+
+    const email = emails.find((e) => e.id === emailId);
+    if (!email) {
+      console.error('Email not found:', emailId);
+      return;
+    }
+
+    setIsSendingReply(true);
+    setReplyingToEmailId(emailId);
+
+    try {
+      console.log('🤖 Starting auto-reply workflow for:', email.subject);
+
+      const response = await fetch('/api/email/reply', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: course.professorId,
+          email: {
+            id: email.id,
+            from: email.from,
+            subject: email.subject,
+            body: email.body,
+            category: email.category,
+            reasoning: email.reasoning,
+            threadId: email.threadId,
+          },
+          priority: {
+            priority: 'medium',
+            responseDeadline: 'Within 24 hours',
+            reasoning: 'Auto-reply requested by professor',
+          },
+          courseName: course.name,
+          professorName: 'Professor',
+          language: 'Neutral Spanish',
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        console.log('✅ Email sent successfully:', result.data.sent);
+        alert('Email reply sent successfully!');
+      } else {
+        console.error('❌ Failed to send email:', result.error);
+        alert(`Failed to send email: ${result.error}`);
+      }
+    } catch (error) {
+      console.error('Error in auto-reply:', error);
+      alert('An error occurred while sending the email');
+    } finally {
+      setIsSendingReply(false);
+      setReplyingToEmailId(null);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -253,7 +315,12 @@ export default function CourseDetailsPage() {
           emails={emails}
           isChecking={isChecking}
           stats={stats}
+          courseName={course.name}
+          userId={course.professorId}
+          isSendingReply={isSendingReply}
+          replyingToEmailId={replyingToEmailId}
           onAnalyze={handleCheckEmails}
+          onAutoReply={handleAutoReply}
         />
       </div>
     </div>

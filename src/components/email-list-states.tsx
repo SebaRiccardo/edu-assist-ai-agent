@@ -18,14 +18,24 @@ interface EmailListStatesProps {
     totalAnalyzed: number;
     courseRelated: number;
   } | null;
+  courseName?: string;
+  userId?: string;
+  isSendingReply?: boolean;
+  replyingToEmailId?: string | null;
   onAnalyze: () => void;
+  onAutoReply?: (emailId: string) => void;
 }
 
 export function EmailListStates({
   emails,
   isChecking,
   stats,
+  courseName,
+  userId,
+  isSendingReply,
+  replyingToEmailId,
   onAnalyze,
+  onAutoReply,
 }: EmailListStatesProps) {
   // Loading State - Checking Emails
   if (isChecking) {
@@ -99,7 +109,14 @@ export function EmailListStates({
 
         <div className="grid grid-cols-1 gap-3">
           {emails.map(email => (
-            <EmailCard key={email.id} email={email} />
+            <EmailCard
+              key={email.id}
+              email={email}
+              courseName={courseName}
+              userId={userId}
+              isSendingReply={isSendingReply && replyingToEmailId === email.id}
+              onAutoReply={onAutoReply}
+            />
           ))}
         </div>
       </div>

@@ -7,7 +7,7 @@
 
 import { generateText } from 'ai';
 import { google } from '@ai-sdk/google';
-import { getSendEmailTool } from '@/lib/composio';
+import z from 'zod';
 
 /**
  * Email information for response generation
@@ -92,7 +92,7 @@ export async function generateEmailResponse(params: ResponseGenerationParams): P
         professorName = 'Professor',
         additionalContext = '',
         language = 'English',
-        model = 'gemini-2.0-flash',
+        model = 'gemini-2.0-flash-lite',
     } = params;
 
     console.log(`📝 Generating response for: "${email.subject}"`);
@@ -102,9 +102,9 @@ export async function generateEmailResponse(params: ResponseGenerationParams): P
     const responseResult = await generateText({
         model: google(model),
         system: `You are a university professor assistant drafting professional, helpful email responses. You understand academic contexts and student needs. You are fluent in multiple languages and can write responses in any requested language.`,
-        prompt: `Draft a professional email response to this ${priority.priority} priority student email.
+        prompt: `Draft a email response to this ${priority.priority} priority student email.
 
-**IMPORTANT: Write the entire response in ${language}. All greetings, content, and closing remarks must be in ${language}.**
+**IMPORTANT: Write the entire response in ${language}. All greetings, content, placeholder values and closing remarks must be in ${language}.**
 
 **Email Details:**
 From: ${email.from}
@@ -143,14 +143,13 @@ ${additionalContext ? `- Additional Context: ${additionalContext}` : ''}
    - Closing with offer for further help
 
 5. **Length**:
-   - Critical/High priority: Concise (2-3 paragraphs), get to the point quickly
-   - Medium priority: Balanced (3-4 paragraphs)
+   - Critical/High priority: Concise (1-2 paragraphs), get to the point quickly
+   - Medium priority: Balanced (1-3 paragraphs)
    - Low priority: Can be more detailed if needed
 
 6. **Academic Boundaries**:
    - Maintain appropriate professor-student relationship
    - Don't provide direct assignment answers, guide to learning
-   - Encourage office hours for complex topics
 
 7. **Language**:
    - Write the ENTIRE response in ${language}

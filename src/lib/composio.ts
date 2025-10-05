@@ -29,7 +29,12 @@ export async function getGmailTools(userId: string) {
 
 export async function getSendEmailTool(userId: string) {
   const composio = getComposioClient();
-  return await composio.tools.get(userId, "GMAIL_SEND_EMAIL");
+  return await composio.tools.get(userId, {
+    tools: [
+      'GMAIL_REPLY_TO_THREAD',
+      'GMAIL_SEND_EMAIL',
+    ]
+  });
 }
 
 export async function getGmailFetchAndLabelsTool(userId: string) {
