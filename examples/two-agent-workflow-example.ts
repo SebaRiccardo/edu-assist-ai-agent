@@ -10,8 +10,8 @@
 
 import { generateText } from 'ai';
 import { google } from '@ai-sdk/google';
-import { analyzeInboxForCourse } from '@/app/api/inbox/analyze/route';
-import type { CategorizedEmail } from '@/app/api/inbox/analyze/route';
+import { analyzeInboxForCourse } from '@/agents/analyze-inbox';
+import { CategorizedEmail } from '@/types';
 
 /**
  * Two-agent workflow: Analyze emails + Generate responses

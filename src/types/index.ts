@@ -176,12 +176,13 @@ export interface EmailSummary {
 /**
  * Email Analysis Parameters
  */
-export interface EmailAnalysisParams {
+export interface InboxAnalysisParams {
   userId: string;
   courseId: string;
   maxEmails?: number;
   includeRead?: boolean;
   verbose?: boolean;
+  reasoningLanguage: string
 }
 
 /**

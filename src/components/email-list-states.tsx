@@ -16,7 +16,7 @@ interface EmailListStatesProps {
   isChecking: boolean;
   stats: {
     totalAnalyzed: number;
-    totalCategorized: number;
+    courseRelated: number;
   } | null;
   onAnalyze: () => void;
 }
@@ -70,7 +70,7 @@ export function EmailListStates({
   }
 
   // Empty State - No Results After Analysis
-  if (emails.length === 0 && stats && stats.totalCategorized === 0) {
+  if (emails.length === 0 && stats && stats.courseRelated === 0) {
     return (
       <Empty className="min-h-[40vh] border-none bg-background/50 rounded-3xl">
         <EmptyHeader>

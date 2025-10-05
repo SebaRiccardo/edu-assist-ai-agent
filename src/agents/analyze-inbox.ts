@@ -3,26 +3,29 @@ import { getCourseById } from '@/lib/mock-data';
 import { generateObject } from 'ai';
 import { google } from '@ai-sdk/google';
 import { z } from 'zod';
-import { CategorizedEmail, EmailAnalysisParams, InboxAnalysisResult, GmailMessageBody, TransformedEmail } from '@/types';
+import { CategorizedEmail, InboxAnalysisParams, InboxAnalysisResult, GmailMessageBody, TransformedEmail } from '@/types';
 
 // Set max duration for this API route to handle AI processing
 export const maxDuration = 60;
 
+const categoryEnum = z.enum([
+    'course_related',      // Directly related to course content
+    'student_email',       // From students
+    'staff_email',         // From colleagues or staff
+    'administrative',      // Administrative matters
+    'assignment',          // Assignment submissions or questions
+    'grade_inquiry',
+    'other'               // Not related to course
+]).describe('The category of the email')
+
+export type EmailCategoryType = z.infer<typeof categoryEnum>;
 /**
  * Email Tag Schema - defines the structure for email categorization
  */
 const emailTagSchema = z.object({
     emailId: z.string().describe('The ID of the email being analyzed'),
     isRelated: z.boolean().describe('Whether the email is related to the course'),
-    category: z.enum([
-        'course_related',      // Directly related to course content
-        'student_email',       // From students
-        'staff_email',         // From colleagues or staff
-        'administrative',      // Administrative matters
-        'assignment',          // Assignment submissions or questions
-        'grade_inquiry',
-        'other'               // Not related to course
-    ]).describe('The category of the email'),
+    category: categoryEnum,
     suggestedLabel: z.string().describe('Suggested Gmail label for this email'),
     confidence: z.number().min(0).max(100).describe('Confidence score (0-100)'),
     reasoning: z.string().describe('Brief explanation of the categorization'),
@@ -35,8 +38,6 @@ const batchEmailAnalysisSchema = z.object({
     results: z.array(emailTagSchema),
     summary: z.string().describe('Overall summary of the email batch analysis'),
 });
-
-
 
 
 /**
@@ -104,9 +105,9 @@ function extractSnippet(message: GmailMessageBody): string {
  * console.log(`${result.analysis.stats.courseRelated} are course-related`);
  * ```
  */
-export async function analyzeInboxForCourse(params: EmailAnalysisParams): Promise<InboxAnalysisResult> {
+export async function analyzeInboxForCourse(params: InboxAnalysisParams): Promise<InboxAnalysisResult> {
 
-    const { userId, courseId, maxEmails = 10, includeRead = false, verbose = true } = params;
+    const { userId, courseId, maxEmails = 10, includeRead = false, reasoningLanguage = 'English', verbose = true } = params;
 
     // Validation
     if (!userId) {
@@ -220,8 +221,10 @@ Analysis Guidelines:
 Emails to Analyze:
  ${JSON.stringify(emailsForAnalysis, null, 2)}
 
-Provide structured analysis for each email with confidence scores and reasoning.
-Be thorough but efficient in your analysis.`,
+Important:
+- Be thorough but efficient in your analysis.
+- Provide structured analysis for each email with confidence scores and reasoning.
+- Respond in ${reasoningLanguage}.`,
     });
 
     console.log(`✨ Analysis complete!`);

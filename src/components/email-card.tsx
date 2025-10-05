@@ -41,57 +41,43 @@ interface EmailCardProps {
   onMarkAsRead?: (emailId: string) => void;
   onArchive?: (emailId: string) => void;
   onDelete?: (emailId: string) => void;
+  onAutoReply?: (emailId: string) => void;
 }
 
-const emailTypeConfig = {
-  student_question: {
-    label: 'Student Question',
-    variant: 'info' as const,
-    icon: '❓',
+const emailCategoryConfig = {
+  course_related: {
+    label: 'Course Related',
+    variant: 'default' as const,
+    icon: '�',
   },
-  professor_inquiry: {
-    label: 'Professor Inquiry',
+  student_email: {
+    label: 'Student Email',
+    variant: 'info' as const,
+    icon: '🎓',
+  },
+  staff_email: {
+    label: 'Staff Email',
     variant: 'warning' as const,
-    icon: '👨‍🏫',
+    icon: '�‍🏫',
   },
   administrative: {
     label: 'Administrative',
     variant: 'secondary' as const,
-    icon: '📋',
+    icon: '�',
   },
-  assignment_submission: {
-    label: 'Assignment Submission',
+  assignment: {
+    label: 'Assignment',
     variant: 'info' as const,
-    icon: '📝',
+    icon: '�',
   },
   grade_inquiry: {
     label: 'Grade Inquiry',
     variant: 'warning' as const,
-    icon: '📊',
+    icon: '�',
   },
-  office_hours: {
-    label: 'Office Hours',
-    variant: 'info' as const,
-    icon: '🕐',
-  },
-  course_feedback: {
-    label: 'Course Feedback',
-    variant: 'secondary' as const,
-    icon: '💬',
-  },
-  technical_support: {
-    label: 'Technical Support',
-    variant: 'warning' as const,
-    icon: '🔧',
-  },
-  parent_communication: {
-    label: 'Parent Communication',
-    variant: 'info' as const,
-    icon: '👪',
-  },
-  general: {
-    label: 'General',
-    variant: 'secondary' as const,
+  other: {
+    label: 'Other',
+    variant: 'outline' as const,
     icon: '📧',
   },
 };
@@ -101,26 +87,39 @@ export function EmailCard({
   onMarkAsRead,
   onArchive,
   onDelete,
+  onAutoReply,
 }: EmailCardProps) {
-  const typeConfig = emailTypeConfig[email.emailType];
+  const categoryConfig = emailCategoryConfig[email.category as keyof typeof emailCategoryConfig];
   const confidencePercentage = Math.round(email.confidence * 100);
 
   return (
-    <Card className="bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-none shadow-none hover:bg-background/70 transition-all">
-      <CardHeader className="pb-3">
+    <Card className=" hover:shadow-xl hover:scale-120 cursor-pointer 
+                      transition-all duration-200 bg-background/80 
+                      backdrop-blur supports-[backdrop-filter]:bg-background/60 
+                      border-none shadow-none hover:bg-background/70
+                      ">
+      <CardHeader className="">
         <div className="flex items-start justify-between">
           <div className="flex-1 space-y-1">
-            <div className="flex items-start gap-2">
-              <Mail className="text-red-500 size-5" />
+            <div className="flex items-end gap-2">
+              <Mail className="text-red-500 size-6" />
               <CardTitle className="text-base font-semibold">
                 {email.subject}
               </CardTitle>
 
+              {categoryConfig &&
+                <Badge variant={categoryConfig.variant}>
+                  {categoryConfig.label}
+                </Badge>
+              }
+
               {email.isUnread && (
-                <Badge variant="default" className="ml-2">
+                <Badge variant="default">
                   New
                 </Badge>
               )}
+
+
             </div>
             <CardDescription className="text-sm">
               From: {email.from}
@@ -141,17 +140,8 @@ export function EmailCard({
             <Tag className="h-3 w-3 text-muted-foreground" />
             <span className="text-xs text-muted-foreground">Labels:</span>
           </div>
-
-          <Badge variant="success">{email.courseName}</Badge>
-          <Badge variant={typeConfig.variant}>
-            <span className="mr-1">{typeConfig.icon}</span>
-            {typeConfig.label}
-          </Badge>
-          <Badge variant="outline" className="text-xs">
-            {confidencePercentage}% confidence
-          </Badge>
+          <Badge variant="success">{email.suggestedLabel}</Badge>
         </div>
-
         <Collapsible className="w-full">
           <div className="flex items-center gap-2 pt-2">
             <CollapsibleTrigger asChild>
@@ -174,11 +164,15 @@ export function EmailCard({
           <CollapsibleContent className="data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down overflow-hidden transition-all duration-300">
             <div className="mt-3 rounded-lg border bg-background/50 p-4">
               <div className="flex items-start gap-2">
-                <Sparkles className="size-4 text-primary mt-0.5 flex-shrink-0" />
                 <div className="space-y-2">
-                  <p className="text-sm font-semibold text-foreground">
-                    AI Reasoning
-                  </p>
+                  <div className='flex items-center gap-2'>
+                    <p className="text-sm font-semibold text-foreground">
+                      AI Reasoning
+                    </p>
+                    <Badge variant="outline" className="text-xs">
+                      {confidencePercentage}% confidence
+                    </Badge>
+                  </div>
                   <p className="text-sm text-muted-foreground">
                     {email.reasoning}
                   </p>

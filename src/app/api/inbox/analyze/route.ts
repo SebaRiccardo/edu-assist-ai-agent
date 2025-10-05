@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
     try {
-        const { userId, maxEmails = 10, includeRead = false, verbose, courseId } = await request.json();
+        const { userId, maxEmails = 10, includeRead = false, reasoningLanguage, verbose, courseId } = await request.json();
 
         // Validation
         if (!userId) {
@@ -24,6 +24,7 @@ export async function POST(request: NextRequest) {
 
         // Check Gmail connection before processing
         const connectionStatus = await checkGmailConnection(userId);
+
         if (!connectionStatus.isConnected) {
             return NextResponse.json({
                 success: false,
@@ -39,6 +40,7 @@ export async function POST(request: NextRequest) {
             courseId,
             maxEmails,
             includeRead,
+            reasoningLanguage,
             verbose: verbose ?? true,
         });
 

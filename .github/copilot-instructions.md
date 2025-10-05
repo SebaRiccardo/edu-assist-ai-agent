@@ -22,25 +22,6 @@ This is an AI-powered email management system for university professors that aut
 - **Analysis Schema**: Located in `/api/check-emails/route.ts` - defines `emailAnalysisSchema` with `isRelated`, `emailType`, `confidence`, `reasoning`
 - **Composio**: Gmail toolkit integration via `@composio/vercel` provider with real OAuth authentication
 
-## Email Categorization System
-
-### 10 Email Types
-1. **student_question** - Questions about course material, assignments, concepts
-2. **professor_inquiry** - Communications from academic colleagues  
-3. **administrative** - Course logistics, room changes, schedules
-4. **assignment_submission** - Assignment submissions, extension requests
-5. **grade_inquiry** - Questions about grades and grading
-6. **office_hours** - Meeting requests and scheduling
-7. **course_feedback** - Student feedback and evaluations
-8. **technical_support** - IT issues and platform problems
-9. **parent_communication** - Communications from parents/guardians
-10. **general** - Other course-related communications
-
-### Adding New Email Types
-1. Update `emailType` enum in `/types/index.ts`
-2. Modify `emailAnalysisSchema` in `/api/check-emails/route.ts`
-3. Add configuration in `emailTypeConfig` in `/components/email-card.tsx`
-
 ## Development Workflows
 
 ### Key Commands

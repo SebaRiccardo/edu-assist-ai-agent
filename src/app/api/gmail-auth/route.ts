@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Composio } from '@composio/core';
+import { Composio, ConnectedAccountListResponse } from '@composio/core';
 import { VercelProvider } from '@composio/vercel';
 
 // Initialize Composio with Vercel provider
@@ -20,13 +20,11 @@ export async function POST(req: NextRequest) {
     }
 
     // Check if user already has a Gmail connection
-    const connectedAccounts = await composio.connectedAccounts.list({
+    const connectedAccounts: ConnectedAccountListResponse = await composio.connectedAccounts.list({
       userIds: [userId],
     });
-
-    const gmailConnection = connectedAccounts.items.find(
-      account => account.toolkit.slug.toUpperCase() === 'GMAIL'
-    );
+    console.log('Connected accounts:', connectedAccounts);
+    const gmailConnection = connectedAccounts.items.find((account: any) => account.toolkit.slug.toUpperCase() === 'GMAIL');
 
     if (gmailConnection && gmailConnection.status === 'ACTIVE') {
       return NextResponse.json({
@@ -39,7 +37,7 @@ export async function POST(req: NextRequest) {
 
     // Get Gmail auth config ID from environment
     const gmailAuthConfigId = process.env.GMAIL_AUTH_CONFIG_ID;
-    
+
     if (!gmailAuthConfigId) {
       return NextResponse.json(
         { error: 'Gmail auth config not found. Please set GMAIL_AUTH_CONFIG_ID environment variable.' },
@@ -63,9 +61,9 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Error initiating Gmail connection:', error);
     return NextResponse.json(
-      { 
-        error: 'Failed to initiate Gmail connection', 
-        details: error instanceof Error ? error.message : 'Unknown error' 
+      {
+        error: 'Failed to initiate Gmail connection',
+        details: error instanceof Error ? error.message : 'Unknown error'
       },
       { status: 500 }
     );
@@ -89,8 +87,7 @@ export async function GET(req: NextRequest) {
       userIds: [userId],
     });
 
-    const gmailConnection = connectedAccounts.items.find(
-      account => account.toolkit.slug.toUpperCase() === 'GMAIL'
+    const gmailConnection = connectedAccounts.items.find((account: any) => account.toolkit.slug.toUpperCase() === 'GMAIL'
     );
 
     if (gmailConnection && gmailConnection.status === 'ACTIVE') {
@@ -110,9 +107,9 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     console.error('Error checking Gmail connection:', error);
     return NextResponse.json(
-      { 
-        error: 'Failed to check Gmail connection', 
-        details: error instanceof Error ? error.message : 'Unknown error' 
+      {
+        error: 'Failed to check Gmail connection',
+        details: error instanceof Error ? error.message : 'Unknown error'
       },
       { status: 500 }
     );

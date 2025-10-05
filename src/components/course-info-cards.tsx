@@ -43,7 +43,7 @@ export function CourseInfoCards({ course }: CourseInfoCardsProps) {
           <div className="text-sm font-semibold text-foreground">
             {new Date(course.updatedAt).toLocaleDateString()}
           </div>
-          <div className="text-xs text-muted-foreground">Last Updated</div>
+          <div className="text-xs text-muted-foreground">Last Analyzed</div>
         </div>
       </div>
     </div>

@@ -6,8 +6,10 @@ import { CourseDetailsHeader } from '@/components/course-details-header';
 import { CourseInfoCards } from '@/components/course-info-cards';
 import { AnalysisStatsBar } from '@/components/analysis-stats-bar';
 import { EmailListStates } from '@/components/email-list-states';
-import { CategorizedEmail, Course } from '@/types';
-import { Loader2 } from 'lucide-react';
+import { CategorizedEmail, Course, InboxAnalysisResult } from '@/types';
+import { Loader2, Mail } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function CourseDetailsPage() {
   const router = useRouter();
@@ -16,9 +18,12 @@ export default function CourseDetailsPage() {
   const [emails, setEmails] = useState<CategorizedEmail[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isChecking, setIsChecking] = useState(false);
+  const [gmailAuthRequired, setGmailAuthRequired] = useState(false);
+  const [gmailAuthUrl, setGmailAuthUrl] = useState<string | null>(null);
+  const [authError, setAuthError] = useState<string | null>(null);
   const [stats, setStats] = useState<{
     totalAnalyzed: number;
-    totalCategorized: number;
+    courseRelated: number;
   } | null>(null);
 
   useEffect(() => {
@@ -51,8 +56,11 @@ export default function CourseDetailsPage() {
     if (!course) return;
 
     setIsChecking(true);
+    setGmailAuthRequired(false);
+    setAuthError(null);
+
     try {
-      const response = await fetch('/api/check-emails', {
+      const response = await fetch('/api/inbox/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -60,23 +68,95 @@ export default function CourseDetailsPage() {
         body: JSON.stringify({
           courseId: course.id,
           userId: course.professorId,
+          reasoningLanguage: "spanish"
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to check emails');
+      const res: { success: boolean, data?: InboxAnalysisResult, authRequired?: boolean, error?: string } = await response.json();
+
+      // Handle Gmail authentication required
+      if (response.status === 401 && res.authRequired) {
+        setGmailAuthRequired(true);
+        setAuthError(res.error || 'Gmail connection required');
+
+        // Fetch the Gmail auth URL
+        await handleGmailAuth();
+        return;
       }
 
-      const data = await response.json();
-      setEmails(data.emails);
-      setStats({
-        totalAnalyzed: data.totalAnalyzed,
-        totalCategorized: data.totalCategorized,
-      });
+      if (!response.ok) {
+        throw new Error(res.error || 'Failed to check emails');
+      }
+
+      if (res.success && res.data) {
+        setEmails(res.data.emails);
+        setStats({
+          totalAnalyzed: res.data.totalAnalyzed,
+          courseRelated: res.data.analysis.stats.courseRelated,
+        });
+      }
     } catch (error) {
       console.error('Error checking emails:', error);
+      setAuthError(error instanceof Error ? error.message : 'An error occurred');
     } finally {
       setIsChecking(false);
+    }
+  };
+
+  const handleGmailAuth = async () => {
+    if (!course) return;
+
+    try {
+      const response = await fetch('/api/gmail-auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: course.professorId,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.redirectUrl) {
+        setGmailAuthUrl(data.redirectUrl);
+      } else if (data.isConnected) {
+        // Already connected, retry checking emails
+        setGmailAuthRequired(false);
+        await handleCheckEmails();
+      }
+    } catch (error) {
+      console.error('Error initiating Gmail auth:', error);
+      setAuthError('Failed to initiate Gmail authentication');
+    }
+  };
+
+  const handleConnectGmail = () => {
+    if (gmailAuthUrl) {
+      window.open(gmailAuthUrl, '_blank', 'width=600,height=700');
+
+      // Optional: Poll for connection status
+      const pollInterval = setInterval(async () => {
+        try {
+          const response = await fetch(`/api/gmail-auth?userId=${course?.professorId}`);
+          const data = await response.json();
+
+          if (data.isConnected) {
+            clearInterval(pollInterval);
+            setGmailAuthRequired(false);
+            setGmailAuthUrl(null);
+            setAuthError(null);
+            // Automatically retry checking emails
+            await handleCheckEmails();
+          }
+        } catch (error) {
+          console.error('Error checking connection status:', error);
+        }
+      }, 3000); // Check every 3 seconds
+
+      // Stop polling after 2 minutes
+      setTimeout(() => clearInterval(pollInterval), 120000);
     }
   };
 
@@ -94,7 +174,7 @@ export default function CourseDetailsPage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <div className="mt-6 mx-auto max-w-5xl w-full px-6 space-y-6">
+      <div className="mx-auto max-w-5xl w-full px-6 space-y-6">
         <CourseDetailsHeader
           course={course}
           isChecking={isChecking}
@@ -102,6 +182,68 @@ export default function CourseDetailsPage() {
         />
 
         <CourseInfoCards course={course} />
+
+        {/* Gmail Authentication Required Card */}
+        {gmailAuthRequired && (
+          <Card className="border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/20">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="rounded-full bg-amber-100 p-2 dark:bg-amber-900/50">
+                  <Mail className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg">Gmail Connection Required</CardTitle>
+                  <CardDescription className="text-amber-700 dark:text-amber-300">
+                    {authError || 'Connect your Gmail account to analyze emails'}
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <p className="text-sm text-muted-foreground">
+                  To analyze emails for this course, you need to connect your Gmail account.
+                  This will allow the AI assistant to securely access and categorize your emails.
+                </p>
+                <div className="flex gap-3">
+                  <Button
+                    onClick={handleConnectGmail}
+                    disabled={!gmailAuthUrl}
+                    className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-700 dark:hover:bg-amber-800"
+                  >
+                    {gmailAuthUrl ? (
+                      <>
+                        <Mail className="mr-2 h-4 w-4" />
+                        Connect Gmail Account
+                      </>
+                    ) : (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Loading...
+                      </>
+                    )}
+                  </Button>
+                  {gmailAuthUrl && (
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setGmailAuthRequired(false);
+                        setGmailAuthUrl(null);
+                        setAuthError(null);
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  💡 A new window will open for you to authorize the connection.
+                  After authorization, this page will automatically refresh.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {stats && <AnalysisStatsBar stats={stats} />}
       </div>

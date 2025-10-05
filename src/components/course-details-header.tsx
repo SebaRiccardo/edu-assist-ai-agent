@@ -71,33 +71,36 @@ export function CourseDetailsHeader({
         {/* Title and Action - Horizontal Layout */}
         <div className="flex items-center justify-between gap-4">
           <div className="flex-1">
-            <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">
-              {course.title}
-            </h1>
+            <div className='flex items-center justify-between gap-4 mb-4'>
+              <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">
+                {course.title}
+              </h1>
+              {/* Analyze Button */}
+              <Button
+                onClick={onAnalyze}
+                disabled={isChecking}
+                size="lg"
+                className="gap-2 flex-shrink-0"
+              >
+                {isChecking ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Analyzing...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-4 w-4" />
+                    Analyze Inbox
+                  </>
+                )}
+              </Button>
+            </div>
             <p className="text-sm text-muted-foreground">
               {course.description}
             </p>
           </div>
 
-          {/* Analyze Button */}
-          <Button
-            onClick={onAnalyze}
-            disabled={isChecking}
-            size="lg"
-            className="gap-2 flex-shrink-0"
-          >
-            {isChecking ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Analyzing...
-              </>
-            ) : (
-              <>
-                <Sparkles className="h-4 w-4" />
-                Analyze Inbox
-              </>
-            )}
-          </Button>
+
         </div>
       </div>
     </div>
