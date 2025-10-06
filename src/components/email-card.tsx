@@ -79,18 +79,18 @@ const emailCategoryConfig = {
 const SendButton = ({
   isSending,
   onClick,
-  label = 'Auto Reply'
+  label = 'Auto Reply',
 }: {
   isSending: boolean;
   onClick: () => void;
   label?: string;
 }) => (
   <Button
+    size="sm"
     variant="default"
-
     onClick={onClick}
     disabled={isSending}
-  // className="bg-blue-600 cursor-pointer hover:bg-blue-700"
+    // className="bg-blue-600 cursor-pointer hover:bg-blue-700"
   >
     {isSending ? (
       <>
@@ -112,7 +112,9 @@ const EmailHeader = ({
   categoryConfig,
 }: {
   email: CategorizedEmail;
-  categoryConfig: typeof emailCategoryConfig[keyof typeof emailCategoryConfig] | undefined;
+  categoryConfig:
+    | (typeof emailCategoryConfig)[keyof typeof emailCategoryConfig]
+    | undefined;
 }) => (
   <CardHeader>
     <div className="flex items-start justify-between">
@@ -127,6 +129,7 @@ const EmailHeader = ({
               {categoryConfig.label}
             </Badge>
           )}
+          <Badge variant="success">{email.suggestedLabel}</Badge>
           {email.isUnread && <Badge variant="default">New</Badge>}
         </div>
         <CardDescription className="text-sm">
@@ -141,16 +144,22 @@ const EmailHeader = ({
 );
 
 // Email snippet component
-const EmailSnippet = ({ snippet, suggestedLabel }: { snippet: string; suggestedLabel: string }) => (
+const EmailSnippet = ({
+  snippet,
+  suggestedLabel,
+}: {
+  snippet: string;
+  suggestedLabel: string;
+}) => (
   <>
     <p className="text-sm text-muted-foreground line-clamp-2">{snippet}</p>
-    <div className="flex flex-wrap gap-2 items-center">
+    {/* <div className="flex flex-wrap gap-2 items-center">
       <div className="flex items-center gap-1">
         <Tag className="h-3 w-3 text-muted-foreground" />
         <span className="text-xs text-muted-foreground">Labels:</span>
       </div>
       <Badge variant="success">{suggestedLabel}</Badge>
-    </div>
+    </div> */}
   </>
 );
 
@@ -167,7 +176,7 @@ const AIReasoningSection = ({
       <Button
         variant="ghost"
         size="sm"
-        className="hover:text-blue-500 hover:bg-transparent"
+        className="hover:text-blue-500 hover:bg-transparent has-[>svg]:px-0"
       >
         <Sparkles className="size-4 mr-1" />
         Explain reasoning
@@ -210,13 +219,17 @@ const DraftResponseSection = ({
   onAutoReply?: (emailId: string) => void;
   emailId: string;
 }) => (
-  <Collapsible open={isDraftOpen} onOpenChange={setIsDraftOpen} className="w-full">
+  <Collapsible
+    open={isDraftOpen}
+    onOpenChange={setIsDraftOpen}
+    className="w-full mb-4"
+  >
     <div className="flex items-center gap-2 flex-wrap">
       <CollapsibleTrigger asChild>
         <Button
           variant="ghost"
           size="sm"
-          className="hover:text-green-500 hover:bg-transparent"
+          className="hover:text-green-500 hover:bg-transparent has-[>svg]:px-0"
           onClick={() => {
             if (!draftResponse && !isDraftOpen) {
               handleGenerateDraft();
@@ -253,7 +266,7 @@ const DraftResponseSection = ({
     </div>
 
     <CollapsibleContent className="data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down overflow-hidden transition-all duration-300">
-      <div className="mt-3 rounded-lg border bg-green-50 dark:bg-green-950/20 p-4">
+      <div className="mt-3 rounded-lg border-none  bg-green-50 dark:bg-green-950/20 p-4">
         {isGeneratingDraft && (
           <div className="flex items-center justify-center py-4">
             <Loader2 className="h-6 w-6 animate-spin text-green-600" />
@@ -265,7 +278,9 @@ const DraftResponseSection = ({
 
         {draftError && (
           <div className="flex items-start gap-2 p-3 rounded-md bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800">
-            <p className="text-sm text-red-600 dark:text-red-400">{draftError}</p>
+            <p className="text-sm text-red-600 dark:text-red-400">
+              {draftError}
+            </p>
           </div>
         )}
 
@@ -273,13 +288,20 @@ const DraftResponseSection = ({
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <FileText className="h-4 w-4 text-green-600 dark:text-green-400" />
-              <p className="text-sm font-semibold text-foreground">Draft Response</p>
-              <Badge variant="outline" className="text-xs bg-green-100 dark:bg-green-900/30">
+              <p className="text-sm font-semibold text-foreground">
+                Draft Response
+              </p>
+              <Badge
+                variant="outline"
+                className="text-xs text-white border-none bg-green-500 dark:bg-green-900/30"
+              >
                 AI Generated
               </Badge>
             </div>
             <div className="rounded-md bg-background border p-3">
-              <p className="text-sm text-foreground whitespace-pre-wrap">{draftResponse}</p>
+              <p className="text-sm text-foreground whitespace-pre-wrap">
+                {draftResponse}
+              </p>
             </div>
             <div className="flex gap-2">
               <Button
@@ -314,7 +336,8 @@ export function EmailCard({
   onDelete,
   onAutoReply,
 }: EmailCardProps) {
-  const categoryConfig = emailCategoryConfig[email.category as keyof typeof emailCategoryConfig];
+  const categoryConfig =
+    emailCategoryConfig[email.category as keyof typeof emailCategoryConfig];
   const confidencePercentage = Math.round(email.confidence * 100);
 
   const [isDraftOpen, setIsDraftOpen] = useState(false);
@@ -375,12 +398,14 @@ export function EmailCard({
   };
 
   return (
-    <Card className="hover:shadow-xl hover:scale-120 cursor-pointer transition-all duration-200 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-none shadow-none hover:bg-background/70">
+    <Card className="hover:shadow-xl cursor-pointer transition-all gap-1 duration-200 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-none shadow-none hover:bg-background/70">
       <EmailHeader email={email} categoryConfig={categoryConfig} />
-
-      <CardContent className="space-y-3">
-        <EmailSnippet snippet={email.snippet} suggestedLabel={email.suggestedLabel} />
-        <div className='flex flex-col gap-2'>
+      <CardContent>
+        <EmailSnippet
+          snippet={email.snippet}
+          suggestedLabel={email.suggestedLabel}
+        />
+        <div className="flex flex-col gap-2 pt-2">
           <AIReasoningSection
             reasoning={email.reasoning}
             confidencePercentage={confidencePercentage}
@@ -401,7 +426,7 @@ export function EmailCard({
 
         {/* Auto Reply Button - Bottom Right */}
         {onAutoReply && (
-          <div className="flex justify-end">
+          <div className="flex justify-end ">
             <SendButton
               isSending={isSendingReply}
               onClick={() => onAutoReply(email.id)}

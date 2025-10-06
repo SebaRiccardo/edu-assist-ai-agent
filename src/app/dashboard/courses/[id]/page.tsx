@@ -9,7 +9,13 @@ import { EmailListStates } from '@/components/email-list-states';
 import { CategorizedEmail, Course, InboxAnalysisResult } from '@/types';
 import { Loader2, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 
 export default function CourseDetailsPage() {
   const router = useRouter();
@@ -19,7 +25,9 @@ export default function CourseDetailsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isChecking, setIsChecking] = useState(false);
   const [isSendingReply, setIsSendingReply] = useState(false);
-  const [replyingToEmailId, setReplyingToEmailId] = useState<string | null>(null);
+  const [replyingToEmailId, setReplyingToEmailId] = useState<string | null>(
+    null
+  );
   const [gmailAuthRequired, setGmailAuthRequired] = useState(false);
   const [gmailAuthUrl, setGmailAuthUrl] = useState<string | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
@@ -70,11 +78,16 @@ export default function CourseDetailsPage() {
         body: JSON.stringify({
           courseId: course.id,
           userId: course.professorId,
-          reasoningLanguage: "spanish"
+          reasoningLanguage: 'spanish',
         }),
       });
 
-      const res: { success: boolean, data?: InboxAnalysisResult, authRequired?: boolean, error?: string } = await response.json();
+      const res: {
+        success: boolean;
+        data?: InboxAnalysisResult;
+        authRequired?: boolean;
+        error?: string;
+      } = await response.json();
 
       // Handle Gmail authentication required
       if (response.status === 401 && res.authRequired) {
@@ -99,7 +112,9 @@ export default function CourseDetailsPage() {
       }
     } catch (error) {
       console.error('Error checking emails:', error);
-      setAuthError(error instanceof Error ? error.message : 'An error occurred');
+      setAuthError(
+        error instanceof Error ? error.message : 'An error occurred'
+      );
     } finally {
       setIsChecking(false);
     }
@@ -141,7 +156,9 @@ export default function CourseDetailsPage() {
       // Optional: Poll for connection status
       const pollInterval = setInterval(async () => {
         try {
-          const response = await fetch(`/api/gmail-auth?userId=${course?.professorId}`);
+          const response = await fetch(
+            `/api/gmail-auth?userId=${course?.professorId}`
+          );
           const data = await response.json();
 
           if (data.isConnected) {
@@ -165,7 +182,7 @@ export default function CourseDetailsPage() {
   const handleAutoReply = async (emailId: string) => {
     if (!course) return;
 
-    const email = emails.find((e) => e.id === emailId);
+    const email = emails.find(e => e.id === emailId);
     if (!email) {
       console.error('Email not found:', emailId);
       return;
@@ -235,15 +252,15 @@ export default function CourseDetailsPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col">
-      <div className="mx-auto max-w-5xl w-full px-6 space-y-6">
+    <div className="flex flex-1 flex-col h-screen overflow-hidden">
+      <div className="mx-auto max-w-7xl w-full px-6 pb-6 space-y-6">
         <CourseDetailsHeader
           course={course}
           isChecking={isChecking}
           onAnalyze={handleCheckEmails}
         />
 
-        <CourseInfoCards course={course} />
+        {/* <CourseInfoCards course={course} /> */}
 
         {/* Gmail Authentication Required Card */}
         {gmailAuthRequired && (
@@ -254,9 +271,12 @@ export default function CourseDetailsPage() {
                   <Mail className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg">Gmail Connection Required</CardTitle>
+                  <CardTitle className="text-lg">
+                    Gmail Connection Required
+                  </CardTitle>
                   <CardDescription className="text-amber-700 dark:text-amber-300">
-                    {authError || 'Connect your Gmail account to analyze emails'}
+                    {authError ||
+                      'Connect your Gmail account to analyze emails'}
                   </CardDescription>
                 </div>
               </div>
@@ -264,8 +284,9 @@ export default function CourseDetailsPage() {
             <CardContent>
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground">
-                  To analyze emails for this course, you need to connect your Gmail account.
-                  This will allow the AI assistant to securely access and categorize your emails.
+                  To analyze emails for this course, you need to connect your
+                  Gmail account. This will allow the AI assistant to securely
+                  access and categorize your emails.
                 </p>
                 <div className="flex gap-3">
                   <Button
@@ -307,10 +328,11 @@ export default function CourseDetailsPage() {
           </Card>
         )}
 
-        {stats && <AnalysisStatsBar stats={stats} />}
+        {/* {stats && <AnalysisStatsBar stats={stats} />} */}
       </div>
 
-      <div className="flex-1 overflow-y-auto mt-6 mx-auto max-w-5xl w-full px-6 pb-8">
+      {/* Email List - Full Height Layout */}
+      <div className="flex-1 overflow-hidden mx-auto max-w-7xl w-full px-6 pb-6">
         <EmailListStates
           emails={emails}
           isChecking={isChecking}

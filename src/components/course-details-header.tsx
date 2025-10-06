@@ -11,7 +11,7 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { Course } from '@/types';
-import { Loader2, Sparkles, Clock, Home } from 'lucide-react';
+import { Loader2, Sparkles, Clock, Home, Users } from 'lucide-react';
 
 interface CourseDetailsHeaderProps {
   course: Course;
@@ -71,7 +71,7 @@ export function CourseDetailsHeader({
         {/* Title and Action - Horizontal Layout */}
         <div className="flex items-center justify-between gap-4">
           <div className="flex-1">
-            <div className='flex items-center justify-between gap-4 mb-4'>
+            <div className="flex items-center justify-between gap-4 mb-4">
               <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">
                 {course.title}
               </h1>
@@ -98,9 +98,16 @@ export function CourseDetailsHeader({
             <p className="text-sm text-muted-foreground">
               {course.description}
             </p>
+            {course.studentCount > 0 && (
+              <div className="flex items-center gap-2 pt-2 text-muted-foreground">
+              <Users className="text-sm" size={15} />
+              <span className="flex gap-1">
+                {course.studentCount}
+                {course.studentCount === 1 ? 'student' : 'students'}
+              </span>
+              </div>
+            )}
           </div>
-
-
         </div>
       </div>
     </div>

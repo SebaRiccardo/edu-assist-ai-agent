@@ -8,9 +8,7 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-gradient-to-bl from-pink-100 to-blue-200">
       <TopNav />
-      <main className="relative pb-10 pt-14">
-        {children}
-      </main>
+      <main className="relative py-10">{children}</main>
     </div>
   );
 }
