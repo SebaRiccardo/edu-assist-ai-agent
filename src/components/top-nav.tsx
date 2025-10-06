@@ -18,17 +18,25 @@ import {
   Search,
   BookOpen,
   Home,
-  Mail,
-  Users,
-  BarChart3,
   HelpCircle,
   Sparkles,
+  Loader2,
 } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import {
+  useCurrentUser,
+  useUserInitials,
+  useUserDisplayName,
+} from '@/hooks/use-current-user';
+import { signOut } from '@/lib/auth/auth-service';
 
 export function TopNav() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, loading } = useCurrentUser();
+  const initials = useUserInitials();
+  const displayName = useUserDisplayName();
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
@@ -37,6 +45,14 @@ export function TopNav() {
     // { name: 'Students', href: '/dashboard/students', icon: Users },
     // { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
   ];
+
+  const handleLogout = async () => {
+    const result = await signOut();
+    if (result.success) {
+      router.push('/auth/login');
+      router.refresh();
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-card/80 backdrop-blur-xl supports-[backdrop-filter]:bg-card/60 shadow-sm">
@@ -119,10 +135,15 @@ export function TopNav() {
               <Button
                 variant="ghost"
                 className="relative h-9 w-9 rounded-full hover:bg-accent"
+                disabled={loading}
               >
                 <Avatar className="h-9 w-9">
                   <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-semibold">
-                    PJ
+                    {loading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      initials
+                    )}
                   </AvatarFallback>
                 </Avatar>
               </Button>
@@ -133,15 +154,15 @@ export function TopNav() {
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10">
                       <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-semibold">
-                        PJ
+                        {initials}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col">
                       <p className="text-sm font-semibold leading-none">
-                        Prof. Johnson
+                        {displayName}
                       </p>
                       <p className="text-xs leading-none text-muted-foreground mt-1">
-                        professor@university.edu
+                        {user?.email || 'Loading...'}
                       </p>
                     </div>
                   </div>
@@ -161,7 +182,10 @@ export function TopNav() {
                 <span>Help & Support</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-destructive focus:text-destructive">
+              <DropdownMenuItem
+                className="text-destructive focus:text-destructive cursor-pointer"
+                onClick={handleLogout}
+              >
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Log out</span>
               </DropdownMenuItem>

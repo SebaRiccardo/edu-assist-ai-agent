@@ -1,15 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { courseStore } from '@/lib/course-store';
+import { getCurrentUser } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
 // GET - Get all courses for a professor
 export async function GET(req: NextRequest) {
   try {
-    // Use professor ID from query params or default to 'prof-123'
-    const professorId = req.nextUrl.searchParams.get('professorId') || 'prof-123';
+    const user = await getCurrentUser();
 
-    const courses = courseStore.getCourses(professorId);
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const courses = courseStore.getCourses(user.id);
     return NextResponse.json({ courses });
   } catch (error) {
     console.error('Error fetching courses:', error);
@@ -76,10 +80,7 @@ export async function PUT(req: NextRequest) {
     const course = courseStore.updateCourse(courseId, updates);
 
     if (!course) {
-      return NextResponse.json(
-        { error: 'Course not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Course not found' }, { status: 404 });
     }
 
     return NextResponse.json({ course });
@@ -107,10 +108,7 @@ export async function DELETE(req: NextRequest) {
     const success = courseStore.deleteCourse(courseId);
 
     if (!success) {
-      return NextResponse.json(
-        { error: 'Course not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Course not found' }, { status: 404 });
     }
 
     return NextResponse.json({ success: true });

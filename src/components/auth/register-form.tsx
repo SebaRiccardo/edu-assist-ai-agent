@@ -35,7 +35,7 @@ export default function RegisterForm() {
   const form = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
-      username: '',
+      displayName: '',
       email: '',
       password: '',
       confirmPassword: '',
@@ -52,7 +52,7 @@ export default function RegisterForm() {
       const result = await signUp({
         email: data.email,
         password: data.password,
-        username: data.username,
+        displayName: data.displayName,
       });
 
       if (result.success) {
@@ -74,13 +74,13 @@ export default function RegisterForm() {
         {/* Username Field */}
         <FormField
           control={form.control}
-          name="username"
+          name="displayName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Name</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Enter your username"
+                  placeholder="Enter your Name"
                   {...field}
                   disabled={isLoading}
                 />
@@ -155,13 +155,12 @@ export default function RegisterForm() {
           control={form.control}
           name="agreeToTerms"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+            <FormItem className="flex flex-row items-center space-x-3 space-y-0">
               <FormControl>
                 <Checkbox
                   checked={field.value}
                   onCheckedChange={field.onChange}
                   disabled={isLoading}
-                  className="mt-1"
                 />
               </FormControl>
               <div className="space-y-1 leading-none">

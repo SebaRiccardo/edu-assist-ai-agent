@@ -5,7 +5,7 @@ import { z } from 'zod';
  */
 const passwordSchema = z
   .string()
-  .min(12, 'Password must be at least 12 characters')
+  .min(10, 'Password must be at least 10 characters')
   .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
   .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
   .regex(/[0-9]/, 'Password must contain at least one number')
@@ -18,9 +18,8 @@ const passwordSchema = z
  * Email validation schema
  */
 const emailSchema = z
-  .string()
-  .min(1, 'Email is required')
-  .email('Please enter a valid email address');
+  .email('Please enter a valid email address')
+  .min(1, 'Email is required');
 
 /**
  * Username validation schema
@@ -39,7 +38,7 @@ const usernameSchema = z
  */
 export const signUpSchema = z
   .object({
-    username: usernameSchema,
+    displayName: usernameSchema,
     email: emailSchema,
     password: passwordSchema,
     confirmPassword: z.string().min(1, 'Please confirm your password'),

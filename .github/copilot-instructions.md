@@ -51,21 +51,7 @@ Required vars in `.env.local`:
 - **Base Color**: neutral theme
 - **Path Aliases**: `@/components`, `@/lib`, `@/hooks` configured in `components.json`
 
-### Custom Components
-- **EmailCard**: Enhanced email display with 10 category badges, collapsible reasoning, action menus
-- **Gmail Auth**: Handles OAuth connection flow and status checking
-- **Stats Display**: Shows comprehensive analysis statistics and confidence metrics
 
-### Email Card Pattern
-```tsx
-// Supports all 10 email types with appropriate icons and styling
-<EmailCard 
-  email={categorizedEmail}
-  onMarkAsRead={handleMarkAsRead}
-  onArchive={handleArchive}
-  onDelete={handleDelete}
-/>
-```
 
 ## Integration Points
 
@@ -75,19 +61,45 @@ Required vars in `.env.local`:
 - **Production**: Uses real Composio Gmail toolkit with course-specific keyword searching
 - **Mock Mode**: Falls back to enhanced mock data when Composio unavailable
 
-### AI Analysis Flow
-1. Check Gmail connection status via `checkGmailConnection(userId)`
-2. Fetch course-related emails using keyword extraction from course description
-3. For each email, call `generateObject()` with enhanced prompt including all 10 categories
-4. Return `CategorizedEmail[]` with confidence scores and detailed reasoning
-5. Generate comprehensive statistics including type breakdown and average confidence
 
-### Composio Helper Functions
-- **`checkGmailConnection(userId)`** - Verifies active Gmail connection
-- **`searchCourseRelatedEmails(connectionId, courseName, courseDescription)`** - Fetches relevant emails
-- **`extractCourseKeywords()`** - Generates search keywords from course context
 
 ## Code Conventions
+
+## Clean Code Principles to always apply
+
+### 1. **Separation of Concerns**
+
+- UI components only handle presentation
+- Business logic in service layer
+- Validation logic in schemas
+- Each file has single responsibility
+
+### 2. **DRY (Don't Repeat Yourself)**
+
+- Shared validation schemas
+- Common auth service methods
+- Consistent error handling
+
+### 3. **Type Safety**
+
+- Full TypeScript coverage
+- Zod schema type inference
+- Explicit interfaces for all data
+- No `any` types
+
+### 4. **Error Handling**
+
+- Consistent error response format
+- User-friendly error messages
+- Global and field-level errors
+- Graceful failure handling
+
+### 5. **Accessibility**
+
+- ARIA labels on all inputs
+- Screen reader support
+- Keyboard navigation
+- Focus management
 
 ### File Organization
 - **API Routes**: `/app/api/[feature]/route.ts` with comprehensive error handling

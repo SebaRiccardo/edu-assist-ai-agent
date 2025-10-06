@@ -16,10 +16,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
 export default function CourseDetailsPage() {
   const router = useRouter();
   const params = useParams();
+  const { user } = useCurrentUser();
   const [course, setCourse] = useState<Course | null>(null);
   const [emails, setEmails] = useState<CategorizedEmail[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -37,8 +39,10 @@ export default function CourseDetailsPage() {
   } | null>(null);
 
   useEffect(() => {
-    fetchCourse();
-  }, [params.id]);
+    if (user) {
+      fetchCourse();
+    }
+  }, [params.id, user]);
 
   const fetchCourse = async () => {
     setIsLoading(true);
@@ -77,7 +81,7 @@ export default function CourseDetailsPage() {
         },
         body: JSON.stringify({
           courseId: course.id,
-          userId: course.professorId,
+          userId: user?.id || course.professorId,
           reasoningLanguage: 'spanish',
         }),
       });
@@ -121,7 +125,7 @@ export default function CourseDetailsPage() {
   };
 
   const handleGmailAuth = async () => {
-    if (!course) return;
+    if (!course || !user) return;
 
     try {
       const response = await fetch('/api/gmail-auth', {
@@ -130,7 +134,7 @@ export default function CourseDetailsPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: course.professorId,
+          userId: user.id,
         }),
       });
 
@@ -156,9 +160,7 @@ export default function CourseDetailsPage() {
       // Optional: Poll for connection status
       const pollInterval = setInterval(async () => {
         try {
-          const response = await fetch(
-            `/api/gmail-auth?userId=${course?.professorId}`
-          );
+          const response = await fetch(`/api/gmail-auth?userId=${user?.id}`);
           const data = await response.json();
 
           if (data.isConnected) {
@@ -180,7 +182,7 @@ export default function CourseDetailsPage() {
   };
 
   const handleAutoReply = async (emailId: string) => {
-    if (!course) return;
+    if (!course || !user) return;
 
     const email = emails.find(e => e.id === emailId);
     if (!email) {
@@ -200,7 +202,7 @@ export default function CourseDetailsPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: course.professorId,
+          userId: user.id,
           email: {
             id: email.id,
             from: email.from,
@@ -338,7 +340,7 @@ export default function CourseDetailsPage() {
           isChecking={isChecking}
           stats={stats}
           courseName={course.name}
-          userId={course.professorId}
+          userId={user?.id}
           isSendingReply={isSendingReply}
           replyingToEmailId={replyingToEmailId}
           onAnalyze={handleCheckEmails}

@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/client';
 export interface SignUpData {
   email: string;
   password: string;
-  username?: string;
+  displayName?: string;
 }
 
 export interface SignInData {
@@ -29,7 +29,7 @@ export async function signUp(data: SignUpData): Promise<AuthResponse> {
       options: {
         emailRedirectTo: `${window.location.origin}/dashboard`,
         data: {
-          username: data.username,
+          displayName: data.displayName,
         },
       },
     });

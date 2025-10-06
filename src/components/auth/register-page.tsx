@@ -11,6 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import WordmarkLogo from '@/components/wordmark-logo';
 import AuthBackgroundShape from '@/assets/svg/auth-background-shape';
 import RegisterForm from '@/components/auth/register-form';
+import Link from 'next/link';
 
 const Register = () => {
   return (
@@ -25,7 +26,7 @@ const Register = () => {
 
           <div>
             <CardTitle className="mb-1.5 text-2xl">
-              Sign Up to Shadcn studio
+              Sign Up to EduAssist
             </CardTitle>
             <CardDescription className="text-base">
               Start your free trial. No credit card required.
@@ -40,9 +41,12 @@ const Register = () => {
 
             <p className="text-muted-foreground text-center">
               Already have an account?{' '}
-              <a href="#" className="text-card-foreground hover:underline">
+              <Link
+                href="/login"
+                className="text-card-foreground font-medium hover:underline"
+              >
                 Sign in instead
-              </a>
+              </Link>
             </p>
 
             <div className="flex items-center gap-4">
@@ -51,8 +55,16 @@ const Register = () => {
               <Separator className="flex-1" />
             </div>
 
-            <Button variant="ghost" className="w-full" asChild>
-              <a href="#">Sign in with google</a>
+            <Button
+              variant="outline"
+              className="w-full shadow-none bg-muted border-none cursor-pointer"
+            >
+              <img
+                src="https://cdn.shadcnstudio.com/ss-assets/brand-logo/google-icon.png?width=20&height=20&format=auto"
+                alt="Google Icon"
+                className="size-5"
+              />
+              <span className="flex justify-center">Continue with Google</span>
             </Button>
           </div>
         </CardContent>

@@ -31,3 +31,58 @@ export async function createClient() {
     }
   );
 }
+
+/**
+ * Get the current authenticated user (server-side)
+ * @returns User object or null if not authenticated
+ */
+export async function getCurrentUser() {
+  const supabase = await createClient();
+
+  try {
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
+    if (error || !user) {
+      return null;
+    }
+
+    return user;
+  } catch (error) {
+    console.error('Error getting current user:', error);
+    return null;
+  }
+}
+
+/**
+ * Get the current user's session (server-side)
+ */
+export async function getCurrentSession() {
+  const supabase = await createClient();
+
+  try {
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession();
+
+    if (error || !session) {
+      return null;
+    }
+
+    return session;
+  } catch (error) {
+    console.error('Error getting current session:', error);
+    return null;
+  }
+}
+
+/**
+ * Check if user is authenticated (server-side)
+ */
+export async function isAuthenticated(): Promise<boolean> {
+  const user = await getCurrentUser();
+  return !!user;
+}
