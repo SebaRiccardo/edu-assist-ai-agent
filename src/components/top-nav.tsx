@@ -30,6 +30,7 @@ import {
   useUserDisplayName,
 } from '@/hooks/use-current-user';
 import { signOut } from '@/lib/auth/auth-service';
+import WordmarkLogo from '@/components/wordmark-logo';
 
 export function TopNav() {
   const pathname = usePathname();
@@ -59,15 +60,8 @@ export function TopNav() {
       <div className="flex h-20 items-center justify-between px-6 max-w-7xl mx-auto">
         {/* Logo and Brand */}
         <div className="flex items-center gap-8">
-          <Link href="/dashboard" className="flex items-center gap-3 group">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-sm group-hover:shadow-md transition-shadow">
-              <Sparkles className="h-5 w-5" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-base font-bold leading-none">
-                EduAssist AI
-              </span>
-            </div>
+          <Link href="/dashboard" className="group">
+            <WordmarkLogo className="gap-3" />
           </Link>
 
           {/* Main Navigation */}

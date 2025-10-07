@@ -26,6 +26,7 @@ import {
   useUserDisplayName,
 } from '@/hooks/use-current-user';
 import { signOut } from '@/lib/auth/auth-service';
+import WordmarkLogo from '@/components/wordmark-logo';
 
 interface LandingNavProps {
   onGetStarted?: () => void;
@@ -60,11 +61,8 @@ export function LandingNav({ onGetStarted }: LandingNavProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2 group">
-            <Sparkles className="w-8 h-8 text-primary group-hover:scale-110 transition-transform" />
-            <span className="text-xl font-bold text-foreground">
-              EduAssist AI
-            </span>
+          <Link href="/" className="group">
+            <WordmarkLogo className="gap-3" />
           </Link>
 
           {/* Right Side Actions */}

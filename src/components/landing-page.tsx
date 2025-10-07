@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
-  BookOpen,
+  Mail,
+  Zap,
+  Shield,
   CheckCircle,
-  Clock,
-  FileText,
-  MessageSquare,
   Sparkles,
-  User,
+  BookOpen,
+  MessageSquare,
+  Tag,
+  Trash2,
+  Lock,
+  ArrowRight,
 } from 'lucide-react';
 import { AuroraBackground } from './aurora-background';
 import { LandingNav } from './landing-nav';
@@ -19,71 +23,55 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
   const plans = [
     {
       name: 'Free',
+      subtitle: 'Just Getting Started',
       price: '$0',
       period: 'forever',
-      description: 'Perfect for trying out the platform',
+      description:
+        'Smart labeling for one inbox and up to 2 courses. See how much time you save.',
       features: [
-        '5 AI queries per day',
-        'Basic assignment feedback',
-        'Email support',
-        'Standard response time',
+        'Smart labeling for 1 inbox',
+        'Up to 2 courses',
+        'Basic email organization',
+        'Course-aware filtering',
       ],
       cta: 'Get Started',
       highlighted: false,
-      planType: 'free',
     },
     {
       name: 'Basic',
+      subtitle: 'Stay on Top of It',
       price: '$29',
       period: 'per month',
-      description: 'Ideal for individual teachers',
+      description: 'Unlimited courses, faster labeling, and advanced sorting.',
       features: [
-        '100 AI queries per day',
-        'Advanced assignment feedback',
-        'Automated grading assistance',
-        'Priority email support',
-        'Custom rubric creation',
-        'Student progress tracking',
+        'Unlimited courses',
+        'Advanced smart labeling',
+        'Priority sorting',
+        'Faster processing',
+        'Email analytics',
+        'Custom label rules',
       ],
       cta: 'Start Free Trial',
       highlighted: true,
-      planType: 'basic',
     },
     {
-      name: 'Professional',
+      name: 'Pro',
+      subtitle: 'Full Autopilot',
       price: '$79',
       period: 'per month',
-      description: 'For serious educators',
+      description:
+        'Your inbox runs itself — background cleanup, auto-replies, and smart prioritization.',
       features: [
-        'Unlimited AI queries',
-        'All Basic features',
-        'Bulk assignment processing',
-        'Advanced analytics dashboard',
-        'Priority support (24/7)',
-        'Integration with LMS',
-        'Custom AI training',
+        'Everything in Basic',
+        'Auto-replies (AI-powered)',
+        'Background cleanup',
+        'Smart prioritization',
+        'Continuous organization',
+        'Custom response templates',
+        'Advanced analytics',
       ],
       cta: 'Start Free Trial',
       highlighted: false,
-      planType: 'professional',
-    },
-    {
-      name: 'Enterprise',
-      price: 'Custom',
-      period: 'contact us',
-      description: 'For institutions and departments',
-      features: [
-        'Everything in Professional',
-        'Dedicated account manager',
-        'Custom integrations',
-        'On-premise deployment option',
-        'Advanced security features',
-        'Custom SLA',
-        'Team training sessions',
-      ],
-      cta: 'Contact Sales',
-      highlighted: false,
-      planType: 'enterprise',
     },
   ];
 
@@ -97,22 +85,25 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
           {/* Hero Section */}
           <section className="flex-1 pt-20 pb-24 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
-              <div className="text-center max-w-3xl mx-auto">
-                <h1 className="text-5xl sm:text-6xl font-bold text-foreground mb-6 leading-tight">
-                  Your AI Teaching Assistant for
-                  <span className="text-primary"> Modern Education</span>
+              <div className="text-center max-w-4xl mx-auto">
+                <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-foreground mb-6 leading-tight">
+                  Your inbox, finally{' '}
+                  <span className="text-primary">earns tenure</span>.
                 </h1>
-                <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-                  Save hours every week with intelligent assignment grading,
-                  personalized student feedback, and automated administrative
-                  tasks. Focus on what matters most - teaching.
+                <p className="text-xl sm:text-2xl text-muted-foreground mb-4 leading-relaxed">
+                  InboxProfs AI organizes, labels, and replies to academic
+                  emails — automatically.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <p className="text-lg text-muted-foreground/80 mb-10">
+                  So you can spend less time managing messages and more time
+                  mentoring minds.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                   <button
                     onClick={onGetStarted}
-                    className="bg-primary text-primary-foreground px-8 py-4 rounded-xl text-lg font-semibold hover:opacity-90 transition-all shadow-lg hover:shadow-xl"
+                    className="bg-primary text-primary-foreground px-8 py-4 rounded-xl text-lg font-semibold hover:opacity-90 transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
                   >
-                    Start Free Trial
+                    🎓 Start Free Trial
                   </button>
                   <button
                     onClick={() =>
@@ -120,39 +111,147 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                         .getElementById('pricing')
                         ?.scrollIntoView({ behavior: 'smooth' })
                     }
-                    className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 text-foreground border border-border/40 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-background/80 transition-all shadow-sm"
+                    className="text-muted-foreground hover:text-foreground transition-colors text-lg font-medium"
                   >
-                    View Pricing
+                    or <span className="underline">View Pricing</span>
                   </button>
                 </div>
+                <p className="text-sm text-muted-foreground/70 mt-6">
+                  No setup. No credit card. Just peace of mind.
+                </p>
               </div>
             </div>
           </section>
         </div>
       </AuroraBackground>
 
+      {/* Value Proposition Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
+        <div className="max-w-5xl mx-auto text-center">
+          <h2 className="text-4xl sm:text-5xl font-bold text-foreground mb-6 leading-tight">
+            Teach. Research. Think.
+            <br />
+            <span className="text-primary">We'll handle your inbox.</span>
+          </h2>
+          <p className="text-lg sm:text-xl text-muted-foreground mb-6 leading-relaxed max-w-3xl mx-auto">
+            InboxProfs AI learns from your courses and communication patterns.
+            It sorts messages by class, filters distractions, and keeps
+            important student emails front and center.
+          </p>
+          <p className="text-xl font-semibold text-foreground">
+            Your inbox stays calm — even in midterm season.
+          </p>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
+              How It Works
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="relative">
+              <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-8 rounded-2xl border border-border/40 hover:border-primary/40 transition-all h-full">
+                <div className="absolute -top-4 -left-4 w-12 h-12 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold text-xl shadow-lg">
+                  1
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-3 mt-2">
+                  Connect your inbox
+                </h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  InboxProfs syncs with Gmail or Outlook in seconds.
+                </p>
+              </div>
+            </div>
+
+            <div className="relative">
+              <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-8 rounded-2xl border border-border/40 hover:border-primary/40 transition-all h-full">
+                <div className="absolute -top-4 -left-4 w-12 h-12 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold text-xl shadow-lg">
+                  2
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-3 mt-2">
+                  Watch it organize itself
+                </h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  AI detects course-related emails and labels them
+                  automatically.
+                </p>
+              </div>
+            </div>
+
+            <div className="relative">
+              <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-8 rounded-2xl border border-border/40 hover:border-primary/40 transition-all h-full">
+                <div className="absolute -top-4 -left-4 w-12 h-12 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold text-xl shadow-lg">
+                  3
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-3 mt-2">
+                  Stay focused
+                </h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  Important threads rise to the top. Routine emails handle
+                  themselves.
+                </p>
+              </div>
+            </div>
+
+            <div className="relative">
+              <div className="bg-gradient-to-br from-primary/10 to-primary/5 p-8 rounded-2xl border border-primary/40 h-full">
+                <div className="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center text-primary-foreground font-bold text-xl shadow-lg">
+                  4
+                </div>
+                <div className="inline-block bg-primary/20 text-primary text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                  PRO ONLY
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-3">
+                  Sit back
+                </h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  InboxProfs runs continuously — even replying to common
+                  messages for you.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Everything You Need to Excel
+              Features That Actually Help
             </h2>
-            <p className="text-xl text-muted-foreground">
-              Powerful features designed specifically for university educators
-            </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-8 rounded-2xl border-none shadow-none hover:bg-background/80 transition-all">
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                <FileText className="w-6 h-6 text-primary" />
+                <Tag className="w-6 h-6 text-primary" />
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-3">
-                Intelligent Grading
+                🧠 Smart Labeling
               </h3>
               <p className="text-muted-foreground leading-relaxed">
-                AI-powered grading that understands context and provides
-                consistent, fair evaluations across all assignments.
+                Understands subjects, courses, and students — and organizes
+                emails by context, instantly.
+              </p>
+            </div>
+
+            <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-8 rounded-2xl border-none shadow-none hover:bg-background/80 transition-all">
+              <div className="w-12 h-12 bg-chart-1/20 rounded-lg flex items-center justify-center mb-4">
+                <Trash2 className="w-6 h-6 text-chart-1" />
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-3">
+                ✨ Inbox Clean-Up
+              </h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Removes clutter like spam and outdated threads, keeping your
+                inbox zen.
               </p>
             </div>
 
@@ -161,98 +260,99 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                 <MessageSquare className="w-6 h-6 text-chart-2" />
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-3">
-                Personalized Feedback
+                💬 Auto-Replies{' '}
+                <span className="text-xs text-primary">(Pro)</span>
               </h3>
               <p className="text-muted-foreground leading-relaxed">
-                Generate detailed, constructive feedback tailored to each
-                student's work and learning style.
-              </p>
-            </div>
-
-            <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-8 rounded-2xl border-none shadow-none hover:bg-background/80 transition-all">
-              <div className="w-12 h-12 bg-chart-1/20 rounded-lg flex items-center justify-center mb-4">
-                <Clock className="w-6 h-6 text-chart-1" />
-              </div>
-              <h3 className="text-xl font-semibold text-foreground mb-3">
-                Time Savings
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Reduce grading time by up to 80% while maintaining high-quality
-                feedback standards.
-              </p>
-            </div>
-
-            <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-8 rounded-2xl border-none shadow-none hover:bg-background/80 transition-all">
-              <div className="w-12 h-12 bg-destructive/20 rounded-lg flex items-center justify-center mb-4">
-                <BookOpen className="w-6 h-6 text-destructive" />
-              </div>
-              <h3 className="text-xl font-semibold text-foreground mb-3">
-                Course Management
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Organize multiple courses, track student progress, and manage
-                assignments effortlessly.
+                Politely responds to routine requests — like syllabus links or
+                deadlines — using your tone and style.
               </p>
             </div>
 
             <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-8 rounded-2xl border-none shadow-none hover:bg-background/80 transition-all">
               <div className="w-12 h-12 bg-chart-3/20 rounded-lg flex items-center justify-center mb-4">
-                <CheckCircle className="w-6 h-6 text-chart-3" />
+                <BookOpen className="w-6 h-6 text-chart-3" />
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-3">
-                Custom Rubrics
+                📚 Course Awareness
               </h3>
               <p className="text-muted-foreground leading-relaxed">
-                Create and save custom grading rubrics that align with your
-                teaching philosophy.
+                Knows your classes, projects, and committees — keeping each
+                conversation in its right place.
               </p>
             </div>
 
             <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-8 rounded-2xl border-none shadow-none hover:bg-background/80 transition-all">
               <div className="w-12 h-12 bg-chart-4/20 rounded-lg flex items-center justify-center mb-4">
-                <User className="w-6 h-6 text-chart-4" />
+                <Lock className="w-6 h-6 text-chart-4" />
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-3">
-                Student Analytics
+                🔒 Private by Design
               </h3>
               <p className="text-muted-foreground leading-relaxed">
-                Track individual student progress and identify areas where
-                additional support is needed.
+                Built with privacy in mind. Your academic data stays secure and
+                confidential.
+              </p>
+            </div>
+
+            <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-8 rounded-2xl border-none shadow-none hover:bg-background/80 transition-all">
+              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                <Zap className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-3">
+                ⚡ Lightning Fast
+              </h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Processes hundreds of emails in seconds, keeping you ahead of
+                the curve.
               </p>
             </div>
           </div>
         </div>
       </section>
 
+      {/* Pricing Section */}
       <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
               Choose Your Plan
             </h2>
-            <p className="text-xl text-muted-foreground">
-              Flexible pricing for educators at every stage
+            <p className="text-lg text-muted-foreground mb-2">
+              Every plan starts free. Upgrade anytime.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {plans.map(plan => (
               <div
                 key={plan.name}
                 className={`rounded-2xl p-8 ${
                   plan.highlighted
-                    ? 'bg-primary text-primary-foreground shadow-lg ring-2 ring-primary/30 scale-105'
-                    : 'bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-none shadow-none'
+                    ? 'bg-primary text-primary-foreground shadow-lg ring-2 ring-primary/30 scale-105 relative'
+                    : 'bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border border-border/40'
                 }`}
               >
-                <h3
-                  className={`text-2xl font-bold mb-2 ${plan.highlighted ? 'text-primary-foreground' : 'text-foreground'}`}
-                >
-                  {plan.name}
-                </h3>
-                <div className="mb-4">
+                {plan.highlighted && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-sm font-semibold px-4 py-1 rounded-full shadow-lg">
+                    Most Popular
+                  </div>
+                )}
+                <div className="text-center mb-6">
+                  <h3
+                    className={`text-2xl font-bold mb-1 ${plan.highlighted ? 'text-primary-foreground' : 'text-foreground'}`}
+                  >
+                    {plan.name}
+                  </h3>
+                  <p
+                    className={`text-sm ${plan.highlighted ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}
+                  >
+                    {plan.subtitle}
+                  </p>
+                </div>
+                <div className="text-center mb-6">
                   <span
-                    className={`text-4xl font-bold ${plan.highlighted ? 'text-primary-foreground' : 'text-foreground'}`}
+                    className={`text-5xl font-bold ${plan.highlighted ? 'text-primary-foreground' : 'text-foreground'}`}
                   >
                     {plan.price}
                   </span>
@@ -263,7 +363,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                   </span>
                 </div>
                 <p
-                  className={`mb-6 ${plan.highlighted ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}
+                  className={`text-center mb-8 text-sm leading-relaxed ${plan.highlighted ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}
                 >
                   {plan.description}
                 </p>
@@ -271,10 +371,10 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                   {plan.features.map(feature => (
                     <li key={feature} className="flex items-start">
                       <CheckCircle
-                        className={`w-5 h-5 mr-2 flex-shrink-0 mt-0.5 ${
+                        className={`w-5 h-5 mr-3 flex-shrink-0 mt-0.5 ${
                           plan.highlighted
                             ? 'text-primary-foreground/80'
-                            : 'text-chart-2'
+                            : 'text-primary'
                         }`}
                       />
                       <span
@@ -289,7 +389,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                   onClick={onGetStarted}
                   className={`w-full py-3 px-6 rounded-xl font-semibold transition-all ${
                     plan.highlighted
-                      ? 'bg-background/95 backdrop-blur text-foreground hover:bg-background/80 shadow-sm'
+                      ? 'bg-background text-foreground hover:bg-background/90 shadow-md'
                       : 'bg-primary text-primary-foreground hover:opacity-90 shadow-sm'
                   }`}
                 >
@@ -298,20 +398,65 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
               </div>
             ))}
           </div>
+
+          <div className="text-center mt-12">
+            <button
+              onClick={onGetStarted}
+              className="bg-primary text-primary-foreground px-8 py-4 rounded-xl text-lg font-semibold hover:opacity-90 transition-all shadow-lg hover:shadow-xl inline-flex items-center gap-2"
+            >
+              🚀 Start Free Trial
+            </button>
+          </div>
         </div>
       </section>
 
+      {/* Final CTA Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl sm:text-5xl font-bold text-foreground mb-6 leading-tight">
+            More time teaching.
+            <br />
+            <span className="text-primary">Less time triaging.</span>
+          </h2>
+          <p className="text-xl text-muted-foreground mb-10">
+            InboxProfs AI gives you your inbox — and your sanity — back.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <button
+              onClick={onGetStarted}
+              className="bg-primary text-primary-foreground px-8 py-4 rounded-xl text-lg font-semibold hover:opacity-90 transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
+            >
+              🎓 Start Free Trial
+            </button>
+            <button
+              onClick={() =>
+                document
+                  .getElementById('pricing')
+                  ?.scrollIntoView({ behavior: 'smooth' })
+              }
+              className="text-muted-foreground hover:text-foreground transition-colors text-lg font-medium"
+            >
+              or <span className="underline">View Pricing</span>
+            </button>
+          </div>
+          <p className="text-sm text-muted-foreground/70 mt-8">
+            Loved by professors. Trusted by inboxes.
+          </p>
+        </div>
+      </section>
+
+      {/* Footer */}
       <footer className="bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t border-border/40 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
-              <Sparkles className="w-6 h-6 text-primary" />
+              <Mail className="w-6 h-6 text-primary" />
               <span className="text-lg font-bold text-foreground">
-                EduAssist AI
+                InboxProfs AI
               </span>
             </div>
             <p className="text-muted-foreground text-sm">
-              © 2025 EduAssist AI. All rights reserved.
+              © 2025 InboxProfs AI. All rights reserved.
             </p>
           </div>
         </div>

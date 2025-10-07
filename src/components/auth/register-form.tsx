@@ -77,10 +77,12 @@ export default function RegisterForm() {
           name="displayName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>
+                Name<span className="text-destructive">*</span>
+              </FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Enter your Name"
+                  placeholder="Enter your name"
                   {...field}
                   disabled={isLoading}
                 />
@@ -96,7 +98,9 @@ export default function RegisterForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email address</FormLabel>
+              <FormLabel>
+                Email address<span className="text-destructive">*</span>
+              </FormLabel>
               <FormControl>
                 <Input
                   type="email"
@@ -116,30 +120,12 @@ export default function RegisterForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>
+                Password<span className="text-destructive">*</span>
+              </FormLabel>
               <FormControl>
                 <PasswordInput
-                  placeholder="Enter your password"
-                  showStrengthIndicator
-                  {...field}
-                  disabled={isLoading}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Confirm Password Field */}
-        <FormField
-          control={form.control}
-          name="confirmPassword"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
-              <FormControl>
-                <PasswordInput
-                  placeholder="Confirm your password"
+                  placeholder="············"
                   showStrengthIndicator={false}
                   {...field}
                   disabled={isLoading}
@@ -155,30 +141,18 @@ export default function RegisterForm() {
           control={form.control}
           name="agreeToTerms"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 pt-2">
               <FormControl>
                 <Checkbox
                   checked={field.value}
                   onCheckedChange={field.onChange}
                   disabled={isLoading}
+                  className="mt-0.5"
                 />
               </FormControl>
               <div className="space-y-1 leading-none">
-                <FormLabel className="font-normal">
-                  I agree to the{' '}
-                  <Link
-                    href="/privacy-policy"
-                    className="text-primary underline underline-offset-2 hover:text-primary/80"
-                  >
-                    privacy policy
-                  </Link>{' '}
-                  and{' '}
-                  <Link
-                    href="/terms"
-                    className="text-primary underline underline-offset-2 hover:text-primary/80"
-                  >
-                    terms of service
-                  </Link>
+                <FormLabel className="text-sm font-normal text-muted-foreground">
+                  I agree to all Term, privacy Policy and Fees
                 </FormLabel>
                 <FormMessage />
               </div>
@@ -194,14 +168,19 @@ export default function RegisterForm() {
         )}
 
         {/* Submit Button */}
-        <Button type="submit" className="w-full" disabled={isLoading}>
+        <Button
+          type="submit"
+          className="w-full mt-6"
+          size="lg"
+          disabled={isLoading}
+        >
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Creating account...
             </>
           ) : (
-            'Sign Up'
+            '🎓 Start Free Trial'
           )}
         </Button>
       </form>
