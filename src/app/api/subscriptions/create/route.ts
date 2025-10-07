@@ -19,11 +19,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Get plan details
-    const { data: plan } = await supabase
+    const { data: plan, error: planError } = await supabase
       .from('subscription_plans')
       .select('*')
       .eq('id', planId)
       .single();
+
+    if (planError) {
+      console.log(planError.message);
+      return NextResponse.json({ error: 'Unknown error' }, { status: 500 });
+    }
 
     if (!plan) {
       return NextResponse.json({ error: 'Plan not found' }, { status: 404 });

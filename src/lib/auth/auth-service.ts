@@ -29,7 +29,7 @@ export async function signUp(data: SignUpData): Promise<AuthResponse> {
       options: {
         emailRedirectTo: `${window.location.origin}/dashboard`,
         data: {
-          displayName: data.displayName,
+          first_name: data.displayName,
         },
       },
     });

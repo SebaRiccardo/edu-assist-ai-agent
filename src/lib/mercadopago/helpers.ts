@@ -9,7 +9,7 @@ import {
   getPreApproval,
   cancelPreApproval,
 } from './service';
-import { INBOX_PROFS_PLANS, type PlanType } from '../subscriptions/plans';
+import { INBOX_PROFS_PLANS } from '../subscriptions/plans';
 
 // Re-export plans for convenience
 export { INBOX_PROFS_PLANS } from '../subscriptions/plans';

@@ -151,9 +151,9 @@ async function handleSubscription(
 ) {
   const result = await subscribeUserToPlan(planId, userEmail, userName);
 
-  if (result.success && result.initPoint) {
+  if (result.success && result.data?.init_point) {
     // Redirect user to MercadoPago checkout
-    window.location.href = result.initPoint;
+    window.location.href = result.data?.init_point;
   } else {
     console.error('Subscription failed:', result.error);
   }
@@ -329,8 +329,8 @@ async function completeSubscriptionFlow() {
   // });
 
   // Step 4: Redirect to checkout
-  if (subscription.initPoint) {
-    window.location.href = subscription.initPoint;
+  if (subscription.data?.init_point) {
+    window.location.href = subscription.data?.init_point;
   }
 
   // Step 5: Webhook will handle payment confirmation

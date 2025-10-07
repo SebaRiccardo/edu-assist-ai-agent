@@ -274,7 +274,6 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-
 } */
 
 :root {
@@ -423,12 +422,12 @@
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
   --animate-aurora: aurora 60s linear infinite;
-    
+
       @keyframes aurora {
         from {
           background-position: 50% 50%, 50% 50%;
         }
-    
+
         to {
           background-position: 350% 50%, 350% 50%;
         }
@@ -449,25 +448,23 @@
     p {
       @apply font-body;
     }
-  
+
     span {
       @apply font-body;
     }
-  
+
     ::-webkit-scrollbar {
       width: 5px;
     }
-  
+
     ::-webkit-scrollbar-track {
       background: transparent;
     }
-  
+
     ::-webkit-scrollbar-thumb {
       background: hsl(var(--border));
       border-radius: 5px;
     }
-  
-
 
   * {
     @apply border-border outline-ring/50;
