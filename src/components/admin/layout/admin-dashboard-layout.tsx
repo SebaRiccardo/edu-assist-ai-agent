@@ -1,12 +1,16 @@
-import { AppSidebar } from '@/components/admin/sidebar/admin-sidebar';
+import { AdminSidebar } from '@/components/admin/sidebar/admin-sidebar';
 import { SiteHeader } from '@/components/admin/layout/admin-header';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { getCurrentUser } from '@/lib/supabase/server';
 
 interface AdminDashboardLayoutProps {
   children: React.ReactNode;
 }
 
-export function AdminDashboardLayout({ children }: AdminDashboardLayoutProps) {
+export async function AdminDashboardLayout({
+  children,
+}: AdminDashboardLayoutProps) {
+  const user = await getCurrentUser();
   return (
     <SidebarProvider
       style={
@@ -16,7 +20,7 @@ export function AdminDashboardLayout({ children }: AdminDashboardLayoutProps) {
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
+      <AdminSidebar variant="inset" user={user} />
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col">

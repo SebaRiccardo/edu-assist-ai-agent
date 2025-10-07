@@ -1,5 +1,4 @@
-import { Database } from "./types";
-
+import { Database } from './database.types';
 // Webhook Events
 export type WebhookEvent =
   Database['public']['Tables']['webhook_events']['Row'];

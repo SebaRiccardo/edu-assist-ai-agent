@@ -1,5 +1,4 @@
-import { Database } from "./types";
-
+import { Database } from './database.types';
 // User Subscriptions
 export type UserSubscription =
   Database['public']['Tables']['user_subscriptions']['Row'];

@@ -1,4 +1,3 @@
-
 /**
  * Gmail Message Attachment
  */
@@ -82,7 +81,6 @@ export interface TransformedEmail {
   attachments?: GmailAttachment[];
 }
 
-// ...existing code...
 /**
  * Gmail Fetch Emails parameters interface
  */
@@ -107,15 +105,22 @@ export interface FetchEmailsParams {
   verbose?: boolean;
 }
 
-// Mock types for our application
 export interface Course {
   id: string;
   name: string;
   title: string; // Display title
+  year: string;
   description: string; // Full description/context about the course
+  context: string; // a lot of text that will later be used to create embedings with some LLM
+  inboxes: {
+    id: string;
+    email: string;
+    unreadEmailCount: number; // Number of unread course-related emails
+  }[];
   professorId: string;
   studentCount: number; // Number of students enrolled
-  unreadEmailCount: number; // Number of unread course-related emails
+  startAt?: Date;
+  endAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -125,7 +130,6 @@ export interface Professor {
   name: string;
   email: string;
 }
-
 
 export interface GmailConnection {
   isConnected: boolean;
@@ -182,14 +186,21 @@ export interface InboxAnalysisParams {
   maxEmails?: number;
   includeRead?: boolean;
   verbose?: boolean;
-  reasoningLanguage: string
+  reasoningLanguage: string;
 }
 
 /**
  * Categorized Email with Analysis
  */
 export interface CategorizedEmail extends TransformedEmail {
-  category: 'course_related' | 'student_email' | 'staff_email' | 'administrative' | 'assignment' | 'grade_inquiry' | 'other';
+  category:
+    | 'course_related'
+    | 'student_email'
+    | 'staff_email'
+    | 'administrative'
+    | 'assignment'
+    | 'grade_inquiry'
+    | 'other';
   isRelated: boolean;
   suggestedLabel: string;
   confidence: number;

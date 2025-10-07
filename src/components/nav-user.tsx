@@ -27,7 +27,9 @@ import {
 
 export function NavUser({
   user,
+  onLogout,
 }: {
+  onLogout: () => void;
   user: {
     name: string;
     email: string;
@@ -94,7 +96,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => alert('Logging out...')}>
+            <DropdownMenuItem onClick={onLogout}>
               <IconLogout />
               Log out
             </DropdownMenuItem>

@@ -16,19 +16,13 @@ export default async function AdminPage() {
     error: authError,
   } = await supabase.auth.getUser();
 
-  const { data: claims } = await supabase.auth.getClaims();
-
   if (authError || !user) {
     redirect('/auth/login');
   }
-  console.log(claims, user);
+
   // TODO: Add admin role check here
   // For now, we'll allow any authenticated user
   // In production, check if user.role === 'admin' or similar
 
-  return (
-    <AdminDashboardLayout>
-      <AdminDashboardContent />
-    </AdminDashboardLayout>
-  );
+  return <AdminDashboardContent />;
 }

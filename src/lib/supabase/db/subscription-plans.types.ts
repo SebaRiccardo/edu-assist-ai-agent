@@ -1,5 +1,4 @@
-import { Database } from "./types";
-
+import { Database } from './database.types';
 // Subscription Plans
 export type SubscriptionPlan =
   Database['public']['Tables']['subscription_plans']['Row'];

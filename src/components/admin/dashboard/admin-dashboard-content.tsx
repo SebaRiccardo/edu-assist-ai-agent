@@ -1,25 +1,29 @@
+'use client';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, CreditCard, DollarSign, TrendingUp } from 'lucide-react';
-import { createClient } from '@/lib/supabase/server';
+import {
+  Users,
+  CreditCard,
+  DollarSign,
+  TrendingUp,
+  Loader2,
+} from 'lucide-react';
+import { useProfiles } from '@/hooks/use-profiles';
+import { usePlans } from '@/hooks/use-subscription-plans';
+import { useActiveSubscriptions } from '@/hooks/use-subscriptions';
 
-export async function AdminDashboardContent() {
-  const supabase = await createClient();
+export function AdminDashboardContent() {
+  // Fetch data using TanStack Query
+  const { data: profiles, isLoading: usersLoading } = useProfiles();
+  const { data: plans, isLoading: plansLoading } = usePlans();
+  const { data: subscriptions, isLoading: subscriptionsLoading } =
+    useActiveSubscriptions();
 
-  // Fetch statistics
-  const [usersResult, plansResult, subscriptionsResult] = await Promise.all([
-    supabase.from('profiles').select('id', { count: 'exact', head: true }),
-    supabase
-      .from('subscription_plans')
-      .select('id', { count: 'exact', head: true }),
-    supabase
-      .from('user_subscriptions')
-      .select('id, status', { count: 'exact' })
-      .eq('status', 'authorized'),
-  ]);
+  const isLoading = usersLoading || plansLoading || subscriptionsLoading;
 
-  const totalUsers = usersResult.count || 0;
-  const totalPlans = plansResult.count || 0;
-  const activeSubscriptions = subscriptionsResult.count || 0;
+  const totalUsers = profiles?.length || 0;
+  const totalPlans = plans?.length || 0;
+  const activeSubscriptions = subscriptions?.length || 0;
 
   // Calculate total revenue (simplified - would need to sum actual payments)
   const totalRevenue = activeSubscriptions * 9999; // Placeholder calculation
@@ -30,24 +34,28 @@ export async function AdminDashboardContent() {
       value: totalUsers,
       icon: Users,
       description: 'Registered users',
+      isLoading: usersLoading,
     },
     {
       title: 'Active Subscriptions',
       value: activeSubscriptions,
       icon: CreditCard,
       description: 'Currently active',
+      isLoading: subscriptionsLoading,
     },
     {
       title: 'Subscription Plans',
       value: totalPlans,
       icon: TrendingUp,
       description: 'Available plans',
+      isLoading: plansLoading,
     },
     {
       title: 'Revenue (Est.)',
       value: `$${(totalRevenue / 100).toFixed(2)}`,
       icon: DollarSign,
       description: 'Total estimated',
+      isLoading: subscriptionsLoading,
     },
   ];
 
@@ -71,7 +79,13 @@ export async function AdminDashboardContent() {
               <stat.icon className="text-muted-foreground size-4" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
+              {stat.isLoading ? (
+                <div className="flex items-center justify-center py-2">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                </div>
+              ) : (
+                <div className="text-2xl font-bold">{stat.value}</div>
+              )}
               <p className="text-muted-foreground text-xs">
                 {stat.description}
               </p>
