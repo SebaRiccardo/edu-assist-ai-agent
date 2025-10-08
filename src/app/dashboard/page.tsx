@@ -17,23 +17,24 @@ import {
 import { useRouter } from 'next/navigation';
 import { useCurrentUser, useUserDisplayName } from '@/hooks/use-current-user';
 import { useCourses, useCreateCourse } from '@/hooks/use-courses';
+import { Course } from '@/lib/supabase/types/courses.types';
 
 export default function DashboardPage() {
   const router = useRouter();
   const { user, loading: userLoading } = useCurrentUser();
   const displayName = useUserDisplayName();
 
-  const [editingCourse, setEditingCourse] = useState<DomainCourse | null>(null);
+  const [editingCourse, setEditingCourse] = useState<Course | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const { data: courses, isLoading } = useCourses(user?.id);
-  const { mutateAsync: createCourse } = useCreateCourse();
+  const { mutateAsync: createCourse, isPending: isCreatingCourse } =
+    useCreateCourse();
 
   const handleCreateCourse = async (courseData: {
     name: string;
     description: string;
     context: string;
-    studentCount: number;
   }) => {
     const { name, description, context } = courseData;
     try {
@@ -58,7 +59,6 @@ export default function DashboardPage() {
     name: string;
     description: string;
     context: string;
-    studentCount: number;
   }) => {
     if (!editingCourse) return;
 
@@ -71,7 +71,7 @@ export default function DashboardPage() {
     }
   };
 
-  const handleEdit = (course: DomainCourse) => {
+  const handleEdit = (course: Course) => {
     setEditingCourse(course);
     setIsFormOpen(true);
   };
@@ -277,7 +277,7 @@ export default function DashboardPage() {
                         {/* Content */}
                         <div>
                           <h3 className="font-semibold text-lg mb-1">
-                            {course.title}
+                            {course.name}
                           </h3>
                           <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
                             {course.description}
@@ -289,14 +289,14 @@ export default function DashboardPage() {
                           <div className="flex items-center gap-1.5">
                             <Users className="h-4 w-4 text-muted-foreground" />
                             <span className="text-sm font-medium">
-                              {course.studentCount}
+                              {course.student_count}
                             </span>
                           </div>
                           <div className="flex items-center gap-1.5">
                             <Mail className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-sm font-medium">
-                              {course.unreadEmailCount}
-                            </span>
+                            {/* <span className="text-sm font-medium">
+                              {course.inboxes?.map((inbox)=>)}
+                            </span> */}
                           </div>
                           <div className="flex items-center gap-1.5 ml-auto">
                             <Sparkles className="h-4 w-4 text-primary" />
@@ -320,6 +320,7 @@ export default function DashboardPage() {
         open={isFormOpen}
         onOpenChange={handleCloseForm}
         course={editingCourse}
+        isLoading={isCreatingCourse}
         onSubmit={editingCourse ? handleUpdateCourse : handleCreateCourse}
       />
     </div>

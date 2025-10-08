@@ -54,7 +54,7 @@ export function CourseDetailsHeader({
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>{course.title}</BreadcrumbPage>
+                <BreadcrumbPage>{course.name}</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -73,7 +73,7 @@ export function CourseDetailsHeader({
           <div className="flex-1">
             <div className="flex items-center justify-between gap-4 mb-4">
               <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">
-                {course.title}
+                {course.name}
               </h1>
               {/* Analyze Button */}
               <Button
@@ -95,7 +95,7 @@ export function CourseDetailsHeader({
                 )}
               </Button>
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm max-w-5xl truncate text-muted-foreground ">
               {course.description}
             </p>
             {course.studentCount > 0 && (

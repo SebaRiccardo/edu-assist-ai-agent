@@ -10,7 +10,7 @@ const composio = new Composio({
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = await req.json();
+    const { userId, courseId, gmailAddress } = await req.json();
 
     if (!userId) {
       return NextResponse.json(
@@ -20,18 +20,27 @@ export async function POST(req: NextRequest) {
     }
 
     // Check if user already has a Gmail connection
-    const connectedAccounts: ConnectedAccountListResponse = await composio.connectedAccounts.list({
-      userIds: [userId],
-    });
-    console.log('Connected accounts:', connectedAccounts);
-    const gmailConnection = connectedAccounts.items.find((account: any) => account.toolkit.slug.toUpperCase() === 'GMAIL');
+    const connectedAccounts: ConnectedAccountListResponse =
+      await composio.connectedAccounts.list({
+        userIds: [userId],
+      });
 
-    if (gmailConnection && gmailConnection.status === 'ACTIVE') {
+    console.log('Connected accounts:', connectedAccounts);
+    const gmailConnection = connectedAccounts.items.find(
+      (account: any) => account.toolkit.slug.toUpperCase() === 'GMAIL'
+    );
+
+    if (
+      gmailConnection &&
+      (gmailConnection.status === 'ACTIVE' ||
+        gmailConnection.status === 'INITIATED')
+    ) {
       return NextResponse.json({
         isConnected: true,
         connectionId: gmailConnection.id,
         email: gmailConnection.data?.email,
-        message: 'Gmail account already connected'
+        data: gmailConnection.data,
+        message: 'Gmail account already connected',
       });
     }
 
@@ -40,7 +49,10 @@ export async function POST(req: NextRequest) {
 
     if (!gmailAuthConfigId) {
       return NextResponse.json(
-        { error: 'Gmail auth config not found. Please set GMAIL_AUTH_CONFIG_ID environment variable.' },
+        {
+          error:
+            'Gmail auth config not found. Please set GMAIL_AUTH_CONFIG_ID environment variable.',
+        },
         { status: 500 }
       );
     }
@@ -48,22 +60,25 @@ export async function POST(req: NextRequest) {
     // Initiate Gmail connection
     const connectionRequest = await composio.connectedAccounts.initiate(
       userId,
-      gmailAuthConfigId
+      gmailAuthConfigId,
+      {
+        allowMultiple: true,
+        callbackUrl: `https://localhost:3000/course/${courseId}`,
+      }
     );
 
     return NextResponse.json({
       isConnected: false,
       redirectUrl: connectionRequest.redirectUrl,
       connectionId: connectionRequest.id,
-      message: 'Please complete Gmail authentication'
+      message: 'Please complete Gmail authentication',
     });
-
   } catch (error) {
     console.error('Error initiating Gmail connection:', error);
     return NextResponse.json(
       {
         error: 'Failed to initiate Gmail connection',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -87,7 +102,8 @@ export async function GET(req: NextRequest) {
       userIds: [userId],
     });
 
-    const gmailConnection = connectedAccounts.items.find((account: any) => account.toolkit.slug.toUpperCase() === 'GMAIL'
+    const gmailConnection = connectedAccounts.items.find(
+      (account: any) => account.toolkit.slug.toUpperCase() === 'GMAIL'
     );
 
     if (gmailConnection && gmailConnection.status === 'ACTIVE') {
@@ -95,21 +111,20 @@ export async function GET(req: NextRequest) {
         isConnected: true,
         connectionId: gmailConnection.id,
         email: gmailConnection.data?.email || 'Unknown',
-        status: gmailConnection.status
+        status: gmailConnection.status,
       });
     }
 
     return NextResponse.json({
       isConnected: false,
-      status: gmailConnection?.status || 'NOT_CONNECTED'
+      status: gmailConnection?.status || 'NOT_CONNECTED',
     });
-
   } catch (error) {
     console.error('Error checking Gmail connection:', error);
     return NextResponse.json(
       {
         error: 'Failed to check Gmail connection',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );

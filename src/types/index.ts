@@ -108,7 +108,6 @@ export interface FetchEmailsParams {
 export interface DomainCourse {
   id: string;
   name: string;
-  title: string; // Display title
   year: string;
   description: string; // Full description/context about the course
   context: string; // a lot of text that will later be used to create embedings with some LLM

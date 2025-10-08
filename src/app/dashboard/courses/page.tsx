@@ -16,7 +16,7 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import { Course, InsertCourse } from '@/lib/supabase/types/courses.types';
 
 export default function CoursesPage() {
-  const [editingCourse, setEditingCourse] = useState<DomainCourse | null>(null);
+  const [editingCourse, setEditingCourse] = useState<Course | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const { user } = useCurrentUser();
@@ -78,17 +78,16 @@ export default function CoursesPage() {
     setEditingCourse({
       id: course.id,
       name: course.name,
-      title: course.title,
       year: course.year,
       description: course.description,
       context: course.context,
       inboxes: course.inboxes as any,
-      professorId: course.professor_id,
-      studentCount: course.student_count,
-      startAt: course.start_at ? new Date(course.start_at) : undefined,
-      endAt: course.end_at ? new Date(course.end_at) : undefined,
-      createdAt: new Date(course.created_at),
-      updatedAt: new Date(course.updated_at),
+      professor_id: course.professor_id,
+      student_count: course.student_count,
+      start_at: course.start_at ? course.start_at : null,
+      end_at: course.end_at ? course.end_at : null,
+      created_at: course.created_at,
+      updated_at: course.updated_at,
     });
     setIsFormOpen(true);
   };

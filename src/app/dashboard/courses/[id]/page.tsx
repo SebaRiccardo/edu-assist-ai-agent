@@ -7,7 +7,14 @@ import { CourseInfoCards } from '@/components/course-info-cards';
 import { AnalysisStatsBar } from '@/components/analysis-stats-bar';
 import { EmailListStates } from '@/components/email-list-states';
 import { CategorizedEmail, InboxAnalysisResult, DomainCourse } from '@/types';
-import { Loader2, Mail } from 'lucide-react';
+import {
+  Inbox,
+  Loader2,
+  Mail,
+  MailPlus,
+  MailWarning,
+  Sparkles,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -19,6 +26,14 @@ import {
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useCourse } from '@/hooks/use-courses';
 import { Course } from '@/lib/supabase/types/courses.types';
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 
 export default function CourseDetailsPage() {
   const router = useRouter();
@@ -34,8 +49,7 @@ export default function CourseDetailsPage() {
     ? {
         id: (courseData as Course).id,
         name: (courseData as Course).name,
-        title: (courseData as Course).title,
-        year: (courseData as Course).year,
+        year: (courseData as Course).year ?? '',
         description: (courseData as Course).description,
         context: (courseData as Course).context,
         inboxes: (courseData as Course).inboxes as any, // JSON type from Supabase
@@ -53,6 +67,7 @@ export default function CourseDetailsPage() {
     : null;
 
   const [emails, setEmails] = useState<CategorizedEmail[]>([]);
+  const [newGmailAddress, setNewGmailAddress] = useState<string | null>(null);
   const [isChecking, setIsChecking] = useState(false);
   const [isSendingReply, setIsSendingReply] = useState(false);
   const [replyingToEmailId, setReplyingToEmailId] = useState<string | null>(
@@ -141,6 +156,8 @@ export default function CourseDetailsPage() {
         },
         body: JSON.stringify({
           userId: user.id,
+          courseId: course.id,
+          gmailAddress: newGmailAddress,
         }),
       });
 
@@ -148,10 +165,12 @@ export default function CourseDetailsPage() {
 
       if (data.redirectUrl) {
         setGmailAuthUrl(data.redirectUrl);
+
+        window.open(data.redirectUrl, '_blank', 'width=600,height=700');
       } else if (data.isConnected) {
         // Already connected, retry checking emails
-        setGmailAuthRequired(false);
-        await handleCheckEmails();
+        // setGmailAuthRequired(false);
+        // await handleCheckEmails();
       }
     } catch (error) {
       console.error('Error initiating Gmail auth:', error);
@@ -259,6 +278,8 @@ export default function CourseDetailsPage() {
     return null;
   }
 
+  console.log(course);
+
   return (
     <div className="flex flex-1 flex-col h-screen overflow-hidden">
       <div className="mx-auto max-w-7xl w-full px-6 pb-6 space-y-6">
@@ -339,20 +360,42 @@ export default function CourseDetailsPage() {
         {/* {stats && <AnalysisStatsBar stats={stats} />} */}
       </div>
 
-      {/* Email List - Full Height Layout */}
-      <div className="flex-1 overflow-hidden mx-auto max-w-7xl w-full px-6 pb-6">
-        <EmailListStates
-          emails={emails}
-          isChecking={isChecking}
-          stats={stats}
-          courseName={course.name}
-          userId={user?.id}
-          isSendingReply={isSendingReply}
-          replyingToEmailId={replyingToEmailId}
-          onAnalyze={handleCheckEmails}
-          onAutoReply={handleAutoReply}
-        />
-      </div>
+      {course.inboxes?.length === 0 ? (
+        <div className="flex-1 overflow-hidden mx-auto max-w-7xl w-full px-6 pb-6">
+          <Empty className="min-h-[40vh] border-none rounded-3xl">
+            <EmptyHeader>
+              <EmptyMedia className="rounded-full" variant="icon">
+                <MailWarning className="h-6 w-6 text-orange-500" />
+              </EmptyMedia>
+              <EmptyTitle>No inbox connected yet</EmptyTitle>
+              <EmptyDescription>
+                Click the "Connect Inbox" button to connect your email account,
+                so the AI can start analyzing it.
+              </EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
+              <Button size="lg" className="gap-2" onClick={handleGmailAuth}>
+                <MailPlus className="h-4 w-4" />
+                Connect Inbox
+              </Button>
+            </EmptyContent>
+          </Empty>
+        </div>
+      ) : (
+        <div className="flex-1 overflow-hidden mx-auto max-w-7xl w-full px-6 pb-6">
+          <EmailListStates
+            emails={emails}
+            isChecking={isChecking}
+            stats={stats}
+            courseName={course.name}
+            userId={user?.id}
+            isSendingReply={isSendingReply}
+            replyingToEmailId={replyingToEmailId}
+            onAnalyze={handleCheckEmails}
+            onAutoReply={handleAutoReply}
+          />
+        </div>
+      )}
     </div>
   );
 }
