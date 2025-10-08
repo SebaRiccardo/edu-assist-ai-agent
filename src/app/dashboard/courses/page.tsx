@@ -6,9 +6,14 @@ import { CourseCard } from '@/components/course-card';
 import { CourseFormDialog } from '@/components/course-form-dialog';
 import { DomainCourse } from '@/types';
 import { Loader2, Plus, BookOpen } from 'lucide-react';
-import { useCourses, useCreateCourse } from '@/hooks/use-courses';
+import {
+  useCourses,
+  useCreateCourse,
+  useUpdateCourse,
+  useDeleteCourse,
+} from '@/hooks/use-courses';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { InsertCourse } from '@/lib/supabase/types/courses.types';
+import { Course, InsertCourse } from '@/lib/supabase/types/courses.types';
 
 export default function CoursesPage() {
   const [editingCourse, setEditingCourse] = useState<DomainCourse | null>(null);
@@ -17,48 +22,36 @@ export default function CoursesPage() {
   const { user } = useCurrentUser();
   const { data: courses, isLoading } = useCourses(user?.id);
   const { mutateAsync: createCourse } = useCreateCourse();
+  const { mutateAsync: updateCourse } = useUpdateCourse();
+  const { mutateAsync: deleteCourse } = useDeleteCourse();
 
-  const handleCreateCourse = async (courseData: {
-    name: string;
-    title: string;
-    description: string;
-    context: string;
-    studentCount: number;
-  }) => {
-    const { name, title, description, context } = courseData;
+  const handleSubmitCourse = async (
+    courseData: Omit<
+      InsertCourse,
+      'professor_id' | 'created_at' | 'updated_at' | 'id'
+    >
+  ) => {
     try {
-      await createCourse([
-        {
-          title,
-          name,
-          description,
-          context,
-          professor_id: user?.id!,
-          year: '2025',
-        },
-      ]);
+      if (editingCourse) {
+        // Update existing course
+        await updateCourse({
+          id: editingCourse.id,
+          ...courseData,
+        });
+      } else {
+        // Create new course
+        await createCourse([
+          {
+            ...courseData,
+            professor_id: user?.id!,
+          },
+        ]);
+      }
 
-      setIsFormOpen(false);
-    } catch (error) {
-      console.error('Error creating course:', error);
-      throw error;
-    }
-  };
-
-  const handleUpdateCourse = async (courseData: {
-    name: string;
-    title: string;
-    description: string;
-    context: string;
-    studentCount: number;
-  }) => {
-    if (!editingCourse) return;
-
-    try {
       setIsFormOpen(false);
       setEditingCourse(null);
     } catch (error) {
-      console.error('Error updating course:', error);
+      console.error('Error saving course:', error);
       throw error;
     }
   };
@@ -73,23 +66,30 @@ export default function CoursesPage() {
     }
 
     try {
-      const response = await fetch('/api/courses', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id: courseId }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete course');
-      }
+      await deleteCourse({ id: courseId });
     } catch (error) {
       console.error('Error deleting course:', error);
+      throw error;
     }
   };
 
-  const handleEdit = (course: InsertCourse) => {
+  const handleEdit = (course: Course) => {
+    // Convert Course to DomainCourse format for editing
+    setEditingCourse({
+      id: course.id,
+      name: course.name,
+      title: course.title,
+      year: course.year,
+      description: course.description,
+      context: course.context,
+      inboxes: course.inboxes as any,
+      professorId: course.professor_id,
+      studentCount: course.student_count,
+      startAt: course.start_at ? new Date(course.start_at) : undefined,
+      endAt: course.end_at ? new Date(course.end_at) : undefined,
+      createdAt: new Date(course.created_at),
+      updatedAt: new Date(course.updated_at),
+    });
     setIsFormOpen(true);
   };
 
@@ -172,7 +172,7 @@ export default function CoursesPage() {
         open={isFormOpen}
         onOpenChange={handleCloseForm}
         course={editingCourse}
-        onSubmit={editingCourse ? handleUpdateCourse : handleCreateCourse}
+        onSubmit={handleSubmitCourse}
       />
     </div>
   );

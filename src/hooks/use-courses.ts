@@ -1,32 +1,60 @@
+'use client';
+
 import useSupabaseBrowser from '@/lib/supabase/client';
 import {
   useInsertMutation,
   useQuery,
   useUpdateMutation,
-  useUpsertMutation,
+  useDeleteMutation,
 } from '@supabase-cache-helpers/postgrest-react-query';
 import {
-  getAllCoursesForUserQuery,
+  getAllCoursesForProfessorQuery,
   getAllCoursesQuery,
   getCourseByIdQuery,
+  getCoursesCountQuery,
 } from './queries/courses';
 
-export function useCourses(userId?: string) {
+/**
+ * Hook to fetch all courses or courses for a specific professor
+ */
+export function useCourses(professorId?: string) {
   const client = useSupabaseBrowser();
 
   return useQuery(
-    userId
-      ? getAllCoursesForUserQuery(client, userId)
+    professorId
+      ? getAllCoursesForProfessorQuery(client, professorId)
       : getAllCoursesQuery(client)
   );
 }
 
-export function useCourse(id: string) {
+/**
+ * Hook to fetch a single course by ID
+ */
+export function useCourse(courseId: string | undefined) {
   const client = useSupabaseBrowser();
 
-  return useQuery(getCourseByIdQuery(client, id));
+  return useQuery(
+    courseId ? getCourseByIdQuery(client, courseId) : (null as any),
+    {
+      enabled: !!courseId,
+    }
+  );
 }
 
+/**
+ * Hook to fetch courses count
+ */
+export function useCoursesCount(professorId?: string) {
+  const client = useSupabaseBrowser();
+
+  return useQuery(getCoursesCountQuery(client, professorId), {
+    select: (data: any) => data.count,
+  });
+}
+
+/**
+ * Hook to create a new course
+ */
 export function useCreateCourse() {
   const client = useSupabaseBrowser();
 
@@ -37,12 +65,28 @@ export function useCreateCourse() {
   });
 }
 
+/**
+ * Hook to update a course
+ */
 export function useUpdateCourse() {
   const client = useSupabaseBrowser();
 
   return useUpdateMutation(client.from('courses'), ['id'], null, {
     onSuccess: () => {
       console.log('Course updated successfully');
+    },
+  });
+}
+
+/**
+ * Hook to delete a course
+ */
+export function useDeleteCourse() {
+  const client = useSupabaseBrowser();
+
+  return useDeleteMutation(client.from('courses'), ['id'], null, {
+    onSuccess: () => {
+      console.log('Course deleted successfully');
     },
   });
 }

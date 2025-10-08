@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { CourseDetailsHeader } from '@/components/course-details-header';
 import { CourseInfoCards } from '@/components/course-info-cards';
 import { AnalysisStatsBar } from '@/components/analysis-stats-bar';
 import { EmailListStates } from '@/components/email-list-states';
-import { CategorizedEmail, DomainCourse, InboxAnalysisResult } from '@/types';
+import { CategorizedEmail, InboxAnalysisResult, DomainCourse } from '@/types';
 import { Loader2, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,14 +17,42 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { useCourse } from '@/hooks/use-courses';
+import { Course } from '@/lib/supabase/types/courses.types';
 
 export default function CourseDetailsPage() {
   const router = useRouter();
   const params = useParams();
   const { user } = useCurrentUser();
-  const [course, setCourse] = useState<DomainCourse | null>(null);
+  const courseId = params.id as string;
+
+  // Use TanStack Query hook to fetch course
+  const { data: courseData, isLoading, error } = useCourse(courseId);
+
+  // Transform Supabase data to DomainCourse type
+  const course: DomainCourse | null = courseData
+    ? {
+        id: (courseData as Course).id,
+        name: (courseData as Course).name,
+        title: (courseData as Course).title,
+        year: (courseData as Course).year,
+        description: (courseData as Course).description,
+        context: (courseData as Course).context,
+        inboxes: (courseData as Course).inboxes as any, // JSON type from Supabase
+        professorId: (courseData as Course).professor_id,
+        studentCount: (courseData as Course).student_count,
+        startAt: (courseData as Course).start_at
+          ? new Date((courseData as Course).start_at!)
+          : undefined,
+        endAt: (courseData as Course).end_at
+          ? new Date((courseData as Course).end_at!)
+          : undefined,
+        createdAt: new Date((courseData as Course).created_at),
+        updatedAt: new Date((courseData as Course).updated_at),
+      }
+    : null;
+
   const [emails, setEmails] = useState<CategorizedEmail[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [isChecking, setIsChecking] = useState(false);
   const [isSendingReply, setIsSendingReply] = useState(false);
   const [replyingToEmailId, setReplyingToEmailId] = useState<string | null>(
@@ -38,35 +66,11 @@ export default function CourseDetailsPage() {
     courseRelated: number;
   } | null>(null);
 
-  useEffect(() => {
-    if (user) {
-      fetchCourse();
-    }
-  }, [params.id, user]);
-
-  const fetchCourse = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch('/api/courses');
-      if (!response.ok) throw new Error('Failed to fetch courses');
-
-      const data = await response.json();
-      const foundCourse = data.courses.find(
-        (c: DomainCourse) => c.id === params.id
-      );
-
-      if (foundCourse) {
-        setCourse(foundCourse);
-      } else {
-        router.push('/dashboard');
-      }
-    } catch (error) {
-      console.error('Error fetching course:', error);
-      router.push('/dashboard');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // Redirect if course not found after loading
+  if (!isLoading && !course && !error) {
+    router.push('/dashboard');
+    return null;
+  }
 
   const handleCheckEmails = async () => {
     if (!course) return;
