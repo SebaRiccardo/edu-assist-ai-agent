@@ -18,7 +18,7 @@ export type UserRow = {
   id: string;
   email: string;
   full_name: string;
-  username: string;
+  username: string | null;
   avatar_url: string | null;
   created_at: string | null;
   updated_at: string | null;
@@ -57,9 +57,11 @@ export const columns: ColumnDef<UserRow>[] = [
           </Avatar>
           <div className="flex flex-col">
             <span className="font-medium">{user.full_name}</span>
-            <span className="text-muted-foreground text-xs">
-              @{user.username}
-            </span>
+            {user.username && (
+              <span className="text-muted-foreground text-xs">
+                @{user.username}
+              </span>
+            )}
           </div>
         </div>
       );

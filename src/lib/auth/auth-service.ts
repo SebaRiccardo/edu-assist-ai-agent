@@ -19,7 +19,9 @@ export interface AuthResponse {
 /**
  * Sign up a new user with email and password
  */
-export async function signUp(data: SignUpData): Promise<AuthResponse> {
+export async function signUpWithEmailAndPassword(
+  data: SignUpData
+): Promise<AuthResponse> {
   try {
     const supabase = createClient();
 

@@ -71,13 +71,13 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             variant="ghost"
             size="icon"
             onClick={toggleVisibility}
-            className="text-muted-foreground focus-visible:ring-ring/50 absolute inset-y-0 right-0 rounded-l-none hover:bg-transparent"
+            className="text-muted-foreground focus-visible:ring-ring/50 absolute inset-y-0.5 right-0 rounded-l-none hover:bg-transparent"
             tabIndex={-1}
           >
             {isVisible ? (
-              <EyeOffIcon className="size-4" />
+              <EyeOffIcon className="size-5" />
             ) : (
-              <EyeIcon className="size-4" />
+              <EyeIcon className="size-5" />
             )}
             <span className="sr-only">
               {isVisible ? 'Hide password' : 'Show password'}

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createSubscriptionPlan } from '@/lib/mercadopago/service';
-import { InsertSubscriptionPlan } from '@/lib/supabase/db/subscription-plans.types';
+import { InsertSubscriptionPlan } from '@/lib/supabase/types/subscription-plans.types';
 import { z } from 'zod';
 
 // Extend the route timeout for MercadoPago API calls

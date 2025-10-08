@@ -1,7 +1,7 @@
 'use client';
 
 import { UsersDataTable } from '@/components/admin/users/users-data-table';
-import { columns } from '@/components/admin/users/users-columns';
+import { columns, UserRow } from '@/components/admin/users/users-columns';
 import { useProfiles } from '@/hooks/use-profiles';
 import { Loader2 } from 'lucide-react';
 
@@ -29,13 +29,13 @@ export function UsersPageContent() {
   }
 
   // Transform data for table
-  const usersData = (users || []).map(profile => ({
+  const usersData: UserRow[] = (users || []).map(profile => ({
     id: profile.id,
-    email: 'N/A', // Note: Email requires auth.admin access - handle separately if needed
     full_name: profile.full_name || 'N/A',
-    username: profile.username || 'N/A',
+    email: profile.email || 'N/A',
+    username: profile.username,
     avatar_url: profile.avatar_url,
-    created_at: null, // From auth if needed
+    created_at: profile.created_at, // From auth if needed
     updated_at: profile.updated_at,
     subscription_status: profile.user_subscriptions?.[0]?.status || 'none',
     subscription_plan:

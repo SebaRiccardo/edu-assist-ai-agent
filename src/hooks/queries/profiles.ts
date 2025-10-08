@@ -1,4 +1,4 @@
-import { TypedSupabaseClient } from '@/lib/supabase/client';
+import { TypedSupabaseClient } from '@/lib/supabase/types/client.types';
 
 /**
  * Query builder for fetching all profiles with their subscriptions
@@ -11,9 +11,11 @@ export function getAllProfilesQuery(client: TypedSupabaseClient) {
       id,
       full_name,
       username,
+      email,
       avatar_url,
       is_admin,
       updated_at,
+      created_at,
       user_subscriptions (
         id,
         status,

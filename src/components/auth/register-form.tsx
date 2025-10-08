@@ -19,15 +19,15 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { PasswordInput } from '@/components/auth/password-input';
-import { signUp } from '@/lib/auth/auth-service';
+import { signUpWithEmailAndPassword } from '@/lib/auth/auth-service';
 import {
   signUpSchema,
   type SignUpFormData,
 } from '@/lib/auth/validation-schemas';
-import Link from 'next/link';
 
 export default function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isSignedUp, setIsSignedUp] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
@@ -49,13 +49,14 @@ export default function RegisterForm() {
     setError(null);
 
     try {
-      const result = await signUp({
+      const result = await signUpWithEmailAndPassword({
         email: data.email,
         password: data.password,
         displayName: data.displayName,
       });
 
       if (result.success) {
+        setIsSignedUp(true);
         router.push('/auth/sign-up-success');
       } else {
         setError(result.error || 'Failed to sign up. Please try again.');
@@ -68,9 +69,30 @@ export default function RegisterForm() {
     }
   };
 
+  if (isSignedUp) {
+    return (
+      <div className="flex flex-col items-center justify-center space-y-4 p-8">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="text-center space-y-2">
+          <h3 className="text-lg font-semibold">
+            Account Created Successfully!
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            Redirecting you to get started...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmit, err => {
+          console.log(err);
+        })}
+        className="space-y-4"
+      >
         {/* Username Field */}
         <FormField
           control={form.control}
@@ -125,7 +147,28 @@ export default function RegisterForm() {
               </FormLabel>
               <FormControl>
                 <PasswordInput
-                  placeholder="············"
+                  placeholder="A secure password"
+                  showStrengthIndicator={false}
+                  {...field}
+                  disabled={isLoading}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                Confirm password<span className="text-destructive">*</span>
+              </FormLabel>
+              <FormControl>
+                <PasswordInput
+                  placeholder="A secure password again"
                   showStrengthIndicator={false}
                   {...field}
                   disabled={isLoading}

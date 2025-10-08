@@ -1,7 +1,10 @@
 'use client';
 
 import { SubscriptionsDataTable } from '@/components/admin/subscriptions/subscriptions-data-table';
-import { columns } from '@/components/admin/subscriptions/subscriptions-columns';
+import {
+  columns,
+  SubscriptionRow,
+} from '@/components/admin/subscriptions/subscriptions-columns';
 import { useSubscriptions } from '@/hooks/use-subscriptions';
 import { Loader2 } from 'lucide-react';
 
@@ -20,28 +23,27 @@ export function SubscriptionsPageContent() {
   }
 
   // Transform data for the table
-  const subscriptionsData = (subscriptions || []).map(sub => ({
-    id: sub.id,
-    user_id: sub.user_id,
-    user_email: 'N/A', // Note: Email requires auth.admin access
-    user_name:
-      (sub.profiles as any)?.full_name ||
-      (sub.profiles as any)?.username ||
-      'N/A',
-    plan_name: (sub.subscription_plans as any)?.name || 'Unknown Plan',
-    plan_price: (sub.subscription_plans as any)?.price || 0,
-    plan_currency: (sub.subscription_plans as any)?.currency || 'ARS',
-    plan_interval: (sub.subscription_plans as any)?.interval || 'month',
-    status: sub.status,
-    current_period_start: sub.current_period_start,
-    current_period_end: sub.current_period_end,
-    trial_start: sub.trial_start,
-    trial_end: sub.trial_end,
-    cancel_at_period_end: sub.cancel_at_period_end || false,
-    cancelled_at: sub.cancelled_at,
-    created_at: sub.created_at,
-    mercadopago_preapproval_id: sub.mercadopago_preapproval_id,
-  }));
+  const subscriptionsData: SubscriptionRow[] = (subscriptions || []).map(
+    sub => ({
+      id: sub.id,
+      user_id: sub.user_id,
+      user_email: sub.profiles.email || '',
+      user_name: sub.profiles.full_name || 'N/A',
+      plan_name: (sub.subscription_plans as any)?.name || 'Unknown Plan',
+      plan_price: (sub.subscription_plans as any)?.price || 0,
+      plan_currency: (sub.subscription_plans as any)?.currency || 'ARS',
+      plan_interval: (sub.subscription_plans as any)?.interval || 'month',
+      status: sub.status,
+      current_period_start: sub.current_period_start,
+      current_period_end: sub.current_period_end,
+      trial_start: sub.trial_start,
+      trial_end: sub.trial_end,
+      cancel_at_period_end: sub.cancel_at_period_end || false,
+      cancelled_at: sub.cancelled_at,
+      created_at: sub.created_at,
+      mercadopago_preapproval_id: sub.mercadopago_preapproval_id,
+    })
+  );
 
   return (
     <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
@@ -55,7 +57,7 @@ export function SubscriptionsPageContent() {
       </div>
       <div className="px-4 lg:px-6">
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center gap-4 py-12">
+          <div className="flex flex-col min-h-screen items-center justify-center gap-4 py-12">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             <p className="text-muted-foreground">Loading subscriptions...</p>
           </div>

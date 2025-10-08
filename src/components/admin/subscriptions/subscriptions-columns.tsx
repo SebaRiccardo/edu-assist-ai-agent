@@ -16,7 +16,7 @@ import { ArrowUpDown, MoreHorizontal, AlertCircle } from 'lucide-react';
 export type SubscriptionRow = {
   id: string;
   user_id: string;
-  user_email: string;
+  user_email: string | null;
   user_name: string;
   plan_name: string;
   plan_price: number;
@@ -42,7 +42,7 @@ export const columns: ColumnDef<SubscriptionRow>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          User
+          Name
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       );
@@ -52,9 +52,28 @@ export const columns: ColumnDef<SubscriptionRow>[] = [
       return (
         <div className="flex flex-col">
           <span className="font-medium">{subscription.user_name}</span>
-          <span className="text-muted-foreground text-xs">
-            {subscription.user_email}
-          </span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: 'user_email',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Email
+          <ArrowUpDown className="ml-2 size-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const subscription = row.original;
+      return (
+        <div className="flex flex-col">
+          <span className="font-medium">{subscription.user_email}</span>
         </div>
       );
     },

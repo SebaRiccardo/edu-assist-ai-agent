@@ -69,7 +69,7 @@ const nav = {
 
 type AdminSidebarProps = React.ComponentProps<typeof Sidebar> & { user: any };
 
-export async function AdminSidebar({ user, ...props }: AdminSidebarProps) {
+export function AdminSidebar({ user, ...props }: AdminSidebarProps) {
   const router = useRouter();
 
   const handleSignOut = async () => {

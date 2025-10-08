@@ -1,7 +1,12 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient, isAdminUser } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import { AdminDashboardLayout } from '@/components/admin/layout/admin-dashboard-layout';
 import { AdminDashboardContent } from '@/components/admin/dashboard/admin-dashboard-content';
+import { getQueryClient } from '@/lib/providers/tankstack-query/get-query-client';
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
+import { prefetchQuery } from '@supabase-cache-helpers/postgrest-react-query';
+import { getAllProfilesQuery } from '@/hooks/queries/profiles';
+import { getAllPlansQuery } from '@/hooks/queries/subscription-plans';
+import { getActiveSubscriptionsQuery } from '@/hooks/queries/user-subscriptions';
 
 /**
  * Admin Dashboard Page
@@ -9,20 +14,22 @@ import { AdminDashboardContent } from '@/components/admin/dashboard/admin-dashbo
  */
 export default async function AdminPage() {
   const supabase = await createClient();
+  const isAdmin = await isAdminUser(supabase);
 
-  // Check authentication
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError || !user) {
+  if (!isAdmin) {
     redirect('/auth/login');
   }
+  const queryClient = getQueryClient();
 
-  // TODO: Add admin role check here
-  // For now, we'll allow any authenticated user
-  // In production, check if user.role === 'admin' or similar
+  await Promise.all([
+    prefetchQuery(queryClient, getAllProfilesQuery(supabase)),
+    prefetchQuery(queryClient, getAllPlansQuery(supabase)),
+    prefetchQuery(queryClient, getActiveSubscriptionsQuery(supabase)),
+  ]);
 
-  return <AdminDashboardContent />;
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <AdminDashboardContent />
+    </HydrationBoundary>
+  );
 }

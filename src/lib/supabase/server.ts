@@ -1,12 +1,13 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
-import { Database } from './db';
+import { Database } from './types';
+import { TypedSupabaseClient } from './types/client.types';
 
 /**
  * If using Fluid compute: Don't put this client in a global variable. Always create a new client within each
  * function when using it.
  */
-export async function createClient() {
+export async function createClient(): Promise<TypedSupabaseClient> {
   const cookieStore = await cookies();
 
   return createServerClient<Database>(
@@ -81,9 +82,36 @@ export async function getCurrentSession() {
 }
 
 /**
+ * Get the current user's claims (server-side)
+ */
+export async function getCurrentClaims(supabase: TypedSupabaseClient) {
+  const client = supabase ? supabase : await createClient();
+
+  try {
+    const { data, error } = await client.auth.getClaims();
+
+    if (error || !data) {
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error getting current session:', error);
+    return null;
+  }
+}
+
+/**
  * Check if user is authenticated (server-side)
  */
 export async function isAuthenticated(): Promise<boolean> {
   const user = await getCurrentUser();
   return !!user;
+}
+
+export async function isAdminUser(
+  client: TypedSupabaseClient
+): Promise<boolean> {
+  const claims = await getCurrentClaims(client);
+  return !!claims?.claims.user_metadata.admin;
 }

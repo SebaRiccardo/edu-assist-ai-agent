@@ -42,6 +42,7 @@ export async function updateSession(request: NextRequest) {
 
   // Define public routes that don't require authentication
   const publicRoutes = ['/', '/auth', '/terms', '/privacy', '/privacy-policy'];
+
   const isPublicRoute = publicRoutes.some(
     route =>
       request.nextUrl.pathname === route ||
@@ -53,6 +54,16 @@ export async function updateSession(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = '/auth/login';
     url.searchParams.set('redirectTo', request.nextUrl.pathname);
+    return NextResponse.redirect(url);
+  }
+
+  if (
+    user &&
+    !user.user_metadata.admin &&
+    request.nextUrl.pathname.startsWith('/admin/')
+  ) {
+    const url = request.nextUrl.clone();
+    url.pathname = '/';
     return NextResponse.redirect(url);
   }
 
