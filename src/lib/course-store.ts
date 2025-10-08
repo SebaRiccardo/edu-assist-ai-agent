@@ -1,12 +1,13 @@
-import { Course } from '@/types';
+import { DomainCourse } from '@/types';
 
 // In-memory storage for courses
-let courses: Course[] = [
+let courses: DomainCourse[] = [
   {
     id: 'course-1',
     name: 'Algebra I',
     title: 'Algebra I',
-    description: 'Introduction to algebraic concepts including linear equations, polynomials, factoring, quadratic equations, and functions. This is a foundational course for students beginning their study of advanced mathematics. Topics include: solving equations, graphing linear functions, working with exponents, and understanding mathematical patterns.',
+    description:
+      'Introduction to algebraic concepts including linear equations, polynomials, factoring, quadratic equations, and functions. This is a foundational course for students beginning their study of advanced mathematics. Topics include: solving equations, graphing linear functions, working with exponents, and understanding mathematical patterns.',
     professorId: 'prof-123',
     studentCount: 32,
     unreadEmailCount: 5,
@@ -17,7 +18,8 @@ let courses: Course[] = [
     id: 'course-2',
     name: 'Calculus II',
     title: 'Calculus II',
-    description: 'Advanced calculus covering integration techniques, applications of integrals, sequences and series, parametric equations, and polar coordinates. Prerequisites include Calculus I. Students will learn advanced integration methods, infinite series, Taylor series, and their applications in physics and engineering.',
+    description:
+      'Advanced calculus covering integration techniques, applications of integrals, sequences and series, parametric equations, and polar coordinates. Prerequisites include Calculus I. Students will learn advanced integration methods, infinite series, Taylor series, and their applications in physics and engineering.',
     professorId: 'prof-123',
     studentCount: 28,
     unreadEmailCount: 3,
@@ -28,7 +30,8 @@ let courses: Course[] = [
     id: 'course-3',
     name: 'Linear Algebra',
     title: 'Linear Algebra',
-    description: 'Study of vector spaces, linear transformations, matrices, determinants, eigenvalues and eigenvectors. Applications to computer science and engineering. Topics include: systems of linear equations, matrix operations, vector spaces, linear independence, basis and dimension, orthogonality, and diagonalization.',
+    description:
+      'Study of vector spaces, linear transformations, matrices, determinants, eigenvalues and eigenvectors. Applications to computer science and engineering. Topics include: systems of linear equations, matrix operations, vector spaces, linear independence, basis and dimension, orthogonality, and diagonalization.',
     professorId: 'prof-123',
     studentCount: 25,
     unreadEmailCount: 7,
@@ -40,18 +43,20 @@ let courses: Course[] = [
 // CRUD operations
 export const courseStore = {
   // Get all courses for a professor
-  getCourses(professorId: string): Course[] {
+  getCourses(professorId: string): DomainCourse[] {
     return courses.filter(course => course.professorId === professorId);
   },
 
   // Get a single course by ID
-  getCourse(courseId: string): Course | undefined {
+  getCourse(courseId: string): DomainCourse | undefined {
     return courses.find(course => course.id === courseId);
   },
 
   // Create a new course
-  createCourse(course: Omit<Course, 'id' | 'createdAt' | 'updatedAt'>): Course {
-    const newCourse: Course = {
+  createCourse(
+    course: Omit<DomainCourse, 'id' | 'createdAt' | 'updatedAt'>
+  ): DomainCourse {
+    const newCourse: DomainCourse = {
       ...course,
       id: `course-${Date.now()}`,
       createdAt: new Date(),
@@ -62,7 +67,10 @@ export const courseStore = {
   },
 
   // Update an existing course
-  updateCourse(courseId: string, updates: Partial<Omit<Course, 'id' | 'createdAt' | 'professorId'>>): Course | null {
+  updateCourse(
+    courseId: string,
+    updates: Partial<Omit<DomainCourse, 'id' | 'createdAt' | 'professorId'>>
+  ): DomainCourse | null {
     const index = courses.findIndex(course => course.id === courseId);
     if (index === -1) return null;
 

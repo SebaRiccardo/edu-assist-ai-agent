@@ -6,7 +6,7 @@ import { CourseDetailsHeader } from '@/components/course-details-header';
 import { CourseInfoCards } from '@/components/course-info-cards';
 import { AnalysisStatsBar } from '@/components/analysis-stats-bar';
 import { EmailListStates } from '@/components/email-list-states';
-import { CategorizedEmail, Course, InboxAnalysisResult } from '@/types';
+import { CategorizedEmail, DomainCourse, InboxAnalysisResult } from '@/types';
 import { Loader2, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -22,7 +22,7 @@ export default function CourseDetailsPage() {
   const router = useRouter();
   const params = useParams();
   const { user } = useCurrentUser();
-  const [course, setCourse] = useState<Course | null>(null);
+  const [course, setCourse] = useState<DomainCourse | null>(null);
   const [emails, setEmails] = useState<CategorizedEmail[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isChecking, setIsChecking] = useState(false);
@@ -51,7 +51,9 @@ export default function CourseDetailsPage() {
       if (!response.ok) throw new Error('Failed to fetch courses');
 
       const data = await response.json();
-      const foundCourse = data.courses.find((c: Course) => c.id === params.id);
+      const foundCourse = data.courses.find(
+        (c: DomainCourse) => c.id === params.id
+      );
 
       if (foundCourse) {
         setCourse(foundCourse);

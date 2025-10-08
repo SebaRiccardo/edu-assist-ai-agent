@@ -154,8 +154,6 @@ export async function analyzeInboxForCourse(
   }
 
   console.log(`✅ Gmail connection verified for user ${userId}`);
-
-  // STEP 2: Fetch emails from Gmail
   console.log(`📧 Fetching up to ${maxEmails} emails...`);
 
   const gmailResponse = await fetchEmails(userId, {

@@ -47,7 +47,7 @@ export const INBOX_PROFS_PLANS = {
     description:
       'Your inbox runs itself — background cleanup, auto-replies, and smart prioritization.',
     features: [
-      'Everything in Basic',
+      'Everything in Pro',
       'Auto-replies (AI-powered)',
       'Background cleanup',
       'Smart prioritization',

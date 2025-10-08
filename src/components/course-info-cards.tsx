@@ -1,8 +1,8 @@
-import { Course } from '@/types';
+import { DomainCourse } from '@/types';
 import { Users, Mail, Clock } from 'lucide-react';
 
 interface CourseInfoCardsProps {
-  course: Course;
+  course: DomainCourse;
 }
 
 export function CourseInfoCards({ course }: CourseInfoCardsProps) {

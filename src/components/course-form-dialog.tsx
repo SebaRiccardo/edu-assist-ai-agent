@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Course } from '@/types';
+import { DomainCourse } from '@/types';
 import {
   Dialog,
   DialogContent,
@@ -18,8 +18,13 @@ import { Textarea } from '@/components/ui/textarea';
 interface CourseFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  course?: Course | null;
-  onSubmit: (data: { title: string; description: string; studentCount: number }) => void;
+  course?: DomainCourse | null;
+  onSubmit: (data: {
+    name: string;
+    description: string;
+    studentCount: number;
+    context: string;
+  }) => void;
   isLoading?: boolean;
 }
 
@@ -32,6 +37,7 @@ export function CourseFormDialog({
 }: CourseFormDialogProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [context, setContext] = useState('');
   const [studentCount, setStudentCount] = useState(0);
 
   useEffect(() => {
@@ -48,7 +54,7 @@ export function CourseFormDialog({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ title, description, studentCount });
+    onSubmit({ name: title, description, studentCount, context });
   };
 
   const isEdit = !!course;
@@ -58,14 +64,16 @@ export function CourseFormDialog({
       <DialogContent className="sm:max-w-[600px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>{isEdit ? 'Edit Course' : 'Create New Course'}</DialogTitle>
+            <DialogTitle>
+              {isEdit ? 'Edit Course' : 'Create New Course'}
+            </DialogTitle>
             <DialogDescription>
               {isEdit
                 ? 'Update the course information below.'
                 : 'Fill in the details to create a new course.'}
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor="title">
@@ -75,11 +83,11 @@ export function CourseFormDialog({
                 id="title"
                 placeholder="e.g., Introduction to Calculus"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={e => setTitle(e.target.value)}
                 required
               />
             </div>
-            
+
             <div className="grid gap-2">
               <Label htmlFor="description">
                 Description <span className="text-red-500">*</span>
@@ -88,17 +96,37 @@ export function CourseFormDialog({
                 id="description"
                 placeholder="Provide a detailed description of the course, including topics covered, prerequisites, and learning objectives..."
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={e => setDescription(e.target.value)}
                 required
-                rows={8}
+                rows={3}
                 className="resize-none"
               />
               <p className="text-xs text-muted-foreground">
-                This description will help the AI categorize emails related to this course.
+                This description will help the AI categorize emails related to
+                this course.
               </p>
             </div>
 
             <div className="grid gap-2">
+              <Label htmlFor="description">
+                Context <span className="text-red-500">*</span>
+              </Label>
+              <Textarea
+                id="description"
+                placeholder="Provide a detailed description of the course, including topics covered, prerequisites, and learning objectives..."
+                value={context}
+                onChange={e => setContext(e.target.value)}
+                required
+                rows={15}
+                className="resize-none"
+              />
+              <p className="text-xs text-muted-foreground">
+                This description will help the AI categorize emails related to
+                this course.
+              </p>
+            </div>
+
+            {/* <div className="grid gap-2">
               <Label htmlFor="studentCount">Number of Students</Label>
               <Input
                 id="studentCount"
@@ -106,11 +134,11 @@ export function CourseFormDialog({
                 min="0"
                 placeholder="0"
                 value={studentCount}
-                onChange={(e) => setStudentCount(parseInt(e.target.value) || 0)}
+                onChange={e => setStudentCount(parseInt(e.target.value) || 0)}
               />
-            </div>
+            </div> */}
           </div>
-          
+
           <DialogFooter>
             <Button
               type="button"
@@ -120,8 +148,15 @@ export function CourseFormDialog({
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isLoading || !title || !description}>
-              {isLoading ? 'Saving...' : isEdit ? 'Update Course' : 'Create Course'}
+            <Button
+              type="submit"
+              disabled={isLoading || !title || !description}
+            >
+              {isLoading
+                ? 'Saving...'
+                : isEdit
+                  ? 'Update Course'
+                  : 'Create Course'}
             </Button>
           </DialogFooter>
         </form>

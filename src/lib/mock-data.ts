@@ -1,4 +1,4 @@
-import { Course, Professor } from '@/types';
+import { DomainCourse, Professor } from '@/types';
 
 // Mock professor - in production this would come from auth session
 export const mockProfessor: Professor = {
@@ -8,12 +8,13 @@ export const mockProfessor: Professor = {
 };
 
 // Mock courses - in production this would come from Supabase
-export const mockCourses: Course[] = [
+export const mockCourses: DomainCourse[] = [
   {
     id: 'course-1',
     name: 'Algebra I',
     title: 'Algebra I - Introduction to Algebraic Concepts',
-    description: 'Introduction to algebraic concepts including linear equations, polynomials, factoring, quadratic equations, and functions. This is a foundational course for students beginning their study of advanced mathematics.',
+    description:
+      'Introduction to algebraic concepts including linear equations, polynomials, factoring, quadratic equations, and functions. This is a foundational course for students beginning their study of advanced mathematics.',
     professorId: 'prof-123',
     studentCount: 28,
     unreadEmailCount: 5,
@@ -24,7 +25,8 @@ export const mockCourses: Course[] = [
     id: 'course-2',
     name: 'Calculus II',
     title: 'Calculus II - Advanced Integration and Series',
-    description: 'Advanced calculus covering integration techniques, applications of integrals, sequences and series, parametric equations, and polar coordinates. Prerequisites include Calculus I.',
+    description:
+      'Advanced calculus covering integration techniques, applications of integrals, sequences and series, parametric equations, and polar coordinates. Prerequisites include Calculus I.',
     professorId: 'prof-123',
     studentCount: 32,
     unreadEmailCount: 3,
@@ -35,7 +37,8 @@ export const mockCourses: Course[] = [
     id: 'course-3',
     name: 'Linear Algebra',
     title: 'Linear Algebra - Vectors and Matrices',
-    description: 'Study of vector spaces, linear transformations, matrices, determinants, eigenvalues and eigenvectors. Applications to computer science and engineering.',
+    description:
+      'Study of vector spaces, linear transformations, matrices, determinants, eigenvalues and eigenvectors. Applications to computer science and engineering.',
     professorId: 'prof-123',
     studentCount: 25,
     unreadEmailCount: 7,
@@ -45,11 +48,11 @@ export const mockCourses: Course[] = [
 ];
 
 // Helper function to get course by ID
-export function getCourseById(courseId: string): Course | undefined {
+export function getCourseById(courseId: string): DomainCourse | undefined {
   return mockCourses.find(course => course.id === courseId);
 }
 
 // Helper function to get all courses for a professor
-export function getCoursesByProfessor(professorId: string): Course[] {
+export function getCoursesByProfessor(professorId: string): DomainCourse[] {
   return mockCourses.filter(course => course.professorId === professorId);
 }

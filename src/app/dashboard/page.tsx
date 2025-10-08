@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { CourseFormDialog } from '@/components/course-form-dialog';
-import { Course } from '@/types';
+import { DomainCourse } from '@/types';
 import {
   Loader2,
   Plus,
@@ -12,67 +12,41 @@ import {
   Users,
   Mail,
   ChevronRight,
-  AlertCircle,
   Sparkles,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCurrentUser, useUserDisplayName } from '@/hooks/use-current-user';
+import { useCourses, useCreateCourse } from '@/hooks/use-courses';
 
 export default function DashboardPage() {
   const router = useRouter();
   const { user, loading: userLoading } = useCurrentUser();
   const displayName = useUserDisplayName();
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [editingCourse, setEditingCourse] = useState<Course | null>(null);
+
+  const [editingCourse, setEditingCourse] = useState<DomainCourse | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
-  // Fetch courses on mount
-  useEffect(() => {
-    if (user) {
-      fetchCourses();
-    }
-  }, [user]);
-
-  const fetchCourses = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch('/api/courses');
-      if (!response.ok) {
-        throw new Error('Failed to fetch courses');
-      }
-      const data = await response.json();
-      setCourses(data.courses);
-    } catch (error) {
-      console.error('Error fetching courses:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { data: courses, isLoading } = useCourses(user?.id);
+  const { mutateAsync: createCourse } = useCreateCourse();
 
   const handleCreateCourse = async (courseData: {
-    title: string;
+    name: string;
     description: string;
+    context: string;
     studentCount: number;
   }) => {
+    const { name, description, context } = courseData;
     try {
-      const response = await fetch('/api/courses', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      await createCourse([
+        {
+          name,
+          description,
+          context,
+          professor_id: user?.id!,
+          year: '2025',
         },
-        body: JSON.stringify({
-          ...courseData,
-          name: courseData.title.toLowerCase().replace(/\s+/g, '-'),
-          professorId: user?.id || 'unknown',
-        }),
-      });
+      ]);
 
-      if (!response.ok) {
-        throw new Error('Failed to create course');
-      }
-
-      await fetchCourses();
       setIsFormOpen(false);
     } catch (error) {
       console.error('Error creating course:', error);
@@ -81,30 +55,14 @@ export default function DashboardPage() {
   };
 
   const handleUpdateCourse = async (courseData: {
-    title: string;
+    name: string;
     description: string;
+    context: string;
     studentCount: number;
   }) => {
     if (!editingCourse) return;
 
     try {
-      const response = await fetch('/api/courses', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id: editingCourse.id,
-          ...courseData,
-          name: courseData.title.toLowerCase().replace(/\s+/g, '-'),
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update course');
-      }
-
-      await fetchCourses();
       setIsFormOpen(false);
       setEditingCourse(null);
     } catch (error) {
@@ -113,7 +71,7 @@ export default function DashboardPage() {
     }
   };
 
-  const handleEdit = (course: Course) => {
+  const handleEdit = (course: DomainCourse) => {
     setEditingCourse(course);
     setIsFormOpen(true);
   };
@@ -163,7 +121,7 @@ export default function DashboardPage() {
                   <p className="text-sm text-muted-foreground mb-1">
                     Total Courses
                   </p>
-                  <p className="text-3xl font-bold">{courses.length}</p>
+                  <p className="text-3xl font-bold">{courses?.length}</p>
                 </div>
                 <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
                   <BookOpen className="h-6 w-6 text-primary" />
@@ -178,7 +136,7 @@ export default function DashboardPage() {
                     Total Students
                   </p>
                   <p className="text-3xl font-bold">
-                    {courses.reduce((sum, c) => sum + c.studentCount, 0)}
+                    {courses?.reduce((sum, c) => sum + c.student_count, 0)}
                   </p>
                 </div>
                 <div className="h-12 w-12 rounded-full bg-chart-2/10 flex items-center justify-center">
@@ -193,9 +151,7 @@ export default function DashboardPage() {
                   <p className="text-sm text-muted-foreground mb-1">
                     Unread Emails
                   </p>
-                  <p className="text-3xl font-bold">
-                    {courses.reduce((sum, c) => sum + c.unreadEmailCount, 0)}
-                  </p>
+                  <p className="text-3xl font-bold"></p>
                 </div>
                 <div className="h-12 w-12 rounded-full bg-chart-1/10 flex items-center justify-center">
                   <Mail className="h-6 w-6 text-chart-1" />
@@ -216,7 +172,7 @@ export default function DashboardPage() {
         )}
 
         {/* Empty State */}
-        {!isLoading && courses.length === 0 && (
+        {!isLoading && !courses && (
           <div className="text-center py-20 border-2 border-dashed rounded-lg bg-card">
             <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
             <h2 className="text-2xl font-semibold mb-2">No courses yet</h2>
@@ -231,15 +187,15 @@ export default function DashboardPage() {
         )}
 
         {/* Courses Section */}
-        {!isLoading && courses.length > 0 && (
+        {!isLoading && courses && courses?.length > 0 && (
           <div className="space-y-8">
             {/* Important Actions */}
-            <section>
+            {/* <section>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <AlertCircle className="h-5 w-5 text-destructive" />
                   Important Actions (
-                  {courses.filter(c => c.unreadEmailCount > 0).length})
+                  {courses?.filter(c => c.unreadEmailCount > 0).length})
                 </h2>
               </div>
 
@@ -273,7 +229,7 @@ export default function DashboardPage() {
                     </Card>
                   ))}
               </div>
-            </section>
+            </section> */}
 
             {/* Courses Horizontal Scroll */}
             <section>

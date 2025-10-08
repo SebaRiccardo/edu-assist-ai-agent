@@ -105,7 +105,7 @@ export interface FetchEmailsParams {
   verbose?: boolean;
 }
 
-export interface Course {
+export interface DomainCourse {
   id: string;
   name: string;
   title: string; // Display title

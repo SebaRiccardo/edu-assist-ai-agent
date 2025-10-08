@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Course, CategorizedEmail } from '@/types';
+import { DomainCourse, CategorizedEmail } from '@/types';
 import {
   Dialog,
   DialogContent,
@@ -25,7 +25,7 @@ import {
 interface CourseDetailsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  course: Course | null;
+  course: DomainCourse | null;
 }
 
 export function CourseDetailsDialog({
@@ -74,19 +74,19 @@ export function CourseDetailsDialog({
   };
 
   const handleMarkAsRead = (emailId: string) => {
-    setEmails((prev) =>
-      prev.map((email) =>
+    setEmails(prev =>
+      prev.map(email =>
         email.id === emailId ? { ...email, isUnread: false } : email
       )
     );
   };
 
   const handleArchive = (emailId: string) => {
-    setEmails((prev) => prev.filter((email) => email.id !== emailId));
+    setEmails(prev => prev.filter(email => email.id !== emailId));
   };
 
   const handleDelete = (emailId: string) => {
-    setEmails((prev) => prev.filter((email) => email.id !== emailId));
+    setEmails(prev => prev.filter(email => email.id !== emailId));
   };
 
   if (!course) return null;
@@ -115,13 +115,13 @@ export function CourseDetailsDialog({
             <div className="text-2xl font-bold">{course.studentCount}</div>
             <div className="text-sm text-muted-foreground">Students</div>
           </div>
-          
+
           <div className="flex flex-col items-center justify-center p-4 bg-secondary/20 rounded-lg">
             <Mail className="h-5 w-5 text-muted-foreground mb-2" />
             <div className="text-2xl font-bold">{course.unreadEmailCount}</div>
             <div className="text-sm text-muted-foreground">Unread Emails</div>
           </div>
-          
+
           <div className="flex flex-col items-center justify-center p-4 bg-secondary/20 rounded-lg">
             <Calendar className="h-5 w-5 text-muted-foreground mb-2" />
             <div className="text-sm font-semibold">
@@ -135,11 +135,7 @@ export function CourseDetailsDialog({
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">Course Emails</h3>
-            <Button
-              onClick={handleCheckEmails}
-              disabled={isLoading}
-              size="sm"
-            >
+            <Button onClick={handleCheckEmails} disabled={isLoading} size="sm">
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -158,11 +154,15 @@ export function CourseDetailsDialog({
           {stats && (
             <div className="flex gap-4 p-4 bg-muted/50 rounded-lg">
               <div>
-                <div className="text-sm text-muted-foreground">Total Analyzed</div>
+                <div className="text-sm text-muted-foreground">
+                  Total Analyzed
+                </div>
                 <div className="text-2xl font-bold">{stats.totalAnalyzed}</div>
               </div>
               <div className="border-l pl-4">
-                <div className="text-sm text-muted-foreground">Course Related</div>
+                <div className="text-sm text-muted-foreground">
+                  Course Related
+                </div>
                 <div className="text-2xl font-bold text-green-600">
                   {stats.totalCategorized}
                 </div>
@@ -173,7 +173,7 @@ export function CourseDetailsDialog({
           {/* Emails */}
           {emails.length > 0 && (
             <div className="space-y-3 max-h-[400px] overflow-y-auto">
-              {emails.map((email) => (
+              {emails.map(email => (
                 <EmailCard
                   key={email.id}
                   email={email}
@@ -196,17 +196,21 @@ export function CourseDetailsDialog({
           )}
 
           {/* No Results */}
-          {!isLoading && emails.length === 0 && stats && stats.totalCategorized === 0 && (
-            <div className="text-center py-12 border-2 border-dashed rounded-lg">
-              <Mail className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-sm text-muted-foreground">
-                No course-related emails found
-              </p>
-              <p className="text-xs text-muted-foreground mt-2">
-                Analyzed {stats.totalAnalyzed} emails, none matched this course
-              </p>
-            </div>
-          )}
+          {!isLoading &&
+            emails.length === 0 &&
+            stats &&
+            stats.totalCategorized === 0 && (
+              <div className="text-center py-12 border-2 border-dashed rounded-lg">
+                <Mail className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-sm text-muted-foreground">
+                  No course-related emails found
+                </p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Analyzed {stats.totalAnalyzed} emails, none matched this
+                  course
+                </p>
+              </div>
+            )}
         </div>
 
         <div className="flex justify-end pt-4 border-t">

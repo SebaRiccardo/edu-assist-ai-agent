@@ -11,9 +11,6 @@ import {
 } from './service';
 import { INBOX_PROFS_PLANS } from '../subscriptions/plans';
 
-// Re-export plans for convenience
-export { INBOX_PROFS_PLANS } from '../subscriptions/plans';
-
 /**
  * Creates all InboxProfs AI subscription plans in MercadoPago
  * Run this once during initial setup
@@ -219,19 +216,3 @@ export async function getUserSubscriptionStatus(subscriptionId: string) {
 export async function cancelUserSubscription(subscriptionId: string) {
   return cancelPreApproval(subscriptionId);
 }
-
-// Re-export plan utilities for convenience
-export {
-  hasFeatureAccess,
-  getPlanLimits,
-  formatPlanPrice,
-  getPlanBadgeColor,
-  getPlanDetails,
-  getRequiredPlanForFeature,
-  getUpgradeMessage,
-  isLimitExceeded,
-  getRemainingUsage,
-  getLimitUsagePercentage,
-  isApproachingLimit,
-  type PlanType,
-} from '../subscriptions/plans';

@@ -29,7 +29,7 @@ export interface MercadoPagoWebhookEvent {
   };
 }
 
-export interface SubscriptionPlan {
+export interface MpSubscriptionPlan {
   id: string;
   reason: string;
   status: 'active' | 'inactive';
@@ -48,7 +48,7 @@ export interface SubscriptionPlan {
   last_modified: string;
 }
 
-export interface Subscription {
+export interface MpSubscription {
   id: string;
   preapproval_plan_id: string;
   payer_id: number;

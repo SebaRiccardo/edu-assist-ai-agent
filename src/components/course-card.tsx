@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Course } from '@/types';
+import { DomainCourse } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -22,6 +22,7 @@ import {
   Trash2,
   Eye,
 } from 'lucide-react';
+import { Course } from '@/lib/supabase/types/courses.types';
 
 interface CourseCardProps {
   course: Course;
@@ -42,7 +43,7 @@ export function CourseCard({ course, onEdit, onDelete }: CourseCardProps) {
       onClick={handleViewDetails}
     >
       {/* Unread Badge - Top Right */}
-      {course.unreadEmailCount > 0 && (
+      {/* {course.unreadEmailCount > 0 && (
         <div className="absolute -top-2 -right-2 z-10">
           <Badge
             variant="destructive"
@@ -51,7 +52,7 @@ export function CourseCard({ course, onEdit, onDelete }: CourseCardProps) {
             <span className="font-bold">{course.unreadEmailCount}</span>
           </Badge>
         </div>
-      )}
+      )} */}
 
       <CardHeader>
         {/* Icon with Course Icon */}
@@ -123,13 +124,13 @@ export function CourseCard({ course, onEdit, onDelete }: CourseCardProps) {
         <div className="flex items-center gap-6 pt-4 border-t border-border/50">
           <div className="flex items-center gap-2 text-sm">
             <Users className="h-4 w-4 text-muted-foreground" />
-            <span className="font-semibold">{course.studentCount}</span>
+            <span className="font-semibold">{course.student_count}</span>
             <span className="text-muted-foreground">students</span>
           </div>
         </div>
 
         <div className="text-xs text-muted-foreground pt-2">
-          Updated {new Date(course.updatedAt).toLocaleDateString()}
+          Updated {new Date(course.updated_at).toLocaleDateString()}
         </div>
       </CardContent>
     </Card>

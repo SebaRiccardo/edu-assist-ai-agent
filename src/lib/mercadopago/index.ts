@@ -34,8 +34,6 @@ export {
   getPaymentStatusLabel,
 } from './service';
 
-
-
 // Types
 export type {
   CreatePlanParams,
@@ -46,8 +44,8 @@ export type {
 
 export type {
   MercadoPagoWebhookEvent,
-  SubscriptionPlan,
-  Subscription,
+  MpSubscriptionPlan as SubscriptionPlan,
+  MpSubscription as Subscription,
   PaymentData,
   PlanStatus,
   SubscriptionStatus,

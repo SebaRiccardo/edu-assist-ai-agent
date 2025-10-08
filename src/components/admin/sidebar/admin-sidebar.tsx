@@ -21,7 +21,6 @@ import {
   BarChart3,
 } from 'lucide-react';
 import Link from 'next/link';
-import { User } from '@supabase/supabase-js';
 import { signOut } from '@/lib/auth/auth-service';
 import { useRouter } from 'next/navigation';
 
@@ -149,7 +148,11 @@ export function AdminSidebar({ user, ...props }: AdminSidebarProps) {
       <SidebarFooter>
         <NavUser
           onLogout={handleSignOut}
-          user={{ email: user?.email!, name: user?.user_metadata.first_name }}
+          user={{
+            email: user?.email!,
+            name: user?.user_metadata.first_name,
+            avatar: user?.user_metadata.avatar_url,
+          }}
         />
 
         <div className="text-muted-foreground px-2 py-2 text-xs">

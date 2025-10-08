@@ -1,62 +1,43 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CourseCard } from '@/components/course-card';
 import { CourseFormDialog } from '@/components/course-form-dialog';
-import { Course } from '@/types';
+import { DomainCourse } from '@/types';
 import { Loader2, Plus, BookOpen } from 'lucide-react';
+import { useCourses, useCreateCourse } from '@/hooks/use-courses';
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { InsertCourse } from '@/lib/supabase/types/courses.types';
 
 export default function CoursesPage() {
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [editingCourse, setEditingCourse] = useState<Course | null>(null);
+  const [editingCourse, setEditingCourse] = useState<DomainCourse | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
-  // Fetch courses on mount
-  useEffect(() => {
-    fetchCourses();
-  }, []);
-
-  const fetchCourses = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch('/api/courses');
-      if (!response.ok) {
-        throw new Error('Failed to fetch courses');
-      }
-      const data = await response.json();
-      setCourses(data.courses);
-    } catch (error) {
-      console.error('Error fetching courses:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { user } = useCurrentUser();
+  const { data: courses, isLoading } = useCourses(user?.id);
+  const { mutateAsync: createCourse } = useCreateCourse();
 
   const handleCreateCourse = async (courseData: {
+    name: string;
     title: string;
     description: string;
+    context: string;
     studentCount: number;
   }) => {
+    const { name, title, description, context } = courseData;
     try {
-      const response = await fetch('/api/courses', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      await createCourse([
+        {
+          title,
+          name,
+          description,
+          context,
+          professor_id: user?.id!,
+          year: '2025',
         },
-        body: JSON.stringify({
-          ...courseData,
-          name: courseData.title.toLowerCase().replace(/\s+/g, '-'),
-          professorId: 'prof-123',
-        }),
-      });
+      ]);
 
-      if (!response.ok) {
-        throw new Error('Failed to create course');
-      }
-
-      await fetchCourses();
       setIsFormOpen(false);
     } catch (error) {
       console.error('Error creating course:', error);
@@ -65,30 +46,15 @@ export default function CoursesPage() {
   };
 
   const handleUpdateCourse = async (courseData: {
+    name: string;
     title: string;
     description: string;
+    context: string;
     studentCount: number;
   }) => {
     if (!editingCourse) return;
 
     try {
-      const response = await fetch('/api/courses', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id: editingCourse.id,
-          ...courseData,
-          name: courseData.title.toLowerCase().replace(/\s+/g, '-'),
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update course');
-      }
-
-      await fetchCourses();
       setIsFormOpen(false);
       setEditingCourse(null);
     } catch (error) {
@@ -98,7 +64,11 @@ export default function CoursesPage() {
   };
 
   const handleDeleteCourse = async (courseId: string) => {
-    if (!confirm('Are you sure you want to delete this course? This action cannot be undone.')) {
+    if (
+      !confirm(
+        'Are you sure you want to delete this course? This action cannot be undone.'
+      )
+    ) {
       return;
     }
 
@@ -114,15 +84,12 @@ export default function CoursesPage() {
       if (!response.ok) {
         throw new Error('Failed to delete course');
       }
-
-      await fetchCourses();
     } catch (error) {
       console.error('Error deleting course:', error);
     }
   };
 
-  const handleEdit = (course: Course) => {
-    setEditingCourse(course);
+  const handleEdit = (course: InsertCourse) => {
     setIsFormOpen(true);
   };
 
@@ -170,7 +137,7 @@ export default function CoursesPage() {
           )}
 
           {/* Empty State */}
-          {!isLoading && courses.length === 0 && (
+          {!isLoading && courses?.length === 0 && (
             <div className="text-center py-20 bg-background/50 rounded-2xl border-none">
               <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
               <h2 className="text-2xl font-semibold mb-2">No courses yet</h2>
@@ -185,9 +152,9 @@ export default function CoursesPage() {
           )}
 
           {/* Course Grid */}
-          {!isLoading && courses.length > 0 && (
+          {!isLoading && courses && courses?.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {courses.map((course) => (
+              {courses?.map(course => (
                 <CourseCard
                   key={course.id}
                   course={course}

@@ -10,11 +10,11 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import { Course } from '@/types';
+import { DomainCourse } from '@/types';
 import { Loader2, Sparkles, Clock, Home, Users } from 'lucide-react';
 
 interface CourseDetailsHeaderProps {
-  course: Course;
+  course: DomainCourse;
   isChecking: boolean;
   onAnalyze: () => void;
 }
@@ -100,11 +100,11 @@ export function CourseDetailsHeader({
             </p>
             {course.studentCount > 0 && (
               <div className="flex items-center gap-2 pt-2 text-muted-foreground">
-              <Users className="text-sm" size={15} />
-              <span className="flex gap-1">
-                {course.studentCount}
-                {course.studentCount === 1 ? 'student' : 'students'}
-              </span>
+                <Users className="text-sm" size={15} />
+                <span className="flex gap-1">
+                  {course.studentCount}
+                  {course.studentCount === 1 ? 'student' : 'students'}
+                </span>
               </div>
             )}
           </div>
