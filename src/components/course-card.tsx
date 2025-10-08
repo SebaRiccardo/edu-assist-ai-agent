@@ -56,17 +56,9 @@ export function CourseCard({ course, onEdit, onDelete }: CourseCardProps) {
 
       <CardHeader>
         {/* Icon with Course Icon */}
-        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-4">
-          <BookOpen className="h-6 w-6 text-primary" />
-        </div>
-        <div className="flex items-start justify-between">
-          <div className="flex-1 pr-8">
-            <CardTitle className="text-xl font-bold mb-2">
-              {course.title}
-            </CardTitle>
-            <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
-              {course.description}
-            </p>
+        <div className="flex flex-row justify-between items-start">
+          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-4">
+            <BookOpen className="h-6 w-6 text-primary" />
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
@@ -116,6 +108,18 @@ export function CourseCard({ course, onEdit, onDelete }: CourseCardProps) {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+        </div>
+
+        <div className="flex items-start justify-between ">
+          <div className="flex-1 pr-8">
+            <CardTitle className="text-xl font-bold mb-2">
+              {course.name}
+            </CardTitle>
+
+            <p className="text-sm text-muted-foreground  leading-relaxed ">
+              {course.description}
+            </p>
+          </div>
         </div>
       </CardHeader>
 

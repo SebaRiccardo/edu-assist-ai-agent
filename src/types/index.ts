@@ -105,17 +105,19 @@ export interface FetchEmailsParams {
   verbose?: boolean;
 }
 
+interface DomainInbox {
+  id: string;
+  email: string;
+  unreadCount: number;
+}
+
 export interface DomainCourse {
   id: string;
   name: string;
-  year: string;
+  year?: string;
   description: string; // Full description/context about the course
   context: string; // a lot of text that will later be used to create embedings with some LLM
-  inboxes: {
-    id: string;
-    email: string;
-    unreadEmailCount: number; // Number of unread course-related emails
-  }[];
+  inboxes: DomainInbox[];
   professorId: string;
   studentCount: number; // Number of students enrolled
   startAt?: Date;

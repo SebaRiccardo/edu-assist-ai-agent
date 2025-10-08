@@ -95,7 +95,7 @@ export function CourseDetailsHeader({
                 )}
               </Button>
             </div>
-            <p className="text-sm max-w-5xl truncate text-muted-foreground ">
+            <p className="text-sm text-pretty max-w-sm lg:max-w-5xl truncate text-muted-foreground ">
               {course.description}
             </p>
             {course.studentCount > 0 && (

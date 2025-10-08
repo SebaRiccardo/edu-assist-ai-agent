@@ -8,7 +8,7 @@
     "start": "next start",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "generate-types":"npx supabase gen types typescript --project-id wbckhmzpyaabafkdeuhn > database.types.ts"
+    "generate-types":"npx supabase gen types typescript --project-id wbckhmzpyaabafkdeuhn > src\\lib\\supabase\\types\\database.types.ts"
   },
   "dependencies": {
     "@ai-sdk/google": "^2.0.17",
