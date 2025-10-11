@@ -1,4 +1,3 @@
-
 # Agents
 
 Agents are **large language models (LLMs)** using **tools** in a **loop** to accomplish tasks.

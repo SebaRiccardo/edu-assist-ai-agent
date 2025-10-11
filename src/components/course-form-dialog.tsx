@@ -96,7 +96,6 @@ export function CourseFormDialog({
   onSubmit,
   isLoading = false,
 }: CourseFormDialogProps) {
-  
   const isEdit = !!course;
 
   // Initialize form with React Hook Form and Zod validation

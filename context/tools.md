@@ -1,4 +1,3 @@
-
 # Tools
 
 While [large language models (LLMs)](/docs/foundations/overview#large-language-models) have incredible generation capabilities,
@@ -46,15 +45,15 @@ and [Zod](https://zod.dev/) schemas (either directly or using the [`zodSchema` f
 You can install it with:
 
 <Tabs items={['pnpm', 'npm', 'yarn', 'bun']}>
-  <Tab>
-    <Snippet text="pnpm add zod" dark />
-  </Tab>
-  <Tab>
-    <Snippet text="npm install zod" dark />
-  </Tab>
-  <Tab>
-    <Snippet text="yarn add zod" dark />
-  </Tab>
+<Tab>
+<Snippet text="pnpm add zod" dark />
+</Tab>
+<Tab>
+<Snippet text="npm install zod" dark />
+</Tab>
+<Tab>
+<Snippet text="yarn add zod" dark />
+</Tab>
 
   <Tab>
     <Snippet text="bun add zod" dark />
@@ -73,7 +72,7 @@ const recipeSchema = z.object({
       z.object({
         name: z.string(),
         amount: z.string(),
-      }),
+      })
     ),
     steps: z.array(z.string()),
   }),

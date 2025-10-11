@@ -56,8 +56,8 @@ export function TopNav() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-card/80 backdrop-blur-xl supports-[backdrop-filter]:bg-card/60 shadow-sm">
-      <div className="flex h-20 items-center justify-between px-6 max-w-7xl mx-auto">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-card/80 backdrop-blur-xl supports-[backdrop-filter]:bg-card/60 ">
+      <div className="flex h-16 items-center justify-between px-6 max-w-7xl mx-auto">
         {/* Logo and Brand */}
         <div className="flex items-center gap-8">
           <Link href="/dashboard" className="group">
@@ -75,11 +75,10 @@ export function TopNav() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all ${
-                    isActive
-                      ? 'bg-primary/10 text-primary shadow-sm'
-                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-                  }`}
+                  className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all ${isActive
+                    ? 'bg-primary/10 text-primary'
+                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                    }`}
                 >
                   <item.icon className="h-4 w-4" />
                   <span>{item.name}</span>

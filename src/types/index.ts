@@ -1,3 +1,5 @@
+import { Course } from '@/lib/supabase/types/courses.types';
+
 /**
  * Gmail Message Attachment
  */
@@ -105,10 +107,11 @@ export interface FetchEmailsParams {
   verbose?: boolean;
 }
 
-interface DomainInbox {
+export interface DomainInbox {
   id: string;
   email: string;
   unreadCount: number;
+  connectedAccountId: string;
 }
 
 export interface DomainCourse {
@@ -117,7 +120,7 @@ export interface DomainCourse {
   year?: string;
   description: string; // Full description/context about the course
   context: string; // a lot of text that will later be used to create embedings with some LLM
-  inboxes: DomainInbox[];
+  inboxes?: DomainInbox[];
   professorId: string;
   studentCount: number; // Number of students enrolled
   startAt?: Date;
@@ -182,8 +185,8 @@ export interface EmailSummary {
  * Email Analysis Parameters
  */
 export interface InboxAnalysisParams {
-  userId: string;
-  courseId: string;
+  course: Course;
+  connectedAccountId: string;
   maxEmails?: number;
   includeRead?: boolean;
   verbose?: boolean;
@@ -195,13 +198,13 @@ export interface InboxAnalysisParams {
  */
 export interface CategorizedEmail extends TransformedEmail {
   category:
-    | 'course_related'
-    | 'student_email'
-    | 'staff_email'
-    | 'administrative'
-    | 'assignment'
-    | 'grade_inquiry'
-    | 'other';
+  | 'course_related'
+  | 'student_email'
+  | 'staff_email'
+  | 'administrative'
+  | 'assignment'
+  | 'grade_inquiry'
+  | 'other';
   isRelated: boolean;
   suggestedLabel: string;
   confidence: number;
@@ -226,3 +229,8 @@ export interface InboxAnalysisResult {
   courseName: string;
   courseId: string;
 }
+
+/**
+ * Composio Connected Account
+ * Represents a connected account from Composio API
+ */

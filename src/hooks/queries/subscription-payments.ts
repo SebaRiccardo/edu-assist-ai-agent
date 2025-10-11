@@ -1,4 +1,4 @@
-import { TypedSupabaseClient } from "@/lib/supabase/types/client.types";
+import { TypedSupabaseClient } from '@/lib/supabase/types/client.types';
 
 /**
  * Query builder for fetching all subscription payments

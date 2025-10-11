@@ -21,11 +21,11 @@ An intelligent AI-powered email management system for university professors to a
 ## Tech Stack
 
 - **Framework**: Next.js 15 (App Router)
-- **AI/ML**: 
+- **AI/ML**:
   - Vercel AI SDK
   - Google Gemini 2.5 Flash (via @ai-sdk/google)
   - Composio for Gmail integration
-- **UI**: 
+- **UI**:
   - React 19
   - Tailwind CSS
   - shadcn/ui components
@@ -43,22 +43,26 @@ An intelligent AI-powered email management system for university professors to a
 ### Installation
 
 1. Install dependencies:
+
 ```bash
 npm install --legacy-peer-deps
 ```
 
 2. Set up environment variables:
+
 ```bash
 cp .env.local.example .env.local
 ```
 
 Edit `.env.local` and add your API keys:
+
 ```env
 GOOGLE_GENERATIVE_AI_API_KEY=your_google_api_key_here
 COMPOSIO_API_KEY=your_composio_api_key_here
 ```
 
 3. Run the development server:
+
 ```bash
 npm run dev
 ```
@@ -68,10 +72,13 @@ npm run dev
 ## How It Works
 
 ### 1. Course Selection
+
 Professors select one of their courses from the dashboard. Each course has a context/description that helps the AI understand what topics are relevant.
 
 ### 2. Email Analysis
+
 When checking emails, the system:
+
 - Fetches unread emails from Gmail
 - Analyzes each email's subject and content
 - Compares against the selected course context
@@ -80,7 +87,9 @@ When checking emails, the system:
 - Assigns confidence scores
 
 ### 3. Intelligent Categorization
+
 The AI agent considers:
+
 - Course-specific keywords
 - Email sender information (.edu domains, etc.)
 - Question patterns indicating student queries
@@ -88,7 +97,9 @@ The AI agent considers:
 - Administrative language patterns
 
 ### 4. Email Management
+
 For categorized emails, professors can:
+
 - View all course-related emails in one place
 - See confidence scores for each categorization
 - Mark emails as read
@@ -124,6 +135,7 @@ src/
 ## Mock Data
 
 Currently, the application uses mock data for:
+
 - Professor authentication (Dr. Sarah Johnson)
 - Course data (Algebra I, Calculus II, Linear Algebra)
 - Email fetching (6 sample unread emails)
@@ -131,6 +143,7 @@ Currently, the application uses mock data for:
 ### Future Integration
 
 When ready for production:
+
 1. Replace mock professor data with Supabase Auth
 2. Store courses in Supabase database
 3. Use real Gmail API calls via Composio
@@ -143,6 +156,7 @@ When ready for production:
 Analyzes unread emails for a specific course.
 
 **Request Body:**
+
 ```json
 {
   "courseId": "course-1",
@@ -151,6 +165,7 @@ Analyzes unread emails for a specific course.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -172,7 +187,7 @@ Edit `src/lib/mock-data.ts` to add new courses to the mock data.
 
 ## Environment Variables
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `GOOGLE_GENERATIVE_AI_API_KEY` | Google AI API key for Gemini | Yes |
-| `COMPOSIO_API_KEY` | Composio API key for Gmail integration | Yes |
+| Variable                       | Description                            | Required |
+| ------------------------------ | -------------------------------------- | -------- |
+| `GOOGLE_GENERATIVE_AI_API_KEY` | Google AI API key for Gemini           | Yes      |
+| `COMPOSIO_API_KEY`             | Composio API key for Gmail integration | Yes      |

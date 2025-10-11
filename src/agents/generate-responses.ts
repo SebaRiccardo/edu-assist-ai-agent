@@ -1,6 +1,6 @@
 /**
  * Response Generation Agent
- * 
+ *
  * Generates professional draft email responses based on email content,
  * priority level, and course context.
  */
@@ -13,58 +13,58 @@ import z from 'zod';
  * Email information for response generation
  */
 export interface EmailInfo {
-    id: string;
-    from: string;
-    subject: string;
-    body: string;
-    category?: string;
-    reasoning?: string;
+  id: string;
+  from: string;
+  subject: string;
+  body: string;
+  category?: string;
+  reasoning?: string;
 }
 
 /**
  * Priority information for response
  */
 export interface PriorityInfo {
-    priority: 'critical' | 'high' | 'medium' | 'low';
-    responseDeadline: string;
-    reasoning: string;
+  priority: 'critical' | 'high' | 'medium' | 'low';
+  responseDeadline: string;
+  reasoning: string;
 }
 
 /**
  * Parameters for response generation
  */
 export interface ResponseGenerationParams {
-    email: EmailInfo;
-    priority: PriorityInfo;
-    courseName: string;
-    professorName?: string;
-    additionalContext?: string;
-    language?: string; // e.g., 'English', 'Spanish', 'French', 'German', etc.
-    model?: string;
+  email: EmailInfo;
+  priority: PriorityInfo;
+  courseName: string;
+  professorName?: string;
+  additionalContext?: string;
+  language?: string; // e.g., 'English', 'Spanish', 'French', 'German', etc.
+  model?: string;
 }
 
 /**
  * Generated response with metadata
  */
 export interface GeneratedResponse {
-    emailId: string;
-    originalEmail: {
-        from: string;
-        subject: string;
-        category?: string;
-    };
-    priority: string;
-    deadline: string;
-    draftResponse: string;
-    generatedAt: string;
+  emailId: string;
+  originalEmail: {
+    from: string;
+    subject: string;
+    category?: string;
+  };
+  priority: string;
+  deadline: string;
+  draftResponse: string;
+  generatedAt: string;
 }
 
 /**
  * Generate a draft email response using AI
- * 
+ *
  * @param params - Response generation parameters
  * @returns Generated response with metadata
- * 
+ *
  * @example
  * ```typescript
  * const response = await generateEmailResponse({
@@ -84,25 +84,27 @@ export interface GeneratedResponse {
  * });
  * ```
  */
-export async function generateEmailResponse(params: ResponseGenerationParams): Promise<GeneratedResponse> {
-    const {
-        email,
-        priority,
-        courseName,
-        professorName = 'Professor',
-        additionalContext = '',
-        language = 'English',
-        model = 'gemini-2.0-flash-lite',
-    } = params;
+export async function generateEmailResponse(
+  params: ResponseGenerationParams
+): Promise<GeneratedResponse> {
+  const {
+    email,
+    priority,
+    courseName,
+    professorName = 'Professor',
+    additionalContext = '',
+    language = 'English',
+    model = 'gemini-2.0-flash-lite',
+  } = params;
 
-    console.log(`📝 Generating response for: "${email.subject}"`);
-    console.log(`   Priority: ${priority.priority}`);
-    console.log(`   Deadline: ${priority.responseDeadline}`);
+  console.log(`📝 Generating response for: "${email.subject}"`);
+  console.log(`   Priority: ${priority.priority}`);
+  console.log(`   Deadline: ${priority.responseDeadline}`);
 
-    const responseResult = await generateText({
-        model: google(model),
-        system: `You are a university professor assistant drafting professional, helpful email responses. You understand academic contexts and student needs. You are fluent in multiple languages and can write responses in any requested language.`,
-        prompt: `Draft a email response to this ${priority.priority} priority student email.
+  const responseResult = await generateText({
+    model: google(model),
+    system: `You are a university professor assistant drafting professional, helpful email responses. You understand academic contexts and student needs. You are fluent in multiple languages and can write responses in any requested language.`,
+    prompt: `Draft a email response to this ${priority.priority} priority student email.
 
 **IMPORTANT: Write the entire response in ${language}. All greetings, content, placeholder values and closing remarks must be in ${language}.**
 
@@ -157,32 +159,32 @@ ${additionalContext ? `- Additional Context: ${additionalContext}` : ''}
    - Maintain cultural appropriateness for ${language}-speaking contexts
 
 Draft the complete, ready-to-send email response in ${language}:`,
-    });
+  });
 
-    console.log(`   ✅ Draft generated (${responseResult.text.length} chars)`);
+  console.log(`   ✅ Draft generated (${responseResult.text.length} chars)`);
 
-    return {
-        emailId: email.id,
-        originalEmail: {
-            from: email.from,
-            subject: email.subject,
-            category: email.category,
-        },
-        priority: priority.priority,
-        deadline: priority.responseDeadline,
-        draftResponse: responseResult.text,
-        generatedAt: new Date().toISOString(),
-    };
+  return {
+    emailId: email.id,
+    originalEmail: {
+      from: email.from,
+      subject: email.subject,
+      category: email.category,
+    },
+    priority: priority.priority,
+    deadline: priority.responseDeadline,
+    draftResponse: responseResult.text,
+    generatedAt: new Date().toISOString(),
+  };
 }
 
 /**
  * Generate responses for multiple emails
- * 
+ *
  * @param emails - Array of emails with priority info
  * @param courseName - Course name for context
  * @param options - Additional options
  * @returns Array of generated responses
- * 
+ *
  * @example
  * ```typescript
  * const responses = await generateBatchResponses(
@@ -193,66 +195,65 @@ Draft the complete, ready-to-send email response in ${language}:`,
  * ```
  */
 export async function generateBatchResponses(
-    emails: Array<{ email: EmailInfo; priority: PriorityInfo }>,
-    courseName: string,
-    options: {
-        maxResponses?: number;
-        professorName?: string;
-        additionalContext?: string;
-        language?: string; // e.g., 'English', 'Spanish', 'French', 'German', etc.
-        model?: string;
-    } = {}
+  emails: Array<{ email: EmailInfo; priority: PriorityInfo }>,
+  courseName: string,
+  options: {
+    maxResponses?: number;
+    professorName?: string;
+    additionalContext?: string;
+    language?: string; // e.g., 'English', 'Spanish', 'French', 'German', etc.
+    model?: string;
+  } = {}
 ): Promise<GeneratedResponse[]> {
-    const { maxResponses, professorName, additionalContext, language, model } = options;
+  const { maxResponses, professorName, additionalContext, language, model } =
+    options;
 
-    const emailsToProcess = maxResponses
-        ? emails.slice(0, maxResponses)
-        : emails;
+  const emailsToProcess = maxResponses ? emails.slice(0, maxResponses) : emails;
 
-    console.log(`\n✍️  Generating ${emailsToProcess.length} draft responses...`);
+  console.log(`\n✍️  Generating ${emailsToProcess.length} draft responses...`);
 
-    const responses: GeneratedResponse[] = [];
+  const responses: GeneratedResponse[] = [];
 
-    for (const { email, priority } of emailsToProcess) {
-        const response = await generateEmailResponse({
-            email,
-            priority,
-            courseName,
-            professorName,
-            additionalContext,
-            language,
-            model,
-        });
+  for (const { email, priority } of emailsToProcess) {
+    const response = await generateEmailResponse({
+      email,
+      priority,
+      courseName,
+      professorName,
+      additionalContext,
+      language,
+      model,
+    });
 
-        responses.push(response);
-    }
+    responses.push(response);
+  }
 
-    console.log(`✅ Generated ${responses.length} draft responses\n`);
+  console.log(`✅ Generated ${responses.length} draft responses\n`);
 
-    return responses;
+  return responses;
 }
 
 /**
  * Get response statistics
- * 
+ *
  * @param responses - Array of generated responses
  * @returns Response statistics
  */
 export function getResponseStats(responses: GeneratedResponse[]) {
-    const avgLength =
-        responses.reduce((sum, r) => sum + r.draftResponse.length, 0) /
-        responses.length;
+  const avgLength =
+    responses.reduce((sum, r) => sum + r.draftResponse.length, 0) /
+    responses.length;
 
-    const byPriority = {
-        critical: responses.filter((r) => r.priority === 'critical').length,
-        high: responses.filter((r) => r.priority === 'high').length,
-        medium: responses.filter((r) => r.priority === 'medium').length,
-        low: responses.filter((r) => r.priority === 'low').length,
-    };
+  const byPriority = {
+    critical: responses.filter(r => r.priority === 'critical').length,
+    high: responses.filter(r => r.priority === 'high').length,
+    medium: responses.filter(r => r.priority === 'medium').length,
+    low: responses.filter(r => r.priority === 'low').length,
+  };
 
-    return {
-        total: responses.length,
-        averageLength: Math.round(avgLength),
-        byPriority,
-    };
+  return {
+    total: responses.length,
+    averageLength: Math.round(avgLength),
+    byPriority,
+  };
 }

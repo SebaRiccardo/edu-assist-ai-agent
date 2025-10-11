@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CourseCard } from '@/components/course-card';
 import { CourseFormDialog } from '@/components/course-form-dialog';
-import { DomainCourse } from '@/types';
 import { Loader2, Plus, BookOpen } from 'lucide-react';
 import {
   useCourses,
@@ -81,7 +80,6 @@ export default function CoursesPage() {
       year: course.year,
       description: course.description,
       context: course.context,
-      inboxes: course.inboxes as any,
       professor_id: course.professor_id,
       student_count: course.student_count,
       start_at: course.start_at ? course.start_at : null,

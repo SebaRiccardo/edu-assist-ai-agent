@@ -157,8 +157,8 @@ A `Sidebar` component is composed of the following parts:
 ## Usage
 
 ```tsx showLineNumbers title="app/layout.tsx"
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/app-sidebar"
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/app-sidebar';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -169,7 +169,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {children}
       </main>
     </SidebarProvider>
-  )
+  );
 }
 ```
 
@@ -180,7 +180,7 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarHeader,
-} from "@/components/ui/sidebar"
+} from '@/components/ui/sidebar';
 
 export function AppSidebar() {
   return (
@@ -192,7 +192,7 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter />
     </Sidebar>
-  )
+  );
 }
 ```
 
@@ -207,8 +207,8 @@ Let's start with the most basic sidebar. A collapsible sidebar with a menu.
 </Step>
 
 ```tsx showLineNumbers title="app/layout.tsx"
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/app-sidebar"
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/app-sidebar';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -219,21 +219,21 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {children}
       </main>
     </SidebarProvider>
-  )
+  );
 }
 ```
 
 <Step>Create a new sidebar component at `components/app-sidebar.tsx`.</Step>
 
 ```tsx showLineNumbers title="components/app-sidebar.tsx"
-import { Sidebar, SidebarContent } from "@/components/ui/sidebar"
+import { Sidebar, SidebarContent } from '@/components/ui/sidebar';
 
 export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarContent />
     </Sidebar>
-  )
+  );
 }
 ```
 
@@ -242,7 +242,7 @@ export function AppSidebar() {
 We'll use the `SidebarMenu` component in a `SidebarGroup`.
 
 ```tsx showLineNumbers title="components/app-sidebar.tsx"
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
+import { Calendar, Home, Inbox, Search, Settings } from 'lucide-react';
 
 import {
   Sidebar,
@@ -253,36 +253,36 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from '@/components/ui/sidebar';
 
 // Menu items.
 const items = [
   {
-    title: "Home",
-    url: "#",
+    title: 'Home',
+    url: '#',
     icon: Home,
   },
   {
-    title: "Inbox",
-    url: "#",
+    title: 'Inbox',
+    url: '#',
     icon: Inbox,
   },
   {
-    title: "Calendar",
-    url: "#",
+    title: 'Calendar',
+    url: '#',
     icon: Calendar,
   },
   {
-    title: "Search",
-    url: "#",
+    title: 'Search',
+    url: '#',
     icon: Search,
   },
   {
-    title: "Settings",
-    url: "#",
+    title: 'Settings',
+    url: '#',
     icon: Settings,
   },
-]
+];
 
 export function AppSidebar() {
   return (
@@ -292,7 +292,7 @@ export function AppSidebar() {
           <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {items.map(item => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <a href={item.url}>
@@ -307,7 +307,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }
 ```
 
@@ -355,8 +355,8 @@ The `SidebarProvider` component is used to provide the sidebar context to the `S
 If you have a single sidebar in your application, you can use the `SIDEBAR_WIDTH` and `SIDEBAR_WIDTH_MOBILE` variables in `sidebar.tsx` to set the width of the sidebar.
 
 ```tsx showLineNumbers title="components/ui/sidebar.tsx"
-const SIDEBAR_WIDTH = "16rem"
-const SIDEBAR_WIDTH_MOBILE = "18rem"
+const SIDEBAR_WIDTH = '16rem';
+const SIDEBAR_WIDTH_MOBILE = '18rem';
 ```
 
 For multiple sidebars in your application, you can use the `style` prop to set the width of the sidebar.
@@ -366,8 +366,8 @@ To set the width of the sidebar, you can use the `--sidebar-width` and `--sideba
 ```tsx showLineNumbers title="components/ui/sidebar.tsx"
 <SidebarProvider
   style={{
-    "--sidebar-width": "20rem",
-    "--sidebar-width-mobile": "20rem",
+    '--sidebar-width': '20rem',
+    '--sidebar-width-mobile': '20rem',
   }}
 >
   <Sidebar />
@@ -385,7 +385,7 @@ To trigger the sidebar, you use the `cmd+b` keyboard shortcut on Mac and `ctrl+b
 You can change the keyboard shortcut by updating the `SIDEBAR_KEYBOARD_SHORTCUT` variable.
 
 ```tsx showLineNumbers title="components/ui/sidebar.tsx"
-const SIDEBAR_KEYBOARD_SHORTCUT = "b"
+const SIDEBAR_KEYBOARD_SHORTCUT = 'b';
 ```
 
 ### Persisted State
@@ -395,14 +395,14 @@ The `SidebarProvider` supports persisting the sidebar state across page reloads 
 To persist sidebar state in Next.js, set up your `SidebarProvider` in `app/layout.tsx` like this:
 
 ```tsx showLineNumbers title="app/layout.tsx"
-import { cookies } from "next/headers"
+import { cookies } from 'next/headers';
 
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/app-sidebar"
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/app-sidebar';
 
 export async function Layout({ children }: { children: React.ReactNode }) {
-  const cookieStore = await cookies()
-  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
+  const cookieStore = await cookies();
+  const defaultOpen = cookieStore.get('sidebar_state')?.value === 'true';
 
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
@@ -412,14 +412,14 @@ export async function Layout({ children }: { children: React.ReactNode }) {
         {children}
       </main>
     </SidebarProvider>
-  )
+  );
 }
 ```
 
 You can change the name of the cookie by updating the `SIDEBAR_COOKIE_NAME` variable in `sidebar.tsx`.
 
 ```tsx showLineNumbers title="components/ui/sidebar.tsx"
-const SIDEBAR_COOKIE_NAME = "sidebar_state"
+const SIDEBAR_COOKIE_NAME = 'sidebar_state';
 ```
 
 ## Sidebar
@@ -427,10 +427,10 @@ const SIDEBAR_COOKIE_NAME = "sidebar_state"
 The main `Sidebar` component used to render a collapsible sidebar.
 
 ```tsx showLineNumbers
-import { Sidebar } from "@/components/ui/sidebar"
+import { Sidebar } from '@/components/ui/sidebar';
 
 export function AppSidebar() {
-  return <Sidebar />
+  return <Sidebar />;
 }
 ```
 
@@ -449,10 +449,10 @@ Use the `side` prop to change the side of the sidebar.
 Available options are `left` and `right`.
 
 ```tsx showLineNumbers
-import { Sidebar } from "@/components/ui/sidebar"
+import { Sidebar } from '@/components/ui/sidebar';
 
 export function AppSidebar() {
-  return <Sidebar side="left | right" />
+  return <Sidebar side="left | right" />;
 }
 ```
 
@@ -463,10 +463,10 @@ Use the `variant` prop to change the variant of the sidebar.
 Available options are `sidebar`, `floating` and `inset`.
 
 ```tsx showLineNumbers
-import { Sidebar } from "@/components/ui/sidebar"
+import { Sidebar } from '@/components/ui/sidebar';
 
 export function AppSidebar() {
-  return <Sidebar variant="sidebar | floating | inset" />
+  return <Sidebar variant="sidebar | floating | inset" />;
 }
 ```
 
@@ -491,10 +491,10 @@ Use the `collapsible` prop to make the sidebar collapsible.
 Available options are `offcanvas`, `icon` and `none`.
 
 ```tsx showLineNumbers
-import { Sidebar } from "@/components/ui/sidebar"
+import { Sidebar } from '@/components/ui/sidebar';
 
 export function AppSidebar() {
-  return <Sidebar collapsible="offcanvas | icon | none" />
+  return <Sidebar collapsible="offcanvas | icon | none" />;
 }
 ```
 
@@ -509,7 +509,7 @@ export function AppSidebar() {
 The `useSidebar` hook is used to control the sidebar.
 
 ```tsx showLineNumbers
-import { useSidebar } from "@/components/ui/sidebar"
+import { useSidebar } from '@/components/ui/sidebar';
 
 export function AppSidebar() {
   const {
@@ -520,7 +520,7 @@ export function AppSidebar() {
     setOpenMobile,
     isMobile,
     toggleSidebar,
-  } = useSidebar()
+  } = useSidebar();
 }
 ```
 
@@ -636,7 +636,7 @@ export function AppSidebar() {
         </SidebarFooter>
       </Sidebar>
     </SidebarProvider>
-  )
+  );
 }
 ```
 
@@ -645,7 +645,7 @@ export function AppSidebar() {
 The `SidebarContent` component is used to wrap the content of the sidebar. This is where you add your `SidebarGroup` components. It is scrollable.
 
 ```tsx showLineNumbers
-import { Sidebar, SidebarContent } from "@/components/ui/sidebar"
+import { Sidebar, SidebarContent } from '@/components/ui/sidebar';
 
 export function AppSidebar() {
   return (
@@ -655,7 +655,7 @@ export function AppSidebar() {
         <SidebarGroup />
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }
 ```
 
@@ -679,7 +679,7 @@ A `SidebarGroup` has a `SidebarGroupLabel`, a `SidebarGroupContent` and an optio
 </figure>
 
 ```tsx showLineNumbers
-import { Sidebar, SidebarContent, SidebarGroup } from "@/components/ui/sidebar"
+import { Sidebar, SidebarContent, SidebarGroup } from '@/components/ui/sidebar';
 
 export function AppSidebar() {
   return (
@@ -694,7 +694,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }
 ```
 
@@ -731,7 +731,7 @@ export function AppSidebar() {
         </CollapsibleContent>
       </SidebarGroup>
     </Collapsible>
-  )
+  );
 }
 ```
 
@@ -767,7 +767,7 @@ export function AppSidebar() {
       </SidebarGroupAction>
       <SidebarGroupContent />
     </SidebarGroup>
-  )
+  );
 }
 ```
 
@@ -814,7 +814,7 @@ Here's an example of a `SidebarMenu` component rendering a list of projects.
       <SidebarGroupLabel>Projects</SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu>
-          {projects.map((project) => (
+          {projects.map(project => (
             <SidebarMenuItem key={project.name}>
               <SidebarMenuButton asChild>
                 <a href={project.url}>
@@ -1036,7 +1036,7 @@ function NavProjectsSkeleton() {
         </SidebarMenuItem>
       ))}
     </SidebarMenu>
-  )
+  );
 }
 ```
 
@@ -1076,12 +1076,12 @@ The `SidebarTrigger` component must be used within a `SidebarProvider`.
 To create a custom trigger, you can use the `useSidebar` hook.
 
 ```tsx showLineNumbers
-import { useSidebar } from "@/components/ui/sidebar"
+import { useSidebar } from '@/components/ui/sidebar';
 
 export function CustomTrigger() {
-  const { toggleSidebar } = useSidebar()
+  const { toggleSidebar } = useSidebar();
 
-  return <button onClick={toggleSidebar}>Toggle Sidebar</button>
+  return <button onClick={toggleSidebar}>Toggle Sidebar</button>;
 }
 ```
 
@@ -1129,17 +1129,17 @@ function NavProjectsSkeleton() {
         </SidebarMenuItem>
       ))}
     </SidebarMenu>
-  )
+  );
 }
 ```
 
 ```tsx showLineNumbers {2} title="Server component fetching data."
 async function NavProjects() {
-  const projects = await fetchProjects()
+  const projects = await fetchProjects();
 
   return (
     <SidebarMenu>
-      {projects.map((project) => (
+      {projects.map(project => (
         <SidebarMenuItem key={project.name}>
           <SidebarMenuButton asChild>
             <a href={project.url}>
@@ -1150,7 +1150,7 @@ async function NavProjects() {
         </SidebarMenuItem>
       ))}
     </SidebarMenu>
-  )
+  );
 }
 ```
 
@@ -1169,7 +1169,7 @@ function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }
 ```
 
@@ -1270,13 +1270,13 @@ Use the `open` and `onOpenChange` props to control the sidebar.
 
 ```tsx showLineNumbers
 export function AppSidebar() {
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = React.useState(false);
 
   return (
     <SidebarProvider open={open} onOpenChange={setOpen}>
       <Sidebar />
     </SidebarProvider>
-  )
+  );
 }
 ```
 
@@ -1348,18 +1348,18 @@ Update the `setOpen` callback in `<SidebarProvider>` as follows:
 ```tsx showLineNumbers
 const setOpen = React.useCallback(
   (value: boolean | ((value: boolean) => boolean)) => {
-    const openState = typeof value === "function" ? value(open) : value
+    const openState = typeof value === 'function' ? value(open) : value;
     if (setOpenProp) {
-      setOpenProp(openState)
+      setOpenProp(openState);
     } else {
-      _setOpen(openState)
+      _setOpen(openState);
     }
 
     // This sets the cookie to keep the sidebar state.
-    document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
+    document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
   },
   [setOpenProp, open]
-)
+);
 ```
 
 ### 2024-10-21 Fixed `text-sidebar-foreground`

@@ -170,7 +170,8 @@ export async function GET(request: Request) {
   const connectionId = searchParams.get('connectionId');
 
   // Wait for connection to complete
-  const connection = await composio.connectedAccounts.waitForConnection(connectionId);
+  const connection =
+    await composio.connectedAccounts.waitForConnection(connectionId);
 
   return NextResponse.json({
     id: connection.id,

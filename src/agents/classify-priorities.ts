@@ -1,6 +1,6 @@
 /**
  * Priority Classification Agent
- * 
+ *
  * Analyzes categorized emails and assigns priority levels based on urgency,
  * impact, and deadline considerations.
  */
@@ -18,58 +18,58 @@ export type PriorityLevel = 'critical' | 'high' | 'medium' | 'low';
  * Single email priority assessment
  */
 export interface EmailPriority {
-    emailId: string;
-    priority: PriorityLevel;
-    responseDeadline: string;
-    reasoning: string;
+  emailId: string;
+  priority: PriorityLevel;
+  responseDeadline: string;
+  reasoning: string;
 }
 
 /**
  * Complete prioritization result
  */
 export interface PrioritizationResult {
-    priorities: EmailPriority[];
-    summary: string;
+  priorities: EmailPriority[];
+  summary: string;
 }
 
 /**
  * Input parameters for priority classification
  */
 export interface PriorityClassificationParams {
-    emails: Array<{
-        id: string;
-        from: string;
-        subject: string;
-        body: string;
-        category?: string;
-        reasoning?: string;
-    }>;
-    courseName: string;
-    analysisSummary?: string;
-    model?: string;
+  emails: Array<{
+    id: string;
+    from: string;
+    subject: string;
+    body: string;
+    category?: string;
+    reasoning?: string;
+  }>;
+  courseName: string;
+  analysisSummary?: string;
+  model?: string;
 }
 
 /**
  * Zod schemas for structured output
  */
 const prioritySchema = z.object({
-    emailId: z.string(),
-    priority: z.enum(['critical', 'high', 'medium', 'low']),
-    responseDeadline: z.string().describe('Suggested response deadline'),
-    reasoning: z.string(),
+  emailId: z.string(),
+  priority: z.enum(['critical', 'high', 'medium', 'low']),
+  responseDeadline: z.string().describe('Suggested response deadline'),
+  reasoning: z.string(),
 });
 
 const priorityListSchema = z.object({
-    priorities: z.array(prioritySchema),
-    summary: z.string(),
+  priorities: z.array(prioritySchema),
+  summary: z.string(),
 });
 
 /**
  * Classify email priorities using AI
- * 
+ *
  * @param params - Classification parameters including emails and course context
  * @returns Prioritization result with priority levels and deadlines
- * 
+ *
  * @example
  * ```typescript
  * const result = await classifyEmailPriorities({
@@ -77,27 +77,27 @@ const priorityListSchema = z.object({
  *   courseName: 'CS 101: Introduction to Computer Science',
  *   analysisSummary: 'Most emails are from students...'
  * });
- * 
+ *
  * const criticalEmails = result.priorities.filter(p => p.priority === 'critical');
  * ```
  */
 export async function classifyEmailPriorities(
-    params: PriorityClassificationParams
+  params: PriorityClassificationParams
 ): Promise<PrioritizationResult> {
-    const {
-        emails,
-        courseName,
-        analysisSummary = '',
-        model = 'gemini-2.0-flash',
-    } = params;
+  const {
+    emails,
+    courseName,
+    analysisSummary = '',
+    model = 'gemini-2.0-flash',
+  } = params;
 
-    console.log(`⚡ Classifying priorities for ${emails.length} emails...`);
+  console.log(`⚡ Classifying priorities for ${emails.length} emails...`);
 
-    const result = await generateObject({
-        model: google(model),
-        schema: priorityListSchema,
-        system: `You are an expert at triaging university course emails and determining response priority based on urgency and importance.`,
-        prompt: `Analyze these course-related emails and assign priority levels.
+  const result = await generateObject({
+    model: google(model),
+    schema: priorityListSchema,
+    system: `You are an expert at triaging university course emails and determining response priority based on urgency and importance.`,
+    prompt: `Analyze these course-related emails and assign priority levels.
 
 **Course Context:**
 ${courseName}
@@ -107,17 +107,17 @@ ${analysisSummary}
 
 **Emails to Prioritize:**
 ${JSON.stringify(
-            emails.map((e) => ({
-                id: e.id,
-                from: e.from,
-                subject: e.subject,
-                body: e.body.substring(0, 300),
-                category: e.category,
-                aiReasoning: e.reasoning,
-            })),
-            null,
-            2
-        )}
+  emails.map(e => ({
+    id: e.id,
+    from: e.from,
+    subject: e.subject,
+    body: e.body.substring(0, 300),
+    category: e.category,
+    aiReasoning: e.reasoning,
+  })),
+  null,
+  2
+)}
 
 **Priority Guidelines:**
 - **CRITICAL**: Technical issues blocking work, urgent admin matters, emergencies
@@ -147,42 +147,40 @@ Consider:
 - Administrative requirements and policies
 - Complexity of required response
 - Number of students affected`,
-    });
+  });
 
-    console.log(`✅ Prioritization complete`);
-    console.log(`   Summary: ${result.object.summary}`);
+  console.log(`✅ Prioritization complete`);
+  console.log(`   Summary: ${result.object.summary}`);
 
-    return result.object;
+  return result.object;
 }
 
 /**
  * Get priority statistics from prioritization result
- * 
+ *
  * @param result - Prioritization result
  * @returns Count of emails by priority level
  */
 export function getPriorityStats(result: PrioritizationResult) {
-    return {
-        critical: result.priorities.filter((p) => p.priority === 'critical').length,
-        high: result.priorities.filter((p) => p.priority === 'high').length,
-        medium: result.priorities.filter((p) => p.priority === 'medium').length,
-        low: result.priorities.filter((p) => p.priority === 'low').length,
-        total: result.priorities.length,
-    };
+  return {
+    critical: result.priorities.filter(p => p.priority === 'critical').length,
+    high: result.priorities.filter(p => p.priority === 'high').length,
+    medium: result.priorities.filter(p => p.priority === 'medium').length,
+    low: result.priorities.filter(p => p.priority === 'low').length,
+    total: result.priorities.length,
+  };
 }
 
 /**
  * Filter emails by priority level
- * 
+ *
  * @param result - Prioritization result
  * @param priorities - Priority levels to include
  * @returns Filtered email priorities
  */
 export function filterByPriority(
-    result: PrioritizationResult,
-    priorities: PriorityLevel[]
+  result: PrioritizationResult,
+  priorities: PriorityLevel[]
 ): EmailPriority[] {
-    return result.priorities.filter((p) =>
-        priorities.includes(p.priority)
-    );
+  return result.priorities.filter(p => priorities.includes(p.priority));
 }

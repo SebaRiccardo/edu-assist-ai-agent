@@ -1,39 +1,34 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { CourseDetailsHeader } from '@/components/course-details-header';
-import { CourseInfoCards } from '@/components/course-info-cards';
-import { AnalysisStatsBar } from '@/components/analysis-stats-bar';
 import { EmailListStates } from '@/components/email-list-states';
-import { CategorizedEmail, InboxAnalysisResult, DomainCourse } from '@/types';
 import {
-  Inbox,
-  Loader2,
-  Mail,
-  MailPlus,
-  MailWarning,
-  Sparkles,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+  CategorizedEmail,
+  InboxAnalysisResult,
+  DomainCourse,
+  DomainInbox,
+} from '@/types';
+import { Loader2 } from 'lucide-react';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useCourse } from '@/hooks/use-courses';
-import { Course } from '@/lib/supabase/types/courses.types';
 import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from '@/components/ui/empty';
+  useCreateInbox,
+  useDeleteInbox,
+  useInboxes,
+} from '@/hooks/use-inboxes';
+import { Course } from '@/lib/supabase/types/courses.types';
+import { Inboxes } from '@/lib/supabase/types/inboxes.types';
+import { useConnections } from '@/hooks/use-connections';
+import { useGmailConnection } from '@/hooks/use-gmail-connection';
+import { ConnectedInboxesCard } from '@/components/connected-inboxes-card';
+import { ConnectionStatusCard } from '@/components/connection-status-card';
+import { ErrorCard } from '@/components/error-card';
+import { NoAccountsEmptyState } from '@/components/no-accounts-empty-state';
+import { AddInboxSection } from '@/components/add-inbox-section';
+import { ComposioConnectedAccount } from '@/app/api/connections/route';
+import { InboxEmailSelect } from './inbox-email-select';
 
 export default function CourseDetailsPage() {
   const router = useRouter();
@@ -41,68 +36,94 @@ export default function CourseDetailsPage() {
   const { user } = useCurrentUser();
   const courseId = params.id as string;
 
-  // Use TanStack Query hook to fetch course
+  const [currentInbox, setCurrentInbox] = useState<DomainInbox | null>(null);
+
+  // Data fetching hooks
   const { data: courseData, isLoading, error } = useCourse(courseId);
+  const { data: inboxes = [] } = useInboxes(courseId);
+  const { mutateAsync: deleteInbox } = useDeleteInbox();
+  const {
+    mutateAsync: createInbox,
+    isPending: isCreatingInbox,
+    variables: createInboxVariables,
+  } = useCreateInbox();
+
+  const { data: composionGmailConnections } = useConnections(
+    Array.isArray(inboxes) && inboxes.length > 0
+  );
+
+  // Gmail connection logic
+  const gmailConnection = useGmailConnection({
+    courseId,
+    onConnectionSuccess: account => {
+      inboxes?.length === 0 && composionGmailConnections?.length === 1
+        ? handleAddInboxToCourse(account)
+        : null;
+    },
+  });
 
   // Transform Supabase data to DomainCourse type
   const course: DomainCourse | null = courseData
     ? {
-        id: (courseData as Course).id,
-        name: (courseData as Course).name,
-        year: (courseData as Course).year ?? '',
-        description: (courseData as Course).description,
-        context: (courseData as Course).context,
-        inboxes: (courseData as Course).inboxes as any, // JSON type from Supabase
-        professorId: (courseData as Course).professor_id,
-        studentCount: (courseData as Course).student_count,
-        startAt: (courseData as Course).start_at
-          ? new Date((courseData as Course).start_at!)
-          : undefined,
-        endAt: (courseData as Course).end_at
-          ? new Date((courseData as Course).end_at!)
-          : undefined,
-        createdAt: new Date((courseData as Course).created_at),
-        updatedAt: new Date((courseData as Course).updated_at),
-      }
+      id: courseData.id,
+      name: courseData.name,
+      year: courseData.year ?? '',
+      description: courseData.description,
+      context: courseData.context,
+      inboxes: inboxes?.map(inbox => ({
+        id: inbox.id,
+        email: inbox.email,
+        unreadCount: inbox.unread_count,
+        connectedAccountId: inbox.connected_account_id,
+        status: inbox.status,
+        createdAt: new Date(inbox.created_at),
+        updatedAt: new Date(inbox.updated_at),
+      })),
+      professorId: courseData.professor_id,
+      studentCount: courseData.student_count,
+      startAt: courseData.start_at
+        ? new Date(courseData.start_at!)
+        : undefined,
+      endAt: courseData.end_at ? new Date(courseData.end_at!) : undefined,
+      createdAt: new Date(courseData.created_at),
+      updatedAt: new Date(courseData.updated_at),
+    }
     : null;
 
+  // Email state
   const [emails, setEmails] = useState<CategorizedEmail[]>([]);
-  const [newGmailAddress, setNewGmailAddress] = useState<string | null>(null);
   const [isChecking, setIsChecking] = useState(false);
   const [isSendingReply, setIsSendingReply] = useState(false);
   const [replyingToEmailId, setReplyingToEmailId] = useState<string | null>(
     null
   );
-  const [gmailAuthRequired, setGmailAuthRequired] = useState(false);
-  const [gmailAuthUrl, setGmailAuthUrl] = useState<string | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
   const [stats, setStats] = useState<{
     totalAnalyzed: number;
     courseRelated: number;
   } | null>(null);
 
-  // Redirect if course not found after loading
-  if (!isLoading && !course && !error) {
-    router.push('/dashboard');
-    return null;
-  }
+  // Handlers
+  const handleAnalyzeInbox = async () => {
+    if (!course || !user) return;
 
-  const handleCheckEmails = async () => {
-    if (!course) return;
+    if (!course.inboxes || course.inboxes.length === 0) {
+      setAuthError('Please connect a Gmail account first');
+      return;
+    }
 
     setIsChecking(true);
-    setGmailAuthRequired(false);
     setAuthError(null);
 
     try {
       const response = await fetch('/api/inbox/analyze', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          connectedAccountId: currentInbox
+            ? currentInbox.connectedAccountId
+            : course.inboxes[0].connectedAccountId,
           courseId: course.id,
-          userId: user?.id || course.professorId,
           reasoningLanguage: 'spanish',
         }),
       });
@@ -114,13 +135,8 @@ export default function CourseDetailsPage() {
         error?: string;
       } = await response.json();
 
-      // Handle Gmail authentication required
-      if (response.status === 401 && res.authRequired) {
-        setGmailAuthRequired(true);
-        setAuthError(res.error || 'Gmail connection required');
-
-        // Fetch the Gmail auth URL
-        await handleGmailAuth();
+      if (response.status === 401) {
+        setAuthError('Gmail connection required');
         return;
       }
 
@@ -138,71 +154,39 @@ export default function CourseDetailsPage() {
     } catch (error) {
       console.error('Error checking emails:', error);
       setAuthError(
-        error instanceof Error ? error.message : 'An error occurred'
+        'Ocurrió un error al analizar los correos. Por favor, inténtalo de nuevo.'
       );
     } finally {
       setIsChecking(false);
     }
   };
 
-  const handleGmailAuth = async () => {
-    if (!course || !user) return;
-
+  const handleAddInboxToCourse = async (account: ComposioConnectedAccount) => {
     try {
-      const response = await fetch('/api/gmail-auth', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      await createInbox([
+        {
+          course_id: courseId,
+          email: account.email,
+          connected_account_id: account.id,
+          status: account.status,
         },
-        body: JSON.stringify({
-          userId: user.id,
-          courseId: course.id,
-          gmailAddress: newGmailAddress,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.redirectUrl) {
-        setGmailAuthUrl(data.redirectUrl);
-
-        window.open(data.redirectUrl, '_blank', 'width=600,height=700');
-      } else if (data.isConnected) {
-        // Already connected, retry checking emails
-        // setGmailAuthRequired(false);
-        // await handleCheckEmails();
-      }
+      ]);
     } catch (error) {
-      console.error('Error initiating Gmail auth:', error);
-      setAuthError('Failed to initiate Gmail authentication');
+      console.error('Error adding account to course:', error);
+      setAuthError('Failed to add account to course');
     }
   };
 
-  const handleConnectGmail = () => {
-    if (gmailAuthUrl) {
-      window.open(gmailAuthUrl, '_blank', 'width=600,height=700');
+  const handleDisconnectInbox = async (inboxId: string) => {
+    if (!confirm('Are you sure you want to disconnect this Gmail account?')) {
+      return;
+    }
 
-      // Optional: Poll for connection status
-      const pollInterval = setInterval(async () => {
-        try {
-          const response = await fetch(`/api/gmail-auth?userId=${user?.id}`);
-          const data = await response.json();
-
-          if (data.isConnected) {
-            clearInterval(pollInterval);
-            setGmailAuthRequired(false);
-            setGmailAuthUrl(null);
-            setAuthError(null);
-            // Automatically retry checking emails
-            await handleCheckEmails();
-          }
-        } catch (error) {
-          console.error('Error checking connection status:', error);
-        }
-      }, 3000); // Check every 3 seconds
-
-      // Stop polling after 2 minutes
-      setTimeout(() => clearInterval(pollInterval), 120000);
+    try {
+      await deleteInbox({ id: inboxId });
+    } catch (error) {
+      console.error('Error disconnecting inbox:', error);
+      setAuthError('Failed to disconnect inbox');
     }
   };
 
@@ -219,13 +203,9 @@ export default function CourseDetailsPage() {
     setReplyingToEmailId(emailId);
 
     try {
-      console.log('🤖 Starting auto-reply workflow for:', email.subject);
-
       const response = await fetch('/api/email/reply', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: user.id,
           email: {
@@ -251,10 +231,8 @@ export default function CourseDetailsPage() {
       const result = await response.json();
 
       if (result.success) {
-        console.log('✅ Email sent successfully:', result.data.sent);
         alert('Email reply sent successfully!');
       } else {
-        console.error('❌ Failed to send email:', result.error);
         alert(`Failed to send email: ${result.error}`);
       }
     } catch (error) {
@@ -265,6 +243,16 @@ export default function CourseDetailsPage() {
       setReplyingToEmailId(null);
     }
   };
+
+  const handleInboxSelect = (inbox: DomainInbox) => {
+    setCurrentInbox(inbox);
+  };
+
+  // Redirect if course not found
+  if (!isLoading && !course && !error) {
+    router.push('/dashboard');
+    return null;
+  }
 
   if (isLoading) {
     return (
@@ -278,111 +266,59 @@ export default function CourseDetailsPage() {
     return null;
   }
 
-  console.log(course);
+  const gmailAccounts = composionGmailConnections || [];
+  const hasNoConnections = gmailAccounts.length === 0;
+  const hasInboxes = course.inboxes && course.inboxes.length > 0;
+  const addingAccountId = createInboxVariables
+    ? createInboxVariables[0].connected_account_id
+    : null;
 
   return (
-    <div className="flex flex-1 flex-col h-screen overflow-hidden">
-      <div className="mx-auto max-w-7xl w-full px-6 pb-6 space-y-6">
+    <div className="flex flex-1 flex-col">
+      <div className="mx-auto max-w-7xl w-full px-6 space-y-6">
         <CourseDetailsHeader
           course={course}
           isChecking={isChecking}
-          onAnalyze={handleCheckEmails}
+          onAnalyze={handleAnalyzeInbox}
         />
 
-        {/* <CourseInfoCards course={course} /> */}
+        <ConnectionStatusCard
+          status={gmailConnection.connectionStatus}
+          onCancel={gmailConnection.cancelConnection}
+        />
 
-        {/* Gmail Authentication Required Card */}
-        {gmailAuthRequired && (
-          <Card className="border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/20">
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="rounded-full bg-amber-100 p-2 dark:bg-amber-900/50">
-                  <Mail className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg">
-                    Gmail Connection Required
-                  </CardTitle>
-                  <CardDescription className="text-amber-700 dark:text-amber-300">
-                    {authError ||
-                      'Connect your Gmail account to analyze emails'}
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <p className="text-sm text-muted-foreground">
-                  To analyze emails for this course, you need to connect your
-                  Gmail account. This will allow the AI assistant to securely
-                  access and categorize your emails.
-                </p>
-                <div className="flex gap-3">
-                  <Button
-                    onClick={handleConnectGmail}
-                    disabled={!gmailAuthUrl}
-                    className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-700 dark:hover:bg-amber-800"
-                  >
-                    {gmailAuthUrl ? (
-                      <>
-                        <Mail className="mr-2 h-4 w-4" />
-                        Connect Gmail Account
-                      </>
-                    ) : (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Loading...
-                      </>
-                    )}
-                  </Button>
-                  {gmailAuthUrl && (
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setGmailAuthRequired(false);
-                        setGmailAuthUrl(null);
-                        setAuthError(null);
-                      }}
-                    >
-                      Cancel
-                    </Button>
-                  )}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  💡 A new window will open for you to authorize the connection.
-                  After authorization, this page will automatically refresh.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+        {hasInboxes && (
+          <div className="pb-2">
+            <InboxEmailSelect
+              onSelected={handleInboxSelect}
+              inboxes={course.inboxes}
+            />
+          </div>
         )}
-
-        {/* {stats && <AnalysisStatsBar stats={stats} />} */}
       </div>
 
-      {course.inboxes?.length === 0 ? (
-        <div className="flex-1 overflow-hidden mx-auto max-w-7xl w-full px-6 pb-6">
-          <Empty className="min-h-[40vh] border-none rounded-3xl">
-            <EmptyHeader>
-              <EmptyMedia className="rounded-full" variant="icon">
-                <MailWarning className="h-6 w-6 text-orange-500" />
-              </EmptyMedia>
-              <EmptyTitle>No inbox connected yet</EmptyTitle>
-              <EmptyDescription>
-                Click the "Connect Inbox" button to connect your email account,
-                so the AI can start analyzing it.
-              </EmptyDescription>
-            </EmptyHeader>
-            <EmptyContent>
-              <Button size="lg" className="gap-2" onClick={handleGmailAuth}>
-                <MailPlus className="h-4 w-4" />
-                Connect Inbox
-              </Button>
-            </EmptyContent>
-          </Empty>
-        </div>
+      {/* Main Content Area */}
+      {hasNoConnections ? (
+        <NoAccountsEmptyState
+          connectionStatus={gmailConnection.connectionStatus}
+          isDialogOpen={gmailConnection.isDialogOpen}
+          onOpenDialog={gmailConnection.setIsDialogOpen}
+          onConnect={gmailConnection.initiateConnection}
+          onCancel={gmailConnection.cancelConnection}
+          onRetry={gmailConnection.retryConnection}
+        />
+      ) : !hasInboxes ? (
+        <AddInboxSection
+          accounts={gmailAccounts}
+          isDialogOpen={gmailConnection.isDialogOpen}
+          onOpenDialog={gmailConnection.setIsDialogOpen}
+          onConnect={gmailConnection.initiateConnection}
+          onAddAccount={handleAddInboxToCourse}
+          isAddingAccount={isCreatingInbox}
+          addingAccountId={addingAccountId}
+        />
       ) : (
-        <div className="flex-1 overflow-hidden mx-auto max-w-7xl w-full px-6 pb-6">
+        <div className="flex-1 overflow-hidden mx-auto max-w-7xl w-full px-6">
           <EmailListStates
             emails={emails}
             isChecking={isChecking}
@@ -391,7 +327,7 @@ export default function CourseDetailsPage() {
             userId={user?.id}
             isSendingReply={isSendingReply}
             replyingToEmailId={replyingToEmailId}
-            onAnalyze={handleCheckEmails}
+            onAnalyze={handleAnalyzeInbox}
             onAutoReply={handleAutoReply}
           />
         </div>

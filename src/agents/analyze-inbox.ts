@@ -1,5 +1,3 @@
-import { checkGmailConnection, fetchEmails } from '@/lib/composio';
-import { getCourseById } from '@/lib/mock-data';
 import { generateObject } from 'ai';
 import { google } from '@ai-sdk/google';
 import { z } from 'zod';
@@ -10,6 +8,9 @@ import {
   GmailMessageBody,
   TransformedEmail,
 } from '@/types';
+import { ComposioService } from '@/lib/services/composio';
+import { tr } from 'zod/v4/locales';
+
 
 // Set max duration for this API route to handle AI processing
 export const maxDuration = 60;
@@ -89,74 +90,21 @@ function extractSnippet(message: GmailMessageBody): string {
   return '';
 }
 
-/**
- * Analyze and categorize emails for a specific course
- *
- * This function encapsulates the entire email analysis workflow:
- * 1. Validates Gmail connection
- * 2. Fetches emails from Gmail
- * 3. Analyzes emails with AI in batch
- * 4. Returns categorized emails with statistics
- *
- * @param params - Email analysis parameters
- * @returns EmailAnalysisResult with categorized emails and statistics
- * @throws Error if validation fails or Gmail is not connected
- *
- * @example
- * ```typescript
- * const result = await analyzeEmailsForCourse({
- *   userId: 'connection-id',
- *   courseId: '1',
- *   maxEmails: 20,
- *   includeRead: false
- * });
- *
- * console.log(`Analyzed ${result.totalAnalyzed} emails`);
- * console.log(`${result.analysis.stats.courseRelated} are course-related`);
- * ```
- */
 export async function analyzeInboxForCourse(
   params: InboxAnalysisParams
 ): Promise<InboxAnalysisResult> {
   const {
-    userId,
-    courseId,
+    course,
+    connectedAccountId,
     maxEmails = 10,
     includeRead = false,
     reasoningLanguage = 'English',
     verbose = true,
   } = params;
 
-  // Validation
-  if (!userId) {
-    throw new Error('Missing required parameter: userId');
-  }
+  if (!course) throw new Error(`Course is required`);
 
-  if (!courseId) {
-    throw new Error('Missing required parameter: courseId');
-  }
-
-  const course = getCourseById(courseId);
-
-  if (!course) {
-    throw new Error(`Course not found: ${courseId}`);
-  }
-
-  console.log(
-    `🤖 Starting email analysis for user ${userId} - Course: ${course.name}`
-  );
-
-  // STEP 1: Check Gmail connection
-  const connectionStatus = await checkGmailConnection(userId);
-
-  if (!connectionStatus.isConnected) {
-    throw new Error('Gmail not connected. Please authenticate first.');
-  }
-
-  console.log(`✅ Gmail connection verified for user ${userId}`);
-  console.log(`📧 Fetching up to ${maxEmails} emails...`);
-
-  const gmailResponse = await fetchEmails(userId, {
+  const gmailResponse = await ComposioService.fetchEmails(connectedAccountId, {
     query: includeRead ? 'in:inbox' : 'is:unread',
     verbose: verbose,
     max_results: maxEmails,
@@ -207,9 +155,10 @@ export async function analyzeInboxForCourse(
     system: `You are an expert email assistant that helps categorize emails for university professors based on course context. You understand academic contexts and can identify different types of educational communications.`,
     prompt: `Analyze these emails to determine if they are related to the course and categorize their type.
                 
-Course Context:
+Course Details:
     - Course Name: ${course.name}
     - Course Description: ${course.description}
+    - Course Context: ${course.context}
 
 Task:
    - Analyze the following ${emailsForAnalysis.length} emails and categorize each one.
@@ -230,7 +179,7 @@ Label Suggestions:
  
 Analysis Guidelines:
     1. Determine if this email is related to the course "${course.name}"
-    2. Look for course-specific keywords, concepts, or topics mentioned in the course description
+    2. Look for course-specific keywords, concepts, or topics mentioned in the course description and course context
     3. Consider the sender's email domain (students often use .edu addresses)
     4. Analyze the content context and intent
     5. Assign appropriate confidence score (0-1) based on how certain you are
@@ -242,7 +191,7 @@ Emails to Analyze:
 Important:
 - Be thorough but efficient in your analysis.
 - Provide structured analysis for each email with confidence scores and reasoning.
-- Respond in ${reasoningLanguage}.`,
+- Write the reasoning in ${reasoningLanguage}.`,
   });
 
   console.log(`✨ Analysis complete!`);
@@ -269,7 +218,7 @@ Important:
     courseRelated: categorizedEmails.filter(e => e.isRelated).length,
     avgConfidence: Math.round(
       categorizedEmails.reduce((sum, e) => sum + e.confidence, 0) /
-        categorizedEmails.length
+      categorizedEmails.length
     ),
     categoryBreakdown: categorizedEmails.reduce(
       (acc: Record<string, number>, email) => {

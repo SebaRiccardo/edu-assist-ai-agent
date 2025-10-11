@@ -1,4 +1,3 @@
-
 # Workflow Patterns
 
 Combine the building blocks from the [overview](/docs/agents/overview) with these patterns to add structure and reliability to your agents:
@@ -227,7 +226,7 @@ async function implementFeature(featureRequest: string) {
           purpose: z.string(),
           filePath: z.string(),
           changeType: z.enum(['create', 'modify', 'delete']),
-        }),
+        })
       ),
       estimatedComplexity: z.enum(['low', 'medium', 'high']),
     }),
@@ -268,7 +267,7 @@ async function implementFeature(featureRequest: string) {
         file,
         implementation: change,
       };
-    }),
+    })
   );
 
   return {

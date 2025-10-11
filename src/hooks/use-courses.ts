@@ -6,6 +6,7 @@ import {
   useQuery,
   useUpdateMutation,
   useDeleteMutation,
+  UseQuerySingleReturn,
 } from '@supabase-cache-helpers/postgrest-react-query';
 import {
   getAllCoursesForProfessorQuery,
@@ -13,6 +14,7 @@ import {
   getCourseByIdQuery,
   getCoursesCountQuery,
 } from './queries/courses';
+import { Course } from '@/lib/supabase/types/courses.types';
 
 /**
  * Hook to fetch all courses or courses for a specific professor
@@ -30,7 +32,9 @@ export function useCourses(professorId?: string) {
 /**
  * Hook to fetch a single course by ID
  */
-export function useCourse(courseId: string | undefined) {
+export function useCourse(
+  courseId: string | undefined
+): UseQuerySingleReturn<Course> {
   const client = useSupabaseBrowser();
 
   return useQuery(

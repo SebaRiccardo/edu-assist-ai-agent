@@ -7,12 +7,12 @@ image:
   value: 'https://og.composio.dev/api/og?title=Using%20Gmail%20with%20Composio'
 ---
 
-
 ## Overview
 
 **SLUG**: `GMAIL`
 
 ### Description
+
 Gmail is Google’s email service, featuring spam protection, search functions, and seamless integration with other G Suite apps for productivity
 
 ### Authentication Details
@@ -35,7 +35,6 @@ Gmail is Google’s email service, featuring spam protection, search functions, 
 
 </Accordion>
 
-
 <Accordion title="Bearer Token">
 <ParamField path="token" type="string" required={true}>
 </ParamField>
@@ -45,9 +44,10 @@ Gmail is Google’s email service, featuring spam protection, search functions, 
 
 </Accordion>
 
-
 ## Connecting to Gmail
+
 ### Create an auth config
+
 Use the dashboard to create an auth config for the Gmail toolkit. This allows you to connect multiple Gmail accounts to Composio for agents to use.
 
 <Steps>
@@ -63,7 +63,6 @@ Use the dashboard to create an auth config for the Gmail toolkit. This allows yo
   </Step>
 </Steps>
 
-
 ### Connect Your Account
 
 #### Using OAuth2
@@ -73,17 +72,17 @@ Use the dashboard to create an auth config for the Gmail toolkit. This allows yo
 from composio import Composio
 
 # Replace these with your actual values
+
 gmail_auth_config_id = "ac_YOUR_GMAIL_CONFIG_ID" # Auth config ID created above
-user_id = "0000-0000-0000"  # UUID from database/application
+user_id = "0000-0000-0000" # UUID from database/application
 
 composio = Composio()
 
-
 def authenticate_toolkit(user_id: str, auth_config_id: str):
-    connection_request = composio.connected_accounts.initiate(
-        user_id=user_id,
-        auth_config_id=auth_config_id,
-    )
+connection_request = composio.connected_accounts.initiate(
+user_id=user_id,
+auth_config_id=auth_config_id,
+)
 
     print(
         f"Visit this URL to authenticate Gmail: {connection_request.redirect_url}"
@@ -93,13 +92,14 @@ def authenticate_toolkit(user_id: str, auth_config_id: str):
     connection_request.wait_for_connection(timeout=15)
     return connection_request.id
 
-
 connection_id = authenticate_toolkit(user_id, gmail_auth_config_id)
 
 # You can also verify the connection status using:
+
 connected_account = composio.connected_accounts.get(connection_id)
 print(f"Connected account: {connected_account}")
-```
+
+````
 ```typescript title="TypeScript" maxLines=40 wordWrap
 import { Composio } from '@composio/core';
 
@@ -116,10 +116,10 @@ async function authenticateToolkit(userId: string, authConfigId: string) {
   );
 
   console.log(`Visit this URL to authenticate Gmail: ${connectionRequest.redirectUrl}`);
-  
+
   // This will wait for the auth flow to be completed
   await connectionRequest.waitForConnection(60);
-  
+
   return connectionRequest.id;
 }
 
@@ -129,9 +129,9 @@ const connectionId = await authenticateToolkit(userId, gmail_auth_config_id);
 // You can also verify the connection status using:
 const connectedAccount = await composio.connectedAccounts.get(connectionId);
 console.log("Connected account:", connectedAccount);
-```
-</CodeGroup>
+````
 
+</CodeGroup>
 
 #### Using Bearer Token
 
@@ -140,34 +140,35 @@ console.log("Connected account:", connectedAccount);
 from composio import Composio
 
 # Auth config ID created above
-gmail_auth_config_id = "ac_YOUR_GMAIL_CONFIG_ID" 
+
+gmail_auth_config_id = "ac_YOUR_GMAIL_CONFIG_ID"
 
 # UUID from database/application
+
 user_id = "0000-0000-0000"
 
 composio = Composio()
 
+def authenticate_toolkit(user_id: str, auth_config_id: str): # Replace this with a method to retrieve the Bearer Token from the user.
+bearer_token = input("[!] Enter bearer token")
+connection_request = composio.connected_accounts.initiate(
+user_id=user_id,
+auth_config_id=auth_config_id,
+config={"auth_scheme": "BEARER_TOKEN", "val": bearer_token}
+)
+print(f"Successfully connected Gmail for user {user_id}")
+print(f"Connection status: {connection_request.status}")
 
-def authenticate_toolkit(user_id: str, auth_config_id: str):
-    # Replace this with a method to retrieve the Bearer Token from the user.
-    bearer_token = input("[!] Enter bearer token")
-    connection_request = composio.connected_accounts.initiate(
-        user_id=user_id,
-        auth_config_id=auth_config_id,
-        config={"auth_scheme": "BEARER_TOKEN", "val": bearer_token}
-    )
-    print(f"Successfully connected Gmail for user {user_id}")
-    print(f"Connection status: {connection_request.status}")
-    
     return connection_request.id
-
 
 connection_id = authenticate_toolkit(user_id, gmail_auth_config_id)
 
 # You can verify the connection using:
+
 connected_account = composio.connected_accounts.get(connection_id)
 print(f"Connected account: {connected_account}")
-```
+
+````
 ```typescript title="TypeScript" maxLines=40 wordWrap
 import { Composio } from '@composio/core';
 import { AuthScheme } from '@composio/core';
@@ -182,7 +183,7 @@ async function authenticateToolkit(userId: string, authConfigId: string) {
   // In production, this should be securely retrieved from your database or user input.
   // For example: const bearerToken = await getUserBearerToken(userId);
   const bearerToken = "your_gmail_bearer_token"; // Replace with actual bearer token
-  
+
   const connectionRequest = await composio.connectedAccounts.initiate(
     userId,
     authConfigId,
@@ -192,11 +193,11 @@ async function authenticateToolkit(userId: string, authConfigId: string) {
       })
     }
   );
-  
+
   // Bearer token authentication is immediate - no redirect needed
   console.log(`Successfully connected Gmail for user ${userId}`);
   console.log(`Connection status: ${connectionRequest.status}`);
-  
+
   return connectionRequest.id;
 }
 
@@ -206,9 +207,9 @@ const connectionId = await authenticateToolkit(userId, gmail_auth_config_id);
 // You can verify the connection using:
 const connectedAccount = await composio.connectedAccounts.get(connectionId);
 console.log("Connected account:", connectedAccount);
-```
-</CodeGroup>
+````
 
+</CodeGroup>
 
 ## Tools
 
@@ -227,7 +228,8 @@ openai = OpenAI()
 composio = Composio()
 
 # User ID must be a valid UUID format
-user_id = "0000-0000-0000"  # Replace with actual user UUID from your database
+
+user_id = "0000-0000-0000" # Replace with actual user UUID from your database
 
 tools = composio.tools.get(user_id=user_id, toolkits=["GMAIL"])
 
@@ -235,16 +237,16 @@ print("[!] Tools:")
 print(json.dumps(tools))
 
 def invoke_llm(task = "What can you do?"):
-    completion = openai.chat.completions.create(
-        model="gpt-4o",
-        messages=[
-            {
-                "role": "user",
-                "content": task,  # Your task here!
-            },
-        ],
-        tools=tools,
-    )
+completion = openai.chat.completions.create(
+model="gpt-4o",
+messages=[
+{
+"role": "user",
+"content": task, # Your task here!
+},
+],
+tools=tools,
+)
 
     # Handle Result from tool call
     result = composio.provider.handle_tool_calls(user_id=user_id, response=completion)
@@ -252,7 +254,8 @@ def invoke_llm(task = "What can you do?"):
     print(f"[!] Tool call result: {result}")
 
 invoke_llm()
-```
+
+````
 
 </Tab>
 <Tab title="Anthropic (TypeScript)">
@@ -295,7 +298,7 @@ const msg = await anthropic.messages.create({
 // Handle tool calls if any
 const result = await composio.provider.handleToolCalls(userId, msg);
 console.log("[!] Result:", result);
-```
+````
 
 </Tab>
 <Tab title="Google (Python)">
@@ -306,26 +309,34 @@ from google import genai
 from google.genai import types
 
 # Create composio client
+
 composio = Composio(provider=GoogleProvider())
+
 # Create google client
+
 client = genai.Client()
 
 # User ID must be a valid UUID format
-user_id = "0000-0000-0000"  # Replace with actual user UUID from your database
+
+user_id = "0000-0000-0000" # Replace with actual user UUID from your database
 
 # Get tools for Gmail
+
 tools = composio.tools.get(user_id, toolkits=["GMAIL"])
 
 print("[!] Tools:", tools)
 
 # Create genai client config
+
 config = types.GenerateContentConfig(tools=tools)
 
 # Use the chat interface
+
 chat = client.chats.create(model="gemini-2.0-flash", config=config)
 response = chat.send_message("What can you do with Gmail?")
 print("[!] Response:", response.text)
-```
+
+````
 
 </Tab>
 <Tab title="Vercel (TypeScript)">
@@ -344,8 +355,8 @@ const composio = new Composio({
 const userId = "0000-0000-0000"; // Replace with actual user UUID from your database
 
 // Get tools for Gmail
-const tools = await composio.tools.get(userId, { 
-  toolkits: ["GMAIL"] 
+const tools = await composio.tools.get(userId, {
+  toolkits: ["GMAIL"]
 });
 
 console.log("[!] Tools:", tools);
@@ -364,7 +375,7 @@ const { text } = await generateText({
 });
 
 console.log("[!] Result:", text);
-```
+````
 
 </Tab>
 </Tabs>
@@ -381,7 +392,6 @@ console.log("[!] Result:", text);
 Adds and/or removes specified gmail labels for a message; ensure `message id` and all `label ids` are valid (use 'listlabels' for custom label ids).
 ```
 
-
 **Action Parameters**
 
 <ParamField path="add_label_ids" type="array">
@@ -395,7 +405,6 @@ Adds and/or removes specified gmail labels for a message; ensure `message id` an
 
 <ParamField path="user_id" type="string" default="me">
 </ParamField>
-
 
 **Action Response**
 
@@ -418,7 +427,6 @@ Adds and/or removes specified gmail labels for a message; ensure `message id` an
 ```text wordWrap
 Creates a gmail email draft, requiring at least one of recipient email, cc, or bcc must be provided. atleast one of subject or body must be provided. supports to/cc/bcc, subject, plain/html body (ensure `is html=true` for html), attachments, and threading.
 ```
-
 
 **Action Parameters**
 
@@ -452,7 +460,6 @@ Creates a gmail email draft, requiring at least one of recipient email, cc, or b
 <ParamField path="user_id" type="string" default="me">
 </ParamField>
 
-
 **Action Response**
 
 <ParamField path="data" type="object" required={true}>
@@ -475,7 +482,6 @@ Creates a gmail email draft, requiring at least one of recipient email, cc, or b
 Creates a new label with a unique name in the specified user's gmail account.
 ```
 
-
 **Action Parameters**
 
 <ParamField path="background_color" type="string">
@@ -495,7 +501,6 @@ Creates a new label with a unique name in the specified user's gmail account.
 
 <ParamField path="user_id" type="string" default="me">
 </ParamField>
-
 
 **Action Response**
 
@@ -519,7 +524,6 @@ Creates a new label with a unique name in the specified user's gmail account.
 Permanently deletes a specific gmail draft using its id; ensure the draft exists and the user has necessary permissions for the given `user id`.
 ```
 
-
 **Action Parameters**
 
 <ParamField path="draft_id" type="string" required={true}>
@@ -527,7 +531,6 @@ Permanently deletes a specific gmail draft using its id; ensure the draft exists
 
 <ParamField path="user_id" type="string" default="me">
 </ParamField>
-
 
 **Action Response**
 
@@ -551,7 +554,6 @@ Permanently deletes a specific gmail draft using its id; ensure the draft exists
 Permanently deletes a specific email message by its id from a gmail mailbox; for `user id`, use 'me' for the authenticated user or an email address to which the authenticated user has delegated access.
 ```
 
-
 **Action Parameters**
 
 <ParamField path="message_id" type="string" required={true}>
@@ -559,7 +561,6 @@ Permanently deletes a specific email message by its id from a gmail mailbox; for
 
 <ParamField path="user_id" type="string" default="me">
 </ParamField>
-
 
 **Action Response**
 
@@ -582,7 +583,6 @@ Permanently deletes a specific email message by its id from a gmail mailbox; for
 ```text wordWrap
 Fetches a list of email messages from a gmail account, supporting filtering, pagination, and optional full content retrieval.
 ```
-
 
 **Action Parameters**
 
@@ -613,7 +613,6 @@ Fetches a list of email messages from a gmail account, supporting filtering, pag
 <ParamField path="verbose" type="boolean" default="True">
 </ParamField>
 
-
 **Action Response**
 
 <ParamField path="data" type="object" required={true}>
@@ -636,7 +635,6 @@ Fetches a list of email messages from a gmail account, supporting filtering, pag
 Fetches a specific email message by its id, provided the `message id` exists and is accessible to the authenticated `user id`.
 ```
 
-
 **Action Parameters**
 
 <ParamField path="format" type="string" default="full">
@@ -647,7 +645,6 @@ Fetches a specific email message by its id, provided the `message id` exists and
 
 <ParamField path="user_id" type="string" default="me">
 </ParamField>
-
 
 **Action Response**
 
@@ -671,7 +668,6 @@ Fetches a specific email message by its id, provided the `message id` exists and
 Retrieves messages from a gmail thread using its `thread id`, where the thread must be accessible by the specified `user id`.
 ```
 
-
 **Action Parameters**
 
 <ParamField path="page_token" type="string">
@@ -682,7 +678,6 @@ Retrieves messages from a gmail thread using its `thread id`, where the thread m
 
 <ParamField path="user_id" type="string" default="me">
 </ParamField>
-
 
 **Action Response**
 
@@ -706,7 +701,6 @@ Retrieves messages from a gmail thread using its `thread id`, where the thread m
 Forward an existing gmail message to specified recipients, preserving original body and attachments.
 ```
 
-
 **Action Parameters**
 
 <ParamField path="additional_text" type="string">
@@ -720,7 +714,6 @@ Forward an existing gmail message to specified recipients, preserving original b
 
 <ParamField path="user_id" type="string" default="me">
 </ParamField>
-
 
 **Action Response**
 
@@ -744,7 +737,6 @@ Forward an existing gmail message to specified recipients, preserving original b
 Retrieves a specific attachment by id from a message in a user's gmail mailbox, requiring valid message and attachment ids.
 ```
 
-
 **Action Parameters**
 
 <ParamField path="attachment_id" type="string" required={true}>
@@ -758,7 +750,6 @@ Retrieves a specific attachment by id from a message in a user's gmail mailbox, 
 
 <ParamField path="user_id" type="string" default="me">
 </ParamField>
-
 
 **Action Response**
 
@@ -782,7 +773,6 @@ Retrieves a specific attachment by id from a message in a user's gmail mailbox, 
 Fetches contacts (connections) for the authenticated google account, allowing selection of specific data fields and pagination.
 ```
 
-
 **Action Parameters**
 
 <ParamField path="include_other_contacts" type="boolean" default="True">
@@ -796,7 +786,6 @@ Fetches contacts (connections) for the authenticated google account, allowing se
 
 <ParamField path="resource_name" type="string" default="people/me">
 </ParamField>
-
 
 **Action Response**
 
@@ -820,7 +809,6 @@ Fetches contacts (connections) for the authenticated google account, allowing se
 Retrieves either a specific person's details (using `resource name`) or lists 'other contacts' (if `other contacts` is true), with `person fields` specifying the data to return.
 ```
 
-
 **Action Parameters**
 
 <ParamField path="other_contacts" type="boolean">
@@ -840,7 +828,6 @@ Retrieves either a specific person's details (using `resource name`) or lists 'o
 
 <ParamField path="sync_token" type="string">
 </ParamField>
-
 
 **Action Response**
 
@@ -864,12 +851,10 @@ Retrieves either a specific person's details (using `resource name`) or lists 'o
 Retrieves key gmail profile information (email address, message/thread totals, history id) for a user.
 ```
 
-
 **Action Parameters**
 
 <ParamField path="user_id" type="string" default="me">
 </ParamField>
-
 
 **Action Response**
 
@@ -893,7 +878,6 @@ Retrieves key gmail profile information (email address, message/thread totals, h
 Retrieves a paginated list of email drafts from a user's gmail account. use verbose=true to get full draft details including subject, body, sender, and timestamp.
 ```
 
-
 **Action Parameters**
 
 <ParamField path="max_results" type="integer" default="1">
@@ -907,7 +891,6 @@ Retrieves a paginated list of email drafts from a user's gmail account. use verb
 
 <ParamField path="verbose" type="boolean">
 </ParamField>
-
 
 **Action Response**
 
@@ -931,12 +914,10 @@ Retrieves a paginated list of email drafts from a user's gmail account. use verb
 Retrieves a list of all system and user-created labels for the specified gmail account.
 ```
 
-
 **Action Parameters**
 
 <ParamField path="user_id" type="string" default="me">
 </ParamField>
-
 
 **Action Response**
 
@@ -960,7 +941,6 @@ Retrieves a list of all system and user-created labels for the specified gmail a
 Retrieves a list of email threads from a gmail account, identified by `user id` (email address or 'me'), supporting filtering and pagination.
 ```
 
-
 **Action Parameters**
 
 <ParamField path="max_results" type="integer" default="10">
@@ -977,7 +957,6 @@ Retrieves a list of email threads from a gmail account, identified by `user id` 
 
 <ParamField path="verbose" type="boolean">
 </ParamField>
-
 
 **Action Response**
 
@@ -1001,7 +980,6 @@ Retrieves a list of email threads from a gmail account, identified by `user id` 
 Adds or removes specified existing label ids from a gmail thread, affecting all its messages; ensure the thread id is valid.
 ```
 
-
 **Action Parameters**
 
 <ParamField path="add_label_ids" type="array">
@@ -1015,7 +993,6 @@ Adds or removes specified existing label ids from a gmail thread, affecting all 
 
 <ParamField path="user_id" type="string" default="me">
 </ParamField>
-
 
 **Action Response**
 
@@ -1039,7 +1016,6 @@ Adds or removes specified existing label ids from a gmail thread, affecting all 
 Moves an existing, non-deleted email message to the trash for the specified user.
 ```
 
-
 **Action Parameters**
 
 <ParamField path="message_id" type="string" required={true}>
@@ -1047,7 +1023,6 @@ Moves an existing, non-deleted email message to the trash for the specified user
 
 <ParamField path="user_id" type="string" default="me">
 </ParamField>
-
 
 **Action Response**
 
@@ -1071,7 +1046,6 @@ Moves an existing, non-deleted email message to the trash for the specified user
 Patches the specified label.
 ```
 
-
 **Action Parameters**
 
 <ParamField path="color" type="object">
@@ -1091,7 +1065,6 @@ Patches the specified label.
 
 <ParamField path="userId" type="string" required={true}>
 </ParamField>
-
 
 **Action Response**
 
@@ -1115,7 +1088,6 @@ Patches the specified label.
 Permanently deletes a specific, existing user-created gmail label by its id for a user; cannot delete system labels.
 ```
 
-
 **Action Parameters**
 
 <ParamField path="label_id" type="string" required={true}>
@@ -1123,7 +1095,6 @@ Permanently deletes a specific, existing user-created gmail label by its id for 
 
 <ParamField path="user_id" type="string" default="me">
 </ParamField>
-
 
 **Action Response**
 
@@ -1146,7 +1117,6 @@ Permanently deletes a specific, existing user-created gmail label by its id for 
 ```text wordWrap
 Sends a reply within a specific gmail thread using the original thread's subject, requiring a valid `thread id` and at least one of recipient email, cc, or bcc must be provided. supports attachments via the `attachment` parameter with valid `s3key`, `mimetype`, and `name`.
 ```
-
 
 **Action Parameters**
 
@@ -1177,7 +1147,6 @@ Sends a reply within a specific gmail thread using the original thread's subject
 <ParamField path="user_id" type="string" default="me">
 </ParamField>
 
-
 **Action Response**
 
 <ParamField path="data" type="object" required={true}>
@@ -1200,7 +1169,6 @@ Sends a reply within a specific gmail thread using the original thread's subject
 Searches contacts by matching the query against names, nicknames, emails, phone numbers, and organizations, optionally including 'other contacts'.
 ```
 
-
 **Action Parameters**
 
 <ParamField path="other_contacts" type="boolean" default="True">
@@ -1214,7 +1182,6 @@ Searches contacts by matching the query against names, nicknames, emails, phone 
 
 <ParamField path="query" type="string" required={true}>
 </ParamField>
-
 
 **Action Response**
 
@@ -1238,7 +1205,6 @@ Searches contacts by matching the query against names, nicknames, emails, phone 
 Sends the specified, existing draft to the recipients in the to, cc, and bcc headers.
 ```
 
-
 **Action Parameters**
 
 <ParamField path="draft_id" type="string" required={true}>
@@ -1246,7 +1212,6 @@ Sends the specified, existing draft to the recipients in the to, cc, and bcc hea
 
 <ParamField path="user_id" type="string" default="me">
 </ParamField>
-
 
 **Action Response**
 
@@ -1269,7 +1234,6 @@ Sends the specified, existing draft to the recipients in the to, cc, and bcc hea
 ```text wordWrap
 Sends an email via gmail api using the authenticated user's google profile display name. at least one of recipient email, cc, or bcc must be provided. atleast one of subject or body must be provided. requires `is html=true` if the body contains html and valid `s3key`, `mimetype`, `name` for any attachment.
 ```
-
 
 **Action Parameters**
 
@@ -1299,7 +1263,6 @@ Sends an email via gmail api using the authenticated user's google profile displ
 
 <ParamField path="user_id" type="string" default="me">
 </ParamField>
-
 
 **Action Response**
 

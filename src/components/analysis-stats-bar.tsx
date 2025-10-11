@@ -8,7 +8,6 @@ interface AnalysisStatsBarProps {
 }
 
 export function AnalysisStatsBar({ stats }: AnalysisStatsBarProps) {
-
   return (
     <div className="flex items-center gap-6 text-sm p-4 bg-background/80 backdrop-blur rounded-xl border-none shadow-none">
       <div className="flex items-center gap-2">

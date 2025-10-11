@@ -41,7 +41,8 @@ const { text } = await generateText({
   messages: [
     {
       role: 'user',
-      content: "Send an email to soham@composio.dev saying 'hi from the ether of composio'",
+      content:
+        "Send an email to soham@composio.dev saying 'hi from the ether of composio'",
     },
   ],
   tools,

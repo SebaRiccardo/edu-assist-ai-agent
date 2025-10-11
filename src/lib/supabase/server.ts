@@ -38,14 +38,14 @@ export async function createClient(): Promise<TypedSupabaseClient> {
  * Get the current authenticated user (server-side)
  * @returns User object or null if not authenticated
  */
-export async function getCurrentUser() {
-  const supabase = await createClient();
+export async function getCurrentUser(supabase?: TypedSupabaseClient) {
+  const client = supabase ? supabase : await createClient();
 
   try {
     const {
       data: { user },
       error,
-    } = await supabase.auth.getUser();
+    } = await client.auth.getUser();
 
     if (error || !user) {
       return null;

@@ -1,6 +1,6 @@
 /**
  * Quality Review Agent
- * 
+ *
  * Reviews draft email responses and provides quality scores,
  * approval recommendations, and improvement suggestions.
  */
@@ -13,71 +13,71 @@ import { z } from 'zod';
  * Draft response to review
  */
 export interface DraftResponse {
-    emailId: string;
-    originalEmail: {
-        from: string;
-        subject: string;
-        category?: string;
-    };
-    priority: string;
-    deadline: string;
-    draftResponse: string;
+  emailId: string;
+  originalEmail: {
+    from: string;
+    subject: string;
+    category?: string;
+  };
+  priority: string;
+  deadline: string;
+  draftResponse: string;
 }
 
 /**
  * Quality review result for a single response
  */
 export interface QualityReview {
-    emailId: string;
-    approved: boolean;
-    qualityScore: number; // 0-100
-    suggestions: string[];
-    reasoning: string;
-    reviewedAt: string;
+  emailId: string;
+  approved: boolean;
+  qualityScore: number; // 0-100
+  suggestions: string[];
+  reasoning: string;
+  reviewedAt: string;
 }
 
 /**
  * Parameters for quality review
  */
 export interface QualityReviewParams {
-    draftResponse: DraftResponse;
-    courseName?: string;
-    model?: string;
+  draftResponse: DraftResponse;
+  courseName?: string;
+  model?: string;
 }
 
 /**
  * Quality review statistics
  */
 export interface QualityStats {
-    totalReviewed: number;
-    averageScore: number;
-    approvedCount: number;
-    approvalRate: number;
-    scoreDistribution: {
-        excellent: number; // 90-100
-        good: number; // 70-89
-        fair: number; // 50-69
-        poor: number; // 0-49
-    };
+  totalReviewed: number;
+  averageScore: number;
+  approvedCount: number;
+  approvalRate: number;
+  scoreDistribution: {
+    excellent: number; // 90-100
+    good: number; // 70-89
+    fair: number; // 50-69
+    poor: number; // 0-49
+  };
 }
 
 /**
  * Zod schema for quality review
  */
 const qualityReviewSchema = z.object({
-    emailId: z.string(),
-    approved: z.boolean(),
-    qualityScore: z.number().min(0).max(100),
-    suggestions: z.array(z.string()),
-    reasoning: z.string(),
+  emailId: z.string(),
+  approved: z.boolean(),
+  qualityScore: z.number().min(0).max(100),
+  suggestions: z.array(z.string()),
+  reasoning: z.string(),
 });
 
 /**
  * Review a draft email response for quality
- * 
+ *
  * @param params - Review parameters including draft response
  * @returns Quality review with score and suggestions
- * 
+ *
  * @example
  * ```typescript
  * const review = await reviewEmailQuality({
@@ -94,24 +94,24 @@ const qualityReviewSchema = z.object({
  *   },
  *   courseName: 'CS 101'
  * });
- * 
+ *
  * if (review.approved && review.qualityScore > 80) {
  *   await sendEmail(draftResponse);
  * }
  * ```
  */
 export async function reviewEmailQuality(
-    params: QualityReviewParams
+  params: QualityReviewParams
 ): Promise<QualityReview> {
-    const { draftResponse, courseName = '', model = 'gemini-2.0-flash' } = params;
+  const { draftResponse, courseName = '', model = 'gemini-2.0-flash' } = params;
 
-    console.log(`🔍 Reviewing: ${draftResponse.originalEmail.subject}`);
+  console.log(`🔍 Reviewing: ${draftResponse.originalEmail.subject}`);
 
-    const result = await generateObject({
-        model: google(model),
-        schema: qualityReviewSchema,
-        system: `You are an expert email quality reviewer ensuring responses are professional, accurate, and helpful. You evaluate university professor emails to students with high standards for academic communication.`,
-        prompt: `Review this draft email response for quality and provide detailed feedback.
+  const result = await generateObject({
+    model: google(model),
+    schema: qualityReviewSchema,
+    system: `You are an expert email quality reviewer ensuring responses are professional, accurate, and helpful. You evaluate university professor emails to students with high standards for academic communication.`,
+    prompt: `Review this draft email response for quality and provide detailed feedback.
 
 **Original Email:**
 From: ${draftResponse.originalEmail.from}
@@ -167,31 +167,31 @@ Provide:
 4. Clear reasoning explaining the score and approval decision
 
 Be thorough and constructive in your feedback.`,
-    });
+  });
 
-    const review: QualityReview = {
-        ...result.object,
-        reviewedAt: new Date().toISOString(),
-    };
+  const review: QualityReview = {
+    ...result.object,
+    reviewedAt: new Date().toISOString(),
+  };
 
-    const approvalIcon = review.approved ? '✅' : '⚠️';
-    console.log(`   ${approvalIcon} Score: ${review.qualityScore}/100`);
-    console.log(`   Approved: ${review.approved}`);
-    if (!review.approved && review.suggestions.length > 0) {
-        console.log(`   Suggestions: ${review.suggestions.slice(0, 2).join(', ')}`);
-    }
+  const approvalIcon = review.approved ? '✅' : '⚠️';
+  console.log(`   ${approvalIcon} Score: ${review.qualityScore}/100`);
+  console.log(`   Approved: ${review.approved}`);
+  if (!review.approved && review.suggestions.length > 0) {
+    console.log(`   Suggestions: ${review.suggestions.slice(0, 2).join(', ')}`);
+  }
 
-    return review;
+  return review;
 }
 
 /**
  * Review multiple draft responses
- * 
+ *
  * @param draftResponses - Array of draft responses to review
  * @param courseName - Course name for context
  * @param model - AI model to use
  * @returns Array of quality reviews
- * 
+ *
  * @example
  * ```typescript
  * const reviews = await reviewBatchQuality(draftResponses, 'CS 101');
@@ -199,106 +199,104 @@ Be thorough and constructive in your feedback.`,
  * ```
  */
 export async function reviewBatchQuality(
-    draftResponses: DraftResponse[],
-    courseName?: string,
-    model?: string
+  draftResponses: DraftResponse[],
+  courseName?: string,
+  model?: string
 ): Promise<QualityReview[]> {
-    console.log(`\n🔍 Reviewing ${draftResponses.length} draft responses...`);
+  console.log(`\n🔍 Reviewing ${draftResponses.length} draft responses...`);
 
-    const reviews: QualityReview[] = [];
+  const reviews: QualityReview[] = [];
 
-    for (const draft of draftResponses) {
-        const review = await reviewEmailQuality({
-            draftResponse: draft,
-            courseName,
-            model,
-        });
+  for (const draft of draftResponses) {
+    const review = await reviewEmailQuality({
+      draftResponse: draft,
+      courseName,
+      model,
+    });
 
-        reviews.push(review);
-    }
+    reviews.push(review);
+  }
 
-    console.log(`✅ Reviewed ${reviews.length} responses\n`);
+  console.log(`✅ Reviewed ${reviews.length} responses\n`);
 
-    return reviews;
+  return reviews;
 }
 
 /**
  * Calculate quality statistics from reviews
- * 
+ *
  * @param reviews - Array of quality reviews
  * @returns Quality statistics
  */
-export function calculateQualityStats(
-    reviews: QualityReview[]
-): QualityStats {
-    const totalReviewed = reviews.length;
-    const averageScore =
-        reviews.reduce((sum, r) => sum + r.qualityScore, 0) / totalReviewed;
-    const approvedCount = reviews.filter((r) => r.approved).length;
-    const approvalRate = (approvedCount / totalReviewed) * 100;
+export function calculateQualityStats(reviews: QualityReview[]): QualityStats {
+  const totalReviewed = reviews.length;
+  const averageScore =
+    reviews.reduce((sum, r) => sum + r.qualityScore, 0) / totalReviewed;
+  const approvedCount = reviews.filter(r => r.approved).length;
+  const approvalRate = (approvedCount / totalReviewed) * 100;
 
-    const scoreDistribution = {
-        excellent: reviews.filter((r) => r.qualityScore >= 90).length,
-        good: reviews.filter((r) => r.qualityScore >= 70 && r.qualityScore < 90)
-            .length,
-        fair: reviews.filter((r) => r.qualityScore >= 50 && r.qualityScore < 70)
-            .length,
-        poor: reviews.filter((r) => r.qualityScore < 50).length,
-    };
+  const scoreDistribution = {
+    excellent: reviews.filter(r => r.qualityScore >= 90).length,
+    good: reviews.filter(r => r.qualityScore >= 70 && r.qualityScore < 90)
+      .length,
+    fair: reviews.filter(r => r.qualityScore >= 50 && r.qualityScore < 70)
+      .length,
+    poor: reviews.filter(r => r.qualityScore < 50).length,
+  };
 
-    return {
-        totalReviewed,
-        averageScore: Math.round(averageScore * 10) / 10,
-        approvedCount,
-        approvalRate: Math.round(approvalRate * 10) / 10,
-        scoreDistribution,
-    };
+  return {
+    totalReviewed,
+    averageScore: Math.round(averageScore * 10) / 10,
+    approvedCount,
+    approvalRate: Math.round(approvalRate * 10) / 10,
+    scoreDistribution,
+  };
 }
 
 /**
  * Filter reviews by approval status
- * 
+ *
  * @param reviews - Array of quality reviews
  * @param approved - Filter by approval status
  * @returns Filtered reviews
  */
 export function filterByApproval(
-    reviews: QualityReview[],
-    approved: boolean
+  reviews: QualityReview[],
+  approved: boolean
 ): QualityReview[] {
-    return reviews.filter((r) => r.approved === approved);
+  return reviews.filter(r => r.approved === approved);
 }
 
 /**
  * Filter reviews by minimum quality score
- * 
+ *
  * @param reviews - Array of quality reviews
  * @param minScore - Minimum quality score threshold
  * @returns Filtered reviews
  */
 export function filterByScore(
-    reviews: QualityReview[],
-    minScore: number
+  reviews: QualityReview[],
+  minScore: number
 ): QualityReview[] {
-    return reviews.filter((r) => r.qualityScore >= minScore);
+  return reviews.filter(r => r.qualityScore >= minScore);
 }
 
 /**
  * Get improvement suggestions for unapproved responses
- * 
+ *
  * @param reviews - Array of quality reviews
  * @returns Map of emailId to suggestions
  */
 export function getImprovementSuggestions(
-    reviews: QualityReview[]
+  reviews: QualityReview[]
 ): Map<string, string[]> {
-    const suggestions = new Map<string, string[]>();
+  const suggestions = new Map<string, string[]>();
 
-    reviews
-        .filter((r) => !r.approved)
-        .forEach((r) => {
-            suggestions.set(r.emailId, r.suggestions);
-        });
+  reviews
+    .filter(r => !r.approved)
+    .forEach(r => {
+      suggestions.set(r.emailId, r.suggestions);
+    });
 
-    return suggestions;
+  return suggestions;
 }

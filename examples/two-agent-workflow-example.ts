@@ -1,9 +1,9 @@
 /**
  * Example: Two-Agent Workflow
- * 
+ *
  * Agent 1: Analyze and categorize emails (using encapsulated function)
  * Agent 2: Generate draft responses for student emails
- * 
+ *
  * This demonstrates how to pass results from the email analysis agent
  * to another agent for further processing.
  */
@@ -17,69 +17,75 @@ import { CategorizedEmail } from '@/types';
  * Two-agent workflow: Analyze emails + Generate responses
  */
 export async function analyzeAndRespondToEmails(
-    userId: string,
-    courseId: string,
-    maxEmails: number = 20
+  userId: string,
+  courseId: string,
+  maxEmails: number = 20
 ) {
-    console.log('🚀 Starting two-agent workflow...\n');
+  console.log('🚀 Starting two-agent workflow...\n');
 
-    // ========================================
-    // AGENT 1: EMAIL ANALYSIS AGENT
-    // ========================================
-    console.log('📧 AGENT 1: Analyzing emails...');
-    console.log('─'.repeat(60));
+  // ========================================
+  // AGENT 1: EMAIL ANALYSIS AGENT
+  // ========================================
+  console.log('📧 AGENT 1: Analyzing emails...');
+  console.log('─'.repeat(60));
 
-    const analysisResult = await analyzeInboxForCourse({
-        userId,
-        courseId,
-        maxEmails,
-        includeRead: false,
-        verbose: false, // Fast mode
-    });
+  const analysisResult = await analyzeInboxForCourse({
+    userId,
+    courseId,
+    maxEmails,
+    includeRead: false,
+    verbose: false, // Fast mode
+  });
 
-    console.log(`✅ Analysis complete!`);
-    console.log(`   Total analyzed: ${analysisResult.totalAnalyzed}`);
-    console.log(`   Course-related: ${analysisResult.analysis.stats.courseRelated}`);
-    console.log(`   Avg confidence: ${analysisResult.analysis.stats.avgConfidence}%`);
-    console.log(`   Course: ${analysisResult.courseName}\n`);
+  console.log(`✅ Analysis complete!`);
+  console.log(`   Total analyzed: ${analysisResult.totalAnalyzed}`);
+  console.log(
+    `   Course-related: ${analysisResult.analysis.stats.courseRelated}`
+  );
+  console.log(
+    `   Avg confidence: ${analysisResult.analysis.stats.avgConfidence}%`
+  );
+  console.log(`   Course: ${analysisResult.courseName}\n`);
 
-    // Filter student emails with high confidence
-    const studentEmails = analysisResult.emails.filter(
-        (email: CategorizedEmail) =>
-            email.category === 'student_email' &&
-            email.confidence > 80 &&
-            email.isRelated
-    );
+  // Filter student emails with high confidence
+  const studentEmails = analysisResult.emails.filter(
+    (email: CategorizedEmail) =>
+      email.category === 'student_email' &&
+      email.confidence > 80 &&
+      email.isRelated
+  );
 
-    console.log(`📚 Found ${studentEmails.length} high-confidence student emails\n`);
+  console.log(
+    `📚 Found ${studentEmails.length} high-confidence student emails\n`
+  );
 
-    if (studentEmails.length === 0) {
-        console.log('No student emails to process. Workflow complete.');
-        return {
-            analysis: analysisResult,
-            responses: [],
-        };
-    }
+  if (studentEmails.length === 0) {
+    console.log('No student emails to process. Workflow complete.');
+    return {
+      analysis: analysisResult,
+      responses: [],
+    };
+  }
 
-    // ========================================
-    // AGENT 2: RESPONSE GENERATION AGENT
-    // ========================================
-    console.log('✍️  AGENT 2: Generating draft responses...');
-    console.log('─'.repeat(60));
+  // ========================================
+  // AGENT 2: RESPONSE GENERATION AGENT
+  // ========================================
+  console.log('✍️  AGENT 2: Generating draft responses...');
+  console.log('─'.repeat(60));
 
-    const responses = [];
+  const responses = [];
 
-    for (const email of studentEmails.slice(0, 5)) {
-        // Limit to first 5 for demo
-        console.log(`\n📝 Processing: "${email.subject}"`);
-        console.log(`   From: ${email.from}`);
-        console.log(`   Category: ${email.category}`);
-        console.log(`   Confidence: ${email.confidence}%`);
+  for (const email of studentEmails.slice(0, 5)) {
+    // Limit to first 5 for demo
+    console.log(`\n📝 Processing: "${email.subject}"`);
+    console.log(`   From: ${email.from}`);
+    console.log(`   Category: ${email.category}`);
+    console.log(`   Confidence: ${email.confidence}%`);
 
-        const responseResult = await generateText({
-            model: google('gemini-2.0-flash'),
-            system: `You are a helpful university professor assistant that drafts professional, friendly email responses to students.`,
-            prompt: `Draft a professional email response to this student.
+    const responseResult = await generateText({
+      model: google('gemini-2.0-flash'),
+      system: `You are a helpful university professor assistant that drafts professional, friendly email responses to students.`,
+      prompt: `Draft a professional email response to this student.
 
 **Course Context:**
 - Course: ${analysisResult.courseName}
@@ -100,56 +106,56 @@ Body: ${email.body}
 6. Include a clear call-to-action if needed
 
 Draft the response email:`,
-        });
+    });
 
-        responses.push({
-            originalEmail: {
-                id: email.id,
-                from: email.from,
-                subject: email.subject,
-                category: email.category,
-                confidence: email.confidence,
-            },
-            draftResponse: responseResult.text,
-        });
+    responses.push({
+      originalEmail: {
+        id: email.id,
+        from: email.from,
+        subject: email.subject,
+        category: email.category,
+        confidence: email.confidence,
+      },
+      draftResponse: responseResult.text,
+    });
 
-        console.log(`   ✅ Draft generated (${responseResult.text.length} chars)`);
-    }
+    console.log(`   ✅ Draft generated (${responseResult.text.length} chars)`);
+  }
 
-    console.log('\n' + '═'.repeat(60));
-    console.log('🎉 Two-agent workflow complete!\n');
+  console.log('\n' + '═'.repeat(60));
+  console.log('🎉 Two-agent workflow complete!\n');
 
-    return {
-        analysis: analysisResult,
-        studentEmailsFound: studentEmails.length,
-        responsesGenerated: responses.length,
-        responses,
-    };
+  return {
+    analysis: analysisResult,
+    studentEmailsFound: studentEmails.length,
+    responsesGenerated: responses.length,
+    responses,
+  };
 }
 
 /**
  * Example usage in an API route
  */
 export async function POST(request: Request) {
-    try {
-        const { userId, courseId, maxEmails } = await request.json();
+  try {
+    const { userId, courseId, maxEmails } = await request.json();
 
-        const result = await analyzeAndRespondToEmails(userId, courseId, maxEmails);
+    const result = await analyzeAndRespondToEmails(userId, courseId, maxEmails);
 
-        return Response.json({
-            success: true,
-            data: result,
-        });
-    } catch (error) {
-        console.error('❌ Workflow failed:', error);
-        return Response.json(
-            {
-                success: false,
-                error: error instanceof Error ? error.message : 'Unknown error',
-            },
-            { status: 500 }
-        );
-    }
+    return Response.json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    console.error('❌ Workflow failed:', error);
+    return Response.json(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
+  }
 }
 
 // ========================================

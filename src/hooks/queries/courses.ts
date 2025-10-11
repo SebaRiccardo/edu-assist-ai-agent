@@ -31,7 +31,13 @@ export function getCourseByIdQuery(
   client: TypedSupabaseClient,
   courseId: string
 ) {
-  return client.from('courses').select(`*`).eq('id', courseId).single();
+  return client
+    .from('courses')
+    .select(
+      `*,inboxes(id,course_id,email,unread_count,created_at,updated_at,status,connected_account_id)`
+    )
+    .eq('id', courseId)
+    .single();
 }
 
 /**

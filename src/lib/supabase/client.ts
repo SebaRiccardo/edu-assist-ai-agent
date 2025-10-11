@@ -3,7 +3,6 @@ import { Database } from './types';
 import { useMemo } from 'react';
 import { TypedSupabaseClient } from './types/client.types';
 
-
 let client: TypedSupabaseClient | undefined;
 
 export function createClient() {

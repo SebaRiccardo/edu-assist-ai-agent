@@ -1,4 +1,3 @@
-
 # Get started with Gemini 2.5
 
 With the release of [Gemini 2.5](https://developers.googleblog.com/gemini-2-5-thinking-model-updates/), there has never been a better time to start building AI applications, particularly those that require complex reasoning capabilities and advanced intelligence.
