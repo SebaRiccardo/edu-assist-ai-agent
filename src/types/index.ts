@@ -198,13 +198,13 @@ export interface InboxAnalysisParams {
  */
 export interface CategorizedEmail extends TransformedEmail {
   category:
-  | 'course_related'
-  | 'student_email'
-  | 'staff_email'
-  | 'administrative'
-  | 'assignment'
-  | 'grade_inquiry'
-  | 'other';
+    | 'course_related'
+    | 'student_email'
+    | 'staff_email'
+    | 'administrative'
+    | 'assignment'
+    | 'grade_inquiry'
+    | 'other';
   isRelated: boolean;
   suggestedLabel: string;
   confidence: number;

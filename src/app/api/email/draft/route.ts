@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateEmailResponse } from '@/agents/generate-responses';
-import { checkGmailConnection } from '@/lib/services/composio/composio';
+import { ComposioService } from '@/lib/services/composio';
+import { getCurrentUser } from '@/lib/supabase/server';
 
 export const maxDuration = 60;
 
@@ -11,20 +12,23 @@ export const maxDuration = 60;
  */
 export async function POST(request: NextRequest) {
   try {
+
     const {
-      userId,
       email,
       priority,
       courseName,
       professorName,
+      connectedAccountId,
       language = 'English',
     } = await request.json();
 
-    // Validation
-    if (!userId) {
+    const user = await getCurrentUser()
+
+
+    if (!user) {
       return NextResponse.json(
-        { error: 'Missing required parameter: userId' },
-        { status: 400 }
+        { error: 'unauthenticated' },
+        { status: 401 }
       );
     }
 
@@ -49,23 +53,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!connectedAccountId) {
+      return NextResponse.json(
+        { error: 'Missing required connectedAccountId' },
+        { status: 400 }
+      );
+    }
+
     // Check Gmail connection before processing
     console.log('🔍 Checking Gmail connection...');
-    const connectionStatus = await checkGmailConnection(userId);
+    const connectedAccount = await ComposioService.getConnectedAccountById(connectedAccountId);
 
-    if (!connectionStatus.isConnected) {
+    if (!connectedAccount) {
       return NextResponse.json(
         {
           success: false,
           error: 'Gmail not connected',
-          authRequired: true,
-          connectionStatus,
         },
         { status: 401 }
       );
     }
-
-    console.log('✅ Gmail connection verified');
 
     // Generate draft response using AI
     console.log('\n📝 Generating draft response...');
@@ -100,8 +107,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error:
-          error instanceof Error ? error.message : 'Unknown error occurred',
+        error: 'Unknown error occurred',
         details: process.env.NODE_ENV === 'development' ? error : undefined,
       },
       { status: 500 }

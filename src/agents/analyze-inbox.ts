@@ -11,7 +11,6 @@ import {
 import { ComposioService } from '@/lib/services/composio';
 import { tr } from 'zod/v4/locales';
 
-
 // Set max duration for this API route to handle AI processing
 export const maxDuration = 60;
 
@@ -218,7 +217,7 @@ Important:
     courseRelated: categorizedEmails.filter(e => e.isRelated).length,
     avgConfidence: Math.round(
       categorizedEmails.reduce((sum, e) => sum + e.confidence, 0) /
-      categorizedEmails.length
+        categorizedEmails.length
     ),
     categoryBreakdown: categorizedEmails.reduce(
       (acc: Record<string, number>, email) => {

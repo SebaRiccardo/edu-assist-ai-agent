@@ -39,8 +39,8 @@ export default function CourseDetailsPage() {
   const [currentInbox, setCurrentInbox] = useState<DomainInbox | null>(null);
 
   // Data fetching hooks
-  const { data: courseData, isLoading, error } = useCourse(courseId);
-  const { data: inboxes = [] } = useInboxes(courseId);
+  const { data: courseData, isLoading: isLoadingCourse, isError: isErrorCourse } = useCourse(courseId);
+  const { data: inboxes = [], isLoading: isLoadingInboxes } = useInboxes(courseId);
   const { mutateAsync: deleteInbox } = useDeleteInbox();
   const {
     mutateAsync: createInbox,
@@ -48,7 +48,7 @@ export default function CourseDetailsPage() {
     variables: createInboxVariables,
   } = useCreateInbox();
 
-  const { data: composionGmailConnections } = useConnections(
+  const { data: composionGmailConnections, isLoading: isLoadingConnections } = useConnections(
     Array.isArray(inboxes) && inboxes.length > 0
   );
 
@@ -246,15 +246,16 @@ export default function CourseDetailsPage() {
 
   const handleInboxSelect = (inbox: DomainInbox) => {
     setCurrentInbox(inbox);
+
   };
 
   // Redirect if course not found
-  if (!isLoading && !course && !error) {
+  if (isErrorCourse) {
     router.push('/dashboard');
     return null;
   }
 
-  if (isLoading) {
+  if (isLoadingCourse || isLoadingInboxes || isLoadingConnections || !course) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -262,13 +263,10 @@ export default function CourseDetailsPage() {
     );
   }
 
-  if (!course) {
-    return null;
-  }
 
   const gmailAccounts = composionGmailConnections || [];
   const hasNoConnections = gmailAccounts.length === 0;
-  const hasInboxes = course.inboxes && course.inboxes.length > 0;
+  const hasInboxes = course!.inboxes && course!.inboxes.length > 0;
   const addingAccountId = createInboxVariables
     ? createInboxVariables[0].connected_account_id
     : null;
@@ -277,7 +275,7 @@ export default function CourseDetailsPage() {
     <div className="flex flex-1 flex-col">
       <div className="mx-auto max-w-7xl w-full px-6 space-y-6">
         <CourseDetailsHeader
-          course={course}
+          course={course!}
           isChecking={isChecking}
           onAnalyze={handleAnalyzeInbox}
         />

@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, ExternalLink, Loader2, InfoIcon } from 'lucide-react';
+import { Plus, ExternalLink, Loader2, InfoIcon, Trash2 } from 'lucide-react';
 import { ComposioConnectedAccount } from '@/app/api/connections/route';
 import Image from 'next/image';
 import gmailLoco from '@/assets/gmail-logo.png';
@@ -19,12 +19,16 @@ interface GmailAccountCardProps {
   onAdd?: (account: ComposioConnectedAccount) => void;
   isAdding?: boolean;
   disabled?: boolean;
+  isDeleting?: boolean;
+  onDelete?: (account: ComposioConnectedAccount) => void;
 }
 
 export function GmailAccountCard({
   account,
   onAdd,
   isAdding,
+  isDeleting,
+  onDelete,
   disabled,
 }: GmailAccountCardProps) {
   const isActive = account.status === 'ACTIVE';
@@ -113,7 +117,7 @@ export function GmailAccountCard({
         </p>
       </CardContent>
       <CardFooter className="">
-        {onAdd ? (
+        {onAdd && (
           <Button
             className="w-full"
             size="sm"
@@ -132,10 +136,20 @@ export function GmailAccountCard({
               </>
             )}
           </Button>
-        ) : (
-          <div className="text-xs text-center w-full text-muted-foreground">
-            Already added to this course
-          </div>
+        )}
+        {onDelete && (
+          <Button
+            variant="destructive"
+            className="w-full"
+            onClick={onDelete ? () => onDelete(account) : undefined}
+          >
+            {isDeleting ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Trash2 className="h-4 w-4" />
+            )}
+            Desconectar cuenta
+          </Button>
         )}
       </CardFooter>
     </Card>

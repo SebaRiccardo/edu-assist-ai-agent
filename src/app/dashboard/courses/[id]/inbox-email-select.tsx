@@ -35,7 +35,6 @@ export function InboxEmailSelect({
   onSelected: (inbox: DomainInbox) => void;
   canAddNew?: boolean;
 }) {
-
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -45,9 +44,7 @@ export function InboxEmailSelect({
     },
   });
 
-
   const handleOnChange = (value: string) => {
-
     if (value === '__add_new') {
       window.location.href = '/dashboard/settings/connections';
       return;
@@ -65,9 +62,7 @@ export function InboxEmailSelect({
 
   return (
     <Form {...form}>
-      <form
-        className="flex flex-col items-start space-y-3"
-      >
+      <form className="flex flex-col items-start space-y-3">
         <FormField
           control={form.control}
           name="email"
@@ -86,11 +81,14 @@ export function InboxEmailSelect({
                       <SelectItem key={inbox.id} value={inbox.email}>
                         {inbox.email}
                       </SelectItem>
-                      {canAddNew &&
-                        <SelectItem className='text-blue-500 font-semibold' value='__add_new'>
+                      {canAddNew && (
+                        <SelectItem
+                          className="text-blue-500 font-semibold"
+                          value="__add_new"
+                        >
                           Click to add new
                         </SelectItem>
-                      }
+                      )}
                     </div>
                   ))}
                 </SelectContent>

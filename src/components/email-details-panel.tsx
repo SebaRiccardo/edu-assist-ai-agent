@@ -140,10 +140,10 @@ export function EmailDetailsPanel({
   return (
     <div className="flex flex-col h-full border-l border-border w-full ">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-border">
+      <div className="flex items-center justify-between p-3 border-b border-border">
         <div className="flex items-center gap-2">
           <Mail className="size-5 text-red-500" />
-          <h2 className="font-semibold text-lg">Email Details</h2>
+          <h2 className="font-semibold text-base">Email Details</h2>
         </div>
         <Button
           variant="ghost"
@@ -188,14 +188,9 @@ export function EmailDetailsPanel({
           </div>
 
           {/* Email Body */}
-          <Card className="border-none shadow-none bg-muted/30">
-            <CardHeader>
-              <h4 className="text-sm font-semibold">Message</h4>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm whitespace-pre-wrap">{email.body}</p>
-            </CardContent>
-          </Card>
+          <div className="border-none shadow-none bg-background/30 p-3 rounded-3xl">
+            <p className="text-sm whitespace-pre-wrap">{email.body}</p>
+          </div>
 
           {/* AI Reasoning Section */}
           <Collapsible className="w-full">
@@ -212,7 +207,7 @@ export function EmailDetailsPanel({
             </CollapsibleTrigger>
             <CollapsibleContent className="mt-3">
               <Card className="border-none shadow-none bg-background/50">
-                <CardContent className="pt-6 space-y-2">
+                <CardContent className="space-y-2">
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-semibold text-foreground">
                       AI Reasoning
@@ -348,11 +343,11 @@ export function EmailDetailsPanel({
               </Card>
             </CollapsibleContent>
           </Collapsible>
-        </div>
-      </ScrollArea>
+        </div >
+      </ScrollArea >
 
       {/* Footer Actions */}
-      <div className="p-4 border-t border-border">
+      < div className="p-4 border-t border-border" >
         <Button
           className="w-full"
           size="lg"
@@ -371,7 +366,7 @@ export function EmailDetailsPanel({
             </>
           )}
         </Button>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }

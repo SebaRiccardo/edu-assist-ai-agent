@@ -168,6 +168,17 @@ export class ComposioService {
         });
     }
 
+    /**
+     * Delete a connected account
+     *
+     * @param connectionId - The connected account ID to delete
+     * @returns Promise that resolves when the account is deleted
+     */
+    static async deleteConnectedAccount(connectionId: string) {
+        const client = this.getClient();
+        return await client.connectedAccounts.delete(connectionId);
+    }
+
     // ============================================================================
     // TOOLS MANAGEMENT
     // ============================================================================
@@ -395,4 +406,3 @@ export class ComposioService {
         }
     }
 }
-

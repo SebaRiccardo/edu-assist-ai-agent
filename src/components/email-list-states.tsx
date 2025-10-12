@@ -40,6 +40,9 @@ export function EmailListStates({
   onAnalyze,
   onAutoReply,
 }: EmailListStatesProps) {
+  const [selectedEmail, setSelectedEmail] = useState<CategorizedEmail | null>(
+    null
+  );
   // Loading State - Checking Emails
   if (isChecking) {
     return (
@@ -102,15 +105,12 @@ export function EmailListStates({
 
   // Email List - With Results
   if (emails.length > 0) {
-    const [selectedEmail, setSelectedEmail] = useState<CategorizedEmail | null>(
-      null
-    );
 
     return (
-      <div className="flex h-full gap-0 overflow-hidden rounded-lg border border-border bg-background">
+      <div className=" h-full gap-0 grid grid-cols-12 overflow-hidden rounded-lg border border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-3x">
         {/* Email List - Left Side */}
-        <div className="w-full md:w-96 lg:w-[420px] flex flex-col border-r border-border bg-background/50">
-          <div className="flex items-center justify-between p-4 border-b border-border bg-background/80">
+        <div className="col-span-5 flex-col border-r">
+          <div className="flex items-center justify-between p-4 border-b">
             <h2 className="text-base font-semibold text-foreground">
               Course Emails ({emails.length})
             </h2>
@@ -127,7 +127,7 @@ export function EmailListStates({
                     !!isSendingReply && replyingToEmailId === email.id
                   }
                   onClick={() => setSelectedEmail(email)}
-                  onAutoReply={onAutoReply || (() => {})}
+                  onAutoReply={onAutoReply || (() => { })}
                 />
               ))}
             </div>
@@ -135,7 +135,7 @@ export function EmailListStates({
         </div>
 
         {/* Email Details Panel - Desktop Right Side */}
-        <div className="flex flex-1 w-full">
+        <div className="flex flex-1 col-span-7">
           {selectedEmail ? (
             <EmailDetailsPanel
               email={selectedEmail}
@@ -145,10 +145,10 @@ export function EmailListStates({
                 isSendingReply && replyingToEmailId === selectedEmail.id
               }
               onClose={() => setSelectedEmail(null)}
-              onAutoReply={onAutoReply || (() => {})}
+              onAutoReply={onAutoReply || (() => { })}
             />
           ) : (
-            <div className="flex items-center justify-center w-full bg-background/30">
+            <div className="flex items-center justify-center w-full">
               <Empty className="border-none">
                 <EmptyHeader>
                   <EmptyMedia variant="icon">
