@@ -65,7 +65,6 @@ export async function GET(request: NextRequest) {
         const idToken = val?.id_token;
         const decoded = idToken ? jose.decodeJwt(idToken || '') : {};
 
-        console.log('item', item);
         return {
           id: item.id,
           status: val.status,

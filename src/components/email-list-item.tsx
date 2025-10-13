@@ -65,7 +65,7 @@ export function EmailListItem({
   return (
     <div
       className={cn(
-        'group relative flex flex-col gap-2 border-b border-border p-4 cursor-pointer transition-all hover:bg-muted/50',
+        'bg-red-300 group relative flex flex-col gap-2 border-b border-border p-4 cursor-pointer transition-all hover:bg-muted/80',
         isSelected && 'bg-muted/70 border-l-4 border-l-primary'
       )}
       onClick={onClick}
@@ -73,12 +73,12 @@ export function EmailListItem({
       {/* Header Row */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2 flex-1 min-w-0">
-          <Mail
+          {/* <Mail
             className={cn(
               'size-4 flex-shrink-0',
               email.isUnread ? 'text-red-500' : 'text-muted-foreground'
             )}
-          />
+          /> */}
           <div className="flex flex-col gap-1 flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <span
@@ -95,14 +95,8 @@ export function EmailListItem({
                 </Badge>
               )}
             </div>
-            <span
-              className={cn(
-                'text-sm truncate',
-                email.isUnread ? 'font-medium' : 'font-normal'
-              )}
-            >
-              {email.subject}
-            </span>
+
+
           </div>
         </div>
 
@@ -116,13 +110,24 @@ export function EmailListItem({
         </div>
       </div>
 
-      {/* Snippet */}
-      <p className="text-xs text-muted-foreground line-clamp-2 pl-6">
-        {email.snippet}
-      </p>
+
+      <div className='flex items-center gap-2'>
+        <span
+          className={cn(
+            'text-sm truncate',
+            email.isUnread ? 'font-medium' : 'font-normal'
+          )}
+        >
+          {email.subject}
+        </span>
+
+        <span className="text-xs text-muted-foreground line-clamp-2">
+          {email.snippet}
+        </span>
+      </div>
 
       {/* Badges and Actions Row */}
-      <div className="flex items-center justify-between gap-2 pl-6">
+      <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 flex-wrap">
           {categoryConfig && (
             <Badge variant={categoryConfig.variant} className="text-xs">
@@ -133,16 +138,14 @@ export function EmailListItem({
             {email.suggestedLabel}
           </Badge>
         </div>
-
         <Button
           size="sm"
-          variant="ghost"
           onClick={e => {
             e.stopPropagation();
             onAutoReply(email.id);
           }}
           disabled={isSendingReply}
-          className="h-7 text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+          className="h-7 text-xs"
         >
           {isSendingReply ? (
             <>
@@ -152,7 +155,7 @@ export function EmailListItem({
           ) : (
             <>
               <Mail className="size-3 mr-1" />
-              Reply
+              Auto Reply
             </>
           )}
         </Button>

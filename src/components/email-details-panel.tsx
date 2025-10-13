@@ -198,14 +198,14 @@ export function EmailDetailsPanel({
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full justify-start"
+                className="w-full justify-start shadow-none"
               >
                 <Sparkles className="size-4 mr-2" />
                 View AI Reasoning
                 <ChevronsUpDown className="size-4 ml-auto" />
               </Button>
             </CollapsibleTrigger>
-            <CollapsibleContent className="mt-3">
+            <CollapsibleContent className="mt-3 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down flex flex-col gap-2 overflow-hidden transition-all duration-300">
               <Card className="border-none shadow-none bg-background/50">
                 <CardContent className="space-y-2">
                   <div className="flex items-center gap-2">

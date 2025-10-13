@@ -107,11 +107,11 @@ export function EmailListStates({
   if (emails.length > 0) {
 
     return (
-      <div className=" h-full gap-0 grid grid-cols-12 overflow-hidden rounded-lg border border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-3x">
+      <div className=" h-full gap-0 grid grid-cols-12 overflow-hidden rounded-3xl">
         {/* Email List - Left Side */}
         <div className="col-span-5 flex-col border-r">
-          <div className="flex items-center justify-between p-4 border-b">
-            <h2 className="text-base font-semibold text-foreground">
+          <div className="flex items-center justify-between p-2 px-4 border-b">
+            <h2 className="text-sm font-semibold text-foreground">
               Course Emails ({emails.length})
             </h2>
           </div>

@@ -18,14 +18,13 @@ import { fetchConnectedAccounts, connectionsKeys } from './queries/connections';
  * const accounts = data?.data?.accounts || [];
  * ```
  */
-export function useConnections(hasInboxes?: boolean) {
-  return useQuery({
-    queryKey: connectionsKeys.list(),
-    queryFn: fetchConnectedAccounts,
-    refetchInterval: hasInboxes ? false : 5000, // Refetch every 30 seconds if hasInboxes is false
-    staleTime: hasInboxes ? Infinity : 60 * 1000, // Consider data fresh for 1 minute
-    gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes (formerly cacheTime)
-    retry: 2,
-    refetchOnWindowFocus: false,
-  });
+export function useConnections(refetchInterval?: number) {
+    return useQuery({
+        queryKey: connectionsKeys.list(),
+        queryFn: fetchConnectedAccounts,
+        refetchInterval: refetchInterval ?? 60000, // Refetch every 60 seconds if hasInboxes is false
+        gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes (formerly cacheTime)
+        retry: 2,
+        refetchOnWindowFocus: false,
+    });
 }
