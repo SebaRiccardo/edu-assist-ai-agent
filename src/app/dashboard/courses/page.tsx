@@ -21,7 +21,11 @@ export default function CoursesPage() {
   const { user } = useCurrentUser();
   const { data: courses, isLoading } = useCourses(user?.id);
   const { mutateAsync: createCourse } = useCreateCourse();
-  const { mutateAsync: updateCourse } = useUpdateCourse();
+  const {
+    mutateAsync: updateCourse,
+    isPending: isUpdatingCourse,
+    variables,
+  } = useUpdateCourse();
   const { mutateAsync: deleteCourse } = useDeleteCourse();
 
   const handleSubmitCourse = async (
@@ -35,7 +39,9 @@ export default function CoursesPage() {
         // Update existing course
         await updateCourse({
           id: editingCourse.id,
-          ...courseData,
+          name: courseData.name,
+          //professor_id: user?.id!,
+          //...courseData,
         });
       } else {
         // Create new course
@@ -170,6 +176,7 @@ export default function CoursesPage() {
         onOpenChange={handleCloseForm}
         course={editingCourse}
         onSubmit={handleSubmitCourse}
+        isLoading={isUpdatingCourse && editingCourse?.id === variables.id}
       />
     </div>
   );

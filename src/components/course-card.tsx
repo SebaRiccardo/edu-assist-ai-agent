@@ -54,11 +54,11 @@ export function CourseCard({ course, onEdit, onDelete }: CourseCardProps) {
         </div>
       )} */}
 
-      <CardHeader>
+      <CardHeader className="flex-1">
         {/* Icon with Course Icon */}
         <div className="flex flex-row justify-between items-start">
-          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-4">
-            <BookOpen className="h-6 w-6 text-primary" />
+          <div className="flex items-center justify-center size-10 rounded-full bg-primary/10 mb-2">
+            <BookOpen className="size-5 text-primary" />
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
@@ -116,24 +116,15 @@ export function CourseCard({ course, onEdit, onDelete }: CourseCardProps) {
               {course.name}
             </CardTitle>
 
-            <p className="text-sm text-muted-foreground  leading-relaxed ">
+            <p className="text-sm text-muted-foreground whitespace-pre-wrap break-all">
               {course.description}
             </p>
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-4">
-        {/* Stats */}
-        <div className="flex items-center gap-6 pt-4 border-t border-border/50">
-          <div className="flex items-center gap-2 text-sm">
-            <Users className="h-4 w-4 text-muted-foreground" />
-            <span className="font-semibold">{course.student_count}</span>
-            <span className="text-muted-foreground">students</span>
-          </div>
-        </div>
-
-        <div className="text-xs text-muted-foreground pt-2">
+      <CardContent className="flex-1 flex">
+        <div className="text-xs text-muted-foreground">
           Updated {new Date(course.updated_at).toLocaleDateString()}
         </div>
       </CardContent>

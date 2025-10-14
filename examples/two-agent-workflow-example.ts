@@ -10,7 +10,7 @@
 
 import { generateText } from 'ai';
 import { google } from '@ai-sdk/google';
-import { analyzeInboxForCourse } from '@/agents/analyze-inbox';
+import { inboxAnalyzerAgent } from '@/agents/inbox-analyzer';
 import { CategorizedEmail } from '@/types';
 
 /**
@@ -29,7 +29,7 @@ export async function analyzeAndRespondToEmails(
   console.log('📧 AGENT 1: Analyzing emails...');
   console.log('─'.repeat(60));
 
-  const analysisResult = await analyzeInboxForCourse({
+  const analysisResult = await inboxAnalyzerAgent({
     userId,
     courseId,
     maxEmails,
@@ -40,7 +40,7 @@ export async function analyzeAndRespondToEmails(
   console.log(`✅ Analysis complete!`);
   console.log(`   Total analyzed: ${analysisResult.totalAnalyzed}`);
   console.log(
-    `   Course-related: ${analysisResult.analysis.stats.courseRelated}`
+    `   Course-related: ${analysisResult.analysis.stats.totalCourseRelated}`
   );
   console.log(
     `   Avg confidence: ${analysisResult.analysis.stats.avgConfidence}%`

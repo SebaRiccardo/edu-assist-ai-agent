@@ -3,9 +3,6 @@
  * Export all services, types, and utilities
  */
 
-// Client
-export { mercadoPagoClient } from './client';
-
 // Services
 export {
   // Subscription Plans

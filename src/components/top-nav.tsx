@@ -11,7 +11,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
-  User,
   Settings,
   LogOut,
   Bell,
@@ -21,6 +20,7 @@ import {
   HelpCircle,
   Sparkles,
   Loader2,
+  User as UserIcon,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -29,14 +29,15 @@ import {
   useUserInitials,
   useUserDisplayName,
 } from '@/hooks/use-current-user';
-import { signOut } from '@/lib/auth/auth-service';
+import { signOut } from '@/auth/auth-service';
 import WordmarkLogo from '@/components/wordmark-logo';
+import { User } from '@supabase/supabase-js';
 
-export function TopNav() {
+export function TopNav({ user }: { user: User | null }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, loading } = useCurrentUser();
-  const initials = useUserInitials();
+  const { user: clientSideUser, loading } = useCurrentUser(user);
+  const initials = useUserInitials(user);
   const displayName = useUserDisplayName();
 
   const navigation = [
@@ -50,10 +51,12 @@ export function TopNav() {
   const handleLogout = async () => {
     const result = await signOut();
     if (result.success) {
-      router.push('/auth/login');
+      router.replace('/auth/login');
       router.refresh();
     }
   };
+
+  console.log('server user', user);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-card/80 backdrop-blur-xl supports-[backdrop-filter]:bg-card/60 ">
@@ -75,10 +78,11 @@ export function TopNav() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all ${isActive
+                  className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+                    isActive
                       ? 'bg-primary/10 text-primary'
                       : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-                    }`}
+                  }`}
                 >
                   <item.icon className="h-4 w-4" />
                   <span>{item.name}</span>
@@ -163,7 +167,7 @@ export function TopNav() {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
-                <User className="mr-2 h-4 w-4" />
+                <UserIcon className="mr-2 h-4 w-4" />
                 <span>Profile</span>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>

@@ -21,7 +21,7 @@ import {
   BarChart3,
 } from 'lucide-react';
 import Link from 'next/link';
-import { signOut } from '@/lib/auth/auth-service';
+import { signOut } from '@/auth/auth-service';
 import { useRouter } from 'next/navigation';
 
 const mainNav = [

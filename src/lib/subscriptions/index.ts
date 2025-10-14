@@ -1,6 +1,6 @@
 // Plans Configuration
 export {
-  INBOX_PROFS_PLANS,
+  SUBSCRIPTION_PLANS_CONFIG as INBOX_PROFS_PLANS,
   PLAN_FEATURES,
   PLAN_LIMITS,
   hasFeatureAccess,

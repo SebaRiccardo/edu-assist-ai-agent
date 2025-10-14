@@ -25,11 +25,13 @@ import {
   Loader2,
   RefreshCw,
 } from 'lucide-react';
+import { generateEmailDraft } from '@/actions/email/email-draft';
 
 interface EmailCardProps {
   email: CategorizedEmail;
   courseName?: string;
   userId?: string;
+  connectedAccountId?: string;
   isSendingReply?: boolean;
   onMarkAsRead?: (emailId: string) => void;
   onArchive?: (emailId: string) => void;
@@ -330,6 +332,7 @@ export function EmailCard({
   email,
   courseName,
   userId,
+  connectedAccountId,
   isSendingReply = false,
   onMarkAsRead,
   onArchive,
@@ -346,7 +349,7 @@ export function EmailCard({
   const [draftError, setDraftError] = useState<string | null>(null);
 
   const handleGenerateDraft = async () => {
-    if (!userId || !courseName) {
+    if (!userId || !courseName || !connectedAccountId) {
       setDraftError('Missing user or course information');
       return;
     }
@@ -355,8 +358,8 @@ export function EmailCard({
     setDraftError(null);
 
     try {
-      const draftPayload = {
-        userId,
+      const result = await generateEmailDraft({
+        connectedAccountId,
         email: {
           id: email.id,
           from: email.from,
@@ -373,17 +376,9 @@ export function EmailCard({
         courseName,
         professorName: 'Professor',
         language: 'Spanish',
-      };
-
-      const response = await fetch('/api/email/draft', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(draftPayload),
       });
 
-      const result = await response.json();
-
-      if (result.success) {
+      if (result.success && result.data) {
         setDraftResponse(result.data.draftResponse);
         setIsDraftOpen(true);
       } else {

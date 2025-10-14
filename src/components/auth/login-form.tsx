@@ -19,11 +19,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { PasswordInput } from '@/components/auth/password-input';
-import { signIn } from '@/lib/auth/auth-service';
-import {
-  signInSchema,
-  type SignInFormData,
-} from '@/lib/auth/validation-schemas';
+import { signIn } from '@/auth/auth-service';
+import { signInSchema, type SignInFormData } from '@/auth/validation-schemas';
 
 interface LoginFormProps extends React.ComponentPropsWithoutRef<'div'> {
   redirectTo?: string;

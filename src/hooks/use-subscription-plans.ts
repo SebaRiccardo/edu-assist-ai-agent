@@ -20,7 +20,7 @@ import {
 export function usePlans() {
   const client = useSupabaseBrowser();
 
-  return useQuery(getAllPlansQuery(client));
+  return useQuery(getAllPlansQuery(client), { refetchOnMount: true });
 }
 
 /**

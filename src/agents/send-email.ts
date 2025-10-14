@@ -6,7 +6,7 @@
 
 import { generateText } from 'ai';
 import { google } from '@ai-sdk/google';
-import { getSendEmailTool } from '@/lib/services/composio/composio';
+import { ComposioService } from '@/lib/services/composio';
 
 /**
  * Parameters for sending an email
@@ -69,7 +69,7 @@ export async function sendEmail(
 
   try {
     // Get Gmail send email tool from Composio
-    const tools = await getSendEmailTool(userId);
+    const tools = await ComposioService.getSendEmailTools(userId);
 
     const prePropt = threadId
       ? `Reply to: ${to} using this threadId: ${threadId},`

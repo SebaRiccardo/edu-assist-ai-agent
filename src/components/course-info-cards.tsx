@@ -27,9 +27,9 @@ export function CourseInfoCards({ course }: CourseInfoCardsProps) {
           <Mail className="h-5 w-5 text-chart-1" />
         </div>
         <div>
-          <div className="text-lg font-bold text-foreground">
+          {/* <div className="text-lg font-bold text-foreground">
             {course.unreadEmailCount}
-          </div>
+          </div> */}
           <div className="text-xs text-muted-foreground">Unread</div>
         </div>
       </div>

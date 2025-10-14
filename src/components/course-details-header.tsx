@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,27 +11,43 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import { DomainCourse } from '@/types';
-import { Loader2, Sparkles, Clock, Home, Users } from 'lucide-react';
+import {
+  Loader2,
+  Sparkles,
+  Clock,
+  Home,
+  Users,
+  Pencil,
+  ChevronDown,
+} from 'lucide-react';
 
 interface CourseDetailsHeaderProps {
   course: DomainCourse;
   isChecking: boolean;
   onAnalyze: () => void;
+  onEdit?: () => void;
 }
 
 export function CourseDetailsHeader({
   course,
   isChecking,
   onAnalyze,
+  onEdit,
 }: CourseDetailsHeaderProps) {
   const router = useRouter();
+  const [isContextOpen, setIsContextOpen] = useState(false);
 
   return (
-    <div className="mt-6 w-full ">
+    <div className="mt-3 w-full ">
       <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-3xl p-8 border-none shadow-none">
         {/* Breadcrumb and Created Date */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-2 ">
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
@@ -39,7 +56,7 @@ export function CourseDetailsHeader({
                     onClick={() => router.push('/dashboard')}
                     className="flex items-center gap-1"
                   >
-                    <Home className="h-4 w-4" />
+                    <Home className="h-4 w-4 mr-2" />
                     <span>Dashboard</span>
                   </button>
                 </BreadcrumbLink>
@@ -59,24 +76,36 @@ export function CourseDetailsHeader({
             </BreadcrumbList>
           </Breadcrumb>
 
-          {/* Created Date */}
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Clock className="h-4 w-4" />
-            <span>
-              Created {new Date(course.createdAt).toLocaleDateString()}
-            </span>
+          {/* Created Date and Edit Button */}
+          <div className="flex items-center gap-3">
+            {onEdit && (
+              <Button
+                onClick={onEdit}
+                variant="ghost"
+                size="sm"
+                className="gap-2 shadow-none"
+              >
+                <Pencil className="h-4 w-4" />
+                Edit Course
+              </Button>
+            )}
           </div>
         </div>
 
         {/* Title and Action - Horizontal Layout */}
         <div className="flex items-center justify-between gap-4">
-          <div className="flex-1">
-            <div className="flex items-center justify-between gap-4 mb-4">
+          <div className="flex-1 gap-4">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground my-2">
+              <span>
+                Created {new Date(course.createdAt).toLocaleDateString()}
+              </span>
+            </div>
+            <div className="flex items-center justify-between gap-4 ">
               <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">
                 {course.name}
               </h1>
               {/* Analyze Button */}
-              <Button
+              {/* <Button
                 onClick={onAnalyze}
                 disabled={isChecking}
                 size="lg"
@@ -93,11 +122,12 @@ export function CourseDetailsHeader({
                     Analyze Inbox
                   </>
                 )}
-              </Button>
+              </Button> */}
             </div>
             <p className="text-sm text-pretty max-w-sm lg:max-w-5xl truncate text-muted-foreground ">
               {course.description}
             </p>
+
             {course.studentCount > 0 && (
               <div className="flex items-center gap-2 pt-2 text-muted-foreground">
                 <Users className="text-sm" size={15} />
@@ -107,9 +137,50 @@ export function CourseDetailsHeader({
                 </span>
               </div>
             )}
+
+            {/* Course Context Collapsible */}
+            {course.context && (
+              <Collapsible
+                open={isContextOpen}
+                onOpenChange={setIsContextOpen}
+                className="mt-4"
+              >
+                <CollapsibleTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="gap-2  text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <span className="text-sm font-medium">
+                      {isContextOpen ? 'Hide' : 'Read'} course context
+                    </span>
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform duration-300 ${
+                        isContextOpen ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="collapsible-content">
+                  <div className="mt-3 p-4 rounded-lg bg-muted/50 border border-border">
+                    <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                      {course.context}
+                    </p>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+            )}
           </div>
         </div>
       </div>
     </div>
   );
 }
+
+/**
+ *     <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span>
+                Created {new Date(course.createdAt).toLocaleDateString()}
+              </span>
+            </div>
+ */

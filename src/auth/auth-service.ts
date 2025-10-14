@@ -101,8 +101,7 @@ export async function signOut(): Promise<AuthResponse> {
   } catch (error) {
     return {
       success: false,
-      error:
-        error instanceof Error ? error.message : 'An unexpected error occurred',
+      error: 'An unexpected error occurred',
     };
   }
 }

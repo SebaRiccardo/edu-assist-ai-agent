@@ -84,7 +84,7 @@ export async function getCurrentSession() {
 /**
  * Get the current user's claims (server-side)
  */
-export async function getCurrentClaims(supabase: TypedSupabaseClient) {
+export async function getCurrentClaims(supabase?: TypedSupabaseClient) {
   const client = supabase ? supabase : await createClient();
 
   try {
@@ -112,6 +112,7 @@ export async function isAuthenticated(): Promise<boolean> {
 export async function isAdminUser(
   client: TypedSupabaseClient
 ): Promise<boolean> {
-  const claims = await getCurrentClaims(client);
-  return !!claims?.claims.user_metadata.admin;
+  const jwt = await getCurrentClaims(client);
+  
+  return !!jwt?.claims.app_metadata.admin;
 }

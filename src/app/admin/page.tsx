@@ -14,11 +14,7 @@ import { getActiveSubscriptionsQuery } from '@/hooks/queries/user-subscriptions'
  */
 export default async function AdminPage() {
   const supabase = await createClient();
-  const isAdmin = await isAdminUser(supabase);
 
-  if (!isAdmin) {
-    redirect('/auth/login');
-  }
   const queryClient = getQueryClient();
 
   await Promise.all([

@@ -66,24 +66,6 @@ export interface GmailFetchEmailsResponse {
 }
 
 /**
- * Transformed Email for Application Use
- * Simplified email structure used throughout the application
- */
-export interface TransformedEmail {
-  id: string;
-  threadId: string;
-  from: string;
-  to: string;
-  subject: string;
-  snippet: string;
-  body: string;
-  receivedAt: string;
-  isUnread: boolean;
-  labels: string[];
-  attachments?: GmailAttachment[];
-}
-
-/**
  * Gmail Fetch Emails parameters interface
  */
 export interface FetchEmailsParams {
@@ -194,6 +176,24 @@ export interface InboxAnalysisParams {
 }
 
 /**
+ * Transformed Email for Application Use
+ * Simplified email structure used throughout the application
+ */
+export interface TransformedEmail {
+  id: string;
+  threadId: string;
+  from: string;
+  to: string;
+  subject: string;
+  snippet: string;
+  body: string;
+  receivedAt: string;
+  isUnread: boolean;
+  labels: string[];
+  attachments?: GmailAttachment[];
+}
+
+/**
  * Categorized Email with Analysis
  */
 export interface CategorizedEmail extends TransformedEmail {
@@ -220,7 +220,7 @@ export interface InboxAnalysisResult {
     summary: string;
     stats: {
       totalAnalyzed: number;
-      courseRelated: number;
+      totalCourseRelated: number;
       avgConfidence: number;
       categoryBreakdown: Record<string, number>;
     };

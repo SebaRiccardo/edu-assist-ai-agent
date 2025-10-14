@@ -7,24 +7,28 @@ The Settings/Connections page (`/settings/connections`) allows users to manage t
 ## Features
 
 ### ✅ View Connected Accounts
+
 - Display all Gmail accounts connected through Composio
 - Show connection status (ACTIVE, INACTIVE, ERROR)
 - Display email addresses and account details
 - Show authorization status
 
 ### ✅ Add New Gmail Account
+
 - Connect new Gmail accounts via Composio OAuth
 - Real-time polling for connection status
 - Toast notifications for success/error states
 - Automatic account list refresh after connection
 
 ### ✅ Delete Connections
+
 - Remove Gmail connections with confirmation dialog
 - Safe deletion with error handling
 - Immediate UI update after deletion
 - Toast notifications for user feedback
 
 ### ✅ Handle Incomplete Authorizations
+
 - Display accounts that need authorization completion
 - Provide direct link to complete OAuth flow
 - Visual indicators for authorization status
@@ -62,9 +66,11 @@ src/
 ## API Endpoints
 
 ### GET `/api/connections`
+
 Fetches all connected Gmail accounts for the current user.
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -88,9 +94,11 @@ Fetches all connected Gmail accounts for the current user.
 ```
 
 ### POST `/api/connections/initiate`
+
 Initiates a new Gmail connection via Composio OAuth.
 
 **Request Body:**
+
 ```json
 {
   "courseId": "settings"
@@ -98,6 +106,7 @@ Initiates a new Gmail connection via Composio OAuth.
 ```
 
 **Response:**
+
 ```json
 {
   "redirectUrl": "https://composio.dev/auth/...",
@@ -106,9 +115,11 @@ Initiates a new Gmail connection via Composio OAuth.
 ```
 
 ### DELETE `/api/connections/delete`
+
 Deletes an existing Gmail connection.
 
 **Request Body:**
+
 ```json
 {
   "connectionId": "acc_123"
@@ -116,6 +127,7 @@ Deletes an existing Gmail connection.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -130,12 +142,14 @@ Deletes an existing Gmail connection.
 Main page component that orchestrates the connections management.
 
 **State Management:**
+
 - `isDialogOpen` - Controls connect dialog visibility
 - `isConnecting` - Loading state for connection initiation
 - `deletingAccountId` - Tracks which account is being deleted
 - `accountToDelete` - Account selected for deletion
 
 **Key Functions:**
+
 - `handleConnect()` - Initiates new Gmail connection
 - `handleDeleteClick()` - Opens delete confirmation dialog
 - `handleDeleteConfirm()` - Executes account deletion
@@ -145,12 +159,14 @@ Main page component that orchestrates the connections management.
 Displays individual Gmail account information.
 
 **Props:**
+
 - `account` - ComposioConnectedAccount object
 - `onAdd?` - Optional callback for adding to course (not used in settings)
 - `isAdding?` - Loading state (not used in settings)
 - `disabled?` - Disable interactions
 
 **States Handled:**
+
 - **Active with email** - Shows full account details
 - **Inactive/No email** - Shows authorization required message
 
@@ -159,6 +175,7 @@ Displays individual Gmail account information.
 Dialog component for initiating new Gmail connections.
 
 **Props:**
+
 - `open` - Dialog visibility
 - `onOpenChange` - Dialog state change callback
 - `onConnect` - Connection initiation callback
@@ -300,17 +317,20 @@ setTimeout(() => clearInterval(pollInterval), 300000);
 ## Error Handling
 
 ### Connection Errors
+
 - Network failures
 - OAuth cancellation
 - Composio API errors
 - Invalid connection IDs
 
 ### Deletion Errors
+
 - Account not found
 - Network failures
 - Permission errors
 
 ### Display Errors
+
 - Loading failures
 - Empty states
 - Authorization pending
@@ -318,12 +338,14 @@ setTimeout(() => clearInterval(pollInterval), 300000);
 ## Navigation
 
 The page is accessible from:
+
 - **Top Navigation** → User Menu → "Gmail Connections"
 - **Direct URL** → `/settings/connections`
 
 ## Styling
 
 The page uses the consistent app styling:
+
 - Gradient background: `bg-gradient-to-bl from-pink-100 to-blue-200`
 - Max width container: `max-w-7xl mx-auto`
 - Responsive grid: `grid-cols-1 md:grid-cols-2 xl:grid-cols-3`
@@ -365,6 +387,7 @@ The page uses the consistent app styling:
 ## Future Enhancements
 
 ### Planned Features
+
 - [ ] Account details page
 - [ ] Connection health status
 - [ ] Last sync time
@@ -375,6 +398,7 @@ The page uses the consistent app styling:
 - [ ] Connection settings per account
 
 ### Improvements
+
 - [ ] Optimistic UI updates
 - [ ] Better error recovery
 - [ ] Connection testing
@@ -385,18 +409,21 @@ The page uses the consistent app styling:
 ## Troubleshooting
 
 ### Connection Not Appearing
+
 - Check OAuth completion
 - Verify polling is active
 - Check console for errors
 - Refresh page manually
 
 ### Delete Not Working
+
 - Verify connection ID
 - Check network tab
 - Ensure user permissions
 - Try again after refresh
 
 ### Authorization Loop
+
 - Clear browser cookies
 - Try incognito mode
 - Check Composio dashboard
@@ -412,6 +439,7 @@ The page uses the consistent app styling:
 ## Support
 
 For issues or questions:
+
 1. Check console for errors
 2. Review Composio dashboard
 3. Check API endpoint responses

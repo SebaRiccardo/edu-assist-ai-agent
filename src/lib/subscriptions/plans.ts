@@ -1,61 +1,55 @@
 /**
- * InboxProfs AI - Subscription Plans Configuration
+ * Subscription Plans Configuration
  * Centralized plan definitions, limits, and feature access control
  */
 
+import plansConfigEN from '@/config/subscription-plans.en.json';
+import plansConfigES from '@/config/subscription-plans.es.json';
+
 /**
- * InboxProfs AI Plan Definitions
- * These match the plans shown on the landing page
+ * Get plans configuration based on locale
+ * @param locale - Language locale ('en' or 'es')
+ * @returns Plans configuration
  */
-export const INBOX_PROFS_PLANS = {
-  FREE: {
-    name: 'Basic',
-    subtitle: 'Just Getting Started',
-    price: 8,
-    period: 'per month',
-    description:
-      'Smart labeling for one inbox and up to 2 courses. See how much time you save.',
-    features: [
-      'Smart labeling for 1 inbox',
-      'Up to 2 courses',
-      'Basic email organization',
-      'Course-aware filtering',
-    ],
-    highlighted: false,
-  },
+export function getPlansConfig(locale: 'en' | 'es' = 'en') {
+  return locale === 'es' ? plansConfigES : plansConfigEN;
+}
+
+/**
+ * Plan Definitions
+ * Dynamically populated from JSON configuration files
+ * Uses Spanish (ES) configuration by default for ARS pricing
+ */
+export const SUBSCRIPTION_PLANS_CONFIG = {
   BASIC: {
-    name: 'Pro',
-    subtitle: 'Stay on Top of It',
-    price: 15,
-    period: 'per month',
-    description: 'Unlimited courses, faster labeling, and advanced sorting.',
-    features: [
-      'Unlimited courses',
-      'Advanced smart labeling',
-      'Priority sorting',
-      'Faster processing',
-      'Email analytics',
-      'Custom label rules',
-    ],
-    highlighted: true,
+    name: plansConfigES.basic.name,
+    subtitle: plansConfigES.basic.subtitle,
+    price: plansConfigES.basic.price,
+    period: plansConfigES.basic.period,
+    description: plansConfigES.basic.description,
+    features: plansConfigES.basic.features,
+    highlighted: plansConfigES.basic.highlighted,
+    currency: plansConfigES.basic.currency,
   },
   PRO: {
-    name: 'Pro +',
-    subtitle: 'Full Autopilot',
-    price: 25,
-    period: 'per month',
-    description:
-      'Your inbox runs itself — background cleanup, auto-replies, and smart prioritization.',
-    features: [
-      'Everything in Pro',
-      'Auto-replies (AI-powered)',
-      'Background cleanup',
-      'Smart prioritization',
-      'Continuous organization',
-      'Custom response templates',
-      'Advanced analytics',
-    ],
-    highlighted: false,
+    name: plansConfigES.pro.name,
+    subtitle: plansConfigES.pro.subtitle,
+    price: plansConfigES.pro.price,
+    period: plansConfigES.pro.period,
+    description: plansConfigES.pro.description,
+    features: plansConfigES.pro.features,
+    highlighted: plansConfigES.pro.highlighted,
+    currency: plansConfigES.pro.currency,
+  },
+  PRO_PLUS: {
+    name: plansConfigES.pro_plus.name,
+    subtitle: plansConfigES.pro_plus.subtitle,
+    price: plansConfigES.pro_plus.price,
+    period: plansConfigES.pro_plus.period,
+    description: plansConfigES.pro_plus.description,
+    features: plansConfigES.pro_plus.features,
+    highlighted: plansConfigES.pro_plus.highlighted,
+    currency: plansConfigES.pro_plus.currency,
   },
 } as const;
 
@@ -84,35 +78,43 @@ export const PLAN_FEATURES = {
 
 /**
  * Plan limits configuration
- * Defines usage limits for each plan tier
+ * Dynamically populated from JSON configuration files
+ * null values in JSON are converted to Infinity for unlimited features
  */
 export const PLAN_LIMITS = {
   basic: {
-    maxInboxes: 1,
-    maxCourses: 2,
-    aiQueriesPerDay: 20,
-    emailsProcessedPerMonth: 200,
-    storageGB: 1,
-    autoReplies: false,
-    prioritySupport: false,
+    maxInboxes: plansConfigES.basic.limits.maxInboxes,
+    maxCourses: plansConfigES.basic.limits.maxCourses ?? Infinity,
+    aiQueriesPerDay: plansConfigES.basic.limits.aiQueriesPerDay,
+    emailsProcessedPerMonth: plansConfigES.basic.limits.emailsProcessedPerMonth,
+    autoReplies: plansConfigES.basic.limits.autoReplies,
+    prioritySupport: plansConfigES.basic.limits.prioritySupport,
+    autoLabels: plansConfigES.basic.limits.autoLabels,
+    autonomusEmailManagement:
+      plansConfigES.basic.limits.autonomousEmailManagement,
   },
   pro: {
-    maxInboxes: 3,
-    maxCourses: Infinity,
-    aiQueriesPerDay: 500,
-    emailsProcessedPerMonth: 10000,
-    storageGB: 10,
-    autoReplies: false,
-    prioritySupport: false,
+    maxInboxes: plansConfigES.pro.limits.maxInboxes,
+    maxCourses: plansConfigES.pro.limits.maxCourses ?? Infinity,
+    aiQueriesPerDay: plansConfigES.pro.limits.aiQueriesPerDay,
+    emailsProcessedPerMonth: plansConfigES.pro.limits.emailsProcessedPerMonth,
+    autoReplies: plansConfigES.pro.limits.autoReplies,
+    autoLabels: plansConfigES.pro.limits.autoLabels,
+    prioritySupport: plansConfigES.pro.limits.prioritySupport,
+    autonomusEmailManagement:
+      plansConfigES.pro.limits.autonomousEmailManagement,
   },
   pro_plus: {
-    maxInboxes: Infinity,
-    maxCourses: Infinity,
-    aiQueriesPerDay: Infinity,
-    emailsProcessedPerMonth: Infinity,
-    storageGB: 100,
-    autoReplies: true,
-    prioritySupport: true,
+    maxInboxes: plansConfigES.pro_plus.limits.maxInboxes,
+    maxCourses: plansConfigES.pro_plus.limits.maxCourses ?? Infinity,
+    aiQueriesPerDay: plansConfigES.pro_plus.limits.aiQueriesPerDay ?? Infinity,
+    emailsProcessedPerMonth:
+      plansConfigES.pro_plus.limits.emailsProcessedPerMonth ?? Infinity,
+    autoReplies: plansConfigES.pro_plus.limits.autoReplies,
+    autoLabels: plansConfigES.pro_plus.limits.autoLabels,
+    prioritySupport: plansConfigES.pro_plus.limits.prioritySupport,
+    autonomusEmailManagement:
+      plansConfigES.pro_plus.limits.autonomousEmailManagement,
   },
 } as const;
 
@@ -194,8 +196,9 @@ export function formatPlanPrice(
   currencyId: string = 'ARS'
 ): string {
   const price =
-    INBOX_PROFS_PLANS[planType.toUpperCase() as keyof typeof INBOX_PROFS_PLANS]
-      .price;
+    SUBSCRIPTION_PLANS_CONFIG[
+      planType.toUpperCase() as keyof typeof SUBSCRIPTION_PLANS_CONFIG
+    ].price;
 
   // if (price === 0) {
   //   return '$0';
@@ -230,8 +233,14 @@ export function getPlanBadgeColor(planType: PlanType): string {
  * @returns Plan configuration
  */
 export function getPlanDetails(planType: PlanType) {
-  return INBOX_PROFS_PLANS[
-    planType.toUpperCase() as keyof typeof INBOX_PROFS_PLANS
+  const planMap = {
+    basic: 'BASIC',
+    pro: 'PRO',
+    pro_plus: 'PRO_PLUS',
+  } as const;
+
+  return SUBSCRIPTION_PLANS_CONFIG[
+    planMap[planType] as keyof typeof SUBSCRIPTION_PLANS_CONFIG
   ];
 }
 

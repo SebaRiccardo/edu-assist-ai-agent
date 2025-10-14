@@ -3,32 +3,42 @@
 import React, { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { CourseDetailsHeader } from '@/components/course-details-header';
+import { CourseFormDialog } from '@/components/course-form-dialog';
 import { EmailListStates } from '@/components/email-list-states';
 import { CategorizedEmail, InboxAnalysisResult, DomainCourse } from '@/types';
-import { Loader2, Mail } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useCurrentUser } from '@/hooks/use-current-user';
-import { useCourse } from '@/hooks/use-courses';
+import { useCourse, useUpdateCourse } from '@/hooks/use-courses';
 import { useConnections } from '@/hooks/use-connections';
 import { useGmailConnection } from '@/hooks/use-gmail-connection';
 import { ConnectionStatusCard } from '@/components/connection-status-card';
 import { NoAccountsEmptyState } from '@/components/no-accounts-empty-state';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs';
+import { InsertCourse } from '@/lib/supabase/types/courses.types';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { sendEmailReply, analyzeInbox } from '@/actions';
+import { toast } from 'sonner';
 
 export default function CourseDetailsPage() {
   const router = useRouter();
   const params = useParams();
-  const { user } = useCurrentUser();
+
   const courseId = params.id as string;
+  const { user } = useCurrentUser();
 
   // Data fetching hooks
-  const { data: courseData, isLoading: isLoadingCourse, isError: isErrorCourse } = useCourse(courseId);
-  const { data: gmailConnections, isLoading: isLoadingConnections } = useConnections();
+  const {
+    data: courseData,
+    isLoading: isLoadingCourse,
+    isError: isErrorCourse,
+  } = useCourse(courseId);
+  const { data: gmailConnections, isLoading: isLoadingConnections } =
+    useConnections();
+  const { mutateAsync: updateCourse, isPending: isUpdatingCourse } =
+    useUpdateCourse();
+
+  // Edit course dialog state
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   // Gmail connection logic
   const gmailConnection = useGmailConnection({
@@ -54,22 +64,22 @@ export default function CourseDetailsPage() {
   }, [gmailConnections, selectedAccountId]);
 
   // Transform Supabase data to DomainCourse type
-  const course: DomainCourse | null = courseData
+  const domainCourse: DomainCourse | null = courseData
     ? {
-      id: courseData.id,
-      name: courseData.name,
-      year: courseData.year ?? '',
-      description: courseData.description,
-      context: courseData.context,
-      professorId: courseData.professor_id,
-      studentCount: courseData.student_count,
-      startAt: courseData.start_at
-        ? new Date(courseData.start_at!)
-        : undefined,
-      endAt: courseData.end_at ? new Date(courseData.end_at!) : undefined,
-      createdAt: new Date(courseData.created_at),
-      updatedAt: new Date(courseData.updated_at),
-    }
+        id: courseData.id,
+        name: courseData.name,
+        year: courseData.year ?? '',
+        description: courseData.description,
+        context: courseData.context,
+        professorId: courseData.professor_id,
+        studentCount: courseData.student_count,
+        startAt: courseData.start_at
+          ? new Date(courseData.start_at!)
+          : undefined,
+        endAt: courseData.end_at ? new Date(courseData.end_at!) : undefined,
+        createdAt: new Date(courseData.created_at),
+        updatedAt: new Date(courseData.updated_at),
+      }
     : null;
 
   // Email state per account - using a map to store emails for each account
@@ -80,7 +90,9 @@ export default function CourseDetailsPage() {
     new Set()
   );
   const [replyingEmails, setReplyingEmails] = useState<Set<string>>(new Set());
+
   const [authError, setAuthError] = useState<string | null>(null);
+
   const [statsByAccount, setStatsByAccount] = useState<
     Record<
       string,
@@ -99,65 +111,115 @@ export default function CourseDetailsPage() {
   }, [gmailConnections, selectedAccountId]);
 
   // Handlers
+  const handleEditCourse = () => {
+    setIsEditDialogOpen(true);
+  };
+
+  const handleCloseEditDialog = () => {
+    setIsEditDialogOpen(false);
+  };
+
+  const handleSubmitCourseEdit = async (
+    data: Omit<
+      InsertCourse,
+      'professor_id' | 'created_at' | 'updated_at' | 'id'
+    >
+  ) => {
+    try {
+      if (!courseData) {
+        console.error('No course data available');
+        return;
+      }
+
+      const result = await updateCourse({
+        id: courseData.id,
+        name: data.name,
+        description: data.description,
+        context: data.context,
+        year: data.year,
+        student_count: data.student_count ?? 0,
+      });
+
+      console.log('Update result:', result);
+      setIsEditDialogOpen(false);
+    } catch (error) {
+      console.error('Error updating course:', error);
+
+      // Don't re-throw to prevent double error handling
+    }
+  };
+
   const handleAnalyzeInbox = async (connectedAccountId: string) => {
-    if (!course || !user) return;
+    if (!domainCourse || !user || !courseData) return;
 
     if (!connectedAccountId) {
       setAuthError('Please select a Gmail account first');
+      toast.error('Please select a Gmail account first');
       return;
     }
 
     setCheckingAccounts(prev => new Set(prev).add(connectedAccountId));
     setAuthError(null);
 
+    const toastId = `analyze-${connectedAccountId}`;
+    toast.loading('Analyzing inbox...', { id: toastId });
+
     try {
-      const response = await fetch('/api/inbox/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          connectedAccountId,
-          courseId: course.id,
-          reasoningLanguage: 'spanish',
-        }),
+      const result = await analyzeInbox({
+        courseId: domainCourse.id,
+        course: courseData,
+        connectedAccountId,
+        reasoningLanguage: 'spanish',
+        maxEmails: 3,
+        includeRead: false,
+        verbose: true,
       });
 
-      const res: {
-        success: boolean;
-        data?: InboxAnalysisResult;
-        authRequired?: boolean;
-        error?: string;
-      } = await response.json();
+      if (!result.success) {
+        if (result.error === 'unauthorized') {
+          setAuthError('Gmail connection required');
+          toast.error('Gmail connection required', { id: toastId });
+          return;
+        }
 
-      if (response.status === 401) {
-        setAuthError('Gmail connection required');
-        return;
+        if (result.error === 'Connected Account is not active') {
+          setAuthError('Gmail account is not active. Please reconnect.');
+          toast.error('Gmail account is not active. Please reconnect.', {
+            id: toastId,
+          });
+          return;
+        }
+
+        throw new Error(result.error || 'Failed to analyze emails');
       }
 
-      if (!response.ok) {
-        throw new Error(res.error || 'Failed to check emails');
-      }
-
-      if (res.success && res.data && res.data.emails && res.data.analysis) {
+      if (result.data && result.data.emails && result.data.analysis) {
         // Store emails for this specific account
         setEmailsByAccount(prev => ({
           ...prev,
-          [connectedAccountId]: res.data!.emails,
+          [connectedAccountId]: result.data!.emails,
         }));
 
         // Store stats for this specific account
         setStatsByAccount(prev => ({
           ...prev,
           [connectedAccountId]: {
-            totalAnalyzed: res.data!.totalAnalyzed,
-            courseRelated: res.data!.analysis.stats.courseRelated,
+            totalAnalyzed: result.data!.totalAnalyzed,
+            courseRelated: result.data!.analysis.stats.totalCourseRelated,
           },
         }));
+
+        toast.success(
+          `Found ${result.data.analysis.stats.totalCourseRelated} course-related emails out of ${result.data.totalAnalyzed} analyzed`,
+          { id: toastId }
+        );
       }
     } catch (error) {
       console.error('Error checking emails:', error);
-      setAuthError(
-        'Ocurrió un error al analizar los correos. Por favor, inténtalo de nuevo.'
-      );
+      const errorMessage =
+        'Ocurrió un error al analizar los correos. Por favor, inténtalo de nuevo.';
+      setAuthError(errorMessage);
+      toast.error(errorMessage, { id: toastId });
     } finally {
       setCheckingAccounts(prev => {
         const next = new Set(prev);
@@ -171,53 +233,56 @@ export default function CourseDetailsPage() {
     emailId: string,
     connectedAccountId: string
   ) => {
-    if (!course || !user) return;
+    if (!domainCourse || !user) return;
 
     const accountEmails = emailsByAccount[connectedAccountId] || [];
     const email = accountEmails.find(e => e.id === emailId);
+
     if (!email) {
       console.error('Email not found:', emailId);
       return;
     }
 
     setReplyingEmails(prev => new Set(prev).add(emailId));
+    toast.loading('Sending email reply...', { id: `reply-${emailId}` });
 
     try {
-      const response = await fetch('/api/email/reply', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: user.id,
-          email: {
-            id: email.id,
-            from: email.from,
-            subject: email.subject,
-            body: email.body,
-            category: email.category,
-            reasoning: email.reasoning,
-            threadId: email.threadId,
-          },
-          priority: {
-            priority: 'medium',
-            responseDeadline: 'Within 24 hours',
-            reasoning: 'Auto-reply requested by professor',
-          },
-          courseName: course.name,
-          professorName: 'Professor',
-          language: 'Neutral Spanish',
-        }),
+      const result = await sendEmailReply({
+        connectedAccountId,
+        email: {
+          id: email.id,
+          from: email.from,
+          subject: email.subject,
+          body: email.body,
+          category: email.category,
+          reasoning: email.reasoning,
+          threadId: email.threadId,
+        },
+        priority: {
+          priority: 'medium',
+          responseDeadline: 'Within 24 hours',
+          reasoning: 'Auto-reply requested by professor',
+        },
+        courseName: domainCourse.name,
+        professorName: 'Professor',
+        language: 'Neutral Spanish',
       });
 
-      const result = await response.json();
-
       if (result.success) {
-        alert('Email reply sent successfully!');
+        toast.success('Email reply sent successfully!', {
+          id: `reply-${emailId}`,
+          description: `Your reply has been sent to: ${email.from} `,
+        });
       } else {
-        alert(`Failed to send email: ${result.error}`);
+        toast.error(`Failed to send email: ${result.error}`, {
+          id: `reply-${emailId}`,
+        });
       }
     } catch (error) {
       console.error('Error in auto-reply:', error);
-      alert('An error occurred while sending the email');
+      toast.error('An error occurred while sending the email', {
+        id: `reply-${emailId}`,
+      });
     } finally {
       setReplyingEmails(prev => {
         const next = new Set(prev);
@@ -233,7 +298,7 @@ export default function CourseDetailsPage() {
     return null;
   }
 
-  if (isLoadingCourse || isLoadingConnections || !course) {
+  if (isLoadingCourse || isLoadingConnections || !domainCourse) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -241,9 +306,9 @@ export default function CourseDetailsPage() {
     );
   }
 
-  const activeConnections = gmailConnections?.filter(
-    conn => conn.status === 'ACTIVE' && conn.email
-  ) || [];
+  const activeConnections =
+    gmailConnections?.filter(conn => conn.status === 'ACTIVE' && conn.email) ||
+    [];
 
   const hasNoConnections = activeConnections.length === 0;
 
@@ -251,9 +316,10 @@ export default function CourseDetailsPage() {
     <div className="flex flex-1 flex-col">
       <div className="mx-auto max-w-7xl w-full px-6 space-y-6">
         <CourseDetailsHeader
-          course={course}
+          course={domainCourse}
           isChecking={false}
-          onAnalyze={() => { }}
+          onAnalyze={() => {}}
+          onEdit={handleEditCourse}
         />
 
         <ConnectionStatusCard
@@ -280,29 +346,33 @@ export default function CourseDetailsPage() {
             className="gap-0"
           >
             {/* Gmail Account Tabs */}
-            <TabsList className='bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-lg rounded-b-none border-b p-0'>
+            <TabsList className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-lg rounded-b-none border-b p-0">
               {activeConnections.map(account => (
                 <TabsTrigger
                   key={account.id}
                   value={account.id}
                   disabled={account.status !== 'ACTIVE'}
-                  className='px-4 rounded-md rounded-b-none data-[state=active]:border-primary dark:data-[state=active]:border-primary data-[state=active]:text-foreground text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground hover:border-muted-foreground/30 h-full border-0 border-b-2 border-transparent data-[state=active]:shadow-none'
+                  className="px-4 rounded-md rounded-b-none data-[state=active]:border-primary dark:data-[state=active]:border-primary data-[state=active]:text-foreground text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground hover:border-muted-foreground/30 h-full border-0 border-b-2 border-transparent data-[state=active]:shadow-none"
                 >
                   {/* <Mail className="h-4 w-4" /> */}
-                  <span className="hidden sm:inline text-[13px]">{account.email}</span>
+                  <span className="hidden sm:inline text-[13px]">
+                    {account.email}
+                  </span>
                   {account.status !== 'ACTIVE' && (
                     <Badge variant="destructive" className="ml-2">
                       {account.status}
                     </Badge>
                   )}
-                  {checkingAccounts.has(account.id) && !statsByAccount[account.id] && (
-                    <Loader2 className="ml-1 h-4 w-4 animate-spin text-muted-foreground" />
-                  )}
-                  {statsByAccount[account.id] &&
+                  {checkingAccounts.has(account.id) &&
+                    !statsByAccount[account.id] && (
+                      <Loader2 className="ml-1 h-4 w-4 animate-spin text-muted-foreground" />
+                    )}
+                  {statsByAccount[account.id] && (
                     <Badge variant="secondary" className="ml-1">
-                      {statsByAccount[account.id].courseRelated} / {statsByAccount[account.id].totalAnalyzed}
+                      {statsByAccount[account.id].courseRelated} /{' '}
+                      {statsByAccount[account.id].totalAnalyzed}
                     </Badge>
-                  }
+                  )}
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -311,7 +381,7 @@ export default function CourseDetailsPage() {
             {activeConnections.map(account => {
               const emails = emailsByAccount[account.id] || [];
               const stats = statsByAccount[account.id] || null;
-              const isChecking = checkingAccounts.has(account.id);
+              const isAnalyzing = checkingAccounts.has(account.id);
 
               return (
                 <TabsContent
@@ -320,10 +390,11 @@ export default function CourseDetailsPage() {
                   className="rounded-3xl rounded-tl-none bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
                 >
                   <EmailListStates
+                    selectedAccountId={selectedAccountId}
                     emails={emails}
-                    isChecking={isChecking}
+                    isChecking={isAnalyzing}
                     stats={stats}
-                    courseName={course.name}
+                    courseName={domainCourse.name}
                     userId={user?.id}
                     isSendingReply={false}
                     replyingToEmailId={null}
@@ -338,6 +409,15 @@ export default function CourseDetailsPage() {
           </Tabs>
         </div>
       )}
+
+      {/* Edit Course Dialog */}
+      <CourseFormDialog
+        open={isEditDialogOpen}
+        onOpenChange={handleCloseEditDialog}
+        course={courseData}
+        onSubmit={handleSubmitCourseEdit}
+        isLoading={isUpdatingCourse}
+      />
     </div>
   );
 }

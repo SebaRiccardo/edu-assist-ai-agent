@@ -9,7 +9,7 @@ import {
   getPreApproval,
   cancelPreApproval,
 } from './service';
-import { INBOX_PROFS_PLANS } from '../subscriptions/plans';
+import { SUBSCRIPTION_PLANS_CONFIG } from '../subscriptions/plans';
 
 /**
  * Creates all InboxProfs AI subscription plans in MercadoPago
@@ -30,7 +30,7 @@ export async function setupInboxProfPlans(currencyId: string = 'ARS') {
     autoRecurring: {
       frequency: 1,
       frequencyType: 'months',
-      transactionAmount: INBOX_PROFS_PLANS.FREE.price,
+      transactionAmount: SUBSCRIPTION_PLANS_CONFIG.FREE.price,
       currencyId,
     },
   });
@@ -46,7 +46,7 @@ export async function setupInboxProfPlans(currencyId: string = 'ARS') {
     autoRecurring: {
       frequency: 1,
       frequencyType: 'months',
-      transactionAmount: INBOX_PROFS_PLANS.BASIC.price,
+      transactionAmount: SUBSCRIPTION_PLANS_CONFIG.BASIC.price,
       currencyId,
     },
   });
@@ -62,7 +62,7 @@ export async function setupInboxProfPlans(currencyId: string = 'ARS') {
     autoRecurring: {
       frequency: 1,
       frequencyType: 'months',
-      transactionAmount: INBOX_PROFS_PLANS.PRO.price,
+      transactionAmount: SUBSCRIPTION_PLANS_CONFIG.PRO.price,
       currencyId,
     },
   });
@@ -98,7 +98,7 @@ export async function setupInboxProfPlansWithTrial(
     autoRecurring: {
       frequency: 1,
       frequencyType: 'months',
-      transactionAmount: INBOX_PROFS_PLANS.FREE.price,
+      transactionAmount: SUBSCRIPTION_PLANS_CONFIG.FREE.price,
       currencyId,
     },
   });
@@ -114,7 +114,7 @@ export async function setupInboxProfPlansWithTrial(
     autoRecurring: {
       frequency: 1,
       frequencyType: 'months',
-      transactionAmount: INBOX_PROFS_PLANS.BASIC.price,
+      transactionAmount: SUBSCRIPTION_PLANS_CONFIG.BASIC.price,
       currencyId,
       freeTrial: {
         frequency: trialDays,
@@ -134,7 +134,7 @@ export async function setupInboxProfPlansWithTrial(
     autoRecurring: {
       frequency: 1,
       frequencyType: 'months',
-      transactionAmount: INBOX_PROFS_PLANS.PRO.price,
+      transactionAmount: SUBSCRIPTION_PLANS_CONFIG.PRO.price,
       currencyId,
       freeTrial: {
         frequency: trialDays,

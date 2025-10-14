@@ -1,4 +1,4 @@
-import { analyzeInboxForCourse } from '@/agents/analyze-inbox';
+import { inboxAnalyzerAgent } from '@/agents/inbox-analyzer';
 import { ComposioService } from '@/lib/services/composio';
 import { createClient, getCurrentUser } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
@@ -11,6 +11,7 @@ export async function POST(request: NextRequest) {
       reasoningLanguage,
       verbose,
       courseId,
+      course,
       connectedAccountId,
     } = await request.json();
 
@@ -23,7 +24,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
     }
 
-    if (!courseId) {
+    if (!course) {
       return NextResponse.json(
         { error: 'Course ID is required' },
         { status: 400 }
@@ -37,14 +38,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const [{ data: course, error }, connectedGmailAccount] = await Promise.all([
-      supabase.from('courses').select('*').eq('id', courseId).single(),
-      ComposioService.getConnectedAccountById(connectedAccountId),
-    ]);
-
-    if (error) {
-      return NextResponse.json({ error: 'Course not found' }, { status: 404 });
-    }
+    const connectedGmailAccount =
+      await ComposioService.getConnectedAccountById(connectedAccountId);
 
     if (!connectedGmailAccount) {
       return NextResponse.json(
@@ -64,7 +59,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Call the encapsulated analysis function
-    const result = await analyzeInboxForCourse({
+    const result = await inboxAnalyzerAgent({
       course,
       connectedAccountId,
       maxEmails,

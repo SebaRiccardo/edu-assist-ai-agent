@@ -1,11 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { toast } from 'sonner';
+import { createSubscriptionPlan } from '@/actions/plans/create-subscription-plan';
+import {
+  SUBSCRIPTION_PLANS_CONFIG,
+  PLAN_LIMITS,
+  type PlanType,
+} from '@/lib/subscriptions/plans';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -39,7 +45,7 @@ import { Loader2 } from 'lucide-react';
 const createPlanSchema = z.object({
   name: z.string().min(1, 'Plan name is required'),
   description: z.string().optional(),
-  price: z.coerce.number().positive('Price must be positive'),
+  price: z.coerce.number(),
   currency: z.string().default('ARS'),
   interval: z.enum(['months', 'days', 'years']),
   intervalCount: z.coerce.number().int().positive().default(1),
@@ -50,59 +56,97 @@ const createPlanSchema = z.object({
 
 type CreatePlanFormValues = z.infer<typeof createPlanSchema>;
 
-export function CreatePlanForm() {
+interface CreatePlanFormProps {
+  template?: PlanType;
+}
+
+export function CreatePlanForm({ template }: CreatePlanFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<CreatePlanFormValues>({
-    resolver: zodResolver(createPlanSchema),
-    defaultValues: {
-      name: '',
-      description: '',
-      price: 0,
-      currency: 'ARS',
+  // Get template data if template is provided
+  const getTemplateDefaults = (): Partial<CreatePlanFormValues> => {
+    if (!template) {
+      return {
+        name: '',
+        description: '',
+        price: 0,
+        currency: 'ARS',
+        interval: 'months',
+        intervalCount: 1,
+        trialPeriodDays: 0,
+        features: '',
+        isActive: true,
+      };
+    }
+
+    // Map template keys to config keys
+    const configKey =
+      template === 'basic' ? 'BASIC' : template === 'pro' ? 'PRO' : 'PRO_PLUS';
+
+    const planConfig = SUBSCRIPTION_PLANS_CONFIG[configKey];
+    const planLimits = PLAN_LIMITS[template];
+
+    // Convert features array to comma-separated string
+    const featuresString = planConfig.features.join(', ');
+
+    return {
+      name: planConfig.name,
+      description: planConfig.description,
+      price: planConfig.price,
+      currency: planConfig.currency,
       interval: 'months',
       intervalCount: 1,
       trialPeriodDays: 0,
-      features: '',
+      features: featuresString,
       isActive: true,
-    },
+    };
+  };
+
+  const form = useForm<CreatePlanFormValues>({
+    resolver: zodResolver(createPlanSchema),
+    defaultValues: getTemplateDefaults(),
   });
+
+  // Update form values when template changes
+  useEffect(() => {
+    if (template) {
+      const defaults = getTemplateDefaults();
+      Object.entries(defaults).forEach(([key, value]) => {
+        form.setValue(key as keyof CreatePlanFormValues, value as any);
+      });
+    }
+  }, [template]);
 
   async function onSubmit(values: CreatePlanFormValues) {
     setIsLoading(true);
 
     try {
+      console.log('Submitting plan:', values);
+
       // Parse features from comma-separated string
       const featuresArray = values.features
         ?.split(',')
         .map(f => f.trim())
         .filter(f => f.length > 0);
 
-      const response = await fetch('/api/subscriptions/plan/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: values.name,
-          description: values.description,
-          price: values.price,
-          currency: values.currency,
-          interval: values.interval,
-          intervalCount: values.intervalCount,
-          trialPeriodDays:
-            values.trialPeriodDays && values.trialPeriodDays > 0
-              ? values.trialPeriodDays
-              : undefined,
-          features: featuresArray,
-          isActive: values.isActive,
-        }),
+      // Call server action
+      const result = await createSubscriptionPlan({
+        name: values.name,
+        description: values.description,
+        price: values.price,
+        currency: values.currency,
+        interval: values.interval,
+        intervalCount: values.intervalCount,
+        trialPeriodDays:
+          values.trialPeriodDays && values.trialPeriodDays > 0
+            ? values.trialPeriodDays
+            : undefined,
+        features: featuresArray,
+        isActive: values.isActive,
       });
 
-      const result = await response.json();
-
-      if (!response.ok) {
+      if (!result.success) {
         throw new Error(result.error || 'Failed to create plan');
       }
 
@@ -134,7 +178,12 @@ export function CreatePlanForm() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form
+            onSubmit={form.handleSubmit(onSubmit, e => {
+              console.log(e);
+            })}
+            className="space-y-6"
+          >
             <FormField
               control={form.control}
               name="name"
@@ -172,15 +221,15 @@ export function CreatePlanForm() {
               )}
             />
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-4 items-start justify-between">
               <FormField
                 control={form.control}
                 name="price"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="col-span-2">
                     <FormLabel>Price (in cents)</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="9999" {...field} />
+                      <Input {...field} />
                     </FormControl>
                     <FormDescription>
                       Price in smallest currency unit (e.g., 9999 = $99.99)
@@ -194,14 +243,14 @@ export function CreatePlanForm() {
                 control={form.control}
                 name="currency"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="col-span-2">
                     <FormLabel>Currency</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="data-[size=default]:h-10 shadow-none">
                           <SelectValue placeholder="Select currency" />
                         </SelectTrigger>
                       </FormControl>
@@ -222,7 +271,24 @@ export function CreatePlanForm() {
               />
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2 items-start">
+              <FormField
+                control={form.control}
+                name="intervalCount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Interval Count</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Number of intervals (e.g., 1 month, 3 months)
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="interval"
@@ -234,7 +300,7 @@ export function CreatePlanForm() {
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="data-[size=default]:h-10 shadow-none">
                           <SelectValue placeholder="Select interval" />
                         </SelectTrigger>
                       </FormControl>
@@ -244,23 +310,6 @@ export function CreatePlanForm() {
                         <SelectItem value="years">Years</SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="intervalCount"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Interval Count</FormLabel>
-                    <FormControl>
-                      <Input type="number" min="1" placeholder="1" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Number of intervals (e.g., 1 month, 3 months)
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

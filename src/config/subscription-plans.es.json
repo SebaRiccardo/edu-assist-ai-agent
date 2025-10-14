@@ -1,0 +1,96 @@
+{
+  "basic": {
+    "name": "Básico",
+    "subtitle": "Recién Comenzando",
+    "price": 10400,
+    "currency": "ARS",
+    "period": "por mes",
+    "description": "Etiquetado inteligente para una bandeja de entrada y hasta 2 cursos. Ve cuánto tiempo ahorras.",
+    "features": [
+      "Etiquetado inteligente para 1 bandeja de entrada",
+      "Hasta 2 cursos",
+      "Organización básica de correos",
+      "Filtrado consciente de cursos",
+      "5 consultas de IA por día",
+      "200 correos procesados por mes"
+    ],
+    "highlighted": false,
+    "limits": {
+      "maxInboxes": 1,
+      "maxCourses": 2,
+      "aiQueriesPerDay": 5,
+      "emailsProcessedPerMonth": 200,
+      "autoReplies": false,
+      "prioritySupport": false,
+      "autoLabels": false,
+      "autonomousEmailManagement": false
+    }
+  },
+  "pro": {
+    "name": "Pro",
+    "subtitle": "Mantente al Día",
+    "price": 19500,
+    "currency": "ARS",
+    "period": "por mes",
+    "description": "Cursos ilimitados, etiquetado más rápido y ordenamiento avanzado.",
+    "features": [
+      "Etiquetado inteligente para 3 bandejas de entrada",
+      "Cursos ilimitados",
+      "Etiquetado inteligente avanzado",
+      "Auto-etiquetado habilitado",
+      "Ordenamiento prioritario",
+      "Procesamiento más rápido",
+      "Análisis de correos",
+      "Reglas de etiquetas personalizadas",
+      "250 consultas de IA por día",
+      "2,000 correos procesados por mes",
+      "2 GB de almacenamiento"
+    ],
+    "highlighted": true,
+    "limits": {
+      "maxInboxes": 3,
+      "maxCourses": null,
+      "aiQueriesPerDay": 250,
+      "emailsProcessedPerMonth": 2000,
+      "autoReplies": false,
+      "autoLabels": true,
+      "prioritySupport": false,
+      "autonomousEmailManagement": false
+    }
+  },
+  "pro_plus": {
+    "name": "Pro +",
+    "subtitle": "Piloto Automático Completo",
+    "price": 32500,
+    "currency": "ARS",
+    "period": "por mes",
+    "description": "Tu bandeja de entrada se gestiona sola — limpieza de fondo, respuestas automáticas y priorización inteligente.",
+    "features": [
+      "Etiquetado inteligente para 10 bandejas de entrada",
+      "Cursos ilimitados",
+      "Todo lo incluido en Pro",
+      "Respuestas automáticas (impulsadas por IA)",
+      "Limpieza de fondo",
+      "Priorización inteligente",
+      "Organización continua",
+      "Plantillas de respuesta personalizadas",
+      "Análisis avanzados",
+      "Consultas de IA ilimitadas",
+      "Correos procesados ilimitados",
+      "100 GB de almacenamiento",
+      "Soporte prioritario",
+      "Gestión autónoma de correos"
+    ],
+    "highlighted": false,
+    "limits": {
+      "maxInboxes": 10,
+      "maxCourses": null,
+      "aiQueriesPerDay": null,
+      "emailsProcessedPerMonth": null,
+      "autoReplies": true,
+      "autoLabels": true,
+      "prioritySupport": true,
+      "autonomousEmailManagement": true
+    }
+  }
+}

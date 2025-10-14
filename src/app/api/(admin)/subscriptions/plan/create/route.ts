@@ -91,6 +91,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.log(mercadoPagoResult);
+
     // 4. Prepare data for Supabase
     const supabasePlan: InsertSubscriptionPlan = {
       name: planData.name,

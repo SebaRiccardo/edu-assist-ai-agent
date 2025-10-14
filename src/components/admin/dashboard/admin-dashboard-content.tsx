@@ -11,6 +11,7 @@ import {
 import { useProfiles } from '@/hooks/use-profiles';
 import { usePlans } from '@/hooks/use-subscription-plans';
 import { useActiveSubscriptions } from '@/hooks/use-subscriptions';
+import Link from 'next/link';
 
 export function AdminDashboardContent() {
   // Fetch data using TanStack Query
@@ -101,24 +102,24 @@ export function AdminDashboardContent() {
             <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-2">
-            <a
+            <Link
               href="/admin/users"
               className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
             >
               Manage Users
-            </a>
-            <a
+            </Link>
+            <Link
               href="/admin/plans"
               className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground"
             >
               Manage Plans
-            </a>
-            <a
+            </Link>
+            <Link
               href="/admin/subscriptions"
               className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground"
             >
               View Subscriptions
-            </a>
+            </Link>
           </CardContent>
         </Card>
       </div>

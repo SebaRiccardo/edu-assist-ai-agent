@@ -19,12 +19,12 @@ import { fetchConnectedAccounts, connectionsKeys } from './queries/connections';
  * ```
  */
 export function useConnections(refetchInterval?: number) {
-    return useQuery({
-        queryKey: connectionsKeys.list(),
-        queryFn: fetchConnectedAccounts,
-        refetchInterval: refetchInterval ?? 60000, // Refetch every 60 seconds if hasInboxes is false
-        gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes (formerly cacheTime)
-        retry: 2,
-        refetchOnWindowFocus: false,
-    });
+  return useQuery({
+    queryKey: connectionsKeys.list(),
+    queryFn: fetchConnectedAccounts,
+    refetchInterval: refetchInterval ?? 60000, // Refetch every 60 seconds if hasInboxes is false
+    gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes (formerly cacheTime)
+    retry: 2,
+    refetchOnWindowFocus: false,
+  });
 }

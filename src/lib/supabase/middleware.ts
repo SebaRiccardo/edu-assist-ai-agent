@@ -59,7 +59,7 @@ export async function updateSession(request: NextRequest) {
 
   if (
     user &&
-    !user.user_metadata.admin &&
+    !user.app_metadata.admin &&
     request.nextUrl.pathname.startsWith('/admin/')
   ) {
     const url = request.nextUrl.clone();

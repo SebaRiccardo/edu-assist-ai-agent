@@ -14,64 +14,45 @@ import {
 } from 'lucide-react';
 import { AuroraBackground } from './aurora-background';
 import { LandingNav } from './landing-nav';
+import { SUBSCRIPTION_PLANS_CONFIG } from '@/lib/subscriptions/plans';
 
 interface LandingPageProps {
   onGetStarted: () => void;
 }
 
 export function LandingPage({ onGetStarted }: LandingPageProps) {
+  // Map configuration to plans array
   const plans = [
     {
-      name: 'Free',
-      subtitle: 'Just Getting Started',
-      price: '$0',
-      period: 'forever',
-      description:
-        'Smart labeling for one inbox and up to 2 courses. See how much time you save.',
-      features: [
-        'Smart labeling for 1 inbox',
-        'Up to 2 courses',
-        'Basic email organization',
-        'Course-aware filtering',
-      ],
+      name: SUBSCRIPTION_PLANS_CONFIG.BASIC.name,
+      subtitle: SUBSCRIPTION_PLANS_CONFIG.BASIC.subtitle,
+      price: `$${SUBSCRIPTION_PLANS_CONFIG.BASIC.price}`,
+      period: SUBSCRIPTION_PLANS_CONFIG.BASIC.period,
+      description: SUBSCRIPTION_PLANS_CONFIG.BASIC.description,
+      features: SUBSCRIPTION_PLANS_CONFIG.BASIC.features as readonly string[],
       cta: 'Get Started',
-      highlighted: false,
+      highlighted: SUBSCRIPTION_PLANS_CONFIG.BASIC.highlighted,
     },
     {
-      name: 'Basic',
-      subtitle: 'Stay on Top of It',
-      price: '$29',
-      period: 'per month',
-      description: 'Unlimited courses, faster labeling, and advanced sorting.',
-      features: [
-        'Unlimited courses',
-        'Advanced smart labeling',
-        'Priority sorting',
-        'Faster processing',
-        'Email analytics',
-        'Custom label rules',
-      ],
+      name: SUBSCRIPTION_PLANS_CONFIG.PRO.name,
+      subtitle: SUBSCRIPTION_PLANS_CONFIG.PRO.subtitle,
+      price: `$${SUBSCRIPTION_PLANS_CONFIG.PRO.price}`,
+      period: SUBSCRIPTION_PLANS_CONFIG.PRO.period,
+      description: SUBSCRIPTION_PLANS_CONFIG.PRO.description,
+      features: SUBSCRIPTION_PLANS_CONFIG.PRO.features as readonly string[],
       cta: 'Start Free Trial',
-      highlighted: true,
+      highlighted: SUBSCRIPTION_PLANS_CONFIG.PRO.highlighted,
     },
     {
-      name: 'Pro',
-      subtitle: 'Full Autopilot',
-      price: '$79',
-      period: 'per month',
-      description:
-        'Your inbox runs itself — background cleanup, auto-replies, and smart prioritization.',
-      features: [
-        'Everything in Basic',
-        'Auto-replies (AI-powered)',
-        'Background cleanup',
-        'Smart prioritization',
-        'Continuous organization',
-        'Custom response templates',
-        'Advanced analytics',
-      ],
+      name: SUBSCRIPTION_PLANS_CONFIG.PRO_PLUS.name,
+      subtitle: SUBSCRIPTION_PLANS_CONFIG.PRO_PLUS.subtitle,
+      price: `$${SUBSCRIPTION_PLANS_CONFIG.PRO_PLUS.price}`,
+      period: SUBSCRIPTION_PLANS_CONFIG.PRO_PLUS.period,
+      description: SUBSCRIPTION_PLANS_CONFIG.PRO_PLUS.description,
+      features: SUBSCRIPTION_PLANS_CONFIG.PRO_PLUS
+        .features as readonly string[],
       cta: 'Start Free Trial',
-      highlighted: false,
+      highlighted: SUBSCRIPTION_PLANS_CONFIG.PRO_PLUS.highlighted,
     },
   ];
 

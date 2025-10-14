@@ -1,5 +1,5 @@
 import { PreApprovalPlan, PreApproval, Payment } from 'mercadopago';
-import { mercadoPagoClient } from './client';
+import { mercadoPagoClient } from '@/lib/mercadopago/mercadopago-client';
 
 /**
  * MercadoPago Service
@@ -42,24 +42,26 @@ export interface PlanSearchParams {
  */
 export async function createSubscriptionPlan(params: CreatePlanParams) {
   try {
-    const response = await preApprovalPlanClient.create({
-      body: {
-        reason: params.reason,
-        auto_recurring: {
-          frequency: params.autoRecurring.frequency,
-          frequency_type: params.autoRecurring.frequencyType,
-          transaction_amount: params.autoRecurring.transactionAmount,
-          currency_id: params.autoRecurring.currencyId,
-          // Optional free trial period
-          ...(params.autoRecurring.freeTrial && {
-            free_trial: {
-              frequency: params.autoRecurring.freeTrial.frequency,
-              frequency_type: params.autoRecurring.freeTrial.frequencyType,
-            },
-          }),
-        },
-        back_url: params.backUrl,
+    const requestBody = {
+      reason: params.reason,
+      auto_recurring: {
+        frequency: params.autoRecurring.frequency,
+        frequency_type: params.autoRecurring.frequencyType,
+        transaction_amount: params.autoRecurring.transactionAmount,
+        currency_id: params.autoRecurring.currencyId,
+        // Optional free trial period
+        ...(params.autoRecurring.freeTrial && {
+          free_trial: {
+            frequency: params.autoRecurring.freeTrial.frequency,
+            frequency_type: params.autoRecurring.freeTrial.frequencyType,
+          },
+        }),
       },
+      back_url: params.backUrl,
+    };
+
+    const response = await preApprovalPlanClient.create({
+      body: requestBody,
     });
 
     return {

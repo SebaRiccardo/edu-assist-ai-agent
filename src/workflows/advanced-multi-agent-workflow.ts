@@ -11,7 +11,7 @@
  * or combined in different workflows.
  */
 
-import { analyzeInboxForCourse } from '@/agents/analyze-inbox';
+import { inboxAnalyzerAgent } from '@/agents/inbox-analyzer';
 import {
   classifyEmailPriorities,
   getPriorityStats,
@@ -51,7 +51,7 @@ export async function advancedEmailWorkflow(
 
   const startTime = Date.now();
 
-  const emailAnalysis = await analyzeInboxForCourse({
+  const emailAnalysis = await inboxAnalyzerAgent({
     userId,
     courseId,
     maxEmails,
@@ -64,7 +64,7 @@ export async function advancedEmailWorkflow(
   console.log('✅ Results:');
   console.log(`   • Total emails: ${emailAnalysis.totalAnalyzed}`);
   console.log(
-    `   • Course-related: ${emailAnalysis.analysis.stats.courseRelated}`
+    `   • Course-related: ${emailAnalysis.analysis.stats.totalCourseRelated}`
   );
   console.log(
     `   • Avg confidence: ${emailAnalysis.analysis.stats.avgConfidence}%`

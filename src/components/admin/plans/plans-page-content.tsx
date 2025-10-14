@@ -2,13 +2,22 @@
 
 import { PlansDataTable } from '@/components/admin/plans/plans-data-table';
 import { columns } from '@/components/admin/plans/plans-columns';
+import { PlanTemplateCards } from '@/components/admin/plans/plan-template-cards';
 import { usePlans } from '@/hooks/use-subscription-plans';
 import { Button } from '@/components/ui/button';
 import { Plus, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import type { PlanType } from '@/lib/subscriptions/plans';
 
 export function PlansPageContent() {
-  const { data: plans, isLoading, error } = usePlans();
+  const router = useRouter();
+  const { data: plans, isLoading, error, refetch, isRefetching } = usePlans();
+
+  const handleCreatePlan = (planType: PlanType) => {
+    // Navigate to create page with plan type as query param
+    router.push(`/admin/plans/create?template=${planType}`);
+  };
 
   if (error) {
     return (
@@ -28,9 +37,8 @@ export function PlansPageContent() {
     description: plan.description || 'N/A',
     price: plan.price,
     currency: plan.currency || 'ARS',
-    interval: plan.interval,
-    interval_count: plan.interval_count || 1,
-    trial_period_days: plan.trial_period_days,
+    interval: plan.interval as 'days' | 'months' | 'years',
+    trial_period_days: plan.trial_period_days || null,
     is_active: plan.is_active || false,
     features: plan.features as string[] | null,
     mercadopago_plan_id: plan.mercadopago_plan_id,
@@ -56,6 +64,13 @@ export function PlansPageContent() {
           </Link>
         </Button>
       </div>
+
+      {/* Template Cards */}
+      <div className="px-4 lg:px-6">
+        <PlanTemplateCards onCreatePlan={handleCreatePlan} />
+      </div>
+
+      {/* Plans Table */}
       <div className="px-4 lg:px-6">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center gap-4 py-12">
@@ -63,7 +78,12 @@ export function PlansPageContent() {
             <p className="text-muted-foreground">Loading plans...</p>
           </div>
         ) : (
-          <PlansDataTable columns={columns} data={plansData} />
+          <PlansDataTable
+            isRefresing={isRefetching}
+            onRefresh={refetch}
+            columns={columns}
+            data={plansData}
+          />
         )}
       </div>
     </div>

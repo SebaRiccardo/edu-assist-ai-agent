@@ -42,7 +42,7 @@ const courseFormSchema = z
     description: z
       .string()
       .min(10, 'Description must be at least 10 characters')
-      .max(300, 'Description must be less than 300 characters'),
+      .max(160, 'Description must be less than 160 characters'),
     context: z
       .string()
       .min(
@@ -155,7 +155,7 @@ export function CourseFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto bg-white">
+      <DialogContent className="sm:max-w-[800px] max-h-[95vh] overflow-y-auto bg-white">
         <DialogHeader>
           <DialogTitle>
             {isEdit ? 'Edit Course' : 'Create New Course'}
@@ -188,7 +188,6 @@ export function CourseFormDialog({
                           placeholder="e.g. Calculus 1"
                           {...field}
                           disabled={isLoading}
-                          className="border-2 "
                         />
                       </FormControl>
                       <FormDescription>
@@ -216,7 +215,6 @@ export function CourseFormDialog({
                           {...field}
                           disabled={isLoading}
                           maxLength={4}
-                          className="border-2"
                         />
                       </FormControl>
                       <FormDescription>
@@ -240,15 +238,15 @@ export function CourseFormDialog({
                     <FormControl>
                       <Textarea
                         placeholder="Provide a brief description of the course, including main topics and objectives..."
-                        rows={2}
-                        className="resize-y border-2"
+                        rows={3}
+                        className="resize-none shadow-none"
                         {...field}
                         disabled={isLoading}
                       />
                     </FormControl>
                     <FormDescription>
                       Brief overview of the course ({field.value?.length || 0}
-                      /300 characters)
+                      /160 characters)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -267,8 +265,8 @@ export function CourseFormDialog({
                     <FormControl>
                       <Textarea
                         placeholder={`Provide detailed context about the course including: syllabus topics, key concepts, assignment types, exam schedule, grading criteria, prerequisites, textbooks, important dates, office hours, and any other relevant information that will help the AI understand and categorize student emails... \n\nYou can just copy and paste the whole study plan here if you want.`}
-                        rows={8}
-                        className="resize-y font-mono text-sm border-2"
+                        rows={10}
+                        className="resize-y font-mono text-sm border-2 shadow-none"
                         {...field}
                         disabled={isLoading}
                       />
@@ -290,11 +288,15 @@ export function CourseFormDialog({
                 variant="outline"
                 onClick={() => onOpenChange(false)}
                 disabled={isLoading}
-                className="h-11"
+                className="h-11 shadow-none"
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isLoading} className="h-11">
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="h-11 shadow-none"
+              >
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

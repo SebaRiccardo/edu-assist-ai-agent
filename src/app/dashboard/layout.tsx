@@ -1,14 +1,20 @@
 import { TopNav } from '@/components/top-nav';
+import { getCurrentUser } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const user = await getCurrentUser();
+
+  if (!user) return redirect('/auth/login');
+
   return (
     <div className="min-h-screen bg-gradient-to-bl from-pink-100 to-blue-200">
-      <TopNav />
-      <main className="relative py-5">{children}</main>
+      <TopNav user={user} />
+      <main className="relative py-6 xl:py-20">{children}</main>
     </div>
   );
 }

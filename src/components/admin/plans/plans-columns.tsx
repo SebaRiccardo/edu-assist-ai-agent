@@ -16,7 +16,10 @@ import {
   MoreHorizontal,
   CheckCircle,
   XCircle,
+  ExternalLink,
 } from 'lucide-react';
+import Link from 'next/link';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 export type PlanRow = {
   id: string;
@@ -24,10 +27,9 @@ export type PlanRow = {
   description: string;
   price: number;
   currency: string;
-  interval: string;
-  interval_count: number;
-  trial_period_days: number | null;
+  interval: 'days' | 'months' | 'years';
   is_active: boolean;
+  trial_period_days: number | null;
   features: string[] | null;
   mercadopago_plan_id: string | null;
   created_at: string | null;
@@ -51,12 +53,46 @@ export const columns: ColumnDef<PlanRow>[] = [
     cell: ({ row }) => {
       const plan = row.original;
       return (
-        <div className="flex flex-col">
-          <span className="font-medium">{plan.name}</span>
-          <span className="text-muted-foreground text-xs">
-            {plan.description}
-          </span>
+        <div className="flex flex-row gap-2 max-w-xs">
+          <Avatar className="border-2 size-9 border-primary">
+            <AvatarFallback>{plan.name.charAt(0).toUpperCase()}</AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col">
+            <span className="font-medium">{plan.name}</span>
+            <span className="text-muted-foreground text-xs truncate max-w-xs ">
+              {plan.description}
+            </span>
+          </div>
         </div>
+      );
+    },
+  },
+  {
+    accessorKey: 'mercadopago_plan_id',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Mercadopago ID
+          <ArrowUpDown className="ml-2 size-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const plan = row.original;
+      return (
+        <Button variant="link" className="has-[>svg]:px-0">
+          <Link
+            target="_blank"
+            className="flex flex-row px-0 items-center"
+            href={`https://www.mercadopago.com.ar/subscription-plans/subscription-details?id=${plan.mercadopago_plan_id}`}
+          >
+            <span className="font-medium">{plan.mercadopago_plan_id}</span>
+            <ExternalLink className="size-4 ml-1" />
+          </Link>
+        </Button>
       );
     },
   },
@@ -77,18 +113,18 @@ export const columns: ColumnDef<PlanRow>[] = [
       const price = row.getValue('price') as number;
       const currency = row.original.currency;
       const interval = row.original.interval;
-      const intervalCount = row.original.interval_count;
+      const intervalCount = 1; //row.original.interval_count;
 
-      const formatted = new Intl.NumberFormat('en-US', {
+      const formatted = new Intl.NumberFormat('es-AR', {
         style: 'currency',
         currency: currency,
-      }).format(price / 100);
+      }).format(price);
 
       const intervalText =
         intervalCount === 1
           ? interval.slice(0, -1)
           : `${intervalCount} ${interval}`;
-
+      console.log(formatted);
       return (
         <div className="flex flex-col">
           <span className="font-medium">{formatted}</span>
@@ -127,6 +163,15 @@ export const columns: ColumnDef<PlanRow>[] = [
           Inactive
         </Badge>
       );
+    },
+  },
+  {
+    accessorKey: 'currency',
+    header: 'Currency',
+    cell: ({ row }) => {
+      const currency = row.getValue('currency') as string;
+
+      return <Badge>{currency}</Badge>;
     },
   },
   {

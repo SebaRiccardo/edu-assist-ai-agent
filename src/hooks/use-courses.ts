@@ -7,6 +7,7 @@ import {
   useUpdateMutation,
   useDeleteMutation,
   UseQuerySingleReturn,
+  useUpsertMutation,
 } from '@supabase-cache-helpers/postgrest-react-query';
 import {
   getAllCoursesForProfessorQuery,
@@ -78,6 +79,9 @@ export function useUpdateCourse() {
   return useUpdateMutation(client.from('courses'), ['id'], null, {
     onSuccess: () => {
       console.log('Course updated successfully');
+    },
+    onError: error => {
+      console.error('Error updating course:', error);
     },
   });
 }

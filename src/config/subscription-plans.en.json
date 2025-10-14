@@ -1,0 +1,99 @@
+{
+  "basic": {
+    "name": "Basic",
+    "subtitle": "Just Getting Started",
+    "price": 8,
+    "currency": "USD",
+    "period": "per month",
+    "description": "Smart labeling for one inbox and up to 2 courses. See how much time you save.",
+    "features": [
+      "Smart labeling for 1 inbox",
+      "Up to 2 courses",
+      "Basic email organization",
+      "Course-aware filtering",
+      "5 AI queries per day",
+      "200 emails processed per month"
+    ],
+    "highlighted": false,
+    "limits": {
+      "maxInboxes": 1,
+      "maxCourses": 2,
+      "aiQueriesPerDay": 5,
+      "emailsProcessedPerMonth": 200,
+      "storageGB": 0,
+      "autoReplies": false,
+      "prioritySupport": false,
+      "autoLabels": false,
+      "autonomousEmailManagement": false
+    }
+  },
+  "pro": {
+    "name": "Pro",
+    "subtitle": "Stay on Top of It",
+    "price": 15,
+    "currency": "USD",
+    "period": "per month",
+    "description": "Unlimited courses, faster labeling, and advanced sorting.",
+    "features": [
+      "Smart labeling for 3 inboxes",
+      "Unlimited courses",
+      "Advanced smart labeling",
+      "Auto-labeling enabled",
+      "Priority sorting",
+      "Faster processing",
+      "Email analytics",
+      "Custom label rules",
+      "250 AI queries per day",
+      "2,000 emails processed per month",
+      "2 GB storage"
+    ],
+    "highlighted": true,
+    "limits": {
+      "maxInboxes": 3,
+      "maxCourses": null,
+      "aiQueriesPerDay": 250,
+      "emailsProcessedPerMonth": 2000,
+      "storageGB": 2,
+      "autoReplies": false,
+      "autoLabels": true,
+      "prioritySupport": false,
+      "autonomousEmailManagement": false
+    }
+  },
+  "pro_plus": {
+    "name": "Pro +",
+    "subtitle": "Full Autopilot",
+    "price": 25,
+    "currency": "USD",
+    "period": "per month",
+    "description": "Your inbox runs itself — background cleanup, auto-replies, and smart prioritization.",
+    "features": [
+      "Smart labeling for 10 inboxes",
+      "Unlimited courses",
+      "Everything in Pro",
+      "Auto-replies (AI-powered)",
+      "Background cleanup",
+      "Smart prioritization",
+      "Continuous organization",
+      "Custom response templates",
+      "Advanced analytics",
+      "Unlimited AI queries",
+      "Unlimited emails processed",
+      "100 GB storage",
+      "Priority support",
+      "Autonomous email management"
+    ],
+    "highlighted": false,
+    "limits": {
+      "maxInboxes": 10,
+      "maxCourses": null,
+      "aiQueriesPerDay": null,
+      "emailsProcessedPerMonth": null,
+      "storageGB": 100,
+      "autoReplies": true,
+      "autoLabels": true,
+      "prioritySupport": true,
+      "autonomousEmailManagement": true
+    }
+  }
+}

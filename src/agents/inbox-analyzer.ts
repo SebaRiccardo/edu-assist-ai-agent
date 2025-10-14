@@ -54,6 +54,10 @@ const batchEmailAnalysisSchema = z.object({
  * @returns Transformed email in application format
  */
 function transformGmailMessage(message: GmailMessageBody): TransformedEmail {
+  console.log('Transforming Gmail message:', message);
+  if (!message) {
+    throw new Error('Invalid Gmail message');
+  }
   return {
     id: message.messageId || '',
     threadId: message.threadId || '',
@@ -83,19 +87,19 @@ function extractSnippet(message: GmailMessageBody): string {
   }
 
   if (message.messageText) {
-    return message.messageText.substring(0, 200);
+    return message.messageText;
   }
 
   return '';
 }
 
-export async function analyzeInboxForCourse(
+export async function inboxAnalyzerAgent(
   params: InboxAnalysisParams
 ): Promise<InboxAnalysisResult> {
   const {
     course,
     connectedAccountId,
-    maxEmails = 10,
+    maxEmails,
     includeRead = false,
     reasoningLanguage = 'English',
     verbose = true,
@@ -109,6 +113,7 @@ export async function analyzeInboxForCourse(
     max_results: maxEmails,
     include_payload: true,
     include_spam_trash: false,
+    label_ids: ['INBOX', 'UNREAD'],
   });
 
   if (!gmailResponse.successful) {
@@ -125,7 +130,7 @@ export async function analyzeInboxForCourse(
         summary: 'No emails found',
         stats: {
           totalAnalyzed: 0,
-          courseRelated: 0,
+          totalCourseRelated: 0,
           avgConfidence: 0,
           categoryBreakdown: {},
         },
@@ -138,11 +143,12 @@ export async function analyzeInboxForCourse(
 
   // STEP 3: Prepare emails for batch AI analysis
   const emailsForAnalysis = fetchedEmails.map((email: GmailMessageBody) => ({
-    id: email.messageId || 'unknown',
+    id: email.messageId,
     subject: email.subject || 'No Subject',
-    from: email.sender || 'Unknown',
-    body: (email.messageText || '').substring(0, 500), // Truncate for efficiency
+    from: email.sender,
+    body: email.messageText || '', // Truncate for efficiency
     timestamp: email.messageTimestamp || '',
+    labelsId: email.labelIds || [],
   }));
 
   console.log(`🧠 Analyzing ${emailsForAnalysis.length} emails with AI...`);
@@ -151,7 +157,7 @@ export async function analyzeInboxForCourse(
   const analysisResult = await generateObject({
     model: google('gemini-2.0-flash'),
     schema: batchEmailAnalysisSchema,
-    system: `You are an expert email assistant that helps categorize emails for university professors based on course context. You understand academic contexts and can identify different types of educational communications.`,
+    system: `You are an expert assistant that helps categorize emails for university professors based on course details(name,description,context, etc.). You understand academic contexts and can identify different types of educational communications.`,
     prompt: `Analyze these emails to determine if they are related to the course and categorize their type.
                 
 Course Details:
@@ -190,7 +196,8 @@ Emails to Analyze:
 Important:
 - Be thorough but efficient in your analysis.
 - Provide structured analysis for each email with confidence scores and reasoning.
-- Write the reasoning in ${reasoningLanguage}.`,
+- Write the reasoning in ${reasoningLanguage}.
+- Write the label Suggestions in ${reasoningLanguage}.`,
   });
 
   console.log(`✨ Analysis complete!`);
@@ -201,6 +208,7 @@ Important:
       const originalEmail = fetchedEmails.find(
         (e: GmailMessageBody) => e.messageId === analysis.emailId
       );
+
       return {
         ...transformGmailMessage(originalEmail!),
         category: analysis.category,
@@ -214,7 +222,7 @@ Important:
   // Calculate statistics
   const stats = {
     totalAnalyzed: categorizedEmails.length,
-    courseRelated: categorizedEmails.filter(e => e.isRelated).length,
+    totalCourseRelated: categorizedEmails.filter(e => e.isRelated).length,
     avgConfidence: Math.round(
       categorizedEmails.reduce((sum, e) => sum + e.confidence, 0) /
         categorizedEmails.length
@@ -228,10 +236,9 @@ Important:
     ),
   };
 
-  console.log(`📊 Stats:`, stats);
-
   return {
-    emails: categorizedEmails.filter(e => e.isRelated),
+    //emails: categorizedEmails.filter(e => e.isRelated),
+    emails: categorizedEmails,
     analysis: {
       summary: analysisResult.object.summary,
       stats,

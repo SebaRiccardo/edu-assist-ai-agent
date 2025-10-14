@@ -11,8 +11,9 @@ import {
 import { EmailListItem } from '@/components/email-list-item';
 import { EmailDetailsPanel } from '@/components/email-details-panel';
 import { CategorizedEmail } from '@/types';
-import { Loader2, Sparkles, CheckCircle, Inbox } from 'lucide-react';
+import { Loader2, Sparkles, CheckCircle, Inbox, Tags } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { IconMailSpark } from '@tabler/icons-react';
 
 interface EmailListStatesProps {
   emails: CategorizedEmail[];
@@ -27,6 +28,7 @@ interface EmailListStatesProps {
   replyingToEmailId?: string | null;
   onAnalyze: () => void;
   onAutoReply?: (emailId: string) => void;
+  selectedAccountId: string;
 }
 
 export function EmailListStates({
@@ -39,6 +41,7 @@ export function EmailListStates({
   replyingToEmailId,
   onAnalyze,
   onAutoReply,
+  selectedAccountId,
 }: EmailListStatesProps) {
   const [selectedEmail, setSelectedEmail] = useState<CategorizedEmail | null>(
     null
@@ -77,7 +80,7 @@ export function EmailListStates({
         </EmptyHeader>
         <EmptyContent>
           <Button onClick={onAnalyze} size="lg" className="gap-2">
-            <Sparkles className="h-4 w-4" />
+            <IconMailSpark className="size-5" />
             Analyze Inbox
           </Button>
         </EmptyContent>
@@ -105,18 +108,33 @@ export function EmailListStates({
 
   // Email List - With Results
   if (emails.length > 0) {
-
     return (
-      <div className=" h-full gap-0 grid grid-cols-12 overflow-hidden rounded-3xl">
+      <div className=" h-full gap-0 grid grid-cols-12 overflow-hidden rounded-3xl ">
         {/* Email List - Left Side */}
-        <div className="col-span-5 flex-col border-r">
+        <div className="col-span-6 flex-col border-r">
           <div className="flex items-center justify-between p-2 px-4 border-b">
             <h2 className="text-sm font-semibold text-foreground">
               Course Emails ({emails.length})
             </h2>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={onAnalyze}
+                size="sm"
+                disabled
+                className="gap-2 h-7"
+              >
+                <Tags />
+                Auto tag all
+              </Button>
+              <Button onClick={onAnalyze} size="sm" className="gap-2 h-7">
+                <Sparkles />
+                Re-Analyze
+              </Button>
+            </div>
           </div>
 
-          <ScrollArea className="flex-1">
+          <ScrollArea className="flex-1 ">
             <div className="divide-y divide-border">
               {emails.map(email => (
                 <EmailListItem
@@ -127,7 +145,7 @@ export function EmailListStates({
                     !!isSendingReply && replyingToEmailId === email.id
                   }
                   onClick={() => setSelectedEmail(email)}
-                  onAutoReply={onAutoReply || (() => { })}
+                  onAutoReply={onAutoReply}
                 />
               ))}
             </div>
@@ -135,9 +153,10 @@ export function EmailListStates({
         </div>
 
         {/* Email Details Panel - Desktop Right Side */}
-        <div className="flex flex-1 col-span-7">
+        <div className="flex flex-1 col-span-6">
           {selectedEmail ? (
             <EmailDetailsPanel
+              connectedAccountId={selectedAccountId}
               email={selectedEmail}
               courseName={courseName}
               userId={userId}
@@ -145,7 +164,7 @@ export function EmailListStates({
                 isSendingReply && replyingToEmailId === selectedEmail.id
               }
               onClose={() => setSelectedEmail(null)}
-              onAutoReply={onAutoReply || (() => { })}
+              onAutoReply={onAutoReply}
             />
           ) : (
             <div className="flex items-center justify-center w-full">

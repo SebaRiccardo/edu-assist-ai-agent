@@ -25,7 +25,7 @@ import {
   useUserInitials,
   useUserDisplayName,
 } from '@/hooks/use-current-user';
-import { signOut } from '@/lib/auth/auth-service';
+import { signOut } from '@/auth/auth-service';
 import WordmarkLogo from '@/components/wordmark-logo';
 
 interface LandingNavProps {

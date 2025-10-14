@@ -7,9 +7,9 @@ import type { User } from '@supabase/supabase-js';
 /**
  * Hook to get the current authenticated user (client-side)
  */
-export function useCurrentUser() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+export function useCurrentUser(user?: User | null) {
+  const [_user, setUser] = useState<User | null | undefined>(user);
+  const [loading, setLoading] = useState(!user);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -44,6 +44,7 @@ export function useCurrentUser() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('event', event);
       setUser(session?.user ?? null);
       setLoading(false);
     });
@@ -53,19 +54,19 @@ export function useCurrentUser() {
     };
   }, []);
 
-  return { user, loading, error };
+  return { user: _user, loading, error };
 }
 
 /**
  * Hook to get user initials for avatar display
  */
-export function useUserInitials() {
-  const { user } = useCurrentUser();
+export function useUserInitials(user: User | null) {
+  const { user: _user } = useCurrentUser(user);
 
-  if (!user) return 'U';
+  if (!_user) return 'U';
 
   // Try to get initials from user metadata
-  const fullName = user.user_metadata?.full_name || user.user_metadata?.name;
+  const fullName = _user.user_metadata?.full_name || _user.user_metadata?.name;
   if (fullName) {
     const names = fullName.split(' ');
     if (names.length >= 2) {
@@ -75,8 +76,8 @@ export function useUserInitials() {
   }
 
   // Try to get initials from email
-  if (user.email) {
-    return user.email[0].toUpperCase();
+  if (_user.email) {
+    return _user.email[0].toUpperCase();
   }
 
   return 'U';
@@ -85,23 +86,23 @@ export function useUserInitials() {
 /**
  * Hook to get user display name
  */
-export function useUserDisplayName() {
-  const { user } = useCurrentUser();
+export function useUserDisplayName(user?: User | null) {
+  const { user: _user } = useCurrentUser(user);
 
-  if (!user) return 'User';
+  if (!_user) return 'User';
 
   // Try to get name from user metadata
   const fullName =
-    user.user_metadata?.full_name ||
-    user.user_metadata?.name ||
-    user.user_metadata?.username;
+    _user.user_metadata?.full_name ||
+    _user.user_metadata?.name ||
+    _user.user_metadata?.username;
 
   if (fullName) return fullName;
 
   // Fallback to email prefix
-  if (user.email) {
-    return user.email.split('@')[0];
+  if (_user.email) {
+    return _user.email.split('@')[0];
   }
 
-  return 'User';
+  return '';
 }

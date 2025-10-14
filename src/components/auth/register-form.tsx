@@ -19,11 +19,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { PasswordInput } from '@/components/auth/password-input';
-import { signUpWithEmailAndPassword } from '@/lib/auth/auth-service';
-import {
-  signUpSchema,
-  type SignUpFormData,
-} from '@/lib/auth/validation-schemas';
+import { signUpWithEmailAndPassword } from '@/auth/auth-service';
+import { signUpSchema, type SignUpFormData } from '@/auth/validation-schemas';
 
 export default function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
