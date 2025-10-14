@@ -81,7 +81,7 @@ const priorityListSchema = z.object({
  * const criticalEmails = result.priorities.filter(p => p.priority === 'critical');
  * ```
  */
-export async function classifyEmailPriorities(
+export async function priorityClassificatorAgent(
   params: PriorityClassificationParams
 ): Promise<PrioritizationResult> {
   const {
@@ -99,13 +99,13 @@ export async function classifyEmailPriorities(
     system: `You are an expert at triaging university course emails and determining response priority based on urgency and importance.`,
     prompt: `Analyze these course-related emails and assign priority levels.
 
-**Course Context:**
+Course Name:
 ${courseName}
 
-**AI Analysis Summary:**
+AI Analysis Summary:
 ${analysisSummary}
 
-**Emails to Prioritize:**
+Emails to Prioritize:
 ${JSON.stringify(
   emails.map(e => ({
     id: e.id,

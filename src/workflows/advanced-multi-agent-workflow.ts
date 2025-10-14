@@ -13,11 +13,11 @@
 
 import { inboxAnalyzerAgent } from '@/agents/inbox-analyzer';
 import {
-  classifyEmailPriorities,
+  priorityClassificatorAgent,
   getPriorityStats,
   filterByPriority,
   type PriorityLevel,
-} from '@/agents/classify-priorities';
+} from '@/agents/priority-classificator';
 import {
   generateBatchResponses,
   getResponseStats,
@@ -30,13 +30,14 @@ import {
   filterByApproval,
   type DraftResponse,
 } from '@/agents/review-quality';
+import { Course } from '@/lib/supabase/types/courses.types';
 
 /**
  * Complete multi-agent email processing workflow
  */
 export async function advancedEmailWorkflow(
-  userId: string,
-  courseId: string,
+  connectedAccountId: string,
+  course: Course,
   maxEmails: number = 30
 ) {
   console.log('🚀 Starting Advanced 4-Agent Workflow\n');
@@ -52,11 +53,12 @@ export async function advancedEmailWorkflow(
   const startTime = Date.now();
 
   const emailAnalysis = await inboxAnalyzerAgent({
-    userId,
-    courseId,
+    connectedAccountId,
+    course,
     maxEmails,
     includeRead: false,
     verbose: true,
+    reasoningLanguage: 'English',
   });
 
   const analysisTime = Date.now() - startTime;
@@ -100,7 +102,7 @@ export async function advancedEmailWorkflow(
   console.log('─'.repeat(70));
   console.log('Task: Determine urgency and response deadlines\n');
 
-  const prioritizationResult = await classifyEmailPriorities({
+  const prioritizationResult = await priorityClassificatorAgent({
     emails: relevantEmails.map(e => ({
       id: e.id,
       from: e.from,

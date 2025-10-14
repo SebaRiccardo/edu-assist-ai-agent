@@ -26,32 +26,47 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
     {
       name: SUBSCRIPTION_PLANS_CONFIG.BASIC.name,
       subtitle: SUBSCRIPTION_PLANS_CONFIG.BASIC.subtitle,
-      price: `$${SUBSCRIPTION_PLANS_CONFIG.BASIC.price}`,
+      price: new Intl.NumberFormat('es-AR', {
+        style: 'currency',
+        currency: 'ARS',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(SUBSCRIPTION_PLANS_CONFIG.BASIC.price),
       period: SUBSCRIPTION_PLANS_CONFIG.BASIC.period,
       description: SUBSCRIPTION_PLANS_CONFIG.BASIC.description,
       features: SUBSCRIPTION_PLANS_CONFIG.BASIC.features as readonly string[],
-      cta: 'Get Started',
+      cta: 'Start Free Trial',
       highlighted: SUBSCRIPTION_PLANS_CONFIG.BASIC.highlighted,
     },
     {
       name: SUBSCRIPTION_PLANS_CONFIG.PRO.name,
       subtitle: SUBSCRIPTION_PLANS_CONFIG.PRO.subtitle,
-      price: `$${SUBSCRIPTION_PLANS_CONFIG.PRO.price}`,
+      price: new Intl.NumberFormat('es-AR', {
+        style: 'currency',
+        currency: 'ARS',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(SUBSCRIPTION_PLANS_CONFIG.PRO.price),
       period: SUBSCRIPTION_PLANS_CONFIG.PRO.period,
       description: SUBSCRIPTION_PLANS_CONFIG.PRO.description,
       features: SUBSCRIPTION_PLANS_CONFIG.PRO.features as readonly string[],
-      cta: 'Start Free Trial',
+      cta: 'Get Started',
       highlighted: SUBSCRIPTION_PLANS_CONFIG.PRO.highlighted,
     },
     {
       name: SUBSCRIPTION_PLANS_CONFIG.PRO_PLUS.name,
       subtitle: SUBSCRIPTION_PLANS_CONFIG.PRO_PLUS.subtitle,
-      price: `$${SUBSCRIPTION_PLANS_CONFIG.PRO_PLUS.price}`,
+      price: new Intl.NumberFormat('es-AR', {
+        style: 'currency',
+        currency: 'ARS',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(SUBSCRIPTION_PLANS_CONFIG.PRO_PLUS.price),
       period: SUBSCRIPTION_PLANS_CONFIG.PRO_PLUS.period,
       description: SUBSCRIPTION_PLANS_CONFIG.PRO_PLUS.description,
       features: SUBSCRIPTION_PLANS_CONFIG.PRO_PLUS
         .features as readonly string[],
-      cta: 'Start Free Trial',
+      cta: 'Get Started',
       highlighted: SUBSCRIPTION_PLANS_CONFIG.PRO_PLUS.highlighted,
     },
   ];
@@ -293,7 +308,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8">
+      <section id="pricing" className="py-20 px-4 sm:px-6 ">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
@@ -304,18 +319,18 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-6 w-full ">
             {plans.map(plan => (
               <div
                 key={plan.name}
                 className={`rounded-2xl p-8 ${
                   plan.highlighted
-                    ? 'bg-primary text-primary-foreground shadow-lg ring-2 ring-primary/30 scale-105 relative'
-                    : 'bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border border-border/40'
+                    ? 'bg-primary text-primary-foreground shadow-lg scale-105 relative border-none'
+                    : 'bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border border-border'
                 }`}
               >
                 {plan.highlighted && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-sm font-semibold px-4 py-1 rounded-full shadow-lg">
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary to-primary text-primary-foreground text-sm font-semibold px-4 py-1 rounded-full shadow-lg">
                     Most Popular
                   </div>
                 )}
@@ -340,7 +355,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                   <span
                     className={`text-sm ml-2 ${plan.highlighted ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}
                   >
-                    {plan.period}
+                    /{plan.period}
                   </span>
                 </div>
                 <p
@@ -378,15 +393,6 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                 </button>
               </div>
             ))}
-          </div>
-
-          <div className="text-center mt-12">
-            <button
-              onClick={onGetStarted}
-              className="bg-primary text-primary-foreground px-8 py-4 rounded-xl text-lg font-semibold hover:opacity-90 transition-all shadow-lg hover:shadow-xl inline-flex items-center gap-2"
-            >
-              🚀 Start Free Trial
-            </button>
           </div>
         </div>
       </section>

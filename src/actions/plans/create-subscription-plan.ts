@@ -77,6 +77,33 @@ export async function createSubscriptionPlan(
 
     const planData: CreatePlanRequest = validationResult.data;
 
+    const supabasePlan: InsertSubscriptionPlan = {
+      name: planData.name,
+      description: planData.description || null,
+      price: planData.price,
+      currency: planData.currency,
+      interval: planData.interval,
+      trial_period_days: planData.trialPeriodDays || null,
+      features: planData.features ? (planData.features as any) : null,
+      is_active: planData.isActive,
+    };
+
+    const { data: savedPlan, error: dbError } = await supabase
+      .from('subscription_plans')
+      .insert(supabasePlan)
+      .select()
+      .single();
+
+    if (dbError) {
+      console.error('Database insert error:', dbError);
+
+      return {
+        success: false,
+        error: 'Failed to save subscription plan to database',
+        details: dbError.message,
+      };
+    }
+
     // 3. Create subscription plan in MercadoPago
     const mercadoPagoResult = await createMercadoPagoPlan({
       reason: planData.name,
@@ -110,36 +137,21 @@ export async function createSubscriptionPlan(
 
     console.log('MercadoPago plan created:', mercadoPagoResult);
 
-    // 4. Prepare data for Supabase
-    const supabasePlan: InsertSubscriptionPlan = {
-      name: planData.name,
-      description: planData.description || null,
-      price: planData.price,
-      currency: planData.currency,
-      interval: planData.interval,
-      trial_period_days: planData.trialPeriodDays || null,
-      features: planData.features ? (planData.features as any) : null,
-      is_active: planData.isActive,
-      mercadopago_plan_id: mercadoPagoResult.data.id || null,
-    };
-
-    // 5. Save plan to Supabase
-    const { data: savedPlan, error: dbError } = await supabase
+    const { data: updatePlan, error: updateError } = await supabase
       .from('subscription_plans')
-      .insert(supabasePlan)
-      .select()
+      .update({
+        mercadopago_plan_id: mercadoPagoResult.data.id || null,
+      })
+      .eq('id', savedPlan.id)
       .single();
 
-    if (dbError) {
-      console.error('Database insert error:', dbError);
-
-      // Note: You may want to implement a rollback mechanism here
-      // to delete the MercadoPago plan if the database insert fails
+    if (updateError) {
+      console.error('Database update error:', updateError);
 
       return {
         success: false,
-        error: 'Failed to save subscription plan to database',
-        details: dbError.message,
+        error: 'Failed to update subscription plan with external mp id',
+        details: updateError.message,
       };
     }
 

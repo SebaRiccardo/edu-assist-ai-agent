@@ -33,6 +33,10 @@ export interface CreatePlanParams {
 export interface PlanSearchParams {
   limit?: number;
   offset?: number;
+  status?: string;
+  q?: string;
+  sort?: string;
+  criteria?: string;
 }
 
 /**
@@ -159,6 +163,7 @@ export async function searchSubscriptionPlans(params?: PlanSearchParams) {
       options: {
         limit: params?.limit || 10,
         offset: params?.offset || 0,
+        ...params,
       },
     });
 

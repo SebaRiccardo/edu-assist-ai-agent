@@ -85,7 +85,7 @@ export const PLAN_LIMITS = {
   basic: {
     maxInboxes: plansConfigES.basic.limits.maxInboxes,
     maxCourses: plansConfigES.basic.limits.maxCourses ?? Infinity,
-    aiQueriesPerDay: plansConfigES.basic.limits.aiQueriesPerDay,
+    aiEmailDraftPerDay: plansConfigES.basic.limits.aiEmailDraftPerDay,
     emailsProcessedPerMonth: plansConfigES.basic.limits.emailsProcessedPerMonth,
     autoReplies: plansConfigES.basic.limits.autoReplies,
     prioritySupport: plansConfigES.basic.limits.prioritySupport,
@@ -96,7 +96,7 @@ export const PLAN_LIMITS = {
   pro: {
     maxInboxes: plansConfigES.pro.limits.maxInboxes,
     maxCourses: plansConfigES.pro.limits.maxCourses ?? Infinity,
-    aiQueriesPerDay: plansConfigES.pro.limits.aiQueriesPerDay,
+    aiEmailDraftPerDay: plansConfigES.pro.limits.aiEmailDraftPerDay,
     emailsProcessedPerMonth: plansConfigES.pro.limits.emailsProcessedPerMonth,
     autoReplies: plansConfigES.pro.limits.autoReplies,
     autoLabels: plansConfigES.pro.limits.autoLabels,
@@ -107,7 +107,8 @@ export const PLAN_LIMITS = {
   pro_plus: {
     maxInboxes: plansConfigES.pro_plus.limits.maxInboxes,
     maxCourses: plansConfigES.pro_plus.limits.maxCourses ?? Infinity,
-    aiQueriesPerDay: plansConfigES.pro_plus.limits.aiQueriesPerDay ?? Infinity,
+    aiEmailDraftPerDay:
+      plansConfigES.pro_plus.limits.aiEmailDraftPerDay ?? Infinity,
     emailsProcessedPerMonth:
       plansConfigES.pro_plus.limits.emailsProcessedPerMonth ?? Infinity,
     autoReplies: plansConfigES.pro_plus.limits.autoReplies,
