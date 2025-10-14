@@ -17,6 +17,7 @@ const plans = [
     isPopular: SUBSCRIPTION_PLANS_CONFIG.BASIC.highlighted,
     currency: SUBSCRIPTION_PLANS_CONFIG.BASIC.currency,
     period: SUBSCRIPTION_PLANS_CONFIG.BASIC.period,
+    planType: 'basic' as const,
   },
   {
     name: SUBSCRIPTION_PLANS_CONFIG.PRO.name,
@@ -27,6 +28,7 @@ const plans = [
     isPopular: SUBSCRIPTION_PLANS_CONFIG.PRO.highlighted,
     currency: SUBSCRIPTION_PLANS_CONFIG.PRO.currency,
     period: SUBSCRIPTION_PLANS_CONFIG.PRO.period,
+    planType: 'pro' as const,
   },
   {
     name: SUBSCRIPTION_PLANS_CONFIG.PRO_PLUS.name,
@@ -37,6 +39,7 @@ const plans = [
     isPopular: SUBSCRIPTION_PLANS_CONFIG.PRO_PLUS.highlighted,
     currency: SUBSCRIPTION_PLANS_CONFIG.PRO_PLUS.currency,
     period: SUBSCRIPTION_PLANS_CONFIG.PRO_PLUS.period,
+    planType: 'pro_plus' as const,
   },
 ];
 
@@ -99,7 +102,7 @@ const PricingPage = () => {
                 className="w-full mt-6"
                 asChild
               >
-                <Link href="/auth/register">{plan.buttonText}</Link>
+                <Link href={`/subscriptions/checkout?plan=${plan.planType}`}>{plan.buttonText}</Link>
               </Button>
             </div>
           </div>

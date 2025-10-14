@@ -2,19 +2,18 @@ import React from 'react';
 import {
   Mail,
   Zap,
-  Shield,
   CheckCircle,
-  Sparkles,
+
   BookOpen,
   MessageSquare,
   Tag,
   Trash2,
   Lock,
-  ArrowRight,
 } from 'lucide-react';
 import { AuroraBackground } from './aurora-background';
 import { LandingNav } from './landing-nav';
 import { SUBSCRIPTION_PLANS_CONFIG } from '@/lib/subscriptions/plans';
+import Link from 'next/link';
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -381,16 +380,22 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                     </li>
                   ))}
                 </ul>
-                <button
-                  onClick={onGetStarted}
-                  className={`w-full py-3 px-6 rounded-xl font-semibold transition-all ${
+                <Link
+                  href={`/subscriptions/checkout?plan=${
+                    plan.name === SUBSCRIPTION_PLANS_CONFIG.BASIC.name
+                      ? 'basic'
+                      : plan.name === SUBSCRIPTION_PLANS_CONFIG.PRO.name
+                        ? 'pro'
+                        : 'pro_plus'
+                  }`}
+                  className={`w-full py-3 px-6 rounded-xl font-semibold transition-all text-center block ${
                     plan.highlighted
                       ? 'bg-background text-foreground hover:bg-background/90 shadow-md'
                       : 'bg-primary text-primary-foreground hover:opacity-90 shadow-sm'
                   }`}
                 >
                   {plan.cta}
-                </button>
+                </Link>
               </div>
             ))}
           </div>

@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
 // Handle subscription status changes
 async function handleSubscriptionPreapproval(data: any, webhookId?: string) {
   try {
-    const preapprovalId = data.data?.id;
+    const preapprovalId = data.data?.id as string;
 
     if (!preapprovalId) {
       throw new Error('No preapproval ID in webhook data');
@@ -71,22 +71,17 @@ async function handleSubscriptionPreapproval(data: any, webhookId?: string) {
     // Update or create subscription
     const { data: subscription, error } = await supabase
       .from('user_subscriptions')
-      .upsert(
-        {
-          mercadopago_preapproval_id: preapprovalId,
-          status: status,
-          current_period_start: preapprovalDetails.next_payment_date
-            ? new Date(preapprovalDetails.next_payment_date)
-            : null,
-          current_period_end: preapprovalDetails.last_modified
-            ? new Date(preapprovalDetails.last_modified)
-            : null,
-          updated_at: new Date(),
-        },
-        {
-          onConflict: 'mercadopago_preapproval_id',
-        }
-      );
+      .upsert({
+        mercadopago_preapproval_id: preapprovalId,
+        status: status,
+        current_period_start: preapprovalDetails.next_payment_date
+          ? new Date(preapprovalDetails.next_payment_date)
+          : null,
+        current_period_end: preapprovalDetails.last_modified
+          ? new Date(preapprovalDetails.last_modified)
+          : null,
+        updated_at: new Date(),
+      });
 
     if (error) {
       throw error;
@@ -96,7 +91,7 @@ async function handleSubscriptionPreapproval(data: any, webhookId?: string) {
     if (webhookId) {
       await supabase
         .from('webhook_events')
-        .update({ processed: true, processed_at: new Date() })
+        .update({ processed: true, processed_at: new Date().toISOString() })
         .eq('id', webhookId);
     }
 
