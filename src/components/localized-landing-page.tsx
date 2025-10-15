@@ -21,7 +21,7 @@ import { LandingNav } from './landing-nav';
 import {
   getLocalizedPlansWithLimits,
   formatPrice,
-} from '@/lib/subscriptions/plans-utils';
+} from '@/subscriptions/plans-utils';
 
 interface LocalizedLandingPageProps {
   onGetStarted: () => void;

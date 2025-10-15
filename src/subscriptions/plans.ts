@@ -3,8 +3,8 @@
  * Centralized plan definitions, limits, and feature access control
  */
 
-import plansConfigEN from '@/config/subscription-plans.en.json';
-import plansConfigES from '@/config/subscription-plans.es.json';
+import plansConfigEN from './config/subscription-plans.en.json';
+import plansConfigES from './config/subscription-plans.es.json';
 
 /**
  * Get plans configuration based on locale

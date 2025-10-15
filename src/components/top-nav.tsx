@@ -29,7 +29,7 @@ import {
   useUserInitials,
   useUserDisplayName,
 } from '@/hooks/use-current-user';
-import { signOut } from '@/auth/auth-service';
+import { signOut } from '@/auth/service';
 import WordmarkLogo from '@/components/wordmark-logo';
 import { User } from '@supabase/supabase-js';
 

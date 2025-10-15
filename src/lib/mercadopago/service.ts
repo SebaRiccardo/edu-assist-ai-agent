@@ -1,19 +1,10 @@
-import { PreApprovalPlan, PreApproval, Payment } from 'mercadopago';
+﻿import MercadoPagoConfig, {
+  PreApprovalPlan,
+  PreApproval,
+  Payment,
+} from 'mercadopago';
 import { mercadoPagoClient } from '@/lib/mercadopago/mercadopago-client';
-
-/**
- * MercadoPago Service
- * Handles subscription plans, pre-approvals, and payments
- */
-
-// Initialize API clients
-const preApprovalPlanClient = new PreApprovalPlan(mercadoPagoClient);
-const preApprovalClient = new PreApproval(mercadoPagoClient);
-const paymentClient = new Payment(mercadoPagoClient);
-
-/**
- * Subscription Plan Management
- */
+import type { ServiceResponse } from './types';
 
 export interface CreatePlanParams {
   reason: string;
@@ -39,151 +30,6 @@ export interface PlanSearchParams {
   criteria?: string;
 }
 
-/**
- * Creates a new subscription plan
- * @param params - Plan configuration parameters
- * @returns Created plan details
- */
-export async function createSubscriptionPlan(params: CreatePlanParams) {
-  try {
-    const requestBody = {
-      reason: params.reason,
-      auto_recurring: {
-        frequency: params.autoRecurring.frequency,
-        frequency_type: params.autoRecurring.frequencyType,
-        transaction_amount: params.autoRecurring.transactionAmount,
-        currency_id: params.autoRecurring.currencyId,
-        // Optional free trial period
-        ...(params.autoRecurring.freeTrial && {
-          free_trial: {
-            frequency: params.autoRecurring.freeTrial.frequency,
-            frequency_type: params.autoRecurring.freeTrial.frequencyType,
-          },
-        }),
-      },
-      back_url: params.backUrl,
-    };
-
-    const response = await preApprovalPlanClient.create({
-      body: requestBody,
-    });
-
-    return {
-      success: true,
-      data: response,
-    };
-  } catch (error: any) {
-    console.error('Error creating subscription plan:', error);
-    return {
-      success: false,
-      error: error.message || 'Failed to create subscription plan',
-    };
-  }
-}
-
-/**
- * Gets a subscription plan by ID
- * @param planId - The plan ID
- * @returns Plan details
- */
-export async function getSubscriptionPlan(planId: string) {
-  try {
-    const response = await preApprovalPlanClient.get({
-      preApprovalPlanId: planId,
-    });
-
-    return {
-      success: true,
-      data: response,
-    };
-  } catch (error: any) {
-    console.error('Error getting subscription plan:', error);
-    return {
-      success: false,
-      error: error.message || 'Failed to get subscription plan',
-    };
-  }
-}
-
-/**
- * Updates a subscription plan
- * @param planId - The plan ID
- * @param params - Updated plan parameters
- * @returns Updated plan details
- */
-export async function updateSubscriptionPlan(
-  planId: string,
-  params: Partial<CreatePlanParams>
-) {
-  try {
-    const updateBody: any = {
-      preApprovalPlanId: planId,
-    };
-
-    if (params.reason) {
-      updateBody.reason = params.reason;
-    }
-
-    if (params.autoRecurring) {
-      updateBody.auto_recurring = {
-        frequency: params.autoRecurring.frequency,
-        frequency_type: params.autoRecurring.frequencyType,
-        transaction_amount: params.autoRecurring.transactionAmount,
-        currency_id: params.autoRecurring.currencyId,
-      };
-    }
-
-    if (params.backUrl) {
-      updateBody.back_url = params.backUrl;
-    }
-
-    const response = await preApprovalPlanClient.update(updateBody);
-
-    return {
-      success: true,
-      data: response,
-    };
-  } catch (error: any) {
-    console.error('Error updating subscription plan:', error);
-    return {
-      success: false,
-      error: error.message || 'Failed to update subscription plan',
-    };
-  }
-}
-
-/**
- * Searches for subscription plans
- * @param params - Search parameters
- * @returns List of plans
- */
-export async function searchSubscriptionPlans(params?: PlanSearchParams) {
-  try {
-    const response = await preApprovalPlanClient.search({
-      options: {
-        limit: params?.limit || 10,
-        offset: params?.offset || 0,
-        ...params,
-      },
-    });
-
-    return {
-      success: true,
-      data: response,
-    };
-  } catch (error: any) {
-    console.error('Error searching subscription plans:', error);
-    return {
-      success: false,
-      error: error.message || 'Failed to search subscription plans',
-    };
-  }
-}
-
-/**
- * Pre-Approval (Subscription) Management
- */
-
 export interface CreatePreApprovalParams {
   preApprovalPlanId: string;
   reason: string;
@@ -199,192 +45,14 @@ export interface CreatePreApprovalParams {
   };
 }
 
-/**
- * Creates a new pre-approval (subscription)
- * @param params - Pre-approval configuration
- * @returns Created pre-approval with init_point URL
- */
-export async function createPreApproval(params: CreatePreApprovalParams) {
-  try {
-    const body: any = {
-      preapproval_plan_id: params.preApprovalPlanId,
-      reason: params.reason,
-      payer_email: params.payer.email,
-      back_url: params.backUrl,
-    };
-
-    if (params.payer.firstName) {
-      body.payer = {
-        email: params.payer.email,
-        first_name: params.payer.firstName,
-        last_name: params.payer.lastName,
-      };
-    }
-
-    if (params.autoRecurring) {
-      body.auto_recurring = {
-        start_date: params.autoRecurring.startDate,
-        end_date: params.autoRecurring.endDate,
-      };
-    }
-
-    const response = await preApprovalClient.create({ body });
-
-    return {
-      success: true,
-      data: response,
-    };
-  } catch (error: any) {
-    console.error('Error creating pre-approval:', error);
-    return {
-      success: false,
-      error: error.message || 'Failed to create pre-approval',
-    };
-  }
-}
-
-/**
- * Gets a pre-approval by ID
- * @param preApprovalId - The pre-approval ID
- * @returns Pre-approval details
- */
-export async function getPreApproval(preApprovalId: string) {
-  try {
-    const response = await preApprovalClient.get({ id: preApprovalId });
-
-    return {
-      success: true,
-      data: response,
-    };
-  } catch (error: any) {
-    console.error('Error getting pre-approval:', error);
-    return {
-      success: false,
-      error: error.message || 'Failed to get pre-approval',
-    };
-  }
-}
-
-/**
- * Updates a pre-approval
- * @param preApprovalId - The pre-approval ID
- * @param params - Update parameters (status, reason, etc.)
- * @returns Updated pre-approval
- */
-export async function updatePreApproval(
-  preApprovalId: string,
-  params: {
-    status?: 'paused' | 'cancelled';
-    reason?: string;
-  }
-) {
-  try {
-    const response = await preApprovalClient.update({
-      id: preApprovalId,
-      body: params,
-    });
-
-    return {
-      success: true,
-      data: response,
-    };
-  } catch (error: any) {
-    console.error('Error updating pre-approval:', error);
-    return {
-      success: false,
-      error: error.message || 'Failed to update pre-approval',
-    };
-  }
-}
-
-/**
- * Cancels a pre-approval (subscription)
- * @param preApprovalId - The pre-approval ID
- * @returns Cancellation result
- */
-export async function cancelPreApproval(preApprovalId: string) {
-  try {
-    const response = await preApprovalClient.update({
-      id: preApprovalId,
-      body: { status: 'cancelled' },
-    });
-
-    return {
-      success: true,
-      data: response,
-    };
-  } catch (error: any) {
-    console.error('Error canceling pre-approval:', error);
-    return {
-      success: false,
-      error: error.message || 'Failed to cancel pre-approval',
-    };
-  }
-}
-
-/**
- * Pauses a pre-approval (subscription)
- * @param preApprovalId - The pre-approval ID
- * @returns Pause result
- */
-export async function pausePreApproval(preApprovalId: string) {
-  try {
-    const response = await preApprovalClient.update({
-      id: preApprovalId,
-      body: { status: 'paused' },
-    });
-
-    return {
-      success: true,
-      data: response,
-    };
-  } catch (error: any) {
-    console.error('Error pausing pre-approval:', error);
-    return {
-      success: false,
-      error: error.message || 'Failed to pause pre-approval',
-    };
-  }
-}
-
-/**
- * Searches for pre-approvals
- * @param params - Search parameters
- * @returns List of pre-approvals
- */
-export async function searchPreApprovals(params?: {
+export interface PreApprovalSearchParams {
   limit?: number;
   offset?: number;
   filters?: {
     status?: string;
     email?: string;
   };
-}) {
-  try {
-    const response = await preApprovalClient.search({
-      options: {
-        limit: params?.limit || 10,
-        offset: params?.offset || 0,
-        ...params?.filters,
-      },
-    });
-
-    return {
-      success: true,
-      data: response,
-    };
-  } catch (error: any) {
-    console.error('Error searching pre-approvals:', error);
-    return {
-      success: false,
-      error: error.message || 'Failed to search pre-approvals',
-    };
-  }
 }
-
-/**
- * Payment Management
- */
 
 export interface CreatePaymentParams {
   transactionAmount: number;
@@ -404,272 +72,445 @@ export interface CreatePaymentParams {
   metadata?: Record<string, any>;
 }
 
-/**
- * Creates a one-time payment
- * @param params - Payment configuration
- * @returns Created payment details
- */
-export async function createPayment(params: CreatePaymentParams) {
-  try {
-    const body: any = {
-      transaction_amount: params.transactionAmount,
-      description: params.description,
-      payment_method_id: params.paymentMethodId,
-      payer: {
-        email: params.payer.email,
-      },
-    };
-
-    if (params.payer.firstName) {
-      body.payer.first_name = params.payer.firstName;
-    }
-
-    if (params.payer.lastName) {
-      body.payer.last_name = params.payer.lastName;
-    }
-
-    if (params.payer.identification) {
-      body.payer.identification = params.payer.identification;
-    }
-
-    if (params.token) {
-      body.token = params.token;
-    }
-
-    if (params.installments) {
-      body.installments = params.installments;
-    }
-
-    if (params.metadata) {
-      body.metadata = params.metadata;
-    }
-
-    const response = await paymentClient.create({ body });
-
-    return {
-      success: true,
-      data: response,
-    };
-  } catch (error: any) {
-    console.error('Error creating payment:', error);
-    return {
-      success: false,
-      error: error.message || 'Failed to create payment',
-    };
-  }
-}
-
-/**
- * Gets a payment by ID
- * @param paymentId - The payment ID
- * @returns Payment details
- */
-export async function getPayment(paymentId: string) {
-  try {
-    const response = await paymentClient.get({ id: paymentId });
-
-    return {
-      success: true,
-      data: response,
-    };
-  } catch (error: any) {
-    console.error('Error getting payment:', error);
-    return {
-      success: false,
-      error: error.message || 'Failed to get payment',
-    };
-  }
-}
-
-/**
- * Searches for payments
- * @param params - Search parameters
- * @returns List of payments
- */
-export async function searchPayments(params?: {
+export interface PaymentSearchParams {
   limit?: number;
   offset?: number;
   filters?: {
     status?: string;
     email?: string;
   };
-}) {
-  try {
-    const response = await paymentClient.search({
+}
+
+export class MercadoPagoService {
+  private preApprovalPlanClient: PreApprovalPlan;
+  private preApprovalClient: PreApproval;
+  private paymentClient: Payment;
+
+  constructor() {
+    const mercadoPagoClient = new MercadoPagoConfig({
+      accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN!,
       options: {
-        limit: params?.limit || 10,
-        offset: params?.offset || 0,
-        ...params?.filters,
+        timeout: 5000,
       },
     });
 
-    return {
-      success: true,
-      data: response,
+    this.preApprovalPlanClient = new PreApprovalPlan(mercadoPagoClient);
+    this.preApprovalClient = new PreApproval(mercadoPagoClient);
+    this.paymentClient = new Payment(mercadoPagoClient);
+  }
+
+  async createPlan(params: CreatePlanParams): Promise<ServiceResponse> {
+    try {
+      const requestBody = {
+        reason: params.reason,
+        auto_recurring: {
+          frequency: params.autoRecurring.frequency,
+          frequency_type: params.autoRecurring.frequencyType,
+          transaction_amount: params.autoRecurring.transactionAmount,
+          currency_id: params.autoRecurring.currencyId,
+          ...(params.autoRecurring.freeTrial && {
+            free_trial: {
+              frequency: params.autoRecurring.freeTrial.frequency,
+              frequency_type: params.autoRecurring.freeTrial.frequencyType,
+            },
+          }),
+        },
+        back_url: params.backUrl,
+      };
+      const response = await this.preApprovalPlanClient.create({
+        body: requestBody,
+      });
+      return { success: true, data: response };
+    } catch (error: any) {
+      console.error('Error creating subscription plan:', error);
+      return {
+        success: false,
+        error: error.message || 'Failed to create subscription plan',
+      };
+    }
+  }
+
+  async getPlan(planId: string): Promise<ServiceResponse> {
+    try {
+      const response = await this.preApprovalPlanClient.get({
+        preApprovalPlanId: planId,
+      });
+      return { success: true, data: response };
+    } catch (error: any) {
+      console.error('Error getting subscription plan:', error);
+      return {
+        success: false,
+        error: error.message || 'Failed to get subscription plan',
+      };
+    }
+  }
+
+  async updatePlan(
+    planId: string,
+    params: Partial<CreatePlanParams>
+  ): Promise<ServiceResponse> {
+    try {
+      const updateBody: any = { preApprovalPlanId: planId };
+      if (params.reason) updateBody.reason = params.reason;
+      if (params.autoRecurring) {
+        updateBody.auto_recurring = {
+          frequency: params.autoRecurring.frequency,
+          frequency_type: params.autoRecurring.frequencyType,
+          transaction_amount: params.autoRecurring.transactionAmount,
+          currency_id: params.autoRecurring.currencyId,
+        };
+      }
+      if (params.backUrl) updateBody.back_url = params.backUrl;
+      const response = await this.preApprovalPlanClient.update(updateBody);
+      return { success: true, data: response };
+    } catch (error: any) {
+      console.error('Error updating subscription plan:', error);
+      return {
+        success: false,
+        error: error.message || 'Failed to update subscription plan',
+      };
+    }
+  }
+
+  async searchPlans(params?: PlanSearchParams): Promise<ServiceResponse> {
+    try {
+      const response = await this.preApprovalPlanClient.search({
+        options: {
+          limit: params?.limit || 10,
+          offset: params?.offset || 0,
+          ...params,
+        },
+      });
+      return { success: true, data: response };
+    } catch (error: any) {
+      console.error('Error searching subscription plans:', error);
+      return {
+        success: false,
+        error: error.message || 'Failed to search subscription plans',
+      };
+    }
+  }
+
+  async getActivePlans(): Promise<ServiceResponse> {
+    return this.searchPlans({ status: 'active' });
+  }
+
+  async createSubscription(
+    params: CreatePreApprovalParams
+  ): Promise<ServiceResponse> {
+    try {
+      const body: any = {
+        preapproval_plan_id: params.preApprovalPlanId,
+        reason: params.reason,
+        payer_email: params.payer.email,
+        back_url: params.backUrl,
+      };
+      if (params.payer.firstName) {
+        body.payer = {
+          email: params.payer.email,
+          first_name: params.payer.firstName,
+          last_name: params.payer.lastName,
+        };
+      }
+      if (params.autoRecurring) {
+        body.auto_recurring = {
+          start_date: params.autoRecurring.startDate,
+          end_date: params.autoRecurring.endDate,
+        };
+      }
+      const response = await this.preApprovalClient.create({ body });
+      return { success: true, data: response };
+    } catch (error: any) {
+      console.error('Error creating subscription:', error);
+      return {
+        success: false,
+        error: error.message || 'Failed to create subscription',
+      };
+    }
+  }
+
+  async getSubscription(subscriptionId: string): Promise<ServiceResponse> {
+    try {
+      const response = await this.preApprovalClient.get({ id: subscriptionId });
+      return { success: true, data: response };
+    } catch (error: any) {
+      console.error('Error getting subscription:', error);
+      return {
+        success: false,
+        error: error.message || 'Failed to get subscription',
+      };
+    }
+  }
+
+  async updateSubscription(
+    subscriptionId: string,
+    params: { status?: 'paused' | 'cancelled'; reason?: string }
+  ): Promise<ServiceResponse> {
+    try {
+      const response = await this.preApprovalClient.update({
+        id: subscriptionId,
+        body: params,
+      });
+      return { success: true, data: response };
+    } catch (error: any) {
+      console.error('Error updating subscription:', error);
+      return {
+        success: false,
+        error: error.message || 'Failed to update subscription',
+      };
+    }
+  }
+
+  async cancelSubscription(subscriptionId: string): Promise<ServiceResponse> {
+    try {
+      const response = await this.preApprovalClient.update({
+        id: subscriptionId,
+        body: { status: 'cancelled' },
+      });
+      return { success: true, data: response };
+    } catch (error: any) {
+      console.error('Error canceling subscription:', error);
+      return {
+        success: false,
+        error: error.message || 'Failed to cancel subscription',
+      };
+    }
+  }
+
+  async pauseSubscription(subscriptionId: string): Promise<ServiceResponse> {
+    try {
+      const response = await this.preApprovalClient.update({
+        id: subscriptionId,
+        body: { status: 'paused' },
+      });
+      return { success: true, data: response };
+    } catch (error: any) {
+      console.error('Error pausing subscription:', error);
+      return {
+        success: false,
+        error: error.message || 'Failed to pause subscription',
+      };
+    }
+  }
+
+  async searchSubscriptions(
+    params?: PreApprovalSearchParams
+  ): Promise<ServiceResponse> {
+    try {
+      const response = await this.preApprovalClient.search({
+        options: {
+          limit: params?.limit || 10,
+          offset: params?.offset || 0,
+          ...params?.filters,
+        },
+      });
+      return { success: true, data: response };
+    } catch (error: any) {
+      console.error('Error searching subscriptions:', error);
+      return {
+        success: false,
+        error: error.message || 'Failed to search subscriptions',
+      };
+    }
+  }
+
+  async getActiveSubscriptions(): Promise<ServiceResponse> {
+    return this.searchSubscriptions({ filters: { status: 'authorized' } });
+  }
+
+  async getSubscriptionsByEmail(email: string): Promise<ServiceResponse> {
+    return this.searchSubscriptions({ filters: { email } });
+  }
+
+  async createPayment(params: CreatePaymentParams): Promise<ServiceResponse> {
+    try {
+      const body: any = {
+        transaction_amount: params.transactionAmount,
+        description: params.description,
+        payment_method_id: params.paymentMethodId,
+        payer: { email: params.payer.email },
+      };
+      if (params.payer.firstName)
+        body.payer.first_name = params.payer.firstName;
+      if (params.payer.lastName) body.payer.last_name = params.payer.lastName;
+      if (params.payer.identification)
+        body.payer.identification = params.payer.identification;
+      if (params.token) body.token = params.token;
+      if (params.installments) body.installments = params.installments;
+      if (params.metadata) body.metadata = params.metadata;
+      const response = await this.paymentClient.create({ body });
+      return { success: true, data: response };
+    } catch (error: any) {
+      console.error('Error creating payment:', error);
+      return {
+        success: false,
+        error: error.message || 'Failed to create payment',
+      };
+    }
+  }
+
+  async getPayment(paymentId: string): Promise<ServiceResponse> {
+    try {
+      const response = await this.paymentClient.get({ id: paymentId });
+      return { success: true, data: response };
+    } catch (error: any) {
+      console.error('Error getting payment:', error);
+      return {
+        success: false,
+        error: error.message || 'Failed to get payment',
+      };
+    }
+  }
+
+  async searchPayments(params?: PaymentSearchParams): Promise<ServiceResponse> {
+    try {
+      const response = await this.paymentClient.search({
+        options: {
+          limit: params?.limit || 10,
+          offset: params?.offset || 0,
+          ...params?.filters,
+        },
+      });
+      return { success: true, data: response };
+    } catch (error: any) {
+      console.error('Error searching payments:', error);
+      return {
+        success: false,
+        error: error.message || 'Failed to search payments',
+      };
+    }
+  }
+
+  async getPaymentsByEmail(email: string): Promise<ServiceResponse> {
+    return this.searchPayments({ filters: { email } });
+  }
+
+  async capturePayment(paymentId: string): Promise<ServiceResponse> {
+    try {
+      const response = await this.paymentClient.capture({ id: paymentId });
+      return { success: true, data: response };
+    } catch (error: any) {
+      console.error('Error capturing payment:', error);
+      return {
+        success: false,
+        error: error.message || 'Failed to capture payment',
+      };
+    }
+  }
+
+  async cancelPayment(paymentId: string): Promise<ServiceResponse> {
+    try {
+      const response = await this.paymentClient.cancel({ id: paymentId });
+      return { success: true, data: response };
+    } catch (error: any) {
+      console.error('Error canceling payment:', error);
+      return {
+        success: false,
+        error: error.message || 'Failed to cancel payment',
+      };
+    }
+  }
+
+  validateWebhookSignature(
+    xSignature: string,
+    xRequestId: string,
+    dataId: string
+  ): boolean {
+    try {
+      const secret = process.env.MERCADOPAGO_WEBHOOK_SECRET;
+      if (!secret) {
+        console.warn('MERCADOPAGO_WEBHOOK_SECRET not configured');
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error('Error validating webhook signature:', error);
+      return false;
+    }
+  }
+
+  formatCurrency(amount: number, currencyId: string): string {
+    const formatter = new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: currencyId,
+    });
+    return formatter.format(amount);
+  }
+
+  getSubscriptionStatusLabel(status: string): string {
+    const statusLabels: Record<string, string> = {
+      authorized: 'Active',
+      paused: 'Paused',
+      cancelled: 'Cancelled',
+      pending: 'Pending',
+      ended: 'Ended',
     };
-  } catch (error: any) {
-    console.error('Error searching payments:', error);
-    return {
-      success: false,
-      error: error.message || 'Failed to search payments',
+    return statusLabels[status] || status;
+  }
+
+  getPaymentStatusLabel(status: string): string {
+    const statusLabels: Record<string, string> = {
+      approved: 'Approved',
+      pending: 'Pending',
+      in_process: 'In Process',
+      rejected: 'Rejected',
+      cancelled: 'Cancelled',
+      refunded: 'Refunded',
+      charged_back: 'Charged Back',
     };
+    return statusLabels[status] || status;
   }
 }
 
-/**
- * Refunds a payment
- * Note: Refunds are handled through the Payment API
- * @param paymentId - The payment ID
- * @param amount - Optional partial refund amount
- * @returns Refund result
- */
-export async function refundPayment(paymentId: string, amount?: number) {
-  try {
-    // Note: MercadoPago SDK may handle refunds differently
-    // This is a placeholder - check the latest SDK documentation
-    // You may need to use the REST API directly or a different method
-    console.warn(
-      'Refund functionality needs to be implemented with latest SDK'
-    );
+export const mercadoPagoService = new MercadoPagoService();
 
-    return {
-      success: false,
-      error: 'Refund functionality not yet implemented',
-    };
-  } catch (error: any) {
-    console.error('Error refunding payment:', error);
-    return {
-      success: false,
-      error: error.message || 'Failed to refund payment',
-    };
-  }
-}
-
-/**
- * Captures a reserved payment
- * @param paymentId - The payment ID
- * @returns Capture result
- */
-export async function capturePayment(paymentId: string) {
-  try {
-    const response = await paymentClient.capture({ id: paymentId });
-
-    return {
-      success: true,
-      data: response,
-    };
-  } catch (error: any) {
-    console.error('Error capturing payment:', error);
-    return {
-      success: false,
-      error: error.message || 'Failed to capture payment',
-    };
-  }
-}
-
-/**
- * Cancels a payment
- * @param paymentId - The payment ID
- * @returns Cancellation result
- */
-export async function cancelPayment(paymentId: string) {
-  try {
-    const response = await paymentClient.cancel({ id: paymentId });
-
-    return {
-      success: true,
-      data: response,
-    };
-  } catch (error: any) {
-    console.error('Error canceling payment:', error);
-    return {
-      success: false,
-      error: error.message || 'Failed to cancel payment',
-    };
-  }
-}
-
-/**
- * Helper Functions
- */
-
-/**
- * Validates MercadoPago webhook signature
- * @param xSignature - x-signature header
- * @param xRequestId - x-request-id header
- * @param dataId - data.id from webhook body
- * @returns Validation result
- */
-export function validateWebhookSignature(
+export const createSubscriptionPlan = (params: CreatePlanParams) =>
+  mercadoPagoService.createPlan(params);
+export const getSubscriptionPlan = (planId: string) =>
+  mercadoPagoService.getPlan(planId);
+export const updateSubscriptionPlan = (
+  planId: string,
+  params: Partial<CreatePlanParams>
+) => mercadoPagoService.updatePlan(planId, params);
+export const searchSubscriptionPlans = (params?: PlanSearchParams) =>
+  mercadoPagoService.searchPlans(params);
+export const createPreApproval = (params: CreatePreApprovalParams) =>
+  mercadoPagoService.createSubscription(params);
+export const getPreApproval = (subscriptionId: string) =>
+  mercadoPagoService.getSubscription(subscriptionId);
+export const updatePreApproval = (
+  subscriptionId: string,
+  params: { status?: 'paused' | 'cancelled'; reason?: string }
+) => mercadoPagoService.updateSubscription(subscriptionId, params);
+export const cancelPreApproval = (subscriptionId: string) =>
+  mercadoPagoService.cancelSubscription(subscriptionId);
+export const pausePreApproval = (subscriptionId: string) =>
+  mercadoPagoService.pauseSubscription(subscriptionId);
+export const searchPreApprovals = (params?: PreApprovalSearchParams) =>
+  mercadoPagoService.searchSubscriptions(params);
+export const createPayment = (params: CreatePaymentParams) =>
+  mercadoPagoService.createPayment(params);
+export const getPayment = (paymentId: string) =>
+  mercadoPagoService.getPayment(paymentId);
+export const searchPayments = (params?: PaymentSearchParams) =>
+  mercadoPagoService.searchPayments(params);
+export const capturePayment = (paymentId: string) =>
+  mercadoPagoService.capturePayment(paymentId);
+export const cancelPayment = (paymentId: string) =>
+  mercadoPagoService.cancelPayment(paymentId);
+export const validateWebhookSignature = (
   xSignature: string,
   xRequestId: string,
   dataId: string
-): boolean {
-  // Implement signature validation according to MercadoPago docs
-  // https://www.mercadopago.com/developers/en/docs/your-integrations/notifications/webhooks
-  try {
-    // This is a placeholder - implement actual signature validation
-    const secret = process.env.MERCADOPAGO_WEBHOOK_SECRET;
-    if (!secret) {
-      console.warn('MERCADOPAGO_WEBHOOK_SECRET not configured');
-      return false;
-    }
-
-    // Add actual signature validation logic here
-    return true;
-  } catch (error) {
-    console.error('Error validating webhook signature:', error);
-    return false;
-  }
-}
-
-/**
- * Formats currency for MercadoPago
- * @param amount - Amount in cents or smallest currency unit
- * @param currencyId - Currency code (e.g., 'ARS', 'USD')
- * @returns Formatted amount
- */
-export function formatCurrency(amount: number, currencyId: string): string {
-  const formatter = new Intl.NumberFormat('es-AR', {
-    style: 'currency',
-    currency: currencyId,
-  });
-
-  return formatter.format(amount);
-}
-
-/**
- * Gets subscription status label
- * @param status - Subscription status code
- * @returns Human-readable status
- */
-export function getSubscriptionStatusLabel(status: string): string {
-  const statusLabels: Record<string, string> = {
-    authorized: 'Active',
-    paused: 'Paused',
-    cancelled: 'Cancelled',
-    pending: 'Pending',
-    ended: 'Ended',
-  };
-
-  return statusLabels[status] || status;
-}
-
-/**
- * Gets payment status label
- * @param status - Payment status code
- * @returns Human-readable status
- */
-export function getPaymentStatusLabel(status: string): string {
-  const statusLabels: Record<string, string> = {
-    approved: 'Approved',
-    pending: 'Pending',
-    in_process: 'In Process',
-    rejected: 'Rejected',
-    cancelled: 'Cancelled',
-    refunded: 'Refunded',
-    charged_back: 'Charged Back',
-  };
-
-  return statusLabels[status] || status;
-}
+) =>
+  mercadoPagoService.validateWebhookSignature(xSignature, xRequestId, dataId);
+export const formatCurrency = (amount: number, currencyId: string) =>
+  mercadoPagoService.formatCurrency(amount, currencyId);
+export const getSubscriptionStatusLabel = (status: string) =>
+  mercadoPagoService.getSubscriptionStatusLabel(status);
+export const getPaymentStatusLabel = (status: string) =>
+  mercadoPagoService.getPaymentStatusLabel(status);
+export const refundPayment = async (paymentId: string, amount?: number) => {
+  console.warn('refundPayment is not yet implemented in MercadoPago SDK');
+  return { success: false, error: 'Refund functionality not yet implemented' };
+};

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayment, getPreApproval, getSubscriptionPlan } from './service';
+import { mercadoPagoService } from './service';
 import type { MercadoPagoWebhookEvent } from './types';
 
 /**
@@ -83,7 +83,7 @@ export async function handleMercadoPagoWebhook(
 async function handlePaymentEvent(event: MercadoPagoWebhookEvent) {
   try {
     const paymentId = event.data.id;
-    const paymentResult = await getPayment(paymentId);
+    const paymentResult = await mercadoPagoService.getPayment(paymentId);
 
     if (!paymentResult.success) {
       console.error('Failed to fetch payment:', paymentResult.error);
@@ -131,7 +131,8 @@ async function handlePaymentEvent(event: MercadoPagoWebhookEvent) {
 async function handleSubscriptionEvent(event: MercadoPagoWebhookEvent) {
   try {
     const subscriptionId = event.data.id;
-    const subscriptionResult = await getPreApproval(subscriptionId);
+    const subscriptionResult =
+      await mercadoPagoService.getSubscription(subscriptionId);
 
     if (!subscriptionResult.success) {
       console.error('Failed to fetch subscription:', subscriptionResult.error);
@@ -193,7 +194,7 @@ async function handleSubscriptionEvent(event: MercadoPagoWebhookEvent) {
 async function handlePlanEvent(event: MercadoPagoWebhookEvent) {
   try {
     const planId = event.data.id;
-    const planResult = await getSubscriptionPlan(planId);
+    const planResult = await mercadoPagoService.getPlan(planId);
 
     if (!planResult.success) {
       console.error('Failed to fetch plan:', planResult.error);
@@ -230,7 +231,7 @@ async function handlePlanEvent(event: MercadoPagoWebhookEvent) {
 async function handleAuthorizedPaymentEvent(event: MercadoPagoWebhookEvent) {
   try {
     const paymentId = event.data.id;
-    const paymentResult = await getPayment(paymentId);
+    const paymentResult = await mercadoPagoService.getPayment(paymentId);
 
     if (!paymentResult.success) {
       console.error('Failed to fetch authorized payment:', paymentResult.error);

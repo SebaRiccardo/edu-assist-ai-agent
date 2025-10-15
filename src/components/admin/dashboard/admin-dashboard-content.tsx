@@ -14,6 +14,7 @@ import { useActiveSubscriptions } from '@/hooks/use-subscriptions';
 import Link from 'next/link';
 
 export function AdminDashboardContent() {
+  
   // Fetch data using TanStack Query
   const { data: profiles, isLoading: usersLoading } = useProfiles();
   const { data: plans, isLoading: plansLoading } = usePlans();

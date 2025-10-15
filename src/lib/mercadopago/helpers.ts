@@ -3,13 +3,8 @@
  * Common subscription and payment helpers for the application
  */
 
-import {
-  createSubscriptionPlan,
-  createPreApproval,
-  getPreApproval,
-  cancelPreApproval,
-} from './service';
-import { SUBSCRIPTION_PLANS_CONFIG } from '../subscriptions/plans';
+import { mercadoPagoService } from './service';
+import { SUBSCRIPTION_PLANS_CONFIG } from '../../subscriptions/plans';
 
 /**
  * Creates all InboxProfs AI subscription plans in MercadoPago
@@ -25,12 +20,12 @@ export async function setupInboxProfPlans(currencyId: string = 'ARS') {
   };
 
   // Free Plan (for tracking purposes, even though it's $0)
-  const freePlanResult = await createSubscriptionPlan({
+  const freePlanResult = await mercadoPagoService.createPlan({
     reason: 'InboxProfs AI - Free Plan',
     autoRecurring: {
       frequency: 1,
       frequencyType: 'months',
-      transactionAmount: SUBSCRIPTION_PLANS_CONFIG.FREE.price,
+      transactionAmount: 0,
       currencyId,
     },
   });
@@ -41,7 +36,7 @@ export async function setupInboxProfPlans(currencyId: string = 'ARS') {
   }
 
   // Basic Plan
-  const basicPlanResult = await createSubscriptionPlan({
+  const basicPlanResult = await mercadoPagoService.createPlan({
     reason: 'InboxProfs AI - Basic Plan',
     autoRecurring: {
       frequency: 1,
@@ -57,7 +52,7 @@ export async function setupInboxProfPlans(currencyId: string = 'ARS') {
   }
 
   // Pro Plan
-  const proPlanResult = await createSubscriptionPlan({
+  const proPlanResult = await mercadoPagoService.createPlan({
     reason: 'InboxProfs AI - Pro Plan',
     autoRecurring: {
       frequency: 1,
@@ -93,12 +88,12 @@ export async function setupInboxProfPlansWithTrial(
   };
 
   // Free Plan (no trial needed, already free)
-  const freePlanResult = await createSubscriptionPlan({
+  const freePlanResult = await mercadoPagoService.createPlan({
     reason: 'InboxProfs AI - Free Plan',
     autoRecurring: {
       frequency: 1,
       frequencyType: 'months',
-      transactionAmount: SUBSCRIPTION_PLANS_CONFIG.FREE.price,
+      transactionAmount: 0,
       currencyId,
     },
   });
@@ -109,7 +104,7 @@ export async function setupInboxProfPlansWithTrial(
   }
 
   // Basic Plan with trial
-  const basicPlanResult = await createSubscriptionPlan({
+  const basicPlanResult = await mercadoPagoService.createPlan({
     reason: 'InboxProfs AI - Basic Plan (with trial)',
     autoRecurring: {
       frequency: 1,
@@ -129,7 +124,7 @@ export async function setupInboxProfPlansWithTrial(
   }
 
   // Pro Plan with trial
-  const proPlanResult = await createSubscriptionPlan({
+  const proPlanResult = await mercadoPagoService.createPlan({
     reason: 'InboxProfs AI - Pro Plan (with trial)',
     autoRecurring: {
       frequency: 1,
@@ -166,7 +161,7 @@ export async function subscribeUserToPlan(
   const [firstName, ...lastNameParts] = userName.split(' ');
   const lastName = lastNameParts.join(' ');
 
-  const result = await createPreApproval({
+  const result = await mercadoPagoService.createSubscription({
     preApprovalPlanId: planId,
     reason: 'InboxProfs AI Monthly Subscription',
     payer: {
@@ -186,7 +181,7 @@ export async function subscribeUserToPlan(
  * @returns Subscription details
  */
 export async function getUserSubscriptionStatus(subscriptionId: string) {
-  const result = await getPreApproval(subscriptionId);
+  const result = await mercadoPagoService.getSubscription(subscriptionId);
 
   if (!result.success || !result.data) {
     return null;
@@ -214,5 +209,5 @@ export async function getUserSubscriptionStatus(subscriptionId: string) {
  * @returns Cancellation result
  */
 export async function cancelUserSubscription(subscriptionId: string) {
-  return cancelPreApproval(subscriptionId);
+  return mercadoPagoService.cancelSubscription(subscriptionId);
 }

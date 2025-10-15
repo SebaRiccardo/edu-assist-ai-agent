@@ -24,7 +24,7 @@ import {
   SUBSCRIPTION_PLANS_CONFIG,
   PLAN_LIMITS,
   type PlanType,
-} from '@/lib/subscriptions/plans';
+} from '@/subscriptions/plans';
 import { useState } from 'react';
 
 interface PlanTemplateCardsProps {

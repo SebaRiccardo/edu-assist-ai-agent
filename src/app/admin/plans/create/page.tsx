@@ -1,5 +1,5 @@
 import { CreatePlanForm } from '@/components/admin/plans/create-plan-form';
-import { PlanType } from '@/lib/subscriptions/plans';
+import { PlanType } from '@/subscriptions/plans';
 
 type SearchParams = Promise<{ template?: string }>;
 

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { CircleCheck } from 'lucide-react';
-import { SUBSCRIPTION_PLANS_CONFIG } from '@/lib/subscriptions/plans';
+import { SUBSCRIPTION_PLANS_CONFIG } from '@/subscriptions/plans';
 import Link from 'next/link';
 
 // Transform SUBSCRIPTION_PLANS_CONFIG into the format needed for the pricing page
@@ -102,7 +102,9 @@ const PricingPage = () => {
                 className="w-full mt-6"
                 asChild
               >
-                <Link href={`/subscriptions/checkout?plan=${plan.planType}`}>{plan.buttonText}</Link>
+                <Link href={`/subscriptions/checkout?plan=${plan.planType}`}>
+                  {plan.buttonText}
+                </Link>
               </Button>
             </div>
           </div>

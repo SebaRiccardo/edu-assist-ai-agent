@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Plus, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import type { PlanType } from '@/lib/subscriptions/plans';
+import type { PlanType } from '@/subscriptions/plans';
 
 export function PlansPageContent() {
   const router = useRouter();

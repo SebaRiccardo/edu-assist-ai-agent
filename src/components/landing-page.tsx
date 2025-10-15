@@ -3,7 +3,6 @@ import {
   Mail,
   Zap,
   CheckCircle,
-
   BookOpen,
   MessageSquare,
   Tag,
@@ -12,7 +11,7 @@ import {
 } from 'lucide-react';
 import { AuroraBackground } from './aurora-background';
 import { LandingNav } from './landing-nav';
-import { SUBSCRIPTION_PLANS_CONFIG } from '@/lib/subscriptions/plans';
+import { SUBSCRIPTION_PLANS_CONFIG } from '@/subscriptions/plans';
 import Link from 'next/link';
 
 interface LandingPageProps {

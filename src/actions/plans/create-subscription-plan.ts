@@ -195,9 +195,7 @@ export async function createSubscriptionPlanFromTemplate(
   locale: 'en' | 'es' = 'en'
 ): Promise<CreatePlanResult> {
   try {
-    const { getLocalizedPlan } = await import(
-      '@/lib/subscriptions/plans-utils'
-    );
+    const { getLocalizedPlan } = await import('@/subscriptions/plans-utils');
 
     // Get plan configuration from template
     const planConfig = getLocalizedPlan(planType, locale);
