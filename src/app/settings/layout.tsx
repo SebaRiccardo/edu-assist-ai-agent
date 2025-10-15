@@ -1,4 +1,4 @@
-import { TopNav } from '@/components/top-nav';
+import { DashboardNavBar } from '@/components/top-nav';
 
 export default function SettingsLayout({
   children,
@@ -7,7 +7,7 @@ export default function SettingsLayout({
 }) {
   return (
     <div className="min-h-screen bg-gradient-to-bl from-pink-100 to-blue-200">
-      <TopNav />
+      <DashboardNavBar />
       <main className="relative py-5">{children}</main>
     </div>
   );

@@ -15,6 +15,8 @@
       "100 correos procesados por mes",
       "Sugerencias de etiquetas basadas en cursos (impulsadas por IA)"
     ],
+    "free_trial_count": 7,
+    "free_trial_interval": "dias",
     "highlighted": false,
     "limits": {
       "maxInboxes": 1,
@@ -45,6 +47,8 @@
       "10 borradores de correo con IA por día",
       "1,000 correos procesados por mes"
     ],
+    "free_trial_count": 0,
+    "free_trial_interval": "dias",
     "highlighted": true,
     "limits": {
       "maxInboxes": 2,
@@ -75,6 +79,8 @@
       "Borradores de correo con IA ilimitados",
       "Correos procesados ilimitados"
     ],
+    "free_trial_count": 0,
+    "free_trial_interval": "dias",
     "highlighted": false,
     "limits": {
       "maxInboxes": 10,

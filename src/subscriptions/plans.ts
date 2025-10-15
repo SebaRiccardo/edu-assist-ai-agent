@@ -11,7 +11,7 @@ import plansConfigES from './config/subscription-plans.es.json';
  * @param locale - Language locale ('en' or 'es')
  * @returns Plans configuration
  */
-export function getPlansConfig(locale: 'en' | 'es' = 'en') {
+export function getPlansConfig(locale: 'en' | 'es' = 'es') {
   return locale === 'es' ? plansConfigES : plansConfigEN;
 }
 
@@ -30,6 +30,10 @@ export const SUBSCRIPTION_PLANS_CONFIG = {
     features: plansConfigES.basic.features,
     highlighted: plansConfigES.basic.highlighted,
     currency: plansConfigES.basic.currency,
+    free_trial: {
+      count: plansConfigES.basic.free_trial_count,
+      interval: plansConfigES.basic.free_trial_interval,
+    },
   },
   PRO: {
     name: plansConfigES.pro.name,
@@ -40,6 +44,10 @@ export const SUBSCRIPTION_PLANS_CONFIG = {
     features: plansConfigES.pro.features,
     highlighted: plansConfigES.pro.highlighted,
     currency: plansConfigES.pro.currency,
+    free_trial: {
+      count: plansConfigES.pro.free_trial_count,
+      interval: plansConfigES.pro.free_trial_interval,
+    },
   },
   PRO_PLUS: {
     name: plansConfigES.pro_plus.name,
@@ -50,6 +58,10 @@ export const SUBSCRIPTION_PLANS_CONFIG = {
     features: plansConfigES.pro_plus.features,
     highlighted: plansConfigES.pro_plus.highlighted,
     currency: plansConfigES.pro_plus.currency,
+    free_trial: {
+      count: plansConfigES.pro_plus.free_trial_count,
+      interval: plansConfigES.pro_plus.free_trial_interval,
+    },
   },
 } as const;
 

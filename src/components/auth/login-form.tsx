@@ -21,6 +21,7 @@ import {
 import { PasswordInput } from '@/components/auth/password-input';
 import { signIn } from '@/auth/service';
 import { signInSchema, type SignInFormData } from '@/auth/schemas';
+import { useTranslations } from 'next-intl';
 
 interface LoginFormProps extends React.ComponentPropsWithoutRef<'div'> {
   redirectTo?: string;
@@ -31,6 +32,7 @@ export function LoginForm({
   redirectTo = '/dashboard',
   ...props
 }: LoginFormProps) {
+  const t = useTranslations('Auth');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -79,12 +81,13 @@ export function LoginForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>
-                Email address<span className="text-destructive">*</span>
+                {t('email')}
+                <span className="text-destructive">*</span>
               </FormLabel>
               <FormControl>
                 <Input
                   type="email"
-                  placeholder="Enter your email address"
+                  placeholder={t('email')}
                   {...field}
                   disabled={isLoading}
                 />
@@ -102,14 +105,15 @@ export function LoginForm({
             <FormItem>
               <div className="flex items-center justify-between">
                 <FormLabel>
-                  Password<span className="text-destructive">*</span>
+                  {t('password')}
+                  <span className="text-destructive">*</span>
                 </FormLabel>
                 <Link
                   href="/auth/forgot-password"
                   className="text-sm text-primary hover:underline underline-offset-4"
                   tabIndex={-1}
                 >
-                  Forgot password?
+                  {t('forgotPassword')}
                 </Link>
               </div>
               <FormControl>
@@ -142,10 +146,10 @@ export function LoginForm({
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Signing in...
+              {t('continue')}
             </>
           ) : (
-            'Sign in to InboxProfs AI'
+            t('signInTitle')
           )}
         </Button>
       </form>

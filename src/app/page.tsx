@@ -1,14 +1,6 @@
-'use client';
-
 import { LandingPage } from '@/components/landing-page';
-import { useRouter } from 'next/navigation';
+import Navbar from '@/components/landing/navbar/navbar';
 
 export default function HomePage() {
-  const router = useRouter();
-
-  const handleGetStarted = () => {
-    router.push('/dashboard');
-  };
-
-  return <LandingPage onGetStarted={handleGetStarted} />;
+  return <LandingPage navBarComponent={<Navbar />} />;
 }

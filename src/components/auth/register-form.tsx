@@ -21,8 +21,10 @@ import {
 import { PasswordInput } from '@/components/auth/password-input';
 import { signUpWithEmailAndPassword } from '@/auth/service';
 import { signUpSchema, type SignUpFormData } from '@/auth/schemas';
+import { useTranslations } from 'next-intl';
 
 export default function RegisterForm() {
+  const t = useTranslations('Auth');
   const [isLoading, setIsLoading] = useState(false);
   const [isSignedUp, setIsSignedUp] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -71,11 +73,9 @@ export default function RegisterForm() {
       <div className="flex flex-col items-center justify-center space-y-4 p-8">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
         <div className="text-center space-y-2">
-          <h3 className="text-lg font-semibold">
-            Account Created Successfully!
-          </h3>
+          <h3 className="text-lg font-semibold">{t('accountCreated')}</h3>
           <p className="text-sm text-muted-foreground">
-            Redirecting you to get started...
+            {t('redirectingGetStarted')}
           </p>
         </div>
       </div>
@@ -97,11 +97,12 @@ export default function RegisterForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>
-                Name<span className="text-destructive">*</span>
+                {t('name')}
+                <span className="text-destructive">*</span>
               </FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Enter your name"
+                  placeholder={t('enterName')}
                   {...field}
                   disabled={isLoading}
                 />
@@ -118,12 +119,13 @@ export default function RegisterForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>
-                Email address<span className="text-destructive">*</span>
+                {t('emailAddress')}
+                <span className="text-destructive">*</span>
               </FormLabel>
               <FormControl>
                 <Input
                   type="email"
-                  placeholder="Enter your email address"
+                  placeholder={t('enterEmail')}
                   {...field}
                   disabled={isLoading}
                 />
@@ -140,11 +142,12 @@ export default function RegisterForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>
-                Password<span className="text-destructive">*</span>
+                {t('password')}
+                <span className="text-destructive">*</span>
               </FormLabel>
               <FormControl>
                 <PasswordInput
-                  placeholder="A secure password"
+                  placeholder={t('aSecurePassword')}
                   showStrengthIndicator={false}
                   {...field}
                   disabled={isLoading}
@@ -161,11 +164,12 @@ export default function RegisterForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>
-                Confirm password<span className="text-destructive">*</span>
+                {t('confirmPassword', { default: 'Confirm password' })}
+                <span className="text-destructive">*</span>
               </FormLabel>
               <FormControl>
                 <PasswordInput
-                  placeholder="A secure password again"
+                  placeholder={t('aSecurePasswordAgain')}
                   showStrengthIndicator={false}
                   {...field}
                   disabled={isLoading}
@@ -192,7 +196,7 @@ export default function RegisterForm() {
               </FormControl>
               <div className="space-y-1 leading-none">
                 <FormLabel className="text-sm font-normal text-muted-foreground">
-                  I agree to all Term, privacy Policy and Fees
+                  {t('agreeToTerms')}
                 </FormLabel>
                 <FormMessage />
               </div>
@@ -217,10 +221,10 @@ export default function RegisterForm() {
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Creating account...
+              {t('creatingAccount')}
             </>
           ) : (
-            '🎓 Start Free Trial'
+            `🎓 ${t('startFreeTrial')}`
           )}
         </Button>
       </form>

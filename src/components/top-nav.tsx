@@ -33,7 +33,7 @@ import { signOut } from '@/auth/service';
 import WordmarkLogo from '@/components/wordmark-logo';
 import { User } from '@supabase/supabase-js';
 
-export function TopNav({ user }: { user: User | null }) {
+export function DashboardNavBar({ user }: { user: User | null }) {
   const pathname = usePathname();
   const router = useRouter();
   const { user: clientSideUser, loading } = useCurrentUser(user);
@@ -55,8 +55,6 @@ export function TopNav({ user }: { user: User | null }) {
       router.refresh();
     }
   };
-
-  console.log('server user', user);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-card/80 backdrop-blur-xl supports-[backdrop-filter]:bg-card/60 ">

@@ -5,8 +5,10 @@ import WordmarkLogo from '@/components/wordmark-logo';
 import { LoginForm } from '@/components/auth/login-form';
 import Link from 'next/link';
 import { Mail, TrendingUp } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 const Login = () => {
+  const t = useTranslations('Auth');
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       {/* Left Panel - Form */}
@@ -15,11 +17,10 @@ const Login = () => {
           {/* Main Hero Content */}
           <div className="space-y-4">
             <h2 className="text-4xl font-bold leading-tight text-primary-foreground">
-              Your inbox is waiting for you.
+              {t('welcomeBackTitle')}
             </h2>
             <p className="text-lg text-primary-foreground/90 leading-relaxed">
-              Access your AI-powered inbox assistant and get back to what
-              matters most — teaching, researching, and making an impact.
+              {t('welcomeBackSubtitle')}
             </p>
           </div>
 
@@ -31,11 +32,10 @@ const Login = () => {
               </div>
               <div className="flex-1 space-y-2">
                 <h3 className="text-xl font-semibold text-foreground">
-                  Your productivity, amplified
+                  {t('communityTitle')}
                 </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Save hours every week with intelligent email organization,
-                  smart labeling, and automated responses.
+                  {t('communitySubtitle')}
                 </p>
               </div>
             </div>
@@ -67,10 +67,10 @@ const Login = () => {
           {/* Header */}
           <div className="space-y-3">
             <h1 className="text-3xl font-bold tracking-tight text-foreground">
-              Welcome back to InboxProfs AI 👋
+              {t('welcomeBackTitle')}
             </h1>
             <p className="text-base text-muted-foreground">
-              Sign in to your account to continue managing your inbox.
+              {t('welcomeBackSubtitle')}
             </p>
           </div>
 
@@ -85,13 +85,13 @@ const Login = () => {
               alt="Google Icon"
               className="size-5"
             />
-            <span>Login with Google</span>
+            <span>{t('loginWithGoogle')}</span>
           </Button>
 
           {/* Divider */}
           <div className="flex items-center gap-4">
             <Separator className="flex-1" />
-            <span className="text-sm text-muted-foreground">or</span>
+            <span className="text-sm text-muted-foreground">{t('or')}</span>
             <Separator className="flex-1" />
           </div>
 
@@ -102,16 +102,16 @@ const Login = () => {
             {/* Sign Up Link */}
             <div className="space-y-3 text-center">
               <p className="text-sm text-muted-foreground">
-                Don&apos;t have an account?{' '}
+                {t('dontHaveAccount')}{' '}
                 <Link
                   href="/auth/sign-up"
                   className="font-medium text-foreground hover:underline"
                 >
-                  Sign up
+                  {t('signUp')}
                 </Link>
               </p>
               <p className="text-xs text-muted-foreground/70">
-                Protected by enterprise-grade security.
+                {t('protectedBySecurity')}
               </p>
             </div>
           </div>

@@ -113,6 +113,6 @@ export async function isAdminUser(
   client: TypedSupabaseClient
 ): Promise<boolean> {
   const jwt = await getCurrentClaims(client);
-  
+
   return !!jwt?.claims.app_metadata.admin;
 }

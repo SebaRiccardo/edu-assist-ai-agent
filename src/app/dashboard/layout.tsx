@@ -1,4 +1,4 @@
-import { TopNav } from '@/components/top-nav';
+import { DashboardNavBar } from '@/components/top-nav';
 import { getCurrentUser } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 
@@ -13,7 +13,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-gradient-to-bl from-pink-100 to-blue-200">
-      <TopNav user={user} />
+      <DashboardNavBar user={user} />
       <main className="relative py-6 xl:py-20">{children}</main>
     </div>
   );

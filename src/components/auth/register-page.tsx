@@ -5,8 +5,10 @@ import WordmarkLogo from '@/components/wordmark-logo';
 import RegisterForm from '@/components/auth/register-form';
 import Link from 'next/link';
 import { Mail, Users } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 const Register = () => {
+  const t = useTranslations('Auth');
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       {/* Left Panel - Form */}
@@ -20,10 +22,10 @@ const Register = () => {
           {/* Header */}
           <div className="space-y-3">
             <h1 className="text-3xl font-bold tracking-tight text-foreground">
-              Welcome to InboxProfs AI 👋
+              {t('registerWelcomeTitle')}
             </h1>
             <p className="text-base text-muted-foreground">
-              Your new inbox assistant is ready to get to work.
+              {t('registerWelcomeSubtitle')}
             </p>
           </div>
 
@@ -38,13 +40,13 @@ const Register = () => {
               alt="Google Icon"
               className="size-5"
             />
-            <span>Login with Google</span>
+            <span>{t('loginWithGoogle')}</span>
           </Button>
 
           {/* Divider */}
           <div className="flex items-center gap-4">
             <Separator className="flex-1" />
-            <span className="text-sm text-muted-foreground">or</span>
+            <span className="text-sm text-muted-foreground">{t('or')}</span>
             <Separator className="flex-1" />
           </div>
 
@@ -55,16 +57,16 @@ const Register = () => {
             {/* Sign In Link */}
             <div className="space-y-3 text-center">
               <p className="text-sm text-muted-foreground">
-                Already have an account?{' '}
+                {t('alreadyHaveAccount')}{' '}
                 <Link
                   href="/auth/login"
                   className="font-medium text-foreground hover:underline"
                 >
-                  Sign in
+                  {t('signIn')}
                 </Link>
               </p>
               <p className="text-xs text-muted-foreground/70">
-                No credit card needed. Cancel anytime.
+                {t('noCreditCardCancel')}
               </p>
             </div>
           </div>
@@ -77,12 +79,10 @@ const Register = () => {
           {/* Main Hero Content */}
           <div className="space-y-4">
             <h2 className="text-4xl font-bold leading-tight text-primary-foreground">
-              Create your account to get started.
+              {t('createAccountCta')}
             </h2>
             <p className="text-lg text-primary-foreground/90 leading-relaxed">
-              Your account will allow you to securely save your progress,
-              customize your preferences, and stay connected across all your
-              devices.
+              {t('createAccountBenefit')}
             </p>
           </div>
 
@@ -94,11 +94,10 @@ const Register = () => {
               </div>
               <div className="flex-1 space-y-2">
                 <h3 className="text-xl font-semibold text-foreground">
-                  We're excited to have you join our community
+                  {t('communityTitle')}
                 </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Your account will allow you to securely save your progress,
-                  customize your preferences.
+                  {t('communitySubtitle')}
                 </p>
               </div>
             </div>

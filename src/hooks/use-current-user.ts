@@ -60,7 +60,7 @@ export function useCurrentUser(user?: User | null) {
 /**
  * Hook to get user initials for avatar display
  */
-export function useUserInitials(user: User | null) {
+export function useUserInitials(user?: User | null) {
   const { user: _user } = useCurrentUser(user);
 
   if (!_user) return 'U';

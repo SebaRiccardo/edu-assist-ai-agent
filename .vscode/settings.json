@@ -1,3 +1,9 @@
 {
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "i18n-ally.localesPaths": [
+        "messages",
+        "src/lib/i18n"
+    ],
+    "editor.formatOnPaste": false,
+    "prettier.requireConfig": true
 }

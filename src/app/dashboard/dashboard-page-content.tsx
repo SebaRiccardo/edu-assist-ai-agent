@@ -19,12 +19,14 @@ import { useCurrentUser, useUserDisplayName } from '@/hooks/use-current-user';
 import { useCourses, useCreateCourse } from '@/hooks/use-courses';
 import { Course } from '@/lib/supabase/types/courses.types';
 import { User } from '@supabase/supabase-js';
+import { useTranslations } from 'next-intl';
 
 export default function DashboardPageContent({
   serverSideUser,
 }: {
   serverSideUser: User | null;
 }) {
+  const t = useTranslations('Dashboard');
   const router = useRouter();
   const { user, loading: userLoading } = useCurrentUser(serverSideUser);
   const displayName = useUserDisplayName(serverSideUser);
@@ -100,12 +102,10 @@ export default function DashboardPageContent({
             <div>
               <h1 className="text-4xl font-bold tracking-tight mb-2">
                 {userLoading
-                  ? 'Loading...'
-                  : `Welcome back, ${displayName}! 👋`}
+                  ? t('loading')
+                  : t('welcomeBack', { name: displayName })}
               </h1>
-              <p className="text-muted-foreground text-lg">
-                Take a look at your courses and emails
-              </p>
+              <p className="text-muted-foreground text-lg">{t('takeLook')}</p>
             </div>
             <Button
               onClick={handleOpenCreateForm}
@@ -114,7 +114,7 @@ export default function DashboardPageContent({
               className="border-none shadow-lg gap-2"
             >
               <Plus className="h-4 w-4" />
-              New Course
+              {t('newCourse')}
             </Button>
           </div>
 
@@ -158,7 +158,7 @@ export default function DashboardPageContent({
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-muted-foreground mb-1">
-                        Total Courses
+                        {t('totalCourses')}
                       </p>
                       <p className="text-3xl font-bold">
                         {courses?.length || 0}
@@ -174,7 +174,7 @@ export default function DashboardPageContent({
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-muted-foreground mb-1">
-                        Total Students
+                        {t('totalStudents')}
                       </p>
                       <p className="text-3xl font-bold">
                         {courses?.reduce(
@@ -193,7 +193,7 @@ export default function DashboardPageContent({
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-muted-foreground mb-1">
-                        Unread Emails
+                        {t('unreadEmails')}
                       </p>
                       <p className="text-3xl font-bold">0</p>
                     </div>
@@ -256,13 +256,13 @@ export default function DashboardPageContent({
         {!isLoading && !courses && (
           <div className="text-center py-20 border-2 border-dashed rounded-lg bg-card">
             <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-2xl font-semibold mb-2">No courses yet</h2>
+            <h2 className="text-2xl font-semibold mb-2">{t('noCourses')}</h2>
             <p className="text-muted-foreground mb-6">
-              Create your first course to get started
+              {t('createFirstCourse')}
             </p>
             <Button onClick={handleOpenCreateForm} size="lg">
               <Plus className="mr-2 h-5 w-5" />
-              Create Your First Course
+              {t('createYourFirstCourse')}
             </Button>
           </div>
         )}
@@ -315,13 +315,13 @@ export default function DashboardPageContent({
             {/* Courses Horizontal Scroll */}
             <section>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold">Your Courses</h2>
+                <h2 className="text-xl font-semibold">{t('yourCourses')}</h2>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => router.push('/dashboard/courses')}
                 >
-                  See More
+                  {t('seeMore')}
                   <ChevronRight className="ml-1 h-4 w-4" />
                 </Button>
               </div>
@@ -382,7 +382,7 @@ export default function DashboardPageContent({
                           <div className="flex items-center gap-1.5 ml-auto">
                             <Sparkles className="h-4 w-4 text-primary" />
                             <span className="text-xs text-muted-foreground">
-                              AI Ready
+                              {t('aiReady')}
                             </span>
                           </div>
                         </div>
