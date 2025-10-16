@@ -5,7 +5,7 @@ import {
   IconChartBar,
   IconDashboard,
   IconHelp,
-  IconInnerShadowTop,
+  IconMessageChatbot,
   IconMail,
   IconSearch,
   IconSettings,
@@ -29,13 +29,10 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import WordmarkLogo from '@/components/wordmark-logo';
+import { useCurrentUser, useUserDisplayName } from '@/hooks/use-current-user';
+import type { User } from '@supabase/supabase-js';
 
 const data = {
-  user: {
-    name: 'Professor',
-    email: 'professor@university.edu',
-    avatar: '/avatars/shadcn.jpg',
-  },
   navMain: [
     {
       title: 'Dashboard',
@@ -53,15 +50,20 @@ const data = {
       icon: IconMail,
     },
     {
-      title: 'Students',
-      url: '/dashboard/students',
-      icon: IconUsers,
+      title: 'Inbox Chat',
+      url: '/chat',
+      icon: IconMessageChatbot,
     },
-    {
-      title: 'Analytics',
-      url: '/dashboard/analytics',
-      icon: IconChartBar,
-    },
+    // {
+    //   title: 'Students',
+    //   url: '/dashboard/students',
+    //   icon: IconUsers,
+    // },
+    // {
+    //   title: 'Analytics',
+    //   url: '/dashboard/analytics',
+    //   icon: IconChartBar,
+    // },
   ],
   navSecondary: [
     {
@@ -94,7 +96,26 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  serverUser?: User | null;
+}
+
+export function AppSidebar({ serverUser, ...props }: AppSidebarProps) {
+  const { user: clientUser } = useCurrentUser(serverUser);
+  const displayName = useUserDisplayName(clientUser);
+
+  const user = {
+    name: displayName || 'User',
+    email: clientUser?.email || 'user@example.com',
+    avatar: clientUser?.user_metadata?.avatar_url || '/avatars/default.jpg',
+  };
+
+  const handleLogout = async () => {
+    const supabase = (await import('@/lib/supabase/client')).createClient();
+    await supabase.auth.signOut();
+    window.location.href = '/auth/login';
+  };
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -117,7 +138,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} onLogout={handleLogout} />
       </SidebarFooter>
     </Sidebar>
   );
