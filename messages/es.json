@@ -167,6 +167,32 @@
     "contactUs": "Contáctanos",
     "freeTrialLabel": "Prueba gratis"
   },
+  "Checkout": {
+    "backToPlans": "Volver a Planes",
+    "planNotFound": "Plan No Encontrado",
+    "planNotFoundDescription": "El plan seleccionado no existe. Por favor elige un plan válido.",
+    "viewPlans": "Ver Planes",
+    "dayFreeTrial": "Días de Prueba Gratis",
+    "featuresIncluded": "Características Incluidas:",
+    "freeTrialNote": "Prueba Gratis:",
+    "freeTrialDescription": "No se te cobrará durante los primeros {days} días. Cancela en cualquier momento durante el período de prueba.",
+    "checkoutSummary": "Resumen de Compra",
+    "reviewDetails": "Revisa los detalles de tu suscripción antes de continuar",
+    "plan": "Plan:",
+    "billingCycle": "Ciclo de Facturación:",
+    "freeTrial": "Prueba Gratis:",
+    "days": "días",
+    "totalDueToday": "Total a Pagar Hoy:",
+    "afterTrial": "Después de la prueba:",
+    "processing": "Procesando...",
+    "proceedToPayment": "Continuar al Pago",
+    "redirectNote": "Serás redirigido a la página segura de pago de MercadoPago",
+    "termsNote": "Al suscribirte, aceptas nuestros",
+    "termsOfService": "Términos de Servicio",
+    "and": "y",
+    "privacyPolicy": "Política de Privacidad",
+    "autoRenewNote": "Tu suscripción se renovará automáticamente a menos que la canceles. Puedes cancelar en cualquier momento desde la configuración de tu cuenta."
+  },
   "Header": {
     "documents": "Documentos",
     "github": "GitHub"

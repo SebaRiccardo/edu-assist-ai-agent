@@ -7,13 +7,13 @@ import { cn } from '@/lib/utils';
 import { CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { Plan } from '@/hooks/use-locale-subscription-plans';
+import { SubscriptionPlan } from '@/hooks/use-locale-subscription-plans';
 
 export default function PricingSectionContent({
   plans,
   locale,
 }: {
-  plans: Plan[];
+  plans: SubscriptionPlan[];
   locale: string;
 }) {
   const t = useTranslations('Landing');

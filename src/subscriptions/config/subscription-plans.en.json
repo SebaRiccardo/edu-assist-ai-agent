@@ -3,8 +3,8 @@
     "name": "Basic",
     "reason": "Basic plan for EduAssist AI",
     "subtitle": "Just Getting Started",
-    "price": 5,
-    "currency": "USD",
+    "price": 6500,
+    "currency": "ARS",
     "period": "per month",
     "description": "Smart analysis for 1 inbox and up to 2 courses. See how much time you save.",
     "features": [
@@ -24,8 +24,8 @@
     "name": "Pro",
     "reason": "Pro plan for EduAssist AI",
     "subtitle": "Stay on Top of It",
-    "price": 15,
-    "currency": "USD",
+    "price": 19500,
+    "currency": "ARS",
     "period": "per month",
     "description": "Unlimited courses, faster labeling, and advanced sorting.",
     "features": [
@@ -46,8 +46,8 @@
     "name": "Pro +",
     "reason": "Pro + plan for EduAssist AI",
     "subtitle": "Full Autopilot",
-    "price": 25,
-    "currency": "USD",
+    "price": 32500,
+    "currency": "ARS",
     "period": "per month",
     "description": "Your inbox runs itself — background cleanup, realtime replies, and smart prioritization.",
     "features": [

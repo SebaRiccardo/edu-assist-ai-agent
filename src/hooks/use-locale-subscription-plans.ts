@@ -3,7 +3,8 @@
 import { getPlansConfig } from '@/subscriptions/plans';
 import { useLocale } from 'next-intl';
 
-export type Plan = {
+export type SubscriptionPlan = {
+  mercadopago_plan_id: string;
   name: string;
   subtitle: string;
   price: number;
@@ -23,8 +24,9 @@ export const useLocaleSubscriptionPlan = () => {
   const activeLocale = useLocale();
   const plansConfig = getPlansConfig(activeLocale as 'en' | 'es');
 
-  const plans: Plan[] = [
+  const plans: SubscriptionPlan[] = [
     {
+      mercadopago_plan_id: process.env.MERCADOPAGO_BASIC_PLAN_ID || '',
       name: plansConfig.basic.name,
       subtitle: plansConfig.basic.subtitle,
       price: plansConfig.basic.price,
@@ -40,6 +42,7 @@ export const useLocaleSubscriptionPlan = () => {
       },
     },
     {
+      mercadopago_plan_id: process.env.MERCADOPAGO_PRO_PLAN_ID || '',
       name: plansConfig.pro.name,
       subtitle: plansConfig.pro.subtitle,
       price: plansConfig.pro.price,
@@ -55,6 +58,7 @@ export const useLocaleSubscriptionPlan = () => {
       },
     },
     {
+      mercadopago_plan_id: process.env.MERCADOPAGO_PRO_PLUS_PLAN_ID || '',
       name: plansConfig.pro_plus.name,
       subtitle: plansConfig.pro_plus.subtitle,
       price: plansConfig.pro_plus.price,

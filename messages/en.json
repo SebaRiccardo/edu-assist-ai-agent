@@ -167,6 +167,32 @@
     "contactUs": "Contact us",
     "freeTrialLabel": "Free trial"
   },
+  "Checkout": {
+    "backToPlans": "Back to Plans",
+    "planNotFound": "Plan Not Found",
+    "planNotFoundDescription": "The selected plan does not exist. Please choose a valid plan.",
+    "viewPlans": "View Plans",
+    "dayFreeTrial": "Day Free Trial",
+    "featuresIncluded": "Features Included:",
+    "freeTrialNote": "Free Trial:",
+    "freeTrialDescription": "You won't be charged for the first {days} days. Cancel anytime during the trial period.",
+    "checkoutSummary": "Checkout Summary",
+    "reviewDetails": "Review your subscription details before proceeding",
+    "plan": "Plan:",
+    "billingCycle": "Billing Cycle:",
+    "freeTrial": "Free Trial:",
+    "days": "days",
+    "totalDueToday": "Total Due Today:",
+    "afterTrial": "After trial:",
+    "processing": "Processing...",
+    "proceedToPayment": "Proceed to Payment",
+    "redirectNote": "You'll be redirected to MercadoPago secure checkout page",
+    "termsNote": "By subscribing, you agree to our",
+    "termsOfService": "Terms of Service",
+    "and": "and",
+    "privacyPolicy": "Privacy Policy",
+    "autoRenewNote": "Your subscription will automatically renew unless cancelled. You can cancel anytime from your account settings."
+  },
   "Header": {
     "documents": "Documents",
     "github": "GitHub"

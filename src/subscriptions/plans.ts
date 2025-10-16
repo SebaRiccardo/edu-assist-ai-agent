@@ -13,6 +13,11 @@ import subscriptionLimits from './config/subscription-limits.json';
 export const USD_TO_ARS_RATE = 1300;
 
 /**
+ * Plan type definition
+ */
+export type PlanType = 'basic' | 'pro' | 'pro_plus';
+
+/**
  * Get plans configuration based on locale
  * @param locale - Language locale ('en' or 'es')
  * @returns Plans configuration
@@ -28,6 +33,7 @@ export function getPlansConfig(locale: 'en' | 'es' = 'es') {
  */
 export const SUBSCRIPTION_PLANS_CONFIG = {
   BASIC: {
+    mp_id: process.env.MERCADOPAGO_BASIC_PLAN_ID || '',
     name: plansConfigES.basic.name,
     subtitle: plansConfigES.basic.subtitle,
     price: plansConfigES.basic.price,
@@ -42,6 +48,7 @@ export const SUBSCRIPTION_PLANS_CONFIG = {
     },
   },
   PRO: {
+    mp_id: process.env.MERCADOPAGO_PRO_PLAN_ID || '',
     name: plansConfigES.pro.name,
     subtitle: plansConfigES.pro.subtitle,
     price: plansConfigES.pro.price,
@@ -56,6 +63,7 @@ export const SUBSCRIPTION_PLANS_CONFIG = {
     },
   },
   PRO_PLUS: {
+    mp_id: process.env.MERCADOPAGO_PRO_PLUS_PLAN_ID || '',
     name: plansConfigES.pro_plus.name,
     subtitle: plansConfigES.pro_plus.subtitle,
     price: plansConfigES.pro_plus.price,
@@ -70,11 +78,6 @@ export const SUBSCRIPTION_PLANS_CONFIG = {
     },
   },
 } as const;
-
-/**
- * Plan type definition
- */
-export type PlanType = 'basic' | 'pro' | 'pro_plus';
 
 /**
  * Feature access control
