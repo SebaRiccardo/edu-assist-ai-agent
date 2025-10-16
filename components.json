@@ -21,6 +21,7 @@
   "registries": {
     "@v0": "https://v0.dev/chat/b/{name}",
     "@acme": "https://registry.acme.com/{name}.json",
-    "@internal": "https://internal.company.com/{name}.json"
+    "@internal": "https://internal.company.com/{name}.json",
+    "@ai-elements": "https://registry.ai-sdk.dev/{name}.json"
   }
 }

@@ -37,11 +37,8 @@ export type ConnectionStatus =
 /**
  * Gmail Connection Details
  */
-export interface GmailConnectionDetails {
-  isConnected: boolean;
-  connectionId?: string;
-  email?: string;
-  status: ConnectionStatus;
+export interface GmailConnectedAccounts {
+  accounts: any[]
 }
 
 /**
@@ -103,43 +100,27 @@ export class ComposioService {
   // ============================================================================
 
   /**
-   * Get Gmail connection details for a specific user
-   *
+   * Get Gmail connected accounts
    * @param userId - The user ID to check connection for
-   * @returns Gmail connection details with status and email
+   * @returns Gmail connected accounts
    */
-  static async getGmailConnectionByUserId(
+  static async getUserGmailConnections(
     userId: string
-  ): Promise<GmailConnectionDetails> {
+  ): Promise<GmailConnectedAccounts> {
     try {
       const client = this.getClient();
       const connectedAccounts = await client.connectedAccounts.list({
         userIds: [userId],
+        toolkitSlugs: [GMAIL_TOOLKIT],
+        statuses: ['ACTIVE'],
       });
-
-      const gmailConnection = connectedAccounts.items.find(
-        (account: any) => account.toolkit.slug.toUpperCase() === GMAIL_TOOLKIT
-      );
-
-      if (gmailConnection && gmailConnection.status === 'ACTIVE') {
-        return {
-          isConnected: true,
-          connectionId: gmailConnection.id,
-          email: gmailConnection.data?.email,
-          status: 'ACTIVE',
-        };
-      }
-
       return {
-        isConnected: false,
-        status:
-          (gmailConnection?.status as ConnectionStatus) || 'NOT_CONNECTED',
+        accounts: connectedAccounts.items,
       };
     } catch (error) {
       console.error('Error checking Gmail connection:', error);
       return {
-        isConnected: false,
-        status: 'ERROR',
+        accounts: [],
       };
     }
   }
@@ -398,7 +379,7 @@ export class ComposioService {
    * @throws Error if connection is not active
    */
   static async validateConnection(userId: string): Promise<void> {
-    const connection = await this.getGmailConnectionByUserId(userId);
+    const connection = await this.getUserGmailConnections(userId);
 
     if (!connection.isConnected) {
       throw new Error(
