@@ -30,21 +30,8 @@ export function PlansPageContent() {
     );
   }
 
-  // Transform data for the table
-  const plansData = (plans || []).map(plan => ({
-    id: plan.id,
-    name: plan.name,
-    description: plan.description || 'N/A',
-    price: plan.price,
-    currency: plan.currency || 'ARS',
-    interval: plan.interval as 'days' | 'months' | 'years',
-    trial_period_days: plan.trial_period_days || null,
-    is_active: plan.is_active || false,
-    features: plan.features as string[] | null,
-    mercadopago_plan_id: plan.mercadopago_plan_id,
-    created_at: plan.created_at,
-    updated_at: plan.updated_at,
-  }));
+  // MercadoPago plans data is already in the correct format
+  const plansData = plans?.results || [];
 
   return (
     <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
@@ -65,11 +52,6 @@ export function PlansPageContent() {
         </Button>
       </div>
 
-      {/* Template Cards */}
-      <div className="px-4 lg:px-6">
-        <PlanTemplateCards onCreatePlan={handleCreatePlan} />
-      </div>
-
       {/* Plans Table */}
       <div className="px-4 lg:px-6">
         {isLoading ? (
@@ -85,6 +67,10 @@ export function PlansPageContent() {
             data={plansData}
           />
         )}
+      </div>
+      {/* Template Cards */}
+      <div className="px-4 lg:px-6">
+        <PlanTemplateCards onCreatePlan={handleCreatePlan} />
       </div>
     </div>
   );

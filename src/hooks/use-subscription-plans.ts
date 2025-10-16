@@ -20,14 +20,7 @@ import type {
 export function usePlans(params?: PlanSearchParams) {
   return useQuery({
     queryKey: ['mercadopago', 'plans', params],
-    queryFn: async () => {
-      const result = await searchPlansAction(params);
-      console.log(result);
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to fetch plans');
-      }
-      return result.data;
-    },
+    queryFn: async () => await searchPlansAction(params),
     refetchOnMount: true,
   });
 }
@@ -38,13 +31,7 @@ export function usePlans(params?: PlanSearchParams) {
 export function useActivePlans() {
   return useQuery({
     queryKey: ['mercadopago', 'plans', 'active'],
-    queryFn: async () => {
-      const result = await getActivePlansAction();
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to fetch active plans');
-      }
-      return result.data;
-    },
+    queryFn: async () => await getActivePlansAction(),
   });
 }
 
@@ -57,11 +44,7 @@ export function usePlan(planId: string | undefined) {
     queryKey: ['mercadopago', 'plans', planId],
     queryFn: async () => {
       if (!planId) throw new Error('Plan ID is required');
-      const result = await getPlanAction(planId);
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to fetch plan');
-      }
-      return result.data;
+      return await getPlanAction(planId);
     },
     enabled: !!planId,
   });
@@ -77,10 +60,7 @@ export function usePlansCount(status?: string) {
     queryFn: async () => {
       const params = status ? { status } : undefined;
       const result = await searchPlansAction(params);
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to fetch plans count');
-      }
-      return result.data?.results?.length || 0;
+      return result?.results?.length || 0;
     },
   });
 }
@@ -93,11 +73,7 @@ export function useCreatePlan() {
 
   return useMutation({
     mutationFn: async (params: CreatePlanParams) => {
-      const result = await createPlanAction(params);
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to create plan');
-      }
-      return result.data;
+      return await createPlanAction(params);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['mercadopago', 'plans'] });
@@ -120,11 +96,7 @@ export function useUpdatePlan() {
       planId: string;
       params: Partial<CreatePlanParams>;
     }) => {
-      const result = await updatePlanAction(planId, params);
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to update plan');
-      }
-      return result.data;
+      return await updatePlanAction(planId, params);
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['mercadopago', 'plans'] });

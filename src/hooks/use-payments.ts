@@ -21,13 +21,7 @@ import type {
 export function usePayments(params?: PaymentSearchParams) {
   return useQuery({
     queryKey: ['mercadopago', 'payments', params],
-    queryFn: async () => {
-      const result = await searchPaymentsAction(params);
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to fetch payments');
-      }
-      return result.data;
-    },
+    queryFn: async () => await searchPaymentsAction(params),
   });
 }
 
@@ -40,11 +34,7 @@ export function useUserPayments(email: string | undefined) {
     queryKey: ['mercadopago', 'payments', 'user', email],
     queryFn: async () => {
       if (!email) throw new Error('Email is required');
-      const result = await getPaymentsByEmailAction(email);
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to fetch user payments');
-      }
-      return result.data;
+      return await getPaymentsByEmailAction(email);
     },
     enabled: !!email,
   });
@@ -59,11 +49,7 @@ export function usePayment(paymentId: string | undefined) {
     queryKey: ['mercadopago', 'payments', paymentId],
     queryFn: async () => {
       if (!paymentId) throw new Error('Payment ID is required');
-      const result = await getPaymentAction(paymentId);
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to fetch payment');
-      }
-      return result.data;
+      return await getPaymentAction(paymentId);
     },
     enabled: !!paymentId,
   });
@@ -77,11 +63,7 @@ export function useCreatePayment() {
 
   return useMutation({
     mutationFn: async (params: CreatePaymentParams) => {
-      const result = await createPaymentAction(params);
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to create payment');
-      }
-      return result.data;
+      return await createPaymentAction(params);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['mercadopago', 'payments'] });
@@ -97,11 +79,7 @@ export function useCapturePayment() {
 
   return useMutation({
     mutationFn: async (paymentId: string) => {
-      const result = await capturePaymentAction(paymentId);
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to capture payment');
-      }
-      return result.data;
+      return await capturePaymentAction(paymentId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['mercadopago', 'payments'] });
@@ -117,11 +95,7 @@ export function useCancelPayment() {
 
   return useMutation({
     mutationFn: async (paymentId: string) => {
-      const result = await cancelPaymentAction(paymentId);
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to cancel payment');
-      }
-      return result.data;
+      return await cancelPaymentAction(paymentId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['mercadopago', 'payments'] });

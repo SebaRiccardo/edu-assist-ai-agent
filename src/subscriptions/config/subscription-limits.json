@@ -1,0 +1,35 @@
+{
+  "basic": {
+    "maxInboxes": 1,
+    "maxCourses": 2,
+    "aiEmailDraftPerDay": 2,
+    "emailsProcessedPerMonth": 100,
+    "autoReplies": false,
+    "prioritySupport": false,
+    "autoLabels": false,
+    "realTimeReplies": false,
+    "autonomousEmailManagement": false
+  },
+  "pro": {
+    "maxInboxes": 2,
+    "maxCourses": null,
+    "aiEmailDraftPerDay": 10,
+    "emailsProcessedPerMonth": 1000,
+    "autoReplies": false,
+    "autoLabels": true,
+    "realTimeReplies": false,
+    "prioritySupport": false,
+    "autonomousEmailManagement": false
+  },
+  "pro_plus": {
+    "maxInboxes": 10,
+    "maxCourses": null,
+    "aiEmailDraftPerDay": null,
+    "emailsProcessedPerMonth": null,
+    "autoReplies": true,
+    "autoLabels": true,
+    "realTimeReplies": true,
+    "prioritySupport": true,
+    "autonomousEmailManagement": true
+  }
+}

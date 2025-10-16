@@ -23,13 +23,7 @@ import type {
 export function useSubscriptions(params?: PreApprovalSearchParams) {
   return useQuery({
     queryKey: ['mercadopago', 'subscriptions', params],
-    queryFn: async () => {
-      const result = await searchSubscriptionsAction(params);
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to fetch subscriptions');
-      }
-      return result.data;
-    },
+    queryFn: async () => await searchSubscriptionsAction(params),
   });
 }
 
@@ -39,13 +33,7 @@ export function useSubscriptions(params?: PreApprovalSearchParams) {
 export function useActiveSubscriptions() {
   return useQuery({
     queryKey: ['mercadopago', 'subscriptions', 'active'],
-    queryFn: async () => {
-      const result = await getActiveSubscriptionsAction();
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to fetch active subscriptions');
-      }
-      return result.data;
-    },
+    queryFn: async () => await getActiveSubscriptionsAction(),
   });
 }
 
@@ -58,11 +46,7 @@ export function useUserSubscriptions(email: string | undefined) {
     queryKey: ['mercadopago', 'subscriptions', 'user', email],
     queryFn: async () => {
       if (!email) throw new Error('Email is required');
-      const result = await getSubscriptionsByEmailAction(email);
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to fetch user subscriptions');
-      }
-      return result.data;
+      return await getSubscriptionsByEmailAction(email);
     },
     enabled: !!email,
   });
@@ -77,11 +61,7 @@ export function useSubscription(subscriptionId: string | undefined) {
     queryKey: ['mercadopago', 'subscriptions', subscriptionId],
     queryFn: async () => {
       if (!subscriptionId) throw new Error('Subscription ID is required');
-      const result = await getSubscriptionAction(subscriptionId);
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to fetch subscription');
-      }
-      return result.data;
+      return await getSubscriptionAction(subscriptionId);
     },
     enabled: !!subscriptionId,
   });
@@ -97,10 +77,7 @@ export function useSubscriptionsCount(status?: string) {
     queryFn: async () => {
       const params = status ? { filters: { status } } : undefined;
       const result = await searchSubscriptionsAction(params);
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to fetch subscriptions count');
-      }
-      return result.data?.results?.length || 0;
+      return result?.results?.length || 0;
     },
   });
 }
@@ -113,11 +90,7 @@ export function useCreateSubscription() {
 
   return useMutation({
     mutationFn: async (params: CreatePreApprovalParams) => {
-      const result = await createSubscriptionAction(params);
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to create subscription');
-      }
-      return result.data;
+      return await createSubscriptionAction(params);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -142,11 +115,7 @@ export function useUpdateSubscription() {
       subscriptionId: string;
       params: { status?: 'paused' | 'cancelled'; reason?: string };
     }) => {
-      const result = await updateSubscriptionAction(subscriptionId, params);
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to update subscription');
-      }
-      return result.data;
+      return await updateSubscriptionAction(subscriptionId, params);
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
@@ -168,11 +137,7 @@ export function useCancelSubscription() {
 
   return useMutation({
     mutationFn: async (subscriptionId: string) => {
-      const result = await cancelSubscriptionAction(subscriptionId);
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to cancel subscription');
-      }
-      return result.data;
+      return await cancelSubscriptionAction(subscriptionId);
     },
     onSuccess: (_, subscriptionId) => {
       queryClient.invalidateQueries({
@@ -194,11 +159,7 @@ export function usePauseSubscription() {
 
   return useMutation({
     mutationFn: async (subscriptionId: string) => {
-      const result = await pauseSubscriptionAction(subscriptionId);
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to pause subscription');
-      }
-      return result.data;
+      return await pauseSubscriptionAction(subscriptionId);
     },
     onSuccess: (_, subscriptionId) => {
       queryClient.invalidateQueries({

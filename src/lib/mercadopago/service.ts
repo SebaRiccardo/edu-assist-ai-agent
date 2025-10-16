@@ -5,6 +5,10 @@
 } from 'mercadopago';
 import { mercadoPagoClient } from '@/lib/mercadopago/mercadopago-client';
 import type { ServiceResponse } from './types';
+import { PreApprovalPlanSearchPaging } from 'mercadopago/dist/clients/preApprovalPlan/search/types';
+import { PreApprovalPlanResponse } from 'mercadopago/dist/clients/preApprovalPlan/commonTypes';
+import { PreApprovalResponse } from 'mercadopago/dist/clients/preApproval/commonTypes';
+import { PreApprovalSearchResponse } from 'mercadopago/dist/clients/preApproval/search/types';
 
 export interface CreatePlanParams {
   reason: string;
@@ -120,7 +124,8 @@ export class MercadoPagoService {
       const response = await this.preApprovalPlanClient.create({
         body: requestBody,
       });
-      return { success: true, data: response };
+      const { api_response, ...res } = response;
+      return { success: true, data: res };
     } catch (error: any) {
       console.error('Error creating subscription plan:', error);
       return {
@@ -135,7 +140,8 @@ export class MercadoPagoService {
       const response = await this.preApprovalPlanClient.get({
         preApprovalPlanId: planId,
       });
-      return { success: true, data: response };
+      const { api_response, ...res } = response;
+      return { success: true, data: res };
     } catch (error: any) {
       console.error('Error getting subscription plan:', error);
       return {
@@ -162,7 +168,8 @@ export class MercadoPagoService {
       }
       if (params.backUrl) updateBody.back_url = params.backUrl;
       const response = await this.preApprovalPlanClient.update(updateBody);
-      return { success: true, data: response };
+      const { api_response, ...res } = response;
+      return { success: true, data: res };
     } catch (error: any) {
       console.error('Error updating subscription plan:', error);
       return {
@@ -172,7 +179,12 @@ export class MercadoPagoService {
     }
   }
 
-  async searchPlans(params?: PlanSearchParams): Promise<ServiceResponse> {
+  async searchPlans(params?: PlanSearchParams): Promise<
+    ServiceResponse<{
+      paging?: PreApprovalPlanSearchPaging;
+      results?: Array<Omit<PreApprovalPlanResponse, 'api_response'>>;
+    }>
+  > {
     try {
       const response = await this.preApprovalPlanClient.search({
         options: {
@@ -181,7 +193,13 @@ export class MercadoPagoService {
           ...params,
         },
       });
-      return { success: true, data: response };
+      const cleanResults = response.results?.map(
+        ({ api_response, ...res }) => res
+      );
+      return {
+        success: true,
+        data: { paging: response.paging, results: cleanResults },
+      };
     } catch (error: any) {
       console.error('Error searching subscription plans:', error);
       return {
@@ -192,7 +210,7 @@ export class MercadoPagoService {
   }
 
   async getActivePlans(): Promise<ServiceResponse> {
-    return this.searchPlans({ status: 'active' });
+    return await this.searchPlans({ status: 'active' });
   }
 
   async createSubscription(
@@ -219,7 +237,8 @@ export class MercadoPagoService {
         };
       }
       const response = await this.preApprovalClient.create({ body });
-      return { success: true, data: response };
+      const { api_response, ...res } = response;
+      return { success: true, data: res };
     } catch (error: any) {
       console.error('Error creating subscription:', error);
       return {
@@ -229,10 +248,13 @@ export class MercadoPagoService {
     }
   }
 
-  async getSubscription(subscriptionId: string): Promise<ServiceResponse> {
+  async getSubscription(
+    subscriptionId: string
+  ): Promise<ServiceResponse<Omit<PreApprovalResponse, 'api_response'>>> {
     try {
       const response = await this.preApprovalClient.get({ id: subscriptionId });
-      return { success: true, data: response };
+      const { api_response, ...res } = response;
+      return { success: true, data: res };
     } catch (error: any) {
       console.error('Error getting subscription:', error);
       return {
@@ -251,7 +273,8 @@ export class MercadoPagoService {
         id: subscriptionId,
         body: params,
       });
-      return { success: true, data: response };
+      const { api_response, ...res } = response as any;
+      return { success: true, data: res };
     } catch (error: any) {
       console.error('Error updating subscription:', error);
       return {
@@ -267,7 +290,8 @@ export class MercadoPagoService {
         id: subscriptionId,
         body: { status: 'cancelled' },
       });
-      return { success: true, data: response };
+      const { api_response, ...res } = response as any;
+      return { success: true, data: res };
     } catch (error: any) {
       console.error('Error canceling subscription:', error);
       return {
@@ -283,7 +307,8 @@ export class MercadoPagoService {
         id: subscriptionId,
         body: { status: 'paused' },
       });
-      return { success: true, data: response };
+      const { api_response, ...res } = response as any;
+      return { success: true, data: res };
     } catch (error: any) {
       console.error('Error pausing subscription:', error);
       return {
@@ -295,16 +320,20 @@ export class MercadoPagoService {
 
   async searchSubscriptions(
     params?: PreApprovalSearchParams
-  ): Promise<ServiceResponse> {
+  ): Promise<ServiceResponse<PreApprovalSearchResponse>> {
     try {
-      const response = await this.preApprovalClient.search({
-        options: {
-          limit: params?.limit || 10,
-          offset: params?.offset || 0,
-          ...params?.filters,
-        },
-      });
-      return { success: true, data: response };
+      //PreApprovalSearchResponse do not have the api_response field because the SDK
+      //does not return it but it is there and will cause the server action to throw an error
+      const response: PreApprovalSearchResponse =
+        await this.preApprovalClient.search({
+          options: {
+            limit: params?.limit || 10,
+            offset: params?.offset || 0,
+            ...params?.filters,
+          },
+        });
+      const { api_response, ...res } = response as any;
+      return { success: true, data: res };
     } catch (error: any) {
       console.error('Error searching subscriptions:', error);
       return {
@@ -315,7 +344,7 @@ export class MercadoPagoService {
   }
 
   async getActiveSubscriptions(): Promise<ServiceResponse> {
-    return this.searchSubscriptions({ filters: { status: 'authorized' } });
+    return this.searchSubscriptions({ filters: { status: 'active' } });
   }
 
   async getSubscriptionsByEmail(email: string): Promise<ServiceResponse> {
@@ -338,8 +367,11 @@ export class MercadoPagoService {
       if (params.token) body.token = params.token;
       if (params.installments) body.installments = params.installments;
       if (params.metadata) body.metadata = params.metadata;
+
       const response = await this.paymentClient.create({ body });
-      return { success: true, data: response };
+
+      const { api_response, ...res } = response as any;
+      return { success: true, data: res };
     } catch (error: any) {
       console.error('Error creating payment:', error);
       return {
@@ -352,7 +384,8 @@ export class MercadoPagoService {
   async getPayment(paymentId: string): Promise<ServiceResponse> {
     try {
       const response = await this.paymentClient.get({ id: paymentId });
-      return { success: true, data: response };
+      const { api_response, ...res } = response as any;
+      return { success: true, data: res };
     } catch (error: any) {
       console.error('Error getting payment:', error);
       return {
@@ -371,7 +404,10 @@ export class MercadoPagoService {
           ...params?.filters,
         },
       });
-      return { success: true, data: response };
+      const cleanResults = (response.results as any[])?.map(
+        ({ api_response, ...res }) => res
+      );
+      return { success: true, data: { ...response, results: cleanResults } };
     } catch (error: any) {
       console.error('Error searching payments:', error);
       return {
@@ -388,7 +424,8 @@ export class MercadoPagoService {
   async capturePayment(paymentId: string): Promise<ServiceResponse> {
     try {
       const response = await this.paymentClient.capture({ id: paymentId });
-      return { success: true, data: response };
+      const { api_response, ...res } = response as any;
+      return { success: true, data: res };
     } catch (error: any) {
       console.error('Error capturing payment:', error);
       return {
@@ -401,7 +438,8 @@ export class MercadoPagoService {
   async cancelPayment(paymentId: string): Promise<ServiceResponse> {
     try {
       const response = await this.paymentClient.cancel({ id: paymentId });
-      return { success: true, data: response };
+      const { api_response, ...res } = response as any;
+      return { success: true, data: res };
     } catch (error: any) {
       console.error('Error canceling payment:', error);
       return {

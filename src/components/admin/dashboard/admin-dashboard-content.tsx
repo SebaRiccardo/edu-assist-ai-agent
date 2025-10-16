@@ -16,14 +16,16 @@ import Link from 'next/link';
 export function AdminDashboardContent() {
   // Fetch data using TanStack Query
   const { data: profiles, isLoading: usersLoading } = useProfiles();
-  const { data: plans, isLoading: plansLoading } = usePlans();
+  const { data: plans, isLoading: plansLoading } = usePlans({
+    status: 'active',
+  });
   const { data: subscriptions, isLoading: subscriptionsLoading } =
     useActiveSubscriptions();
 
   const isLoading = usersLoading || plansLoading || subscriptionsLoading;
 
   const totalUsers = profiles?.length || 0;
-  const totalPlans = plans?.length || 0;
+  const totalPlans = plans?.results?.length || 0;
   const activeSubscriptions = subscriptions?.length || 0;
 
   // Calculate total revenue (simplified - would need to sum actual payments)

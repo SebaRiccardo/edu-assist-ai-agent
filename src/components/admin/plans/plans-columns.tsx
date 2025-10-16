@@ -17,28 +17,51 @@ import {
   CheckCircle,
   XCircle,
   ExternalLink,
+  Clock,
+  Pause,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import type { PreApprovalPlanResponse } from 'mercadopago/dist/clients/preApprovalPlan/commonTypes';
 
-export type PlanRow = {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  currency: string;
-  interval: 'days' | 'months' | 'years';
-  is_active: boolean;
-  trial_period_days: number | null;
-  features: string[] | null;
-  mercadopago_plan_id: string | null;
-  created_at: string | null;
-  updated_at: string | null;
+export type PlanRow = Omit<PreApprovalPlanResponse, 'api_response'>;
+
+const getStatusBadge = (status?: string) => {
+  switch (status) {
+    case 'active':
+      return (
+        <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+          <CheckCircle className="mr-1 size-3" />
+          Active
+        </Badge>
+      );
+    case 'paused':
+      return (
+        <Badge variant="secondary">
+          <Pause className="mr-1 size-3" />
+          Paused
+        </Badge>
+      );
+    case 'cancelled':
+      return (
+        <Badge variant="secondary" className="text-muted-foreground">
+          <XCircle className="mr-1 size-3" />
+          Cancelled
+        </Badge>
+      );
+    default:
+      return (
+        <Badge variant="outline">
+          <Clock className="mr-1 size-3" />
+          {status || 'Unknown'}
+        </Badge>
+      );
+  }
 };
 
 export const columns: ColumnDef<PlanRow>[] = [
   {
-    accessorKey: 'name',
+    accessorKey: 'reason',
     header: ({ column }) => {
       return (
         <Button
@@ -52,15 +75,16 @@ export const columns: ColumnDef<PlanRow>[] = [
     },
     cell: ({ row }) => {
       const plan = row.original;
+      const reason = plan.reason || 'Unnamed Plan';
       return (
         <div className="flex flex-row gap-2 max-w-xs">
           <Avatar className="border-2 size-9 border-primary">
-            <AvatarFallback>{plan.name.charAt(0).toUpperCase()}</AvatarFallback>
+            <AvatarFallback>{reason.charAt(0).toUpperCase()}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
-            <span className="font-medium">{plan.name}</span>
-            <span className="text-muted-foreground text-xs truncate max-w-xs ">
-              {plan.description}
+            <span className="font-medium">{reason}</span>
+            <span className="text-muted-foreground text-xs truncate max-w-xs">
+              ID: {plan.id}
             </span>
           </div>
         </div>
@@ -68,14 +92,14 @@ export const columns: ColumnDef<PlanRow>[] = [
     },
   },
   {
-    accessorKey: 'mercadopago_plan_id',
+    accessorKey: 'id',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Mercadopago ID
+          MercadoPago ID
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       );
@@ -87,9 +111,9 @@ export const columns: ColumnDef<PlanRow>[] = [
           <Link
             target="_blank"
             className="flex flex-row px-0 items-center"
-            href={`https://www.mercadopago.com.ar/subscription-plans/subscription-details?id=${plan.mercadopago_plan_id}`}
+            href={`https://www.mercadopago.com.ar/subscription-plans/subscription-details?id=${plan.id}`}
           >
-            <span className="font-medium">{plan.mercadopago_plan_id}</span>
+            <span className="font-medium">{plan.id}</span>
             <ExternalLink className="size-4 ml-1" />
           </Link>
         </Button>
@@ -97,7 +121,7 @@ export const columns: ColumnDef<PlanRow>[] = [
     },
   },
   {
-    accessorKey: 'price',
+    accessorKey: 'auto_recurring',
     header: ({ column }) => {
       return (
         <Button
@@ -110,10 +134,11 @@ export const columns: ColumnDef<PlanRow>[] = [
       );
     },
     cell: ({ row }) => {
-      const price = row.getValue('price') as number;
-      const currency = row.original.currency;
-      const interval = row.original.interval;
-      const intervalCount = 1; //row.original.interval_count;
+      const autoRecurring = row.original.auto_recurring;
+      const price = autoRecurring?.transaction_amount || 0;
+      const currency = autoRecurring?.currency_id || 'ARS';
+      const frequency = autoRecurring?.frequency || 1;
+      const frequencyType = autoRecurring?.frequency_type || 'months';
 
       const formatted = new Intl.NumberFormat('es-AR', {
         style: 'currency',
@@ -121,10 +146,10 @@ export const columns: ColumnDef<PlanRow>[] = [
       }).format(price);
 
       const intervalText =
-        intervalCount === 1
-          ? interval.slice(0, -1)
-          : `${intervalCount} ${interval}`;
-      console.log(formatted);
+        frequency === 1
+          ? frequencyType.slice(0, -1)
+          : `${frequency} ${frequencyType}`;
+
       return (
         <div className="flex flex-col">
           <span className="font-medium">{formatted}</span>
@@ -136,46 +161,40 @@ export const columns: ColumnDef<PlanRow>[] = [
     },
   },
   {
-    accessorKey: 'trial_period_days',
+    id: 'free_trial',
     header: 'Free Trial',
     cell: ({ row }) => {
-      const trialDays = row.getValue('trial_period_days') as number | null;
-      return trialDays ? (
-        <Badge variant="secondary">{trialDays} days</Badge>
+      const freeTrial = row.original.auto_recurring?.free_trial;
+      const frequency = freeTrial?.frequency;
+      const frequencyType = freeTrial?.frequency_type;
+
+      return frequency && frequencyType ? (
+        <Badge variant="secondary">
+          {frequency} {frequencyType}
+        </Badge>
       ) : (
         <span className="text-muted-foreground text-sm">No trial</span>
       );
     },
   },
   {
-    accessorKey: 'is_active',
+    accessorKey: 'status',
     header: 'Status',
     cell: ({ row }) => {
-      const isActive = row.getValue('is_active') as boolean;
-      return isActive ? (
-        <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
-          <CheckCircle className="mr-1 size-3" />
-          Active
-        </Badge>
-      ) : (
-        <Badge variant="secondary" className="text-muted-foreground">
-          <XCircle className="mr-1 size-3" />
-          Inactive
-        </Badge>
-      );
+      const status = row.getValue('status') as string;
+      return getStatusBadge(status);
     },
   },
   {
-    accessorKey: 'currency',
+    id: 'currency',
     header: 'Currency',
     cell: ({ row }) => {
-      const currency = row.getValue('currency') as string;
-
-      return <Badge>{currency}</Badge>;
+      const currency = row.original.auto_recurring?.currency_id || 'ARS';
+      return <Badge variant="outline">{currency}</Badge>;
     },
   },
   {
-    accessorKey: 'created_at',
+    accessorKey: 'date_created',
     header: ({ column }) => {
       return (
         <Button
@@ -188,7 +207,7 @@ export const columns: ColumnDef<PlanRow>[] = [
       );
     },
     cell: ({ row }) => {
-      const date = row.getValue('created_at') as string | null;
+      const date = row.getValue('date_created') as string | undefined;
       return date
         ? new Date(date).toLocaleDateString('en-US', {
             year: 'numeric',
@@ -214,26 +233,27 @@ export const columns: ColumnDef<PlanRow>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(plan.id)}
+              onClick={() => plan.id && navigator.clipboard.writeText(plan.id)}
             >
               Copy plan ID
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() =>
-                navigator.clipboard.writeText(plan.mercadopago_plan_id || '')
+                plan.init_point &&
+                navigator.clipboard.writeText(plan.init_point)
               }
             >
-              Copy MercadoPago ID
+              Copy checkout URL
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Edit plan</DropdownMenuItem>
+            <DropdownMenuItem>View details</DropdownMenuItem>
             <DropdownMenuItem>View subscribers</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              {plan.is_active ? 'Deactivate' : 'Activate'}
+              {plan.status === 'active' ? 'Pause plan' : 'Activate plan'}
             </DropdownMenuItem>
             <DropdownMenuItem className="text-destructive">
-              Delete plan
+              Cancel plan
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

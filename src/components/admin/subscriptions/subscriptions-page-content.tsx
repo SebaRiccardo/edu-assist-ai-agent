@@ -9,7 +9,13 @@ import { useSubscriptions } from '@/hooks/use-subscriptions';
 import { Loader2 } from 'lucide-react';
 
 export function SubscriptionsPageContent() {
-  const { data: subscriptions, isLoading, error } = useSubscriptions();
+  const {
+    data: subscriptions,
+    isLoading,
+    error,
+    refetch,
+    isRefetching,
+  } = useSubscriptions();
 
   if (error) {
     return (
@@ -22,28 +28,8 @@ export function SubscriptionsPageContent() {
     );
   }
 
-  // Transform data for the table
-  const subscriptionsData: SubscriptionRow[] = (subscriptions || []).map(
-    sub => ({
-      id: sub.id,
-      user_id: sub.user_id,
-      user_email: sub.profiles.email || '',
-      user_name: sub.profiles.full_name || 'N/A',
-      plan_name: (sub.subscription_plans as any)?.name || 'Unknown Plan',
-      plan_price: (sub.subscription_plans as any)?.price || 0,
-      plan_currency: (sub.subscription_plans as any)?.currency || 'ARS',
-      plan_interval: (sub.subscription_plans as any)?.interval || 'month',
-      status: sub.status,
-      current_period_start: sub.current_period_start,
-      current_period_end: sub.current_period_end,
-      trial_start: sub.trial_start,
-      trial_end: sub.trial_end,
-      cancel_at_period_end: sub.cancel_at_period_end || false,
-      cancelled_at: sub.cancelled_at,
-      created_at: sub.created_at,
-      mercadopago_preapproval_id: sub.mercadopago_preapproval_id,
-    })
-  );
+  // MercadoPago subscriptions data is already in the correct format
+  const subscriptionsData = subscriptions?.results || [];
 
   return (
     <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
@@ -62,7 +48,12 @@ export function SubscriptionsPageContent() {
             <p className="text-muted-foreground">Loading subscriptions...</p>
           </div>
         ) : (
-          <SubscriptionsDataTable columns={columns} data={subscriptionsData} />
+          <SubscriptionsDataTable
+            columns={columns}
+            data={subscriptionsData}
+            onRefresh={refetch}
+            isRefreshing={isRefetching}
+          />
         )}
       </div>
     </div>

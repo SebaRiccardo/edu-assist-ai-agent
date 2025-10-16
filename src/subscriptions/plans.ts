@@ -5,6 +5,12 @@
 
 import plansConfigEN from './config/subscription-plans.en.json';
 import plansConfigES from './config/subscription-plans.es.json';
+import subscriptionLimits from './config/subscription-limits.json';
+
+/**
+ * Convert USD to ARS (1 USD = 1300 ARS)
+ */
+export const USD_TO_ARS_RATE = 1300;
 
 /**
  * Get plans configuration based on locale
@@ -73,61 +79,76 @@ export type PlanType = 'basic' | 'pro' | 'pro_plus';
 /**
  * Feature access control
  * Defines which features are available for each plan
+ * Based on subscription-plans.en.json configuration
  */
 export const PLAN_FEATURES = {
+  // Basic features (available in basic, pro, pro_plus)
+  'smart-inbox-analysis': ['basic', 'pro', 'pro_plus'],
+  'basic-email-organization': ['basic', 'pro', 'pro_plus'],
+  'course-aware-filtering': ['basic', 'pro', 'pro_plus'],
+  'ai-email-drafts': ['basic', 'pro', 'pro_plus'],
+  'label-suggestions': ['basic', 'pro', 'pro_plus'],
+
+  // Pro features (available in pro, pro_plus)
   'unlimited-courses': ['pro', 'pro_plus'],
-  'advanced-labeling': ['pro', 'pro_plus'],
+  'auto-labeling': ['pro', 'pro_plus'],
+  'auto-replies': ['pro', 'pro_plus'],
   'priority-sorting': ['pro', 'pro_plus'],
-  'email-analytics': ['pro', 'pro_plus'],
-  'custom-label-rules': ['pro', 'pro_plus'],
-  'auto-replies': ['pro_plus'],
+  'multiple-inboxes': ['pro', 'pro_plus'],
+
+  // Pro+ features (available only in pro_plus)
+  'realtime-replies': ['pro_plus'],
   'background-cleanup': ['pro_plus'],
   'smart-prioritization': ['pro_plus'],
-  'custom-templates': ['pro_plus'],
-  'advanced-analytics': ['pro_plus'],
   'continuous-organization': ['pro_plus'],
+  'unlimited-ai-drafts': ['pro_plus'],
+  'unlimited-emails': ['pro_plus'],
+  'priority-support': ['pro_plus'],
+  'autonomous-email-management': ['pro_plus'],
 } as const;
 
 /**
  * Plan limits configuration
- * Dynamically populated from JSON configuration files
+ * Single source of truth from subscription-limits.json
  * null values in JSON are converted to Infinity for unlimited features
  */
 export const PLAN_LIMITS = {
   basic: {
-    maxInboxes: plansConfigES.basic.limits.maxInboxes,
-    maxCourses: plansConfigES.basic.limits.maxCourses ?? Infinity,
-    aiEmailDraftPerDay: plansConfigES.basic.limits.aiEmailDraftPerDay,
-    emailsProcessedPerMonth: plansConfigES.basic.limits.emailsProcessedPerMonth,
-    autoReplies: plansConfigES.basic.limits.autoReplies,
-    prioritySupport: plansConfigES.basic.limits.prioritySupport,
-    autoLabels: plansConfigES.basic.limits.autoLabels,
+    maxInboxes: subscriptionLimits.basic.maxInboxes,
+    maxCourses: subscriptionLimits.basic.maxCourses ?? Infinity,
+    aiEmailDraftPerDay: subscriptionLimits.basic.aiEmailDraftPerDay,
+    emailsProcessedPerMonth: subscriptionLimits.basic.emailsProcessedPerMonth,
+    autoReplies: subscriptionLimits.basic.autoReplies,
+    prioritySupport: subscriptionLimits.basic.prioritySupport,
+    autoLabels: subscriptionLimits.basic.autoLabels,
+    realTimeReplies: subscriptionLimits.basic.realTimeReplies,
     autonomusEmailManagement:
-      plansConfigES.basic.limits.autonomousEmailManagement,
+      subscriptionLimits.basic.autonomousEmailManagement,
   },
   pro: {
-    maxInboxes: plansConfigES.pro.limits.maxInboxes,
-    maxCourses: plansConfigES.pro.limits.maxCourses ?? Infinity,
-    aiEmailDraftPerDay: plansConfigES.pro.limits.aiEmailDraftPerDay,
-    emailsProcessedPerMonth: plansConfigES.pro.limits.emailsProcessedPerMonth,
-    autoReplies: plansConfigES.pro.limits.autoReplies,
-    autoLabels: plansConfigES.pro.limits.autoLabels,
-    prioritySupport: plansConfigES.pro.limits.prioritySupport,
-    autonomusEmailManagement:
-      plansConfigES.pro.limits.autonomousEmailManagement,
+    maxInboxes: subscriptionLimits.pro.maxInboxes,
+    maxCourses: subscriptionLimits.pro.maxCourses ?? Infinity,
+    aiEmailDraftPerDay: subscriptionLimits.pro.aiEmailDraftPerDay,
+    emailsProcessedPerMonth: subscriptionLimits.pro.emailsProcessedPerMonth,
+    autoReplies: subscriptionLimits.pro.autoReplies,
+    autoLabels: subscriptionLimits.pro.autoLabels,
+    prioritySupport: subscriptionLimits.pro.prioritySupport,
+    realTimeReplies: subscriptionLimits.pro.realTimeReplies,
+    autonomusEmailManagement: subscriptionLimits.pro.autonomousEmailManagement,
   },
   pro_plus: {
-    maxInboxes: plansConfigES.pro_plus.limits.maxInboxes,
-    maxCourses: plansConfigES.pro_plus.limits.maxCourses ?? Infinity,
+    maxInboxes: subscriptionLimits.pro_plus.maxInboxes,
+    maxCourses: subscriptionLimits.pro_plus.maxCourses ?? Infinity,
     aiEmailDraftPerDay:
-      plansConfigES.pro_plus.limits.aiEmailDraftPerDay ?? Infinity,
+      subscriptionLimits.pro_plus.aiEmailDraftPerDay ?? Infinity,
     emailsProcessedPerMonth:
-      plansConfigES.pro_plus.limits.emailsProcessedPerMonth ?? Infinity,
-    autoReplies: plansConfigES.pro_plus.limits.autoReplies,
-    autoLabels: plansConfigES.pro_plus.limits.autoLabels,
-    prioritySupport: plansConfigES.pro_plus.limits.prioritySupport,
+      subscriptionLimits.pro_plus.emailsProcessedPerMonth ?? Infinity,
+    autoReplies: subscriptionLimits.pro_plus.autoReplies,
+    autoLabels: subscriptionLimits.pro_plus.autoLabels,
+    prioritySupport: subscriptionLimits.pro_plus.prioritySupport,
+    realTimeReplies: subscriptionLimits.pro_plus.realTimeReplies,
     autonomusEmailManagement:
-      plansConfigES.pro_plus.limits.autonomousEmailManagement,
+      subscriptionLimits.pro_plus.autonomousEmailManagement,
   },
 } as const;
 
@@ -334,4 +355,121 @@ export function isApproachingLimit(
 ): boolean {
   const percentage = getLimitUsagePercentage(planType, limitType, currentUsage);
   return percentage !== null && percentage >= 80;
+}
+
+export type LocalizedPlanConfig = typeof plansConfigEN;
+
+/**
+ * Get all plans with their limits for a specific locale
+ * @param locale - Language locale ('en' or 'es')
+ * @returns Array of plans with combined config and limits
+ */
+export function getLocalizedPlansWithLimits(locale: 'en' | 'es' = 'en') {
+  const config = locale === 'es' ? plansConfigES : plansConfigEN;
+
+  return [
+    {
+      key: 'basic' as PlanType,
+      ...config.basic,
+      limits: PLAN_LIMITS.basic,
+    },
+    {
+      key: 'pro' as PlanType,
+      ...config.pro,
+      limits: PLAN_LIMITS.pro,
+    },
+    {
+      key: 'pro_plus' as PlanType,
+      ...config.pro_plus,
+      limits: PLAN_LIMITS.pro_plus,
+    },
+  ];
+}
+
+/**
+ * Get a specific plan configuration by type and locale
+ * @param planType - Plan type identifier
+ * @param locale - Language locale ('en' or 'es')
+ * @returns Plan configuration with limits
+ */
+export function getLocalizedPlan(
+  planType: PlanType,
+  locale: 'en' | 'es' = 'en'
+) {
+  const config = locale === 'es' ? plansConfigES : plansConfigEN;
+
+  return {
+    key: planType,
+    ...config[planType],
+    limits: PLAN_LIMITS[planType],
+  };
+}
+
+/**
+ * Format price with currency symbol
+ * @param price - Price amount
+ * @param currency - Currency code (USD or ARS)
+ * @returns Formatted price string
+ */
+export function formatPrice(
+  price: number,
+  currency: 'USD' | 'ARS' = 'USD'
+): string {
+  if (currency === 'ARS') {
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'ARS',
+      minimumFractionDigits: 0,
+    }).format(price);
+  }
+
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+  }).format(price);
+}
+
+/**
+ * Convert a USD price to ARS
+ * @param usdPrice - Price in USD
+ * @returns Price in ARS
+ */
+export function convertUsdToArs(usdPrice: number): number {
+  return usdPrice * USD_TO_ARS_RATE;
+}
+
+/**
+ * Convert an ARS price to USD
+ * @param arsPrice - Price in ARS
+ * @returns Price in USD
+ */
+export function convertArsToUsd(arsPrice: number): number {
+  return Math.round(arsPrice / USD_TO_ARS_RATE);
+}
+
+/**
+ * Get plan display name for UI
+ * @param planType - Plan type
+ * @param locale - Language locale
+ * @returns Display name
+ */
+export function getPlanDisplayName(
+  planType: PlanType,
+  locale: 'en' | 'es' = 'en'
+): string {
+  const config = locale === 'es' ? plansConfigES : plansConfigEN;
+  return config[planType].name;
+}
+
+/**
+ * Get all plan types as array
+ */
+export const ALL_PLAN_TYPES: PlanType[] = ['basic', 'pro', 'pro_plus'];
+
+/**
+ * Check if a plan type is valid
+ */
+export function isValidPlanType(type: string): type is PlanType {
+  return ALL_PLAN_TYPES.includes(type as PlanType);
 }

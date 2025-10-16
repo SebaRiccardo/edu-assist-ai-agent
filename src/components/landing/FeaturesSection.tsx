@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Tag, Trash2, MessageSquare, BookOpen, Lock, Zap } from 'lucide-react';
+import { Tag, Filter, ArrowUpDown, Inbox, Zap } from 'lucide-react';
 import { IconMailSpark } from '@tabler/icons-react';
 
 export default function FeaturesSection() {
@@ -14,43 +14,33 @@ export default function FeaturesSection() {
       iconWrap: 'bg-primary/10',
     },
     {
-      icon: <Tag className="w-6 h-6 text-primary" />,
-      title: t('featureSmartLabeling'),
-      text: t('featureSmartLabelingText'),
-      iconWrap: 'bg-primary/10',
-    },
-    {
-      icon: <Trash2 className="w-6 h-6 text-chart-1" />,
-      title: t('featureInboxCleanup'),
-      text: t('featureInboxCleanupText'),
-      iconWrap: 'bg-chart-1/20',
-    },
-    {
-      icon: (
-        <>
-          <MessageSquare className="w-6 h-6 text-chart-2" />
-        </>
-      ),
-      title: `${t('featureAutoReplies')} ${t('featureAutoRepliesPro')}`,
-      text: t('featureAutoRepliesText'),
-      iconWrap: 'bg-chart-2/20',
-    },
-    {
-      icon: <BookOpen className="w-6 h-6 text-chart-3" />,
-      title: t('featureCourseAwareness'),
-      text: t('featureCourseAwarenessText'),
+      icon: <Filter className="w-6 h-6 text-chart-3" />,
+      title: t('featureCourseAwareFiltering'),
+      text: t('featureCourseAwareFilteringText'),
       iconWrap: 'bg-chart-3/20',
     },
     {
-      icon: <Lock className="w-6 h-6 text-chart-4" />,
-      title: t('featurePrivateByDesign'),
-      text: t('featurePrivateByDesignText'),
+      icon: <Tag className="w-6 h-6 text-chart-1" />,
+      title: t('featureAutoLabeling'),
+      text: t('featureAutoLabelingText'),
+      iconWrap: 'bg-chart-1/20',
+    },
+    {
+      icon: <Zap className="w-6 h-6 text-chart-2" />,
+      title: t('featureRealtimeReplies'),
+      text: t('featureRealtimeRepliesText'),
+      iconWrap: 'bg-chart-2/20',
+    },
+    {
+      icon: <ArrowUpDown className="w-6 h-6 text-chart-4" />,
+      title: t('featurePrioritySorting'),
+      text: t('featurePrioritySortingText'),
       iconWrap: 'bg-chart-4/20',
     },
     {
-      icon: <Zap className="w-6 h-6 text-primary" />,
-      title: t('featureLightningFast'),
-      text: t('featureLightningFastText'),
+      icon: <Inbox className="w-6 h-6 text-primary" />,
+      title: t('featureMultipleInboxes'),
+      text: t('featureMultipleInboxesText'),
       iconWrap: 'bg-primary/10',
     },
   ];

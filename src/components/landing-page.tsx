@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  Mail,
-} from 'lucide-react';
+import { Mail } from 'lucide-react';
 import { AuroraBackground } from './aurora-background';
 import PricingSection from './landing/PricingSection';
 import HeroSection from './landing/HeroSection';
@@ -13,15 +11,13 @@ import FAQ from './faq';
 import { Navbar } from './landing/navbar';
 
 export function LandingPage() {
- 
-
   return (
     <div className="min-h-screen">
       <AuroraBackground>
-        <div className="relative w-full h-full flex flex-col"> 
-          <Navbar/>
+        <div className="relative w-full h-full flex flex-col">
+          <Navbar />
           <div className="mt-40">
-            <HeroSection  />
+            <HeroSection />
           </div>
         </div>
       </AuroraBackground>
@@ -35,7 +31,7 @@ export function LandingPage() {
       <PricingSection />
 
       <FAQ />
-      <FinalCTASection  />
+      <FinalCTASection />
 
       {/* Footer */}
       <footer className="bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t border-border/40 py-12">

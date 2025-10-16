@@ -19,15 +19,11 @@ export default function HeroSection() {
             {t('subtitle2')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link href='/auth/sign-up' >
-            <button
-              
-              className="bg-primary text-primary-foreground px-8 py-4 rounded-xl text-lg font-semibold hover:opacity-90 transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
-            >
-              🎓 {t('startFreeTrial')}
-            </button>
+            <Link href="/auth/sign-up">
+              <button className="bg-primary text-primary-foreground px-8 py-4 rounded-xl text-lg font-semibold hover:opacity-90 transition-all shadow-lg hover:shadow-xl flex items-center gap-2">
+                🎓 {t('startFreeTrial')}
+              </button>
             </Link>
-      
           </div>
           <p className="text-sm text-muted-foreground/70 mt-6">
             {t('noSetup')}

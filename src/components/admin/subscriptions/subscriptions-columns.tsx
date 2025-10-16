@@ -11,98 +11,181 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ArrowUpDown, MoreHorizontal, AlertCircle } from 'lucide-react';
+import {
+  ArrowUpDown,
+  MoreHorizontal,
+  AlertCircle,
+  CheckCircle,
+  XCircle,
+  Clock,
+  Pause,
+  ExternalLink,
+} from 'lucide-react';
+import Link from 'next/link';
 
+// MercadoPago PreApproval type (subscription)
 export type SubscriptionRow = {
-  id: string;
-  user_id: string;
-  user_email: string | null;
-  user_name: string;
-  plan_name: string;
-  plan_price: number;
-  plan_currency: string;
-  plan_interval: string;
-  status: string;
-  current_period_start: string | null;
-  current_period_end: string | null;
-  trial_start: string | null;
-  trial_end: string | null;
-  cancel_at_period_end: boolean;
-  cancelled_at: string | null;
-  created_at: string | null;
-  mercadopago_preapproval_id: string | null;
+  id?: string;
+  version?: number;
+  application_id?: number;
+  collector_id?: number;
+  preapproval_plan_id?: string;
+  reason?: string;
+  external_reference?: number;
+  back_url?: string;
+  init_point?: string;
+  auto_recurring?: {
+    frequency?: number;
+    frequency_type?: string;
+    transaction_amount?: number;
+    currency_id?: string;
+    free_trial?: {
+      frequency?: number;
+      frequency_type?: string;
+    };
+  };
+  first_invoice_offset?: number;
+  payer_id?: number;
+  payer_first_name?: string;
+  payer_last_name?: string;
+  card_id?: number;
+  payment_method_id?: number;
+  next_payment_date?: number;
+  date_created?: number;
+  last_modified?: number;
+  status?: string;
+};
+
+const getStatusBadge = (status?: string) => {
+  const statusConfig: Record<string, { color: string; icon: React.ReactNode }> =
+    {
+      authorized: {
+        color:
+          'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+        icon: <CheckCircle className="mr-1 size-3" />,
+      },
+      pending: {
+        color:
+          'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+        icon: <Clock className="mr-1 size-3" />,
+      },
+      paused: {
+        color: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300',
+        icon: <Pause className="mr-1 size-3" />,
+      },
+      cancelled: {
+        color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
+        icon: <XCircle className="mr-1 size-3" />,
+      },
+    };
+
+  const config = statusConfig[status || ''] || statusConfig.pending;
+
+  return (
+    <Badge variant="outline" className={config.color}>
+      {config.icon}
+      {status || 'unknown'}
+    </Badge>
+  );
 };
 
 export const columns: ColumnDef<SubscriptionRow>[] = [
   {
-    accessorKey: 'user_name',
+    accessorKey: 'payer_first_name',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Name
+          Payer
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       );
     },
     cell: ({ row }) => {
       const subscription = row.original;
-      return (
-        <div className="flex flex-col">
-          <span className="font-medium">{subscription.user_name}</span>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: 'user_email',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Email
-          <ArrowUpDown className="ml-2 size-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const subscription = row.original;
-      return (
-        <div className="flex flex-col">
-          <span className="font-medium">{subscription.user_email}</span>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: 'plan_name',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Plan
-          <ArrowUpDown className="ml-2 size-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const subscription = row.original;
-      const price = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: subscription.plan_currency,
-      }).format(subscription.plan_price / 100);
+      const firstName = subscription.payer_first_name || '';
+      const lastName = subscription.payer_last_name || '';
+      const fullName = `${firstName} ${lastName}`.trim() || 'N/A';
 
       return (
         <div className="flex flex-col">
-          <span className="font-medium">{subscription.plan_name}</span>
+          <span className="font-medium">{fullName}</span>
           <span className="text-muted-foreground text-xs">
-            {price}/{subscription.plan_interval}
+            ID: {subscription.payer_id || 'N/A'}
+          </span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: 'id',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Subscription ID
+          <ArrowUpDown className="ml-2 size-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const subscription = row.original;
+      return (
+        <Button variant="link" className="h-auto p-0">
+          <Link
+            target="_blank"
+            className="flex flex-row items-center"
+            href={`https://www.mercadopago.com.ar/subscriptions/${subscription.id}`}
+          >
+            <span className="font-mono text-xs">{subscription.id}</span>
+            <ExternalLink className="ml-1 size-3" />
+          </Link>
+        </Button>
+      );
+    },
+  },
+  {
+    accessorKey: 'reason',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Plan / Reason
+          <ArrowUpDown className="ml-2 size-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const subscription = row.original;
+      const autoRecurring = subscription.auto_recurring;
+      const price = autoRecurring?.transaction_amount || 0;
+      const currency = autoRecurring?.currency_id || 'ARS';
+      const frequency = autoRecurring?.frequency || 1;
+      const frequencyType = autoRecurring?.frequency_type || 'months';
+
+      const formatted = new Intl.NumberFormat('es-AR', {
+        style: 'currency',
+        currency: currency,
+      }).format(price);
+
+      const intervalText =
+        frequency === 1
+          ? frequencyType.slice(0, -1)
+          : `${frequency} ${frequencyType}`;
+
+      return (
+        <div className="flex flex-col">
+          <span className="font-medium">
+            {subscription.reason || 'Unnamed Plan'}
+          </span>
+          <span className="text-muted-foreground text-xs">
+            {formatted} / {intervalText}
           </span>
         </div>
       );
@@ -113,69 +196,40 @@ export const columns: ColumnDef<SubscriptionRow>[] = [
     header: 'Status',
     cell: ({ row }) => {
       const status = row.getValue('status') as string;
-      const cancelAtPeriodEnd = row.original.cancel_at_period_end;
-
-      const statusColors: Record<string, string> = {
-        authorized:
-          'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-        pending:
-          'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-        cancelled: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
-        paused: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300',
-      };
-
-      return (
-        <div className="flex flex-col gap-1">
-          <Badge
-            variant="outline"
-            className={statusColors[status] || statusColors.pending}
-          >
-            {status}
-          </Badge>
-          {cancelAtPeriodEnd && (
-            <span className="text-muted-foreground flex items-center gap-1 text-xs">
-              <AlertCircle className="size-3" />
-              Cancels at period end
-            </span>
-          )}
-        </div>
-      );
+      return getStatusBadge(status);
     },
   },
   {
-    accessorKey: 'current_period_end',
+    accessorKey: 'next_payment_date',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Next Billing
+          Next Payment
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       );
     },
     cell: ({ row }) => {
-      const date = row.getValue('current_period_end') as string | null;
-      const trialEnd = row.original.trial_end;
+      const subscription = row.original;
+      const nextPaymentDate = subscription.next_payment_date;
+      const freeTrial = subscription.auto_recurring?.free_trial;
 
-      if (trialEnd) {
+      if (freeTrial) {
         return (
           <div className="flex flex-col">
-            <span className="text-sm">Trial ends</span>
+            <span className="text-sm font-medium">Free Trial</span>
             <span className="text-muted-foreground text-xs">
-              {new Date(trialEnd).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-              })}
+              {freeTrial.frequency} {freeTrial.frequency_type}
             </span>
           </div>
         );
       }
 
-      return date
-        ? new Date(date).toLocaleDateString('en-US', {
+      return nextPaymentDate
+        ? new Date(nextPaymentDate * 1000).toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'short',
             day: 'numeric',
@@ -184,20 +238,20 @@ export const columns: ColumnDef<SubscriptionRow>[] = [
     },
   },
   {
-    accessorKey: 'created_at',
+    accessorKey: 'date_created',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Started
+          Created
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       );
     },
     cell: ({ row }) => {
-      const date = row.getValue('created_at') as string | null;
+      const date = row.getValue('date_created') as string;
       return date
         ? new Date(date).toLocaleDateString('en-US', {
             year: 'numeric',
@@ -223,24 +277,38 @@ export const columns: ColumnDef<SubscriptionRow>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(subscription.id)}
+              onClick={() =>
+                subscription.id &&
+                navigator.clipboard.writeText(subscription.id)
+              }
             >
               Copy subscription ID
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() =>
-                navigator.clipboard.writeText(
-                  subscription.mercadopago_preapproval_id || ''
-                )
+                subscription.preapproval_plan_id &&
+                navigator.clipboard.writeText(subscription.preapproval_plan_id)
               }
             >
-              Copy MercadoPago ID
+              Copy plan ID
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() =>
+                subscription.init_point &&
+                navigator.clipboard.writeText(subscription.init_point)
+              }
+            >
+              Copy init point URL
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View details</DropdownMenuItem>
-            <DropdownMenuItem>View payments</DropdownMenuItem>
+            <DropdownMenuItem>View payment history</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Pause subscription</DropdownMenuItem>
+            <DropdownMenuItem>
+              {subscription.status === 'authorized'
+                ? 'Pause subscription'
+                : 'Resume subscription'}
+            </DropdownMenuItem>
             <DropdownMenuItem className="text-destructive">
               Cancel subscription
             </DropdownMenuItem>

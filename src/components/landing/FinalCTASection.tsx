@@ -17,14 +17,11 @@ export default function FinalCTASection() {
           {t('finalCtaSubtitle')}
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Link href='/auth/sign-up'>
-          <button
-            className="rounded-full bg-primary text-primary-foreground px-8 py-4 cursor-pointer text-lg font-semibold hover:opacity-90 transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
-          >
-            🎓 {t('startFreeTrial')}
-          </button>
+          <Link href="/auth/sign-up">
+            <button className="rounded-full bg-primary text-primary-foreground px-8 py-4 cursor-pointer text-lg font-semibold hover:opacity-90 transition-all shadow-lg hover:shadow-xl flex items-center gap-2">
+              🎓 {t('startFreeTrial')}
+            </button>
           </Link>
-
         </div>
         <p className="text-sm text-muted-foreground/70 mt-8">{t('lovedBy')}</p>
       </div>

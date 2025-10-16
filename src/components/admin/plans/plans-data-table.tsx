@@ -30,6 +30,13 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { ChevronLeft, ChevronRight, RefreshCcw, Settings2 } from 'lucide-react';
 
 interface PlansDataTableProps<TData, TValue> {
@@ -75,22 +82,48 @@ export function PlansDataTable<TData, TValue>({
   return (
     <div className="space-y-4">
       {/* Toolbar */}
-      <div className="flex items-center justify-between">
-        <Input
-          placeholder="Filter by plan name..."
-          value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-          onChange={event =>
-            table.getColumn('name')?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <div className="space-x-4">
-          <Button onClick={onRefresh} variant="outline">
-            <RefreshCcw className={isRefresing ? 'animate-spin' : ''} />
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-1 items-center gap-4">
+          <Input
+            placeholder="Filter by plan name..."
+            value={
+              (table.getColumn('reason')?.getFilterValue() as string) ?? ''
+            }
+            onChange={event =>
+              table.getColumn('reason')?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
+          <Select
+            value={
+              (table.getColumn('status')?.getFilterValue() as string) ?? 'all'
+            }
+            onValueChange={value =>
+              table
+                .getColumn('status')
+                ?.setFilterValue(value === 'all' ? '' : value)
+            }
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="paused">Paused</SelectItem>
+              <SelectItem value="cancelled">Cancelled</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button onClick={onRefresh} variant="outline" size="icon">
+            <RefreshCcw
+              className={`size-4 ${isRefresing ? 'animate-spin' : ''}`}
+            />
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
+              <Button variant="outline">
                 <Settings2 className="mr-2 size-4" />
                 View
               </Button>
