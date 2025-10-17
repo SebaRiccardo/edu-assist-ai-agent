@@ -9,7 +9,6 @@ import {
   TransformedEmail,
 } from '@/types';
 import { ComposioService } from '@/lib/services/composio';
-import { tr } from 'zod/v4/locales';
 
 // Set max duration for this API route to handle AI processing
 export const maxDuration = 60;
@@ -99,7 +98,7 @@ export async function inboxAnalyzerAgent(
   const {
     course,
     connectedAccountId,
-    maxEmails,
+    maxEmails = 50,
     includeRead = false,
     reasoningLanguage = 'English',
     verbose = true,
@@ -237,8 +236,8 @@ Important:
   };
 
   return {
-    //emails: categorizedEmails.filter(e => e.isRelated),
-    emails: categorizedEmails,
+    emails: categorizedEmails.filter(e => e.isRelated),
+    //emails: categorizedEmails,
     analysis: {
       summary: analysisResult.object.summary,
       stats,

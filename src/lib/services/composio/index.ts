@@ -2,6 +2,7 @@ import { Composio } from '@composio/core';
 import { VercelProvider } from '@composio/vercel';
 import {
   FetchEmailsParams,
+  GmailFetchEmailsData,
   GmailFetchEmailsResponse,
   GmailMessageBody,
   TransformedEmail,
@@ -38,7 +39,7 @@ export type ConnectionStatus =
  * Gmail Connection Details
  */
 export interface GmailConnectedAccounts {
-  accounts: any[]
+  accounts: any[];
 }
 
 /**
@@ -51,7 +52,6 @@ export interface FetchEmailsWithAIOptions {
   courseContext?: string;
   labelIds?: string[];
 }
-
 
 export class ComposioService {
   private static instance: Composio<VercelProvider> | null = null;
@@ -122,7 +122,7 @@ export class ComposioService {
    * @param userId - The user ID
    * @returns List of connected accounts
    */
-  static async listConnectedAccounts(userId: string, slug?: string) {
+  static async getConnectedAccounts(userId: string, slug?: string) {
     const client = this.getClient();
     return await client.connectedAccounts.list({
       userIds: [userId],
@@ -165,18 +165,16 @@ export class ComposioService {
     }
   }
 
-
   /**
    * Get all Gmail tools for a specific user
    *
    * @param userId - The connected account ID from Composio
    * @returns Gmail tools that can be used with AI SDK
    */
-  static async getGmailTools(userId: string, connectedAccountId?: string) {
-    const client = this.getClient();
-
-    return await client.tools.get(userId, {
+  static async getGmailTools(userId: string, limit?: number) {
+    return await this.getClient().tools.get(userId, {
       toolkits: [GMAIL_TOOLKIT],
+      limit,
     });
   }
 
@@ -241,14 +239,14 @@ export class ComposioService {
   /**
    * Fetch emails from Gmail with comprehensive parameter support
    *
-   * @param connectedAccountId - The connected account ID
+   * @param accountId - The connected account ID
    * @param params - Fetch email parameters
    * @returns Gmail fetch emails response
    */
   static async fetchEmails(
-    connectedAccountId: string,
+    accountId: string,
     params: FetchEmailsParams = {}
-  ) {
+  ): Promise<GmailFetchEmailsResponse> {
     const client = this.getClient();
 
     // Set default values according to Gmail API spec
@@ -265,11 +263,15 @@ export class ComposioService {
     };
 
     const result = await client.tools.execute(GMAIL_TOOLS.FETCH_EMAILS, {
-      connectedAccountId,
+      connectedAccountId: accountId,
       arguments: fetchParams as any,
     });
 
-    return result;
+    const { data: mailsData } = result;
+    return {
+      ...result,
+      data: mailsData as unknown as GmailFetchEmailsData,
+    };
   }
 
   /**
@@ -372,21 +374,5 @@ export class ComposioService {
     if (params.label) queryParts.push(`label:${params.label}`);
 
     return queryParts.join(' ');
-  }
-
-  /**
-   * Validate that a connection is active and ready to use
-   *
-   * @param userId - The user ID to validate
-   * @throws Error if connection is not active
-   */
-  static async validateConnection(userId: string): Promise<void> {
-    const connection = await this.getUserGmailConnections(userId);
-
-    if (!connection.isConnected) {
-      throw new Error(
-        `Gmail connection not active for user ${userId}. Status: ${connection.status}`
-      );
-    }
   }
 }

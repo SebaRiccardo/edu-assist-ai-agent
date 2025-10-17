@@ -7,7 +7,6 @@ import type { InboxAnalysisResult } from '@/types';
 import type { Course } from '@/lib/supabase/types/courses.types';
 
 interface AnalyzeInboxInput {
-  courseId: string;
   course: Course;
   connectedAccountId: string;
   maxEmails?: number;
@@ -41,6 +40,7 @@ export async function analyzeInbox(
     } = input;
 
     const supabase = await createClient();
+
     const user = await getCurrentUser(supabase);
 
     // Validation
@@ -65,21 +65,21 @@ export async function analyzeInbox(
       };
     }
 
-    const connectedGmailAccount =
+    const connectedEmail =
       await ComposioService.getConnectedAccountById(connectedAccountId);
 
-    if (!connectedGmailAccount) {
+    if (!connectedEmail) {
       return {
         success: false,
-        error: 'Connected Account not found',
+        error: `Connected Account not found`,
       };
     }
 
-    if (connectedGmailAccount.status !== 'ACTIVE') {
+    if (connectedEmail.status !== 'ACTIVE') {
       return {
         success: false,
-        error: 'Connected Account is not active',
-        account: connectedGmailAccount,
+        error: ` ${connectedEmail.toolkit.slug} account is not active`,
+        account: connectedEmail,
       };
     }
 

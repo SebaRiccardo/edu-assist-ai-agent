@@ -1,4 +1,3 @@
-
 # Embeddings
 
 Embeddings are a way to represent words, phrases, or images as vectors in a high-dimensional space.
@@ -62,7 +61,7 @@ const { embeddings } = await embedMany({
 });
 
 console.log(
-  `cosine similarity: ${cosineSimilarity(embeddings[0], embeddings[1])}`,
+  `cosine similarity: ${cosineSimilarity(embeddings[0], embeddings[1])}`
 );
 ```
 

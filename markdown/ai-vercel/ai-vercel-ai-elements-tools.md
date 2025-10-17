@@ -1,4 +1,3 @@
-
 # Tool
 
 The `Tool` component displays a collapsible interface for showing/hiding tool details. It is designed to take the `ToolUIPart` type from the AI SDK and display it in a collapsible interface.
@@ -88,7 +87,7 @@ const Example = () => {
 
   const latestMessage = messages[messages.length - 1];
   const weatherTool = latestMessage?.parts?.find(
-    (part) => part.type === 'tool-fetch_weather_data',
+    part => part.type === 'tool-fetch_weather_data'
   ) as WeatherToolUIPart | undefined;
 
   return (
@@ -101,7 +100,10 @@ const Example = () => {
 
           {weatherTool && (
             <Tool defaultOpen={true}>
-              <ToolHeader type="tool-fetch_weather_data" state={weatherTool.state} />
+              <ToolHeader
+                type="tool-fetch_weather_data"
+                state={weatherTool.state}
+              />
               <ToolContent>
                 <ToolInput input={weatherTool.input} />
                 <ToolOutput
@@ -167,7 +169,7 @@ export async function POST(req: Request) {
           units: z.enum(['celsius', 'fahrenheit']).default('celsius'),
         }),
         execute: async ({ location, units }) => {
-          await new Promise((resolve) => setTimeout(resolve, 1500));
+          await new Promise(resolve => setTimeout(resolve, 1500));
 
           const temp =
             units === 'celsius'
@@ -234,103 +236,103 @@ Shows a tool that encountered an error during execution. Opens by default to dis
 ### `<Tool />`
 
 <PropertiesTable
-  content={[
-    {
-      name: '[...props]',
-      type: 'React.ComponentProps<typeof Collapsible>',
-      description:
-        'Any other props are spread to the root Collapsible component.',
-      isOptional: true,
-    },
-  ]}
+content={[
+{
+name: '[...props]',
+type: 'React.ComponentProps<typeof Collapsible>',
+description:
+'Any other props are spread to the root Collapsible component.',
+isOptional: true,
+},
+]}
 />
 
 ### `<ToolHeader />`
 
 <PropertiesTable
-  content={[
-    {
-      name: 'type',
-      type: 'ToolUIPart["type"]',
-      description: 'The type/name of the tool.',
-      isOptional: false,
-    },
-    {
-      name: 'state',
-      type: 'ToolUIPart["state"]',
-      description:
-        'The current state of the tool (input-streaming, input-available, output-available, or output-error).',
-      isOptional: false,
-    },
-    {
-      name: 'className',
-      type: 'string',
-      description: 'Additional CSS classes to apply to the header.',
-      isOptional: true,
-    },
-    {
-      name: '[...props]',
-      type: 'React.ComponentProps<typeof CollapsibleTrigger>',
-      description: 'Any other props are spread to the CollapsibleTrigger.',
-      isOptional: true,
-    },
-  ]}
+content={[
+{
+name: 'type',
+type: 'ToolUIPart["type"]',
+description: 'The type/name of the tool.',
+isOptional: false,
+},
+{
+name: 'state',
+type: 'ToolUIPart["state"]',
+description:
+'The current state of the tool (input-streaming, input-available, output-available, or output-error).',
+isOptional: false,
+},
+{
+name: 'className',
+type: 'string',
+description: 'Additional CSS classes to apply to the header.',
+isOptional: true,
+},
+{
+name: '[...props]',
+type: 'React.ComponentProps<typeof CollapsibleTrigger>',
+description: 'Any other props are spread to the CollapsibleTrigger.',
+isOptional: true,
+},
+]}
 />
 
 ### `<ToolContent />`
 
 <PropertiesTable
-  content={[
-    {
-      name: '[...props]',
-      type: 'React.ComponentProps<typeof CollapsibleContent>',
-      description: 'Any other props are spread to the CollapsibleContent.',
-      isOptional: true,
-    },
-  ]}
+content={[
+{
+name: '[...props]',
+type: 'React.ComponentProps<typeof CollapsibleContent>',
+description: 'Any other props are spread to the CollapsibleContent.',
+isOptional: true,
+},
+]}
 />
 
 ### `<ToolInput />`
 
 <PropertiesTable
-  content={[
-    {
-      name: 'input',
-      type: 'ToolUIPart["input"]',
-      description:
-        'The input parameters passed to the tool, displayed as formatted JSON.',
-      isOptional: false,
-    },
-    {
-      name: '[...props]',
-      type: 'React.ComponentProps<"div">',
-      description: 'Any other props are spread to the underlying div.',
-      isOptional: true,
-    },
-  ]}
+content={[
+{
+name: 'input',
+type: 'ToolUIPart["input"]',
+description:
+'The input parameters passed to the tool, displayed as formatted JSON.',
+isOptional: false,
+},
+{
+name: '[...props]',
+type: 'React.ComponentProps<"div">',
+description: 'Any other props are spread to the underlying div.',
+isOptional: true,
+},
+]}
 />
 
 ### `<ToolOutput />`
 
 <PropertiesTable
-  content={[
-    {
-      name: 'output',
-      type: 'React.ReactNode',
-      description: 'The output/result of the tool execution.',
-      isOptional: false,
-    },
-    {
-      name: 'errorText',
-      type: 'ToolUIPart["errorText"]',
-      description: 'An error message if the tool execution failed.',
-      isOptional: false,
-    },
-    {
-      name: '[...props]',
-      type: 'React.ComponentProps<"div">',
-      description: 'Any other props are spread to the underlying div.',
-      isOptional: true,
-    },
-  ]}
+content={[
+{
+name: 'output',
+type: 'React.ReactNode',
+description: 'The output/result of the tool execution.',
+isOptional: false,
+},
+{
+name: 'errorText',
+type: 'ToolUIPart["errorText"]',
+description: 'An error message if the tool execution failed.',
+isOptional: false,
+},
+{
+name: '[...props]',
+type: 'React.ComponentProps<"div">',
+description: 'Any other props are spread to the underlying div.',
+isOptional: true,
+},
+]}
 />

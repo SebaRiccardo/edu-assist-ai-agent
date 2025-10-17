@@ -29,6 +29,7 @@ The Inbox Chat feature allows users to interact with their connected Gmail inbox
 ### API Route
 
 **POST `/api/chat/route.ts`**
+
 - Uses Vercel AI SDK's `streamText` with Google Gemini model
 - Integrates Composio Gmail tools
 - Includes custom course-related tools
@@ -36,6 +37,7 @@ The Inbox Chat feature allows users to interact with their connected Gmail inbox
 ### Tools Available
 
 #### Gmail Tools (from Composio)
+
 - `GMAIL_FETCH_EMAILS` - Fetch emails with advanced filtering
 - `GMAIL_SEND_EMAIL` - Send new emails
 - `GMAIL_REPLY_TO_THREAD` - Reply to existing threads
@@ -45,6 +47,7 @@ The Inbox Chat feature allows users to interact with their connected Gmail inbox
 - `GMAIL_SEARCH` - Search emails
 
 #### Custom Course Tools
+
 - `getUserCourses` - Fetch all courses for the authenticated user
 - `getCourseDetails` - Get detailed information about a specific course
 - `matchEmailsWithCourse` - Analyze emails to determine course relevance
@@ -79,9 +82,9 @@ const { messages, sendMessage, status, stop } = useChat({
 Messages use the new `parts` property for rendering:
 
 ```tsx
-message.parts.map((part) =>
+message.parts.map(part =>
   part.type === 'text' ? <Response>{part.text}</Response> : null
-)
+);
 ```
 
 ### Server-Side Implementation
@@ -109,6 +112,7 @@ return result.toTextStreamResponse();
 ## Environment Variables
 
 Required:
+
 - `COMPOSIO_API_KEY` - Composio API key for Gmail integration
 - Supabase configuration (for courses database)
 

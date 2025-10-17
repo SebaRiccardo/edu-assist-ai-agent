@@ -4,20 +4,20 @@ import { InboxChat } from '@/components/inbox-chat';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Inbox Chat | Edu Assist',
-    description: 'Chat with your connected Gmail inboxes using AI',
+  title: 'Inbox Chat | Edu Assist',
+  description: 'Chat with your connected Gmail inboxes using AI',
 };
 
 export default async function ChatPage() {
-    const user = await getCurrentUser();
+  const user = await getCurrentUser();
 
-    if (!user) {
-        return redirect('/auth/login');
-    }
+  if (!user) {
+    return redirect('/auth/login');
+  }
 
-    return (
-        <div className="flex flex-col h-screen bg-background">
-            <InboxChat userId={user.id} />
-        </div>
-    );
+  return (
+    <div className="flex flex-col h-screen bg-background">
+      <InboxChat userId={user.id} />
+    </div>
+  );
 }

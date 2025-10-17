@@ -25,7 +25,7 @@ import {
   Loader2,
   RefreshCw,
 } from 'lucide-react';
-import { generateEmailDraft } from '@/actions/email/email-draft';
+import { generateEmailDraft } from '@/actions/inbox/email-draft';
 
 interface EmailCardProps {
   email: CategorizedEmail;
@@ -92,7 +92,7 @@ const SendButton = ({
     variant="default"
     onClick={onClick}
     disabled={isSending}
-    // className="bg-blue-600 cursor-pointer hover:bg-blue-700"
+  // className="bg-blue-600 cursor-pointer hover:bg-blue-700"
   >
     {isSending ? (
       <>
@@ -115,8 +115,8 @@ const EmailHeader = ({
 }: {
   email: CategorizedEmail;
   categoryConfig:
-    | (typeof emailCategoryConfig)[keyof typeof emailCategoryConfig]
-    | undefined;
+  | (typeof emailCategoryConfig)[keyof typeof emailCategoryConfig]
+  | undefined;
 }) => (
   <CardHeader>
     <div className="flex items-start justify-between">

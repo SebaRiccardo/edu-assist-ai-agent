@@ -1,4 +1,3 @@
-
 # Chatbot Message Persistence
 
 Being able to store and load chat messages is crucial for most AI chatbots.

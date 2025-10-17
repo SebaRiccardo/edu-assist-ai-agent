@@ -1,4 +1,3 @@
-
 # RAG Agent Guide
 
 In this guide, you will learn how to build a retrieval-augmented generation (RAG) agent.
@@ -119,10 +118,10 @@ To reduce the scope of this guide, you will be starting with a [repository](http
 To get started, clone the starter repository with the following command:
 
 <Snippet
-  text={[
-    'git clone https://github.com/vercel/ai-sdk-rag-starter',
-    'cd ai-sdk-rag-starter',
-  ]}
+text={[
+'git clone https://github.com/vercel/ai-sdk-rag-starter',
+'cd ai-sdk-rag-starter',
+]}
 />
 
 First things first, run the following command to install the project’s dependencies:
@@ -213,7 +212,7 @@ export const embeddings = pgTable(
       .$defaultFn(() => nanoid()),
     resourceId: varchar('resource_id', { length: 191 }).references(
       () => resources.id,
-      { onDelete: 'cascade' },
+      { onDelete: 'cascade' }
     ),
     content: text('content').notNull(),
     embedding: vector('embedding', { dimensions: 1536 }).notNull(),
@@ -221,9 +220,9 @@ export const embeddings = pgTable(
   table => ({
     embeddingIndex: index('embeddingIndex').using(
       'hnsw',
-      table.embedding.op('vector_cosine_ops'),
+      table.embedding.op('vector_cosine_ops')
     ),
-  }),
+  })
 );
 ```
 
@@ -297,7 +296,7 @@ const generateChunks = (input: string): string[] => {
 };
 
 export const generateEmbeddings = async (
-  value: string,
+  value: string
 ): Promise<Array<{ embedding: number[]; content: string }>> => {
   const chunks = generateChunks(value);
   const { embeddings } = await embedMany({
@@ -373,7 +372,7 @@ export const createResource = async (input: NewResourceParams) => {
       embeddings.map(embedding => ({
         resourceId: resource.id,
         ...embedding,
-      })),
+      }))
     );
 
     return 'Resource successfully created and embedded.';
@@ -716,7 +715,7 @@ const generateChunks = (input: string): string[] => {
 };
 
 export const generateEmbeddings = async (
-  value: string,
+  value: string
 ): Promise<Array<{ embedding: number[]; content: string }>> => {
   const chunks = generateChunks(value);
   const { embeddings } = await embedMany({
@@ -739,7 +738,7 @@ export const findRelevantContent = async (userQuery: string) => {
   const userQueryEmbedded = await generateEmbedding(userQuery);
   const similarity = sql<number>`1 - (${cosineDistance(
     embeddings.embedding,
-    userQueryEmbedded,
+    userQueryEmbedded
   )})`;
   const similarGuides = await db
     .select({ name: embeddings.content, similarity })

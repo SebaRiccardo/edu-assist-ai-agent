@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
 
     // Fetch connected accounts for the user
     const connectedAccounts: ConnectedAccountListResponse =
-      await ComposioService.listConnectedAccounts(id, 'GMAIL');
+      await ComposioService.getConnectedAccounts(id, 'GMAIL');
 
     const connectedComposioAccounts = connectedAccounts?.items.map(
       (item: any) => {

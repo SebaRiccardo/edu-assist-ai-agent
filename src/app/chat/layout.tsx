@@ -4,18 +4,18 @@ import { getCurrentUser } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 
 export default async function ChatLayout({
-    children,
+  children,
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-    const user = await getCurrentUser();
+  const user = await getCurrentUser();
 
-    if (!user) return redirect('/auth/login');
+  if (!user) return redirect('/auth/login');
 
-    return (
-        <SidebarProvider>
-            <AppSidebar serverUser={user} />
-            <main className="w-full">{children}</main>
-        </SidebarProvider>
-    );
+  return (
+    <SidebarProvider>
+      <AppSidebar serverUser={user} />
+      <main className="w-full">{children}</main>
+    </SidebarProvider>
+  );
 }

@@ -1,4 +1,3 @@
-
 # Next.js App Router Quickstart
 
 The AI SDK is a powerful Typescript library designed to help developers build AI-powered applications.
@@ -237,7 +236,6 @@ In this updated code:
 
 1. You import the `tool` function from the `ai` package and `z` from `zod` for schema validation.
 2. You define a `tools` object with a `weather` tool. This tool:
-
    - Has a description that helps the model understand when to use it.
    - Defines `inputSchema` using a Zod schema, specifying that it requires a `location` string to execute this tool. The model will attempt to extract this input from the context of the conversation. If it can't, it will ask the user for the missing information.
    - Defines an `execute` function that simulates getting weather data (in this case, it returns a random temperature). This is an asynchronous function running on the server so you can fetch real data from an external API.
@@ -503,21 +501,18 @@ You've built an AI chatbot using the AI SDK! From here, you have several paths t
 - If you're interested in diving deeper with guides, check out the [RAG (retrieval-augmented generation)](/docs/guides/rag-chatbot) and [multi-modal chatbot](/docs/guides/multi-modal-chatbot) guides.
 - To jumpstart your first AI project, explore available [templates](https://vercel.com/templates?type=ai).
 
-
 ### Example of chat UI using ShadcnUI
 
-
 ```tsx
+'use client';
 
-"use client"
-
-import TextareaAutosize from "react-textarea-autosize"
+import TextareaAutosize from 'react-textarea-autosize';
 
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
-} from "@/components/ui/input-group"
+} from '@/components/ui/input-group';
 
 export function InputGroupCustom() {
   return (
@@ -535,6 +530,6 @@ export function InputGroupCustom() {
         </InputGroupAddon>
       </InputGroup>
     </div>
-  )
+  );
 }
 ```

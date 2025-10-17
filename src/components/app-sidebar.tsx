@@ -51,7 +51,7 @@ const data = {
       title: 'Inbox Chat',
       url: '/chat',
       icon: IconMessageChatbot,
-    }
+    },
   ],
   navSecondary: [
     {
@@ -95,7 +95,7 @@ export function AppSidebar({ serverUser, ...props }: AppSidebarProps) {
   };
 
   const handleLogout = async () => {
-    await signOut()
+    await signOut();
     router.replace('/auth/login');
     router.refresh();
   };
@@ -104,11 +104,9 @@ export function AppSidebar({ serverUser, ...props }: AppSidebarProps) {
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
         <SidebarMenu>
-
           <Link href="/dashboard">
             <WordmarkLogo className="gap-2.5" />
           </Link>
-
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>

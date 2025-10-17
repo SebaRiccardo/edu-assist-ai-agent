@@ -1,12 +1,14 @@
 # React Components for Conversational AI
+
 URL: /ai
 React components for building ChatGPT-style interfaces. Production-ready AI chat UI with TypeScript, Vercel AI SDK support, and shadcn/ui design.
 
-***
+---
 
 title: React Components for Conversational AI
 description: React components for building ChatGPT-style interfaces. Production-ready AI chat UI with TypeScript, Vercel AI SDK support, and shadcn/ui design.
---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+---
 
 <Callout title="Trying to implement AI Elements?">
   [Join our Discord community](https://discord.com/invite/Z9NVtNE7bj) for help
@@ -42,14 +44,14 @@ Want branching for multiple AI responses? Build it from scratch. Need tool call 
 Here's what AI Elements does differently. It takes shadcn/ui's philosophy—giving you the actual code—and applies it to AI-specific components.
 
 ```tsx
-import { Message, MessageContent } from "@/components/ai/message";
-import { Response } from "@/components/ai/response";
-import { useChat } from "@ai-sdk/react";
+import { Message, MessageContent } from '@/components/ai/message';
+import { Response } from '@/components/ai/response';
+import { useChat } from '@ai-sdk/react';
 
 export default function Chat() {
   const { messages } = useChat();
 
-  return messages.map((message) => (
+  return messages.map(message => (
     <Message from={message.role} key={message.id}>
       <MessageContent>
         <Response>{message.content}</Response>
@@ -99,12 +101,12 @@ const { messages, append, isLoading } = useChat();
 return (
   <Conversation>
     <ConversationContent>
-      {messages.map((message) => (
+      {messages.map(message => (
         <Message from={message.role}>
           <MessageContent>
-            {message.parts.map((part) => {
-              if (part.type === "text") return <Response>{part.text}</Response>;
-              if (part.type === "tool-call") return <Tool {...part} />;
+            {message.parts.map(part => {
+              if (part.type === 'text') return <Response>{part.text}</Response>;
+              if (part.type === 'tool-call') return <Tool {...part} />;
             })}
           </MessageContent>
         </Message>
@@ -175,7 +177,7 @@ Explore React components designed for AI chat applications and conversational AI
     Not required, but recommended for AI chat applications. AI Elements components are React components that work with any state management. However, they're optimized for the Vercel AI SDK's streaming messages, tool calls, and conversational AI patterns. You get the best experience using both together in Next.js applications.
   </Accordion>
 
-  {" "}
+{" "}
 
   <Accordion id="customization" title="Can I customize these components for my AI application?">
     Absolutely. Every AI Elements component is built on shadcn/ui with TypeScript,

@@ -1,4 +1,3 @@
-
 # Chatbot
 
 The `useChat` hook makes it effortless to create a conversational user interface for your chatbot application. It enables the streaming of chat messages from your AI provider, manages the chat state, and updates the UI automatically as new messages arrive.
@@ -36,7 +35,7 @@ export default function Page() {
         <div key={message.id}>
           {message.role === 'user' ? 'User: ' : 'AI: '}
           {message.parts.map((part, index) =>
-            part.type === 'text' ? <span key={index}>{part.text}</span> : null,
+            part.type === 'text' ? <span key={index}>{part.text}</span> : null
           )}
         </div>
       ))}
@@ -139,7 +138,7 @@ export default function Page() {
         <div key={message.id}>
           {message.role === 'user' ? 'User: ' : 'AI: '}
           {message.parts.map((part, index) =>
-            part.type === 'text' ? <span key={index}>{part.text}</span> : null,
+            part.type === 'text' ? <span key={index}>{part.text}</span> : null
           )}
         </div>
       ))}
@@ -209,7 +208,7 @@ export default function Chat() {
         <div key={m.id}>
           {m.role}:{' '}
           {m.parts.map((part, index) =>
-            part.type === 'text' ? <span key={index}>{part.text}</span> : null,
+            part.type === 'text' ? <span key={index}>{part.text}</span> : null
           )}
         </div>
       ))}
@@ -437,7 +436,7 @@ sendMessage(
       userId: 'user123',
       sessionId: 'session456',
     },
-  },
+  }
 );
 ```
 
@@ -464,7 +463,7 @@ export default function Chat() {
         <div key={m.id}>
           {m.role}:{' '}
           {m.parts.map((part, index) =>
-            part.type === 'text' ? <span key={index}>{part.text}</span> : null,
+            part.type === 'text' ? <span key={index}>{part.text}</span> : null
           )}
         </div>
       ))}
@@ -479,7 +478,7 @@ export default function Chat() {
                 body: {
                   customKey: 'customValue',
                 },
-              },
+              }
             );
             setInput('');
           }
@@ -537,7 +536,7 @@ return result.toUIMessageStreamResponse({
         new Date(message.metadata.createdAt).toLocaleTimeString()}
       {/* Render message content */}
       {message.parts.map((part, index) =>
-        part.type === 'text' ? <span key={index}>{part.text}</span> : null,
+        part.type === 'text' ? <span key={index}>{part.text}</span> : null
       )}
       {/* Show token count if available */}
       {message.metadata?.totalTokens && (

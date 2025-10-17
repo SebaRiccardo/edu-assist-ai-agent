@@ -32,7 +32,7 @@ export default function CourseDetailsPage() {
     isLoading: isLoadingCourse,
     isError: isErrorCourse,
   } = useCourse(courseId);
-  const { data: gmailConnections, isLoading: isLoadingConnections } =
+  const { data: connections, isLoading: isLoadingConnections } =
     useConnections();
   const { mutateAsync: updateCourse, isPending: isUpdatingCourse } =
     useUpdateCourse();
@@ -53,33 +53,33 @@ export default function CourseDetailsPage() {
 
   // Set default tab when connections load
   React.useEffect(() => {
-    if (!selectedAccountId && gmailConnections && gmailConnections.length > 0) {
-      const activeConnection = gmailConnections.find(
+    if (!selectedAccountId && connections && connections.length > 0) {
+      const activeConnection = connections.find(
         conn => conn.status === 'ACTIVE' && conn.email
       );
       if (activeConnection) {
         setSelectedAccountId(activeConnection.id);
       }
     }
-  }, [gmailConnections, selectedAccountId]);
+  }, [connections, selectedAccountId]);
 
   // Transform Supabase data to DomainCourse type
   const domainCourse: DomainCourse | null = courseData
     ? {
-        id: courseData.id,
-        name: courseData.name,
-        year: courseData.year ?? '',
-        description: courseData.description,
-        context: courseData.context,
-        professorId: courseData.professor_id,
-        studentCount: courseData.student_count,
-        startAt: courseData.start_at
-          ? new Date(courseData.start_at!)
-          : undefined,
-        endAt: courseData.end_at ? new Date(courseData.end_at!) : undefined,
-        createdAt: new Date(courseData.created_at),
-        updatedAt: new Date(courseData.updated_at),
-      }
+      id: courseData.id,
+      name: courseData.name,
+      year: courseData.year ?? '',
+      description: courseData.description,
+      context: courseData.context,
+      professorId: courseData.professor_id,
+      studentCount: courseData.student_count,
+      startAt: courseData.start_at
+        ? new Date(courseData.start_at!)
+        : undefined,
+      endAt: courseData.end_at ? new Date(courseData.end_at!) : undefined,
+      createdAt: new Date(courseData.created_at),
+      updatedAt: new Date(courseData.updated_at),
+    }
     : null;
 
   // Email state per account - using a map to store emails for each account
@@ -90,8 +90,6 @@ export default function CourseDetailsPage() {
     new Set()
   );
   const [replyingEmails, setReplyingEmails] = useState<Set<string>>(new Set());
-
-  const [authError, setAuthError] = useState<string | null>(null);
 
   const [statsByAccount, setStatsByAccount] = useState<
     Record<
@@ -105,10 +103,10 @@ export default function CourseDetailsPage() {
 
   // Set initial selected account when connections load
   React.useEffect(() => {
-    if (gmailConnections && gmailConnections.length > 0 && !selectedAccountId) {
-      setSelectedAccountId(gmailConnections[0].id);
+    if (connections && connections.length > 0 && !selectedAccountId) {
+      setSelectedAccountId(connections[0].id);
     }
-  }, [gmailConnections, selectedAccountId]);
+  }, [connections, selectedAccountId]);
 
   // Handlers
   const handleEditCourse = () => {
@@ -144,7 +142,6 @@ export default function CourseDetailsPage() {
       setIsEditDialogOpen(false);
     } catch (error) {
       console.error('Error updating course:', error);
-
       // Don't re-throw to prevent double error handling
     }
   };
@@ -153,38 +150,28 @@ export default function CourseDetailsPage() {
     if (!domainCourse || !user || !courseData) return;
 
     if (!connectedAccountId) {
-      setAuthError('Please select a Gmail account first');
-      toast.error('Please select a Gmail account first');
+      toast.error('Please select a Email account first');
       return;
     }
 
     setCheckingAccounts(prev => new Set(prev).add(connectedAccountId));
-    setAuthError(null);
 
     const toastId = `analyze-${connectedAccountId}`;
     toast.loading('Analyzing inbox...', { id: toastId });
 
     try {
       const result = await analyzeInbox({
-        courseId: domainCourse.id,
         course: courseData,
         connectedAccountId,
         reasoningLanguage: 'spanish',
-        maxEmails: 3,
+        maxEmails: 10,
         includeRead: false,
         verbose: true,
       });
 
       if (!result.success) {
-        if (result.error === 'unauthorized') {
-          setAuthError('Gmail connection required');
-          toast.error('Gmail connection required', { id: toastId });
-          return;
-        }
-
-        if (result.error === 'Connected Account is not active') {
-          setAuthError('Gmail account is not active. Please reconnect.');
-          toast.error('Gmail account is not active. Please reconnect.', {
+        if (result.account.status !== "ACTIVE") {
+          toast.error('Email account is not active. Please reconnect.', {
             id: toastId,
           });
           return;
@@ -215,10 +202,8 @@ export default function CourseDetailsPage() {
         );
       }
     } catch (error) {
-      console.error('Error checking emails:', error);
       const errorMessage =
         'Ocurrió un error al analizar los correos. Por favor, inténtalo de nuevo.';
-      setAuthError(errorMessage);
       toast.error(errorMessage, { id: toastId });
     } finally {
       setCheckingAccounts(prev => {
@@ -292,6 +277,11 @@ export default function CourseDetailsPage() {
     }
   };
 
+  const handleAutoTagAll = async (accountId: string) => {
+    toast.info('Auto-tagging all emails...');
+    // Implement auto-tagging logic here
+  }
+
   // Redirect if course not found
   if (isErrorCourse) {
     router.push('/dashboard');
@@ -307,7 +297,7 @@ export default function CourseDetailsPage() {
   }
 
   const activeConnections =
-    gmailConnections?.filter(conn => conn.status === 'ACTIVE' && conn.email) ||
+    connections?.filter(conn => conn.status === 'ACTIVE' && conn.email) ||
     [];
 
   const hasNoConnections = activeConnections.length === 0;
@@ -318,7 +308,7 @@ export default function CourseDetailsPage() {
         <CourseDetailsHeader
           course={domainCourse}
           isChecking={false}
-          onAnalyze={() => {}}
+          onAnalyze={() => { }}
           onEdit={handleEditCourse}
         />
 
@@ -398,6 +388,7 @@ export default function CourseDetailsPage() {
                     userId={user?.id}
                     isSendingReply={false}
                     replyingToEmailId={null}
+                    onAutoTagAll={ ()=> handleAutoTagAll(account.id)}
                     onAnalyze={() => handleAnalyzeInbox(account.id)}
                     onAutoReply={emailId =>
                       handleAutoReply(emailId, account.id)

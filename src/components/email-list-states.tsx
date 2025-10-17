@@ -27,7 +27,8 @@ interface EmailListStatesProps {
   isSendingReply?: boolean;
   replyingToEmailId?: string | null;
   onAnalyze: () => void;
-  onAutoReply?: (emailId: string) => void;
+  onAutoReply?: (accountId: string) => void;
+  onAutoTagAll: (accountId: string) => void;
   selectedAccountId: string;
 }
 
@@ -41,11 +42,13 @@ export function EmailListStates({
   replyingToEmailId,
   onAnalyze,
   onAutoReply,
+  onAutoTagAll,
   selectedAccountId,
 }: EmailListStatesProps) {
   const [selectedEmail, setSelectedEmail] = useState<CategorizedEmail | null>(
     null
   );
+
   // Loading State - Checking Emails
   if (isChecking) {
     return (
@@ -119,7 +122,7 @@ export function EmailListStates({
             <div className="flex gap-2">
               <Button
                 variant="outline"
-                onClick={onAnalyze}
+                onClick={() => onAutoTagAll(selectedAccountId)}
                 size="sm"
                 disabled
                 className="gap-2 h-7"

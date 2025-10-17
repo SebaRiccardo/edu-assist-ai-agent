@@ -1,19 +1,21 @@
 # React AI Prompt Input
+
 URL: /ai/prompt-input
 ChatGPT-style input with auto-resize and model selector. React component with TypeScript, keyboard shortcuts, and shadcn/ui for AI chat.
 
-***
+---
 
 title: React AI Prompt Input
 description: ChatGPT-style input with auto-resize and model selector. React component with TypeScript, keyboard shortcuts, and shadcn/ui for AI chat.
 icon: MessageSquare
 component: true
----------------
+
+---
 
 <PoweredBy
-  packages={[
-  { name: "AI Elements", url: "https://ai-sdk.dev/elements/overview" },
-  { name: "Radix UI", url: "https://radix-ui.com/" },
+packages={[
+{ name: "AI Elements", url: "https://ai-sdk.dev/elements/overview" },
+{ name: "Radix UI", url: "https://radix-ui.com/" },
 ]}
 />
 
@@ -52,12 +54,12 @@ import {
   PromptInputTextarea,
   PromptInputToolbar,
   PromptInputSubmit,
-} from "@/components/ai/prompt-input";
+} from '@/components/ai/prompt-input';
 
 <PromptInput onSubmit={() => {}}>
   <PromptInputTextarea
     value={input}
-    onChange={(e) => setInput(e.currentTarget.value)}
+    onChange={e => setInput(e.currentTarget.value)}
     placeholder="Type your message..."
   />
   <PromptInputToolbar>
@@ -77,7 +79,7 @@ Enter/Shift+Enter behavior has to be right in JavaScript implementations. Users 
 Complete chat interface using Vercel AI SDK with model selection and status integration in React applications:
 
 ```tsx
-"use client";
+'use client';
 
 import {
   PromptInput,
@@ -91,23 +93,23 @@ import {
   PromptInputModelSelectContent,
   PromptInputModelSelectItem,
   PromptInputModelSelectValue,
-} from "@/components/ai/prompt-input";
+} from '@/components/ai/prompt-input';
 import {
   Conversation,
   ConversationContent,
-} from "@/components/ai/conversation";
-import { Message, MessageContent } from "@/components/ai/message";
-import { useChat } from "@ai-sdk/react";
-import { useState } from "react";
-import { MicIcon, PaperclipIcon } from "lucide-react";
+} from '@/components/ai/conversation';
+import { Message, MessageContent } from '@/components/ai/message';
+import { useChat } from '@ai-sdk/react';
+import { useState } from 'react';
+import { MicIcon, PaperclipIcon } from 'lucide-react';
 
 const models = [
-  { id: "gpt-4o", name: "GPT-4o" },
-  { id: "claude-3-5-sonnet-20241022", name: "Claude 3.5 Sonnet" },
+  { id: 'gpt-4o', name: 'GPT-4o' },
+  { id: 'claude-3-5-sonnet-20241022', name: 'Claude 3.5 Sonnet' },
 ];
 
 export default function Chat() {
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
   const [selectedModel, setSelectedModel] = useState(models[0].id);
 
   const { messages, append, status } = useChat({
@@ -117,8 +119,8 @@ export default function Chat() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim()) {
-      append({ role: "user", content: input });
-      setInput("");
+      append({ role: 'user', content: input });
+      setInput('');
     }
   };
 
@@ -126,7 +128,7 @@ export default function Chat() {
     <div className="flex flex-col h-full max-w-4xl mx-auto">
       <Conversation>
         <ConversationContent>
-          {messages.map((message) => (
+          {messages.map(message => (
             <Message from={message.role} key={message.id}>
               <MessageContent>{message.content}</MessageContent>
             </Message>
@@ -137,7 +139,7 @@ export default function Chat() {
       <PromptInput onSubmit={handleSubmit}>
         <PromptInputTextarea
           value={input}
-          onChange={(e) => setInput(e.currentTarget.value)}
+          onChange={e => setInput(e.currentTarget.value)}
           placeholder="Type your message..."
         />
         <PromptInputToolbar>
@@ -157,7 +159,7 @@ export default function Chat() {
                 <PromptInputModelSelectValue />
               </PromptInputModelSelectTrigger>
               <PromptInputModelSelectContent>
-                {models.map((model) => (
+                {models.map(model => (
                   <PromptInputModelSelectItem key={model.id} value={model.id}>
                     {model.name}
                   </PromptInputModelSelectItem>
@@ -177,13 +179,13 @@ Backend route handling model selection:
 
 ```tsx
 // app/api/chat/route.ts
-import { streamText, convertToModelMessages } from "ai";
+import { streamText, convertToModelMessages } from 'ai';
 
 export async function POST(req: Request) {
   const { messages, model } = await req.json();
 
   const result = streamText({
-    model: model || "openai/gpt-4o",
+    model: model || 'openai/gpt-4o',
     messages: convertToModelMessages(messages),
   });
 
@@ -193,14 +195,14 @@ export async function POST(req: Request) {
 
 ## Features
 
-* Auto-resizing textarea with configurable min/max height (prevents layout jumps) in React applications
-* Keyboard shortcuts that work like users expect (Enter to submit, Shift+Enter for new lines) in TypeScript components
-* Submit button states that integrate with Vercel AI SDK status in Next.js projects
-* Flexible toolbar system for custom actions and model selection in JavaScript frameworks
-* Form validation that prevents empty submissions
-* Proper focus management for continuous conversation
-* Works with any Vercel AI SDK setup and AI chat applications
-* Free open source component designed for conversational AI interfaces and prompt-based applications
+- Auto-resizing textarea with configurable min/max height (prevents layout jumps) in React applications
+- Keyboard shortcuts that work like users expect (Enter to submit, Shift+Enter for new lines) in TypeScript components
+- Submit button states that integrate with Vercel AI SDK status in Next.js projects
+- Flexible toolbar system for custom actions and model selection in JavaScript frameworks
+- Form validation that prevents empty submissions
+- Proper focus management for continuous conversation
+- Works with any Vercel AI SDK setup and AI chat applications
+- Free open source component designed for conversational AI interfaces and prompt-based applications
 
 ## API Reference
 
@@ -271,11 +273,11 @@ Submit button with status indicators.
 
 All model selection components forward props to their underlying shadcn/ui Select components:
 
-* `PromptInputModelSelect` - Select root component
-* `PromptInputModelSelectTrigger` - Select trigger with custom styling
-* `PromptInputModelSelectContent` - Select dropdown content
-* `PromptInputModelSelectItem` - Individual model option
-* `PromptInputModelSelectValue` - Selected value display
+- `PromptInputModelSelect` - Select root component
+- `PromptInputModelSelectTrigger` - Select trigger with custom styling
+- `PromptInputModelSelectContent` - Select dropdown content
+- `PromptInputModelSelectItem` - Individual model option
+- `PromptInputModelSelectValue` - Selected value display
 
 ## Keyboard interactions
 
@@ -309,14 +311,14 @@ Works great with [Conversation](/ai/conversation) for scrolling chat interfaces 
     Use minHeight and maxHeight props to set boundaries in React applications. The component uses CSS field-sizing for automatic height adjustment in TypeScript implementations.
   </Accordion>
 
-  {" "}
+{" "}
 
   <Accordion id="keyboard-shortcuts" title="Can I customize keyboard shortcuts?">
     Override onKeyDown on PromptInputTextarea in React components. The default
     Enter/Shift+Enter behavior works for most users in JavaScript applications.
   </Accordion>
 
-  {" "}
+{" "}
 
   <Accordion id="submit-states" title="What submit button states are available?">
     The status prop accepts Vercel AI SDK status values: "ready", "submitted",
@@ -324,7 +326,7 @@ Works great with [Conversation](/ai/conversation) for scrolling chat interfaces 
     TypeScript components.
   </Accordion>
 
-  {" "}
+{" "}
 
   <Accordion id="toolbar-customization" title="How do I add custom toolbar buttons?">
     Add PromptInputButton components inside PromptInputTools in React

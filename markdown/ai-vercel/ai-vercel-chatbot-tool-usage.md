@@ -1,4 +1,3 @@
-
 # Chatbot Tool Usage
 
 With [`useChat`](/docs/reference/ai-sdk-ui/use-chat) and [`streamText`](/docs/reference/ai-sdk-core/stream-text), you can use tools in your chatbot application.

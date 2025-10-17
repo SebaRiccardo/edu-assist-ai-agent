@@ -15,7 +15,6 @@ import {
   PromptInputTextarea,
   PromptInputTools,
   PromptInputSubmit,
-
   type PromptInputMessage,
   PromptInputToolbar,
   PromptInputButton,
@@ -55,7 +54,10 @@ import {
 } from '@/components/ai-elements/tool';
 import type { ToolUIPart } from 'ai';
 import { Loader } from './ai-elements/loader';
-import { GmailToolOutput, CourseToolOutput } from '@/components/tool-output-formatters';
+import {
+  GmailToolOutput,
+  CourseToolOutput,
+} from '@/components/tool-output-formatters';
 
 interface InboxChatProps {
   userId: string;
@@ -64,10 +66,10 @@ interface InboxChatProps {
 interface ConnectedInbox {
   id: string;
   email: string;
-  name?: string
-  status: string
-  avatarUrl?: string
-  createdAt: string
+  name?: string;
+  status: string;
+  avatarUrl?: string;
+  createdAt: string;
 }
 
 const suggestions = [
@@ -82,7 +84,6 @@ const models = [
   { id: 'gemini-2.0-flash-lite', name: 'Gemini 2.0 Flash Lite' },
   { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash Lite' },
   { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro' },
-
 ];
 
 /**
@@ -92,7 +93,7 @@ const models = [
 function formatToolName(toolName: string): string {
   return toolName
     .replace(/_/g, ' ')
-    .replace(/\b\w/g, (char) => char.toUpperCase());
+    .replace(/\b\w/g, char => char.toUpperCase());
 }
 
 /**
@@ -101,12 +102,18 @@ function formatToolName(toolName: string): string {
  */
 function formatToolOutput(toolName: string, output: any): React.ReactNode {
   // Gmail tools
-  if (toolName.includes('GMAIL_FETCH_EMAILS') || toolName.includes('fetch_emails')) {
+  if (
+    toolName.includes('GMAIL_FETCH_EMAILS') ||
+    toolName.includes('fetch_emails')
+  ) {
     return <GmailToolOutput output={output} />;
   }
 
   // Course tools
-  if (toolName.includes('getUserCourses') || toolName.includes('getCourseDetails')) {
+  if (
+    toolName.includes('getUserCourses') ||
+    toolName.includes('getCourseDetails')
+  ) {
     return <CourseToolOutput output={output} />;
   }
 
@@ -116,7 +123,9 @@ function formatToolOutput(toolName: string, output: any): React.ReactNode {
 
 export function InboxChat({ userId }: InboxChatProps) {
   const [input, setInput] = useState('');
-  const [selectedInbox, setSelectedInbox] = useState<string | undefined>(undefined);
+  const [selectedInbox, setSelectedInbox] = useState<string | undefined>(
+    undefined
+  );
   const [model, setModel] = useState<string>(models[0].id);
   // Fetch connected inboxes using the existing hook
   const { data: connections, isLoading: loading } = useConnections();
@@ -129,7 +138,7 @@ export function InboxChat({ userId }: InboxChatProps) {
       name: account.name,
       status: account.status,
       avatarUrl: account.avatarUrl,
-      createdAt: account.createdAt
+      createdAt: account.createdAt,
     })) || [];
 
   // Auto-select first inbox if none selected
@@ -141,27 +150,30 @@ export function InboxChat({ userId }: InboxChatProps) {
     transport: new DefaultChatTransport({
       api: '/api/chat',
     }),
-    onError: (error) => {
+    onError: error => {
       console.error('Chat error:', error);
     },
   });
 
   const handleSubmit = (message: PromptInputMessage) => {
     if (message.text?.trim() && selectedInbox) {
-      sendMessage({
-        text: message.text,
-      }, {
-        body: {
-          connectionId: selectedInbox,
-          model: model,
+      sendMessage(
+        {
+          text: message.text,
+        },
+        {
+          body: {
+            connectionId: selectedInbox,
+            model: model,
+          },
         }
-      });
+      );
       setInput('');
     }
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    handleSubmit({ text: suggestion })
+    handleSubmit({ text: suggestion });
   };
 
   const handleStop = () => {
@@ -190,7 +202,6 @@ export function InboxChat({ userId }: InboxChatProps) {
     );
   }
 
-
   return (
     <div className="flex flex-col h-full py-6 ">
       {/* Connection Cards */}
@@ -201,7 +212,7 @@ export function InboxChat({ userId }: InboxChatProps) {
       /> */}
 
       <Conversation>
-        <ConversationContent className='max-w-4xl mx-auto h-full'>
+        <ConversationContent className="max-w-4xl mx-auto h-full">
           {!selectedInbox ? (
             <ConversationEmptyState
               icon={<Mail className="h-12 w-12" />}
@@ -216,7 +227,8 @@ export function InboxChat({ userId }: InboxChatProps) {
                   Select an Inbox to Start
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  Choose one of your connected Gmail accounts above to begin chatting with your emails.
+                  Choose one of your connected Gmail accounts above to begin
+                  chatting with your emails.
                 </p>
               </div>
             </ConversationEmptyState>
@@ -228,9 +240,7 @@ export function InboxChat({ userId }: InboxChatProps) {
             >
               <Mail className="h-12 w-12 text-muted-foreground" />
               <div className="space-y-2 max-w-md">
-                <h3 className="text-xl font-semibold">
-                  Chat with Your Inbox
-                </h3>
+                <h3 className="text-xl font-semibold">Chat with Your Inbox</h3>
                 <p className="text-sm text-muted-foreground">
                   Ask me to fetch emails, search for specific messages, find
                   emails related to your courses, or help you manage your inbox.
@@ -249,14 +259,16 @@ export function InboxChat({ userId }: InboxChatProps) {
               </div>
             </ConversationEmptyState>
           ) : (
-            messages.map((message) => (
+            messages.map(message => (
               <Message key={message.id} from={message.role}>
                 <MessageContent>
                   {message.parts.map((part, index) => {
                     switch (part.type) {
                       case 'text':
                         return (
-                          <Response key={`${message.id}-${index}`}>{part.text}</Response>
+                          <Response key={`${message.id}-${index}`}>
+                            {part.text}
+                          </Response>
                         );
 
                       // Handle tool invocations dynamically
@@ -286,15 +298,18 @@ export function InboxChat({ userId }: InboxChatProps) {
                                 {(toolPart.state === 'input-available' ||
                                   toolPart.state === 'output-available' ||
                                   toolPart.state === 'output-error') && (
-                                    <ToolInput input={toolPart.input} />
-                                  )}
+                                  <ToolInput input={toolPart.input} />
+                                )}
                                 {(toolPart.state === 'output-available' ||
                                   toolPart.state === 'output-error') && (
-                                    <ToolOutput
-                                      output={formatToolOutput(toolName, toolPart.output)}
-                                      errorText={toolPart.errorText}
-                                    />
-                                  )}
+                                  <ToolOutput
+                                    output={formatToolOutput(
+                                      toolName,
+                                      toolPart.output
+                                    )}
+                                    errorText={toolPart.errorText}
+                                  />
+                                )}
                               </ToolContent>
                             </Tool>
                           );
@@ -307,7 +322,7 @@ export function InboxChat({ userId }: InboxChatProps) {
             ))
           )}
           {status === 'submitted' && <Loader />}
-          {(status === 'streaming') && (
+          {status === 'streaming' && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground px-4">
               <Loader />
               <span>Thinking...</span>
@@ -316,8 +331,8 @@ export function InboxChat({ userId }: InboxChatProps) {
         </ConversationContent>
       </Conversation>
 
-      <Suggestions className='max-w-4xl mx-auto overflow-hidden bg-transparent'>
-        {suggestions.map((suggestion) => (
+      <Suggestions className="max-w-4xl mx-auto overflow-hidden bg-transparent">
+        {suggestions.map(suggestion => (
           <Suggestion
             key={suggestion}
             onClick={handleSuggestionClick}
@@ -325,12 +340,17 @@ export function InboxChat({ userId }: InboxChatProps) {
           />
         ))}
       </Suggestions>
-      <PromptInput onSubmit={handleSubmit} className="mt-4 bg-transparent max-w-4xl mx-auto relative">
+      <PromptInput
+        onSubmit={handleSubmit}
+        className="mt-4 bg-transparent max-w-4xl mx-auto relative"
+      >
         <PromptInputBody>
-          <PromptInputTextarea value={input}
-            onChange={(e) => setInput(e.currentTarget.value)}
+          <PromptInputTextarea
+            value={input}
+            onChange={e => setInput(e.currentTarget.value)}
             placeholder="Ask me anything about your emails..."
-            disabled={!selectedInbox || status === 'streaming'} />
+            disabled={!selectedInbox || status === 'streaming'}
+          />
         </PromptInputBody>
         <PromptInputFooter>
           <PromptInputTools>

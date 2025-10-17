@@ -1,4 +1,3 @@
-
 # Chatbot Resume Streams
 
 `useChat` supports resuming ongoing streams after page reloads. Use this feature to build applications with long-running generations.
@@ -162,7 +161,7 @@ import { createResumableStreamContext } from 'resumable-stream';
 
 export async function GET(
   _: Request,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
 
@@ -179,7 +178,7 @@ export async function GET(
 
   return new Response(
     await streamContext.resumeExistingStream(chat.activeStreamId),
-    { headers: UI_MESSAGE_STREAM_HEADERS },
+    { headers: UI_MESSAGE_STREAM_HEADERS }
   );
 }
 ```
