@@ -1,32 +1,33 @@
-import { streamText, convertToModelMessages } from 'ai';
+import { streamText, convertToModelMessages, stepCountIs } from 'ai';
 import { google } from '@ai-sdk/google';
 import { z } from 'zod';
 import { ComposioService } from '@/lib/services/composio';
-import { createClient } from '@/lib/supabase/server';
+import { createClient, getCurrentUser } from '@/lib/supabase/server';
 import { getAllCoursesForProfessorQuery } from '@/hooks/queries/courses';
+import { ChatSDKError } from '@/lib/errors';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
     try {
-        const { messages, userId, connectionId } = await req.json();
+        const { messages, connectionId, model } = await req.json();
 
-        console.log('Chat request received:', { userId, connectionId });
+        const user = await getCurrentUser();
 
-        if (!userId) {
-            return Response.json({ error: 'User ID is required' }, { status: 400 });
+
+        if (!user) {
+            return new ChatSDKError('unauthorized:chat').toResponse();
+
         }
 
         if (!connectionId) {
-            return Response.json(
-                { error: 'Connection ID is required' },
-                { status: 400 }
-            );
+            return new ChatSDKError('bad_request:api').toResponse();
         }
 
         // Get Gmail tools for the specific connection
-        const gmailTools = await ComposioService.getGmailTools(connectionId);
+        const gmailTools = await ComposioService.getGmailTools(user.id);
+
 
         // Get Supabase client to fetch courses
         const supabase = await createClient();
@@ -35,13 +36,14 @@ export async function POST(req: Request) {
         const courseTools = {
             getUserCourses: {
                 description:
-                    'Fetch all courses for the current user. Use this to get course information when the user asks about their courses or when you need course details to filter emails.',
+                    `Fetch all courses for the current user. Use this to get course information 
+                     when the user asks about their courses or when you need course details to filter emails.`,
                 inputSchema: z.object({}),
                 execute: async () => {
                     try {
                         const coursesQuery = getAllCoursesForProfessorQuery(
                             supabase,
-                            userId
+                            user.id
                         );
                         const { data: courses, error } = await coursesQuery;
 
@@ -84,7 +86,7 @@ export async function POST(req: Request) {
                     try {
                         const coursesQuery = getAllCoursesForProfessorQuery(
                             supabase,
-                            userId
+                            user.id
                         );
                         const { data: courses, error } = await coursesQuery;
 
@@ -220,38 +222,30 @@ export async function POST(req: Request) {
         };
 
         const result = streamText({
-            model: google('gemini-2.0-flash-exp'),
+            model: google('gemini-2.0-flash'),
             messages: convertToModelMessages(messages),
+            //stopWhen: stepCountIs(5),
             tools: allTools,
             system: `You are an intelligent email assistant that helps users manage and analyze their Gmail inbox. 
-      
 You have access to:
 1. Gmail tools to fetch, search, send, reply, and manage emails
 2. Course tools to fetch user courses and match emails with specific courses
 
 When a user asks about emails related to a course:
 1. First, use getUserCourses or getCourseDetails to get course information
-2. Then, use GMAIL_FETCH_EMAILS to fetch relevant emails (use query parameter to filter)
-3. Finally, use matchEmailsWithCourse to determine which emails are actually related to the course
+2. Then, use GMAIL_FETCH_EMAILS to fetch relevant emails, do not use course details in the query filters as they may not match the email content will discard important emails. Instead use general filters to fetch recent unread emails.
+3. Once you have the emails, use matchEmailsWithCourse to determine which emails are actually related to the course
 
 Be conversational and helpful. Provide summaries and insights about the emails. 
 When showing email information, format it clearly with sender, subject, and relevant details.
 
 Always consider the course context (description, keywords) when analyzing emails.
-Use the Gmail search query syntax when possible (e.g., "from:professor@university.edu" or "subject:assignment").`,
+`,
         });
 
-        return result.toTextStreamResponse();
+        return result.toUIMessageStreamResponse();
+
     } catch (error) {
-        console.error('Chat API error:', error);
-        return Response.json(
-            {
-                error:
-                    error instanceof Error
-                        ? error.message
-                        : 'An error occurred processing your request',
-            },
-            { status: 500 }
-        );
+        return new ChatSDKError('bad_request:api').toResponse();
     }
 }

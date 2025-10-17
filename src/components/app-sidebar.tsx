@@ -31,6 +31,9 @@ import {
 import WordmarkLogo from '@/components/wordmark-logo';
 import { useCurrentUser, useUserDisplayName } from '@/hooks/use-current-user';
 import type { User } from '@supabase/supabase-js';
+import { signOut } from '@/auth/service';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const data = {
   navMain: [
@@ -45,25 +48,10 @@ const data = {
       icon: IconBook,
     },
     {
-      title: 'Email Management',
-      url: '/dashboard/emails',
-      icon: IconMail,
-    },
-    {
       title: 'Inbox Chat',
       url: '/chat',
       icon: IconMessageChatbot,
-    },
-    // {
-    //   title: 'Students',
-    //   url: '/dashboard/students',
-    //   icon: IconUsers,
-    // },
-    // {
-    //   title: 'Analytics',
-    //   url: '/dashboard/analytics',
-    //   icon: IconChartBar,
-    // },
+    }
   ],
   navSecondary: [
     {
@@ -75,11 +63,6 @@ const data = {
       title: 'Get Help',
       url: '/dashboard/help',
       icon: IconHelp,
-    },
-    {
-      title: 'Search',
-      url: '#',
-      icon: IconSearch,
     },
   ],
   documents: [
@@ -101,40 +84,36 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 }
 
 export function AppSidebar({ serverUser, ...props }: AppSidebarProps) {
+  const router = useRouter();
   const { user: clientUser } = useCurrentUser(serverUser);
   const displayName = useUserDisplayName(clientUser);
 
   const user = {
     name: displayName || 'User',
-    email: clientUser?.email || 'user@example.com',
+    email: clientUser?.email,
     avatar: clientUser?.user_metadata?.avatar_url || '/avatars/default.jpg',
   };
 
   const handleLogout = async () => {
-    const supabase = (await import('@/lib/supabase/client')).createClient();
-    await supabase.auth.signOut();
-    window.location.href = '/auth/login';
+    await signOut()
+    router.replace('/auth/login');
+    router.refresh();
   };
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
         <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:!p-2"
-            >
-              <a href="/dashboard">
-                <WordmarkLogo className="gap-2.5" />
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+
+          <Link href="/dashboard">
+            <WordmarkLogo className="gap-2.5" />
+          </Link>
+
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
+        {/* <NavDocuments items={data.documents} /> */}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

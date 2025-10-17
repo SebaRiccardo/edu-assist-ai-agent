@@ -32,7 +32,7 @@ export function NavUser({
   onLogout: () => void;
   user: {
     name: string;
-    email: string;
+    email?: string;
     avatar: string;
   };
 }) {
@@ -89,10 +89,6 @@ export function NavUser({
               <DropdownMenuItem>
                 <IconCreditCard />
                 Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconNotification />
-                Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

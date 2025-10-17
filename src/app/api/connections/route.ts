@@ -1,7 +1,7 @@
 import { getCurrentUser } from '@/lib/supabase/server';
 import { Composio, ConnectedAccountListResponse } from '@composio/core';
 import { NextRequest, NextResponse } from 'next/server';
-import * as jose from 'jose';
+import { decodeJwt } from 'jose/jwt/decode';
 import { ComposioService } from '@/lib/services/composio';
 
 export interface ComposioConnectedAccount {
@@ -63,8 +63,9 @@ export async function GET(request: NextRequest) {
         const { val } = state;
 
         const idToken = val?.id_token;
-        const decoded = idToken ? jose.decodeJwt(idToken || '') : {};
+        const decoded = idToken ? decodeJwt(idToken || '') : {};
 
+        //console.log('Decoded ID Token:', decoded);
         return {
           id: item.id,
           status: val.status,

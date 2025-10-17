@@ -52,27 +52,7 @@ export interface FetchEmailsWithAIOptions {
   labelIds?: string[];
 }
 
-/**
- * ComposioService - Comprehensive service for Composio Gmail integration
- *
- * This service provides a clean, organized interface for interacting with
- * Gmail through Composio's API. It handles authentication, email fetching,
- * tool management, and data transformation.
- *
- * @example
- * ```typescript
- * // Get Gmail connection status
- * const connection = await ComposioService.getGmailConnectionByUserId('user123');
- *
- * // Fetch emails
- * if (connection.isConnected) {
- *   const emails = await ComposioService.fetchEmails(connection.connectionId!, {
- *     max_results: 10,
- *     query: 'is:unread'
- *   });
- * }
- * ```
- */
+
 export class ComposioService {
   private static instance: Composio<VercelProvider> | null = null;
 
@@ -166,13 +146,35 @@ export class ComposioService {
   // ============================================================================
 
   /**
+   * Fetches Composio tools for a user based on enabled toolkits
+   * This is used specifically for AI/LLM tool integration
+   */
+  static async getComposioTools(userId: string, toolkitSlugs: string[]) {
+    if (!toolkitSlugs || toolkitSlugs.length === 0) {
+      return {};
+    }
+
+    try {
+      const tools = await this.getClient().tools.get(userId, {
+        toolkits: toolkitSlugs,
+      });
+      return tools || {};
+    } catch (error) {
+      console.error('Failed to fetch Composio tools:', error);
+      return {};
+    }
+  }
+
+
+  /**
    * Get all Gmail tools for a specific user
    *
    * @param userId - The connected account ID from Composio
    * @returns Gmail tools that can be used with AI SDK
    */
-  static async getGmailTools(userId: string) {
+  static async getGmailTools(userId: string, connectedAccountId?: string) {
     const client = this.getClient();
+
     return await client.tools.get(userId, {
       toolkits: [GMAIL_TOOLKIT],
     });
@@ -246,7 +248,7 @@ export class ComposioService {
   static async fetchEmails(
     connectedAccountId: string,
     params: FetchEmailsParams = {}
-  ): Promise<GmailFetchEmailsResponse> {
+  ) {
     const client = this.getClient();
 
     // Set default values according to Gmail API spec
@@ -264,10 +266,10 @@ export class ComposioService {
 
     const result = await client.tools.execute(GMAIL_TOOLS.FETCH_EMAILS, {
       connectedAccountId,
-      arguments: fetchParams,
+      arguments: fetchParams as any,
     });
 
-    return result as GmailFetchEmailsResponse;
+    return result;
   }
 
   /**
