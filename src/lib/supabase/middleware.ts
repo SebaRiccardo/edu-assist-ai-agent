@@ -1,10 +1,44 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import {
+  verifyBetaAccessToken,
+  getBetaAccessCookieName,
+} from '@/lib/beta-access';
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   });
+
+  // Check beta access first (before any other authentication)
+  const betaAccessToken = request.cookies.get(getBetaAccessCookieName())?.value;
+  const isBetaAccessPage = request.nextUrl.pathname === '/beta-access';
+
+  // If not on beta access page and no valid token, redirect to beta access
+  if (!isBetaAccessPage) {
+    let hasBetaAccess = false;
+
+    if (betaAccessToken) {
+      const payload = await verifyBetaAccessToken(betaAccessToken);
+      hasBetaAccess = payload !== null;
+    }
+
+    if (!hasBetaAccess) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/beta-access';
+      return NextResponse.redirect(url);
+    }
+  }
+
+  // If on beta access page and has valid token, redirect to dashboard
+  if (isBetaAccessPage && betaAccessToken) {
+    const payload = await verifyBetaAccessToken(betaAccessToken);
+    if (payload !== null) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/dashboard';
+      return NextResponse.redirect(url);
+    }
+  }
 
   // With Fluid compute, don't put this client in a global environment
   // variable. Always create a new one on each request.

@@ -91,11 +91,7 @@ export function useUserDisplayName(user?: User | null) {
   if (!_user) return 'User';
 
   // Try to get name from user metadata
-  const fullName =
-    _user.user_metadata?.full_name ||
-    _user.user_metadata?.name ||
-    _user.user_metadata?.username;
-
+  const fullName = _user.user_metadata.first_name;
   if (fullName) return fullName;
 
   // Fallback to email prefix

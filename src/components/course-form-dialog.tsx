@@ -4,6 +4,8 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { type DateRange } from 'react-day-picker';
+import { useTranslations } from 'next-intl';
 import { DomainCourse } from '@/types';
 import { Course, InsertCourse } from '@/lib/supabase/types/courses.types';
 import {
@@ -26,55 +28,62 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Loader2 } from 'lucide-react';
+import { DateRangePicker } from '@/components/date-range-picker';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import { Loader2, Calendar as CalendarIcon, ChevronDown } from 'lucide-react';
 
-// Zod validation schema for course form
-const courseFormSchema = z
-  .object({
-    name: z
-      .string()
-      .min(2, 'Name must be at least 2 characters')
-      .max(100, 'Name must be less than 100 characters')
-      .regex(
-        /^[a-zA-Z0-9\s\-_]+$/,
-        'Name can only contain letters, numbers, spaces, hyphens, and underscores'
-      ),
-    description: z
-      .string()
-      .min(10, 'Description must be at least 10 characters')
-      .max(160, 'Description must be less than 160 characters'),
-    context: z
-      .string()
-      .min(
-        50,
-        'Context must be at least 50 characters to help AI categorize emails effectively'
-      )
-      .max(25000, 'Context must be less than 25000 characters'),
-    year: z
-      .string()
-      .regex(/^\d{4}$/, 'Year must be a valid 4-digit year')
-      .refine(val => {
-        const year = parseInt(val);
-        return year >= 2020 && year <= 2030;
-      }, 'Year must be between 2020 and 2030'),
-    start_at: z.date().optional().nullable(),
-    end_at: z.date().optional().nullable(),
-  })
-  .refine(
-    data => {
-      // Validate that end_at is after start_at if both are provided
-      if (data.start_at && data.end_at) {
-        return data.end_at > data.start_at;
+// Zod validation schema for course form - will be created with translations
+const createCourseFormSchema = (t: any) =>
+  z
+    .object({
+      name: z
+        .string()
+        .min(2, t('validationNameMin'))
+        .max(100, t('validationNameMax'))
+        .regex(/^[a-zA-Z0-9\s\-_]+$/, t('validationNamePattern')),
+      description: z
+        .string()
+        .min(10, t('validationDescriptionMin'))
+        .max(160, t('validationDescriptionMax')),
+      context: z
+        .string()
+        .min(50, t('validationContextMin'))
+        .max(25000, t('validationContextMax')),
+      student_count: z
+        .number()
+        .int(t('validationStudentCountInt'))
+        .min(0, t('validationStudentCountMin'))
+        .max(1000, t('validationStudentCountMax'))
+        .optional(),
+      year: z
+        .string()
+        .regex(/^\d{4}$/, t('validationYearFormat'))
+        .refine(val => {
+          const year = parseInt(val);
+          return year >= 2020 && year <= 2030;
+        }, t('validationYearRange')),
+      start_at: z.date().optional().nullable(),
+      end_at: z.date().optional().nullable(),
+    })
+    .refine(
+      data => {
+        // Validate that end_at is after start_at if both are provided
+        if (data.start_at && data.end_at) {
+          return data.end_at > data.start_at;
+        }
+        return true;
+      },
+      {
+        message: t('validationEndDateAfterStart'),
+        path: ['end_at'],
       }
-      return true;
-    },
-    {
-      message: 'End date must be after start date',
-      path: ['end_at'],
-    }
-  );
+    );
 
-type CourseFormValues = z.infer<typeof courseFormSchema>;
+type CourseFormValues = z.infer<ReturnType<typeof createCourseFormSchema>>;
 
 interface CourseFormDialogProps {
   open: boolean;
@@ -96,15 +105,17 @@ export function CourseFormDialog({
   onSubmit,
   isLoading = false,
 }: CourseFormDialogProps) {
+  const t = useTranslations('CourseForm');
   const isEdit = !!course;
 
   // Initialize form with React Hook Form and Zod validation
   const form = useForm<CourseFormValues>({
-    resolver: zodResolver(courseFormSchema),
+    resolver: zodResolver(createCourseFormSchema(t)),
     defaultValues: {
       name: '',
       description: '',
       context: '',
+      student_count: 0,
       year: new Date().getFullYear().toString(),
       start_at: null,
       end_at: null,
@@ -119,6 +130,7 @@ export function CourseFormDialog({
           name: course.name,
           description: course.description,
           context: course.context,
+          student_count: course.student_count ?? 0,
           year: course.year ?? new Date().getFullYear().toString(),
           start_at: course.start_at ? new Date(course.start_at) : null,
           end_at: course.end_at ? new Date(course.end_at) : null,
@@ -128,6 +140,7 @@ export function CourseFormDialog({
           name: '',
           description: '',
           context: '',
+          student_count: 0,
           year: new Date().getFullYear().toString(),
           start_at: null,
           end_at: null,
@@ -142,8 +155,8 @@ export function CourseFormDialog({
         name: values.name,
         description: values.description,
         context: values.context,
+        student_count: values.student_count,
         year: values.year,
-        student_count: 0,
         start_at: values.start_at ? values.start_at.toISOString() : null,
         end_at: values.end_at ? values.end_at.toISOString() : null,
       });
@@ -155,15 +168,13 @@ export function CourseFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[800px] max-h-[95vh] overflow-y-auto bg-white">
+      <DialogContent className="sm:max-w-[800px] max-h-[95vh] overflow-y-auto bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background">
         <DialogHeader>
           <DialogTitle>
-            {isEdit ? 'Edit Course' : 'Create New Course'}
+            {isEdit ? t('editTitle') : t('createTitle')}
           </DialogTitle>
           <DialogDescription>
-            {isEdit
-              ? 'Update the course information below.'
-              : 'Fill in the details to create a new course. Required fields are marked with *.'}
+            {isEdit ? t('editDescription') : t('createDescription')}
           </DialogDescription>
         </DialogHeader>
 
@@ -173,7 +184,7 @@ export function CourseFormDialog({
             className="space-y-2"
           >
             <div className="grid gap-4 py-4">
-              <div className="flex flex-row justify-between gap-10">
+              <div className="flex flex-row items-start gap-4">
                 {/* Name Field */}
                 <FormField
                   control={form.control}
@@ -181,18 +192,52 @@ export function CourseFormDialog({
                   render={({ field }) => (
                     <FormItem className="flex-1">
                       <FormLabel>
-                        Course Name <span className="text-red-500">*</span>
+                        {t('nameLabel')} <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="e.g. Calculus 1"
+                          className="bg-blue-50  border-none"
+                          placeholder={t('namePlaceholder')}
                           {...field}
                           disabled={isLoading}
                         />
                       </FormControl>
                       <FormDescription>
-                        Short identifier for the course (
-                        {field.value?.length || 0}/100)
+                        {t('nameDescription', {
+                          count: field.value?.length || 0,
+                        })}
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Student Count Field */}
+                <FormField
+                  control={form.control}
+                  name="student_count"
+                  render={({ field }) => (
+                    <FormItem className="w-32">
+                      <FormLabel>
+                        {t('studentsLabel')}{' '}
+                        <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder={t('studentsPlaceholder')}
+                          className="bg-blue-50  border-none"
+                          {...field}
+                          onChange={e =>
+                            field.onChange(parseInt(e.target.value) || 0)
+                          }
+                          disabled={isLoading}
+                          min={0}
+                          max={10000}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        {t('studentsDescription')}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -204,28 +249,27 @@ export function CourseFormDialog({
                   control={form.control}
                   name="year"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="w-28">
                       <FormLabel>
-                        Academic Year <span className="text-red-500">*</span>
+                        {t('yearLabel')} <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
                           type="text"
-                          placeholder="e.g., 2025"
+                          placeholder={t('yearPlaceholder')}
+                          className="bg-blue-50 border-none"
                           {...field}
                           disabled={isLoading}
                           maxLength={4}
                         />
                       </FormControl>
-                      <FormDescription>
-                        Year when this course is being taught (
-                        {field.value?.length || 0}/4)
-                      </FormDescription>
+
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
+
               {/* Description Field */}
               <FormField
                 control={form.control}
@@ -233,20 +277,22 @@ export function CourseFormDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Description <span className="text-red-500">*</span>
+                      {t('descriptionLabel')}{' '}
+                      <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Provide a brief description of the course, including main topics and objectives..."
+                        placeholder={t('descriptionPlaceholder')}
                         rows={3}
-                        className="resize-none shadow-none"
+                        className="bg-blue-50  border-none resize-none shadow-none"
                         {...field}
                         disabled={isLoading}
                       />
                     </FormControl>
                     <FormDescription>
-                      Brief overview of the course ({field.value?.length || 0}
-                      /160 characters)
+                      {t('descriptionDescription', {
+                        count: field.value?.length || 0,
+                      })}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -260,26 +306,76 @@ export function CourseFormDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      AI Context <span className="text-red-500">*</span>
+                      {t('contextLabel')}{' '}
+                      <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder={`Provide detailed context about the course including: syllabus topics, key concepts, assignment types, exam schedule, grading criteria, prerequisites, textbooks, important dates, office hours, and any other relevant information that will help the AI understand and categorize student emails... \n\nYou can just copy and paste the whole study plan here if you want.`}
+                        placeholder={t('contextPlaceholder')}
                         rows={10}
-                        className="resize-y font-mono text-sm border-2 shadow-none"
+                        className="bg-blue-50 border-none resize-y font-mono text-sm border-2 shadow-none"
                         {...field}
                         disabled={isLoading}
                       />
                     </FormControl>
                     <FormDescription>
-                      Detailed information to help the AI categorize and
-                      understand emails related to this course (
-                      {field.value?.length || 0}/5000 characters)
+                      {t('contextDescription', {
+                        count: field.value?.length || 0,
+                      })}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
+              {/* Course Duration (Date Range) - Collapsible */}
+              <Collapsible className="space-y-2">
+                <CollapsibleTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full justify-between"
+                    disabled={isLoading}
+                  >
+                    <span className="flex items-center gap-2">
+                      <CalendarIcon className="h-4 w-4" />
+                      {t('durationLabel')}
+                      {form.watch('start_at') && form.watch('end_at') && (
+                        <span className="text-xs text-muted-foreground ml-2">
+                          {form.watch('start_at')?.toLocaleDateString()} -{' '}
+                          {form.watch('end_at')?.toLocaleDateString()}
+                        </span>
+                      )}
+                    </span>
+                    <ChevronDown className="h-4 w-4 transition-transform duration-200 data-[state=open]:rotate-180" />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-2">
+                  <FormDescription>{t('durationDescription')}</FormDescription>
+                  <DateRangePicker
+                    dateRange={{
+                      from: form.watch('start_at') || undefined,
+                      to: form.watch('end_at') || undefined,
+                    }}
+                    onDateRangeChange={range => {
+                      form.setValue('start_at', range?.from || null);
+                      form.setValue('end_at', range?.to || null);
+
+                      // Auto-fill year based on the start date
+                      if (range?.from) {
+                        const year = range.from.getFullYear().toString();
+                        form.setValue('year', year);
+                      }
+                    }}
+                    disabled={isLoading}
+                  />
+                  {form.formState.errors.end_at && (
+                    <p className="text-sm font-medium text-destructive">
+                      {form.formState.errors.end_at.message}
+                    </p>
+                  )}
+                </CollapsibleContent>
+              </Collapsible>
             </div>
 
             <DialogFooter className="gap-2">
@@ -290,7 +386,7 @@ export function CourseFormDialog({
                 disabled={isLoading}
                 className="h-11 shadow-none"
               >
-                Cancel
+                {t('cancel')}
               </Button>
               <Button
                 type="submit"
@@ -300,12 +396,12 @@ export function CourseFormDialog({
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
+                    {t('save')}
                   </>
                 ) : isEdit ? (
-                  'Update Course'
+                  t('update')
                 ) : (
-                  'Create Course'
+                  t('create')
                 )}
               </Button>
             </DialogFooter>

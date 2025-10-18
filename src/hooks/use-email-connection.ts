@@ -13,17 +13,17 @@ type ConnectionStatus =
   | 'failed'
   | 'expired';
 
-interface UseGmailConnectionProps {
-  courseId: string;
+interface UseEmailConnectionProps {
+  emailProvider?: string;
   onSuccess?: () => void;
   onConnectionSuccess?: (account: ComposioConnectedAccount) => void;
 }
 
-export function useGmailConnection({
-  courseId,
+export function useEmailConnection({
+  emailProvider,
   onSuccess,
   onConnectionSuccess,
-}: UseGmailConnectionProps) {
+}: UseEmailConnectionProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [connectionStatus, setConnectionStatus] =
     useState<ConnectionStatus>('idle');
@@ -78,7 +78,7 @@ export function useGmailConnection({
       const response = await fetch('/api/connections/initiate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ courseId }),
+        body: JSON.stringify({ emailProvider }),
       });
 
       if (!response.ok) {
@@ -99,7 +99,7 @@ export function useGmailConnection({
 
         const authWindow = window.open(
           data.redirectUrl,
-          'Gmail Authorization',
+          'Email Authorization',
           `width=${width},height=${height},left=${left},top=${top}`
         );
 
@@ -115,24 +115,6 @@ export function useGmailConnection({
       setConnectionStatus('failed');
     } finally {
       setIsDialogOpen(false);
-    }
-  };
-
-  const addAccountToCourse = async (account: ComposioConnectedAccount) => {
-    setAddingAccountId(account.id);
-
-    try {
-      // API call to add inbox
-      await createInbox({
-        courseId: courseId,
-        email: account.email,
-        composioConnectionId: account.id,
-      });
-      onSuccess?.();
-    } catch (error) {
-      console.error('Error adding account:', error);
-    } finally {
-      setAddingAccountId(null);
     }
   };
 
@@ -156,7 +138,6 @@ export function useGmailConnection({
     connectionStatus,
     addingAccountId,
     initiateConnection,
-    addAccountToCourse,
     cancelConnection,
     retryConnection,
   };

@@ -11,6 +11,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { MailWarning, Loader2, X, Check, MailPlus } from 'lucide-react';
 import { ConnectGmailDialog } from './connect-gmail-dialog';
+import Image from 'next/image';
+import outlookLogo from '@/assets/svg/outlook-logo.svg';
+import gmailLogo from '@/assets/svg/gmail.svg';
 
 type ConnectionStatus =
   | 'idle'
@@ -27,27 +30,35 @@ interface NoAccountsEmptyStateProps {
   onConnect: () => void;
   onCancel: () => void;
   onRetry: () => void;
+  onSelectEmailProvider: any;
+  selectedEmailProvider?: string;
 }
 
 export function NoAccountsEmptyState({
   connectionStatus,
   isDialogOpen,
+  selectedEmailProvider,
   onOpenDialog,
   onConnect,
   onCancel,
   onRetry,
+  onSelectEmailProvider,
 }: NoAccountsEmptyStateProps) {
+  const handleOpenDialog = (provider: string) => {
+    onOpenDialog(true);
+    onSelectEmailProvider(provider);
+  };
+
   return (
     <div className="flex-1 overflow-hidden mx-auto max-w-7xl w-full px-6">
-      <Empty className="min-h-[40vh] border-none rounded-3xl">
+      <Empty className="min-h-[40vh] rounded-3xl mt-6 border border-dashed">
         <EmptyHeader>
           <EmptyMedia className="rounded-full" variant="icon">
             <MailWarning className="size-6 text-red-500" />
           </EmptyMedia>
-          <EmptyTitle>No Gmail account connected yet</EmptyTitle>
+          <EmptyTitle>No Inbox connected yet</EmptyTitle>
           <EmptyDescription>
-            Connect your Gmail account to start analyzing emails for this
-            course.
+            Connect your Inbox to start analyzing emails for this course.
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
@@ -92,17 +103,45 @@ export function NoAccountsEmptyState({
               </Button>
             </div>
           ) : (
-            <ConnectGmailDialog
-              open={isDialogOpen}
-              onOpenChange={onOpenDialog}
-              onConnect={onConnect}
-              triggerButton={
-                <Button size="lg" className="gap-2">
-                  <MailPlus className="h-4 w-4" />
-                  Connect Gmail Account
-                </Button>
-              }
-            />
+            <div className="flex flex-col gap-4">
+              <Button
+                size="lg"
+                variant="outline"
+                className="gap-2 border-none"
+                onClick={() => handleOpenDialog('GMAIL')}
+              >
+                <Image
+                  src={gmailLogo}
+                  alt="gmail Logo"
+                  width={20}
+                  height={20}
+                  className="object-contain"
+                />
+                Connect Gmail Account
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="gap-2 border-none "
+                onClick={() => handleOpenDialog('OUTLOOK')}
+              >
+                <Image
+                  src={outlookLogo}
+                  alt="Outlook Logo"
+                  width={20}
+                  height={20}
+                  className="object-contain"
+                />
+                Connect Outlook Account
+              </Button>
+              <ConnectGmailDialog
+                open={isDialogOpen}
+                onOpenChange={onOpenDialog}
+                onConnect={onConnect}
+                isLoading={false}
+                type={selectedEmailProvider as 'GMAIL' | 'OUTLOOK'}
+              />
+            </div>
           )}
         </EmptyContent>
       </Empty>

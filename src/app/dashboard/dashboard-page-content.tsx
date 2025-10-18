@@ -4,6 +4,14 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+  EmptyDescription,
+  EmptyContent,
+} from '@/components/ui/empty';
 import { CourseFormDialog } from '@/components/course-form-dialog';
 import {
   Loader2,
@@ -13,11 +21,16 @@ import {
   Mail,
   ChevronRight,
   Sparkles,
+  Calendar,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCurrentUser, useUserDisplayName } from '@/hooks/use-current-user';
-import { useCourses, useCreateCourse } from '@/hooks/use-courses';
-import { Course } from '@/lib/supabase/types/courses.types';
+import {
+  useCourses,
+  useCreateCourse,
+  useUpdateCourse,
+} from '@/hooks/use-courses';
+import { Course, InsertCourse } from '@/lib/supabase/types/courses.types';
 import { User } from '@supabase/supabase-js';
 import { useTranslations } from 'next-intl';
 
@@ -37,21 +50,19 @@ export default function DashboardPageContent({
   const { data: courses, isLoading } = useCourses(user?.id);
   const { mutateAsync: createCourse, isPending: isCreatingCourse } =
     useCreateCourse();
-
-  const handleCreateCourse = async (courseData: {
-    name: string;
-    description: string;
-    context: string;
-  }) => {
-    const { name, description, context } = courseData;
+  const { mutateAsync: updateCourse, isPending: isUpdatingCourse } =
+    useUpdateCourse();
+  const handleCreateCourse = async (
+    courseData: Omit<
+      InsertCourse,
+      'professor_id' | 'created_at' | 'updated_at' | 'id'
+    >
+  ) => {
     try {
       await createCourse([
         {
-          name,
-          description,
-          context,
           professor_id: user?.id!,
-          year: '2025',
+          ...courseData,
         },
       ]);
 
@@ -62,12 +73,18 @@ export default function DashboardPageContent({
     }
   };
 
-  const handleUpdateCourse = async (courseData: {
-    name: string;
-    description: string;
-    context: string;
-  }) => {
+  const handleUpdateCourse = async (
+    courseData: Omit<
+      InsertCourse,
+      'professor_id' | 'created_at' | 'updated_at' | 'id'
+    >
+  ) => {
     if (!editingCourse) return;
+
+    await updateCourse({
+      id: editingCourse.id,
+      ...courseData,
+    });
 
     try {
       setIsFormOpen(false);
@@ -177,10 +194,7 @@ export default function DashboardPageContent({
                         {t('totalStudents')}
                       </p>
                       <p className="text-3xl font-bold">
-                        {courses?.reduce(
-                          (sum, c) => sum + c.student_count,
-                          0
-                        ) || 0}
+                        {courses?.reduce((sum, c) => sum + c.student_count, 0)}
                       </p>
                     </div>
                     <div className="h-12 w-12 rounded-full bg-chart-2/10 flex items-center justify-center">
@@ -253,65 +267,27 @@ export default function DashboardPageContent({
         )}
 
         {/* Empty State */}
-        {!isLoading && !courses && (
-          <div className="text-center py-20 border-2 border-dashed rounded-lg bg-card">
-            <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-2xl font-semibold mb-2">{t('noCourses')}</h2>
-            <p className="text-muted-foreground mb-6">
-              {t('createFirstCourse')}
-            </p>
-            <Button onClick={handleOpenCreateForm} size="lg">
-              <Plus className="mr-2 h-5 w-5" />
-              {t('createYourFirstCourse')}
-            </Button>
-          </div>
+        {!isLoading && (!courses || courses.length === 0) && (
+          <Empty className="border-2">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <BookOpen className="h-6 w-6" />
+              </EmptyMedia>
+              <EmptyTitle>{t('noCourses')}</EmptyTitle>
+              <EmptyDescription>{t('createFirstCourse')}</EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
+              <Button onClick={handleOpenCreateForm} size="lg">
+                <Plus className="mr-2 h-5 w-5" />
+                {t('createYourFirstCourse')}
+              </Button>
+            </EmptyContent>
+          </Empty>
         )}
 
         {/* Courses Section */}
         {!isLoading && courses && courses?.length > 0 && (
-          <div className="space-y-8">
-            {/* Important Actions */}
-            {/* <section>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <AlertCircle className="h-5 w-5 text-destructive" />
-                  Important Actions (
-                  {courses?.filter(c => c.unreadEmailCount > 0).length})
-                </h2>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                {courses
-                  .filter(c => c.unreadEmailCount > 0)
-                  .slice(0, 2)
-                  .map(course => (
-                    <Card
-                      key={course.id}
-                      className="p-4 hover:shadow-lg transition-all cursor-pointer border-l-4 border-l-destructive"
-                      onClick={() =>
-                        router.push(`/dashboard/courses/${course.id}`)
-                      }
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <Mail className="h-4 w-4 text-destructive" />
-                            <h3 className="font-semibold">{course.title}</h3>
-                          </div>
-                          <p className="text-sm text-muted-foreground mb-2">
-                            {course.unreadEmailCount} unread emails
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {new Date().toLocaleDateString()}
-                          </p>
-                        </div>
-                        <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                      </div>
-                    </Card>
-                  ))}
-              </div>
-            </section> */}
-
+          <div className="space-y-8 ">
             {/* Courses Horizontal Scroll */}
             <section>
               <div className="flex items-center justify-between mb-4">
@@ -346,10 +322,10 @@ export default function DashboardPageContent({
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 opacity-0 rounded-full group-hover:opacity-100 transition-opacity"
-                            onClick={e => {
-                              e.stopPropagation();
-                              handleEdit(course);
-                            }}
+                            // onClick={e => {
+                            //   e.stopPropagation();
+                            //   handleEdit(course);
+                            // }}
                           >
                             <ChevronRight className="h-4 w-4" />
                           </Button>
@@ -374,10 +350,10 @@ export default function DashboardPageContent({
                             </span>
                           </div>
                           <div className="flex items-center gap-1.5">
-                            <Mail className="h-4 w-4 text-muted-foreground" />
-                            {/* <span className="text-sm font-medium">
-                              {course.inboxes?.map((inbox)=>)}
-                            </span> */}
+                            <Calendar className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-sm font-medium">
+                              {course.year}
+                            </span>
                           </div>
                           <div className="flex items-center gap-1.5 ml-auto">
                             <Sparkles className="h-4 w-4 text-primary" />

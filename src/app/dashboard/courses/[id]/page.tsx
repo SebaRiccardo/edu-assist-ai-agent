@@ -10,7 +10,7 @@ import { Loader2 } from 'lucide-react';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useCourse, useUpdateCourse } from '@/hooks/use-courses';
 import { useConnections } from '@/hooks/use-connections';
-import { useGmailConnection } from '@/hooks/use-gmail-connection';
+import { useEmailConnection } from '@/hooks/use-email-connection';
 import { ConnectionStatusCard } from '@/components/connection-status-card';
 import { NoAccountsEmptyState } from '@/components/no-accounts-empty-state';
 import { InsertCourse } from '@/lib/supabase/types/courses.types';
@@ -39,16 +39,15 @@ export default function CourseDetailsPage() {
 
   // Edit course dialog state
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [emailProvider, setEmailProvider] = useState(undefined);
 
-  // Gmail connection logic
-  const gmailConnection = useGmailConnection({
-    courseId,
+  const emailConnection = useEmailConnection({
+    emailProvider,
     onConnectionSuccess: () => {
       // Connection successful, data will auto-refresh
     },
   });
 
-  // Track selected tab (Gmail account)
   const [selectedAccountId, setSelectedAccountId] = useState<string>('');
 
   // Set default tab when connections load
@@ -66,20 +65,20 @@ export default function CourseDetailsPage() {
   // Transform Supabase data to DomainCourse type
   const domainCourse: DomainCourse | null = courseData
     ? {
-      id: courseData.id,
-      name: courseData.name,
-      year: courseData.year ?? '',
-      description: courseData.description,
-      context: courseData.context,
-      professorId: courseData.professor_id,
-      studentCount: courseData.student_count,
-      startAt: courseData.start_at
-        ? new Date(courseData.start_at!)
-        : undefined,
-      endAt: courseData.end_at ? new Date(courseData.end_at!) : undefined,
-      createdAt: new Date(courseData.created_at),
-      updatedAt: new Date(courseData.updated_at),
-    }
+        id: courseData.id,
+        name: courseData.name,
+        year: courseData.year ?? '',
+        description: courseData.description,
+        context: courseData.context,
+        professorId: courseData.professor_id,
+        studentCount: courseData.student_count,
+        startAt: courseData.start_at
+          ? new Date(courseData.start_at!)
+          : undefined,
+        endAt: courseData.end_at ? new Date(courseData.end_at!) : undefined,
+        createdAt: new Date(courseData.created_at),
+        updatedAt: new Date(courseData.updated_at),
+      }
     : null;
 
   // Email state per account - using a map to store emails for each account
@@ -170,7 +169,7 @@ export default function CourseDetailsPage() {
       });
 
       if (!result.success) {
-        if (result.account.status !== "ACTIVE") {
+        if (result.account.status !== 'ACTIVE') {
           toast.error('Email account is not active. Please reconnect.', {
             id: toastId,
           });
@@ -280,7 +279,7 @@ export default function CourseDetailsPage() {
   const handleAutoTagAll = async (accountId: string) => {
     toast.info('Auto-tagging all emails...');
     // Implement auto-tagging logic here
-  }
+  };
 
   // Redirect if course not found
   if (isErrorCourse) {
@@ -297,8 +296,7 @@ export default function CourseDetailsPage() {
   }
 
   const activeConnections =
-    connections?.filter(conn => conn.status === 'ACTIVE' && conn.email) ||
-    [];
+    connections?.filter(conn => conn.status === 'ACTIVE' && conn.email) || [];
 
   const hasNoConnections = activeConnections.length === 0;
 
@@ -308,25 +306,27 @@ export default function CourseDetailsPage() {
         <CourseDetailsHeader
           course={domainCourse}
           isChecking={false}
-          onAnalyze={() => { }}
+          onAnalyze={() => {}}
           onEdit={handleEditCourse}
         />
 
         <ConnectionStatusCard
-          status={gmailConnection.connectionStatus}
-          onCancel={gmailConnection.cancelConnection}
+          status={emailConnection.connectionStatus}
+          onCancel={emailConnection.cancelConnection}
         />
       </div>
 
       {/* Main Content Area */}
       {hasNoConnections ? (
         <NoAccountsEmptyState
-          connectionStatus={gmailConnection.connectionStatus}
-          isDialogOpen={gmailConnection.isDialogOpen}
-          onOpenDialog={gmailConnection.setIsDialogOpen}
-          onConnect={gmailConnection.initiateConnection}
-          onCancel={gmailConnection.cancelConnection}
-          onRetry={gmailConnection.retryConnection}
+          selectedEmailProvider={emailProvider}
+          onSelectEmailProvider={setEmailProvider}
+          connectionStatus={emailConnection.connectionStatus}
+          isDialogOpen={emailConnection.isDialogOpen}
+          onOpenDialog={emailConnection.setIsDialogOpen}
+          onConnect={emailConnection.initiateConnection}
+          onCancel={emailConnection.cancelConnection}
+          onRetry={emailConnection.retryConnection}
         />
       ) : (
         <div className="flex-1 overflow-hidden mx-auto max-w-7xl w-full px-6 pt-6">
@@ -388,7 +388,7 @@ export default function CourseDetailsPage() {
                     userId={user?.id}
                     isSendingReply={false}
                     replyingToEmailId={null}
-                    onAutoTagAll={ ()=> handleAutoTagAll(account.id)}
+                    onAutoTagAll={() => handleAutoTagAll(account.id)}
                     onAnalyze={() => handleAnalyzeInbox(account.id)}
                     onAutoReply={emailId =>
                       handleAutoReply(emailId, account.id)

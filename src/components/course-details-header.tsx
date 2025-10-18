@@ -26,6 +26,7 @@ import {
   Pencil,
   ChevronDown,
 } from 'lucide-react';
+import { Badge } from './ui/badge';
 
 interface CourseDetailsHeaderProps {
   course: DomainCourse;
@@ -95,15 +96,18 @@ export function CourseDetailsHeader({
         {/* Title and Action - Horizontal Layout */}
         <div className="flex items-center justify-between gap-4">
           <div className="flex-1 gap-4">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground my-2">
+            {/* <div className="flex items-center gap-2 text-sm text-muted-foreground my-2">
               <span>
                 Created {new Date(course.createdAt).toLocaleDateString()}
               </span>
-            </div>
+            </div> */}
             <div className="flex items-center justify-between gap-4 ">
-              <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">
-                {course.name}
-              </h1>
+              <div className="flex flex-row gap-2 items-center mb-2">
+                <h1 className="text-3xl font-bold tracking-tight text-foreground">
+                  {course.name}
+                </h1>
+                <Badge>{course.year}</Badge>
+              </div>
               {/* Analyze Button */}
               {/* <Button
                 onClick={onAnalyze}
@@ -129,12 +133,11 @@ export function CourseDetailsHeader({
             </p>
 
             {course.studentCount > 0 && (
-              <div className="flex items-center gap-2 pt-2 text-muted-foreground">
-                <Users className="text-sm" size={15} />
-                <span className="flex gap-1">
-                  {course.studentCount}
+              <div className="flex items-center gap-2 pt-4 text-muted-foreground">
+                <Badge variant="info">
+                  {course.studentCount}{' '}
                   {course.studentCount === 1 ? 'student' : 'students'}
-                </span>
+                </Badge>
               </div>
             )}
 
@@ -146,12 +149,8 @@ export function CourseDetailsHeader({
                 className="mt-4"
               >
                 <CollapsibleTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="gap-2  text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <span className="text-sm font-medium">
+                  <Button variant="link" size="sm" className=" p-0">
+                    <span className="text-sm font-normal">
                       {isContextOpen ? 'Hide' : 'Read'} course context
                     </span>
                     <ChevronDown
@@ -162,8 +161,8 @@ export function CourseDetailsHeader({
                   </Button>
                 </CollapsibleTrigger>
                 <CollapsibleContent className="collapsible-content">
-                  <div className="mt-3 p-4 rounded-lg bg-muted/50 border border-border">
-                    <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                  <div className="mt-3 p-4 rounded-lg bg-muted/50 border border-none">
+                    <p className="text-base text-muted-foreground whitespace-pre-wrap leading-relaxed">
                       {course.context}
                     </p>
                   </div>
