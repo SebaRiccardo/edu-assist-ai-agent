@@ -6,7 +6,6 @@ import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { prefetchQuery } from '@supabase-cache-helpers/postgrest-react-query';
 import { getAllProfilesQuery } from '@/hooks/queries/profiles';
 import { getAllPlansQuery } from '@/hooks/queries/subscription-plans';
-import { getActiveSubscriptionsQuery } from '@/hooks/queries/user-subscriptions';
 
 /**
  * Admin Dashboard Page
@@ -15,17 +14,16 @@ import { getActiveSubscriptionsQuery } from '@/hooks/queries/user-subscriptions'
 export default async function AdminPage() {
   const supabase = await createClient();
 
-  // const queryClient = getQueryClient();
+  const queryClient = getQueryClient();
 
-  // await Promise.all([
-  //   prefetchQuery(queryClient, getAllProfilesQuery(supabase)),
-  //   prefetchQuery(queryClient, getAllPlansQuery(supabase)),
-  //   prefetchQuery(queryClient, getActiveSubscriptionsQuery(supabase)),
-  // ]);
+  await Promise.all([
+    prefetchQuery(queryClient, getAllProfilesQuery(supabase)),
+    prefetchQuery(queryClient, getAllPlansQuery(supabase)),
+  ]);
 
   return (
-    // <HydrationBoundary state={dehydrate(queryClient)}>
-    <AdminDashboardContent />
-    // </HydrationBoundary>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <AdminDashboardContent />
+    </HydrationBoundary>
   );
 }

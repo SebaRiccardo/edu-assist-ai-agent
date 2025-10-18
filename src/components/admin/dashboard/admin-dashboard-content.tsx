@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { useProfiles } from '@/hooks/use-profiles';
 import { usePlans } from '@/hooks/use-subscription-plans';
-import { useActiveSubscriptions } from '@/hooks/use-subscriptions';
+import { useActiveSubscriptions } from '@/hooks/use-mp-subscriptions';
 import Link from 'next/link';
 
 export function AdminDashboardContent() {

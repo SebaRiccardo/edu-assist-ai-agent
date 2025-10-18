@@ -1,37 +1,24 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  getUserSubscriptionAction,
-  cancelSubscriptionAction as cancelSubscriptionServerAction,
-} from '@/actions/subscriptions';
+  useQuery,
+  useUpdateMutation,
+} from '@supabase-cache-helpers/postgrest-react-query';
+import useSupabaseBrowser from '@/lib/supabase/client';
+import { getUserSubscriptionById } from './queries/user-subscriptions';
+import { cancelSubscriptionAction } from '@/actions';
+import { useMutation } from '@tanstack/react-query';
 
-/**
- * Hook to get the current user's subscription
- */
-export function useUserSubscription() {
-  return useQuery({
-    queryKey: ['user-subscription'],
-    queryFn: async () => {
-      return await getUserSubscriptionAction();
-    },
-    staleTime: 1000 * 60 * 5, // 5 minutes
+export function useUserSubscription(userId?: string) {
+  const client = useSupabaseBrowser();
+
+  return useQuery(getUserSubscriptionById(client, userId ?? ''), {
+    enabled: !!userId,
   });
 }
 
-/**
- * Hook to cancel the current user's subscription
- */
-export function useCancelUserSubscription() {
-  const queryClient = useQueryClient();
-
+export function useCancelSubscription() {
   return useMutation({
-    mutationFn: async (subscriptionId: string) => {
-      return await cancelSubscriptionServerAction(subscriptionId);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user-subscription'] });
-      console.log('Subscription cancelled successfully');
-    },
+    mutationFn: cancelSubscriptionAction,
   });
 }

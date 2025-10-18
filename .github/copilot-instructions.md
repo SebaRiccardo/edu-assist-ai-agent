@@ -66,3 +66,7 @@ You are a Senior Front-End Developer and expert in ReactJS, Next.js 15, JavaScri
 ## Knowledge Updates
 
 When working with Next.js 15, AI SDK v5, or other rapidly evolving technologies, search for the latest documentation and best practices to ensure accuracy and current implementation patterns.
+
+## Always internationalize
+
+All the pages you create must be internazionalized using the current setup.

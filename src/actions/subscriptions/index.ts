@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import {
   getPlanAction,
   createSubscriptionAction,
+  cancelSubscriptionAction,
 } from '@/lib/mercadopago/actions';
 import type { PlanType } from '@/subscriptions/plans';
 
@@ -173,7 +174,7 @@ export async function createBasicSubscriptionForNewUserAction(userId: string) {
       .from('user_subscriptions')
       .insert({
         user_id: userId,
-        plan_id: 'basic',
+        type: 'basic',
         status: 'trialing',
         trial_start: now.toISOString(),
         trial_end: trialEnd.toISOString(),
@@ -184,20 +185,30 @@ export async function createBasicSubscriptionForNewUserAction(userId: string) {
       .single();
 
     if (error) {
-      throw error;
+      console.log(error.message);
+      return {
+        success: false,
+        error: error.message,
+      };
     }
 
-    return data;
-  } catch (error) {
+    return {
+      success: true,
+      data,
+    };
+  } catch (error: any) {
     console.error('Create basic subscription error:', error);
-    throw error;
+    return {
+      success: false,
+      error: error.message,
+    };
   }
 }
 
 /**
  * Cancels a subscription
  */
-export async function cancelSubscriptionAction(subscriptionId: string) {
+export async function cancelUserSubscriptionAction(subscriptionId: string) {
   try {
     const supabase = await createClient();
 
@@ -224,10 +235,7 @@ export async function cancelSubscriptionAction(subscriptionId: string) {
 
     // Cancel in MercadoPago if there's a preapproval ID
     if (subscription.mercadopago_preapproval_id) {
-      const { cancelSubscriptionAction: cancelMPAction } = await import(
-        '@/lib/mercadopago/actions'
-      );
-      const mpResult = await cancelMPAction(
+      const mpResult = await cancelSubscriptionAction(
         subscription.mercadopago_preapproval_id
       );
       // mpResult is the data, not a success object

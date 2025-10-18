@@ -9,7 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { IconMailSpark } from '@tabler/icons-react';
 import { MailPlus } from 'lucide-react';
-import { GmailAccountCard } from './gmail-account-card';
+import { EmailConnectedAccountCard } from './gmail-account-card';
 import { ConnectGmailDialog } from './connect-gmail-dialog';
 import { ComposioConnectedAccount } from '@/app/api/connections/route';
 import { Card, CardContent, CardFooter, CardHeader } from './ui/card';
@@ -48,7 +48,7 @@ export function AddInboxSection({
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {accounts.map(account => (
-            <GmailAccountCard
+            <EmailConnectedAccountCard
               key={account.id}
               account={account}
               onAdd={onAddAccount}

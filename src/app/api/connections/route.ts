@@ -55,17 +55,18 @@ export async function GET(request: NextRequest) {
 
     // Fetch connected accounts for the user
     const connectedAccounts: ConnectedAccountListResponse =
-      await ComposioService.getConnectedAccounts(id, 'GMAIL');
+      await ComposioService.getConnectedEmailAccounts(id);
 
     const connectedComposioAccounts = connectedAccounts?.items.map(
       (item: any) => {
+        console.log(item);
         const { state } = item;
         const { val } = state;
 
         const idToken = val?.id_token;
         const decoded = idToken ? decodeJwt(idToken || '') : {};
 
-        //console.log('Decoded ID Token:', decoded);
+        // console.log('val:', val);
         return {
           id: item.id,
           status: val.status,

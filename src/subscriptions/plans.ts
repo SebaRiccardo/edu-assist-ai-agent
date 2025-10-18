@@ -33,6 +33,7 @@ export function getPlansConfig(locale: 'en' | 'es' = 'es') {
  */
 export const SUBSCRIPTION_PLANS_CONFIG = {
   BASIC: {
+    type: 'basic' as PlanType,
     mp_id: process.env.MERCADOPAGO_BASIC_PLAN_ID || '',
     name: plansConfigES.basic.name,
     subtitle: plansConfigES.basic.subtitle,
@@ -48,6 +49,7 @@ export const SUBSCRIPTION_PLANS_CONFIG = {
     },
   },
   PRO: {
+    type: 'pro' as PlanType,
     mp_id: process.env.MERCADOPAGO_PRO_PLAN_ID || '',
     name: plansConfigES.pro.name,
     subtitle: plansConfigES.pro.subtitle,
@@ -63,6 +65,7 @@ export const SUBSCRIPTION_PLANS_CONFIG = {
     },
   },
   PRO_PLUS: {
+    type: 'pro_plus' as PlanType,
     mp_id: process.env.MERCADOPAGO_PRO_PLUS_PLAN_ID || '',
     name: plansConfigES.pro_plus.name,
     subtitle: plansConfigES.pro_plus.subtitle,
@@ -108,6 +111,7 @@ export const PLAN_FEATURES = {
   'unlimited-emails': ['pro_plus'],
   'priority-support': ['pro_plus'],
   'autonomous-email-management': ['pro_plus'],
+  'chat-with-inbox': ['pro_plus'],
 } as const;
 
 /**
@@ -125,8 +129,9 @@ export const PLAN_LIMITS = {
     prioritySupport: subscriptionLimits.basic.prioritySupport,
     autoLabels: subscriptionLimits.basic.autoLabels,
     realTimeReplies: subscriptionLimits.basic.realTimeReplies,
-    autonomusEmailManagement:
+    autonomousEmailManagement:
       subscriptionLimits.basic.autonomousEmailManagement,
+    chatWithInboxUsage: subscriptionLimits.basic.chatWithInboxUsage,
   },
   pro: {
     maxInboxes: subscriptionLimits.pro.maxInboxes,
@@ -137,7 +142,8 @@ export const PLAN_LIMITS = {
     autoLabels: subscriptionLimits.pro.autoLabels,
     prioritySupport: subscriptionLimits.pro.prioritySupport,
     realTimeReplies: subscriptionLimits.pro.realTimeReplies,
-    autonomusEmailManagement: subscriptionLimits.pro.autonomousEmailManagement,
+    autonomousEmailManagement: subscriptionLimits.pro.autonomousEmailManagement,
+    chatWithInboxUsage: subscriptionLimits.pro_plus.chatWithInboxUsage,
   },
   pro_plus: {
     maxInboxes: subscriptionLimits.pro_plus.maxInboxes,
@@ -150,8 +156,9 @@ export const PLAN_LIMITS = {
     autoLabels: subscriptionLimits.pro_plus.autoLabels,
     prioritySupport: subscriptionLimits.pro_plus.prioritySupport,
     realTimeReplies: subscriptionLimits.pro_plus.realTimeReplies,
-    autonomusEmailManagement:
+    autonomousEmailManagement:
       subscriptionLimits.pro_plus.autonomousEmailManagement,
+    chatWithInboxUsage: subscriptionLimits.pro_plus.chatWithInboxUsage,
   },
 } as const;
 

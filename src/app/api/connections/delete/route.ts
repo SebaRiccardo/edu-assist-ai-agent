@@ -17,7 +17,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Unauthorized',
+          error: 'unauthorized',
         },
         { status: 401 }
       );

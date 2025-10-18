@@ -1,8 +1,8 @@
 'use client';
 
 import {
+  useCancelSubscription,
   useUserSubscription,
-  useCancelUserSubscription,
 } from '@/hooks/use-user-subscription';
 import { Button } from '@/components/ui/button';
 import {
@@ -42,10 +42,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
 export default function SubscriptionPage() {
-  const { data: subscription, isLoading, error } = useUserSubscription();
-  const cancelMutation = useCancelUserSubscription();
+  const { user } = useCurrentUser();
+  const { data, isLoading, error } = useUserSubscription(user?.id);
+  const cancelMutation = useCancelSubscription();
 
   if (isLoading) {
     return (
@@ -66,7 +68,7 @@ export default function SubscriptionPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-destructive">{error.message}</p>
+            <p className="text-destructive"></p>
           </CardContent>
           <CardFooter>
             <Button asChild>
@@ -78,7 +80,7 @@ export default function SubscriptionPage() {
     );
   }
 
-  if (!subscription) {
+  if (!data || data?.length === 0) {
     return (
       <div className="container max-w-4xl mx-auto py-12">
         <Card>
@@ -103,8 +105,10 @@ export default function SubscriptionPage() {
     );
   }
 
-  const planDetails = getPlanDetails(subscription.plan_id as any);
-  const limits = PLAN_LIMITS[subscription.plan_id as keyof typeof PLAN_LIMITS];
+  const subscription = data[0];
+
+  const planDetails = getPlanDetails(subscription?.type as any);
+  const limits = PLAN_LIMITS[subscription?.type as keyof typeof PLAN_LIMITS];
 
   const getStatusBadge = (status: string) => {
     switch (status) {

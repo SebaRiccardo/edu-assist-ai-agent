@@ -36,20 +36,19 @@ const usernameSchema = z
 /**
  * Sign up form schema
  */
-export const signUpSchema = z
-  .object({
-    displayName: usernameSchema,
-    email: emailSchema,
-    password: passwordSchema,
-    confirmPassword: z.string().min(1, 'Please confirm your password'),
-    agreeToTerms: z.boolean().refine(val => val === true, {
-      message: 'You must agree to the privacy policy and terms',
-    }),
-  })
-  .refine(data => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
-  });
+export const signUpSchema = z.object({
+  displayName: usernameSchema,
+  email: emailSchema,
+  password: passwordSchema,
+  // confirmPassword: z.string().min(1, 'Please confirm your password'),
+  agreeToTerms: z.boolean().refine(val => val === true, {
+    message: 'You must agree to the privacy policy and terms',
+  }),
+});
+// .refine(data => data.password === data.confirmPassword, {
+//   message: 'Passwords do not match',
+//   path: ['confirmPassword'],
+// });
 
 /**
  * Sign in form schema

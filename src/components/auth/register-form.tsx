@@ -37,7 +37,6 @@ export default function RegisterForm() {
       displayName: '',
       email: '',
       password: '',
-      confirmPassword: '',
       agreeToTerms: false,
     },
   });
@@ -58,10 +57,10 @@ export default function RegisterForm() {
         setIsSignedUp(true);
         router.push('/auth/sign-up-success');
       } else {
-        setError(result.error || 'Failed to sign up. Please try again.');
+        setError(t('errorGenericTitle'));
       }
     } catch (err) {
-      setError('An unexpected error occurred. Please try again.');
+      setError(t('errorGenericTitle'));
       console.error('Sign up error:', err);
     } finally {
       setIsLoading(false);
@@ -158,7 +157,7 @@ export default function RegisterForm() {
           )}
         />
 
-        <FormField
+        {/* <FormField
           control={form.control}
           name="confirmPassword"
           render={({ field }) => (
@@ -178,7 +177,7 @@ export default function RegisterForm() {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
 
         {/* Terms and Conditions Checkbox */}
         <FormField
@@ -214,7 +213,7 @@ export default function RegisterForm() {
         {/* Submit Button */}
         <Button
           type="submit"
-          className="w-full mt-6"
+          className="w-full mt-6 cursor-pointer"
           size="lg"
           disabled={isLoading}
         >

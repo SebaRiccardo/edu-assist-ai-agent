@@ -70,7 +70,7 @@ export default function PricingSectionContent({
                 {plan.features.map(feature => (
                   <li key={feature} className="flex items-start gap-2">
                     <CheckCircle className="h-4 w-4 mt-0.5 text-green-600 " />
-                    {feature}
+                    <span className="text-sm">{feature}</span>
                   </li>
                 ))}
               </ul>

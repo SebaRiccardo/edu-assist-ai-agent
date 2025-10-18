@@ -33,7 +33,7 @@ const Register = () => {
           <Button
             disabled
             variant="outline"
-            className="w-full bg-background hover:bg-muted"
+            className="w-full bg-background hover:bg-muted h-10"
           >
             <img
               src="https://cdn.shadcnstudio.com/ss-assets/brand-logo/google-icon.png?width=20&height=20&format=auto"

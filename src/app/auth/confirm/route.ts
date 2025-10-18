@@ -1,3 +1,4 @@
+import { createBasicSubscriptionForNewUserAction } from '@/actions';
 import { createClient } from '@/lib/supabase/server';
 import { type EmailOtpType } from '@supabase/supabase-js';
 import { redirect } from 'next/navigation';
@@ -17,7 +18,27 @@ export async function GET(request: NextRequest) {
       type,
       token_hash,
     });
+
     if (!error) {
+      const { data, error } = await supabase.auth.getUser();
+
+      if (error) {
+        console.log('User is not signed in after verifyOtp');
+        return redirect(
+          `/auth/error?error=No pudismos activar tu prueba gratuita`
+        );
+      }
+
+      const res = await createBasicSubscriptionForNewUserAction(data.user.id);
+
+      if (!res.success) {
+        return redirect(
+          `/subscriptions/error?error=No pudismos activar tu prueba gratuita`
+        );
+      }
+
+      console.log('Basic subscription created for new user:', data.user.id);
+
       // redirect user to specified redirect URL or root of app
       redirect(next);
     } else {

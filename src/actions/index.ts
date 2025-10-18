@@ -11,5 +11,5 @@ export {
   getUserSubscriptionAction,
   updateSubscriptionStatusAction,
   createBasicSubscriptionForNewUserAction,
-  cancelSubscriptionAction,
+  cancelUserSubscriptionAction as cancelSubscriptionAction,
 } from './subscriptions';

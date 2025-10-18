@@ -15,19 +15,31 @@ export function getAllProfilesQuery(client: TypedSupabaseClient) {
  */
 export function getProfileByIdQuery(
   client: TypedSupabaseClient,
-  profileId: string
+  profileId: string | undefined
 ) {
+  if (!profileId) {
+    return client
+      .from('profiles')
+      .select(
+        `
+      id,
+      full_name,
+      avatar_url,
+      updated_at
+    `
+      )
+      .eq('id', 'impossible-id-to-match')
+      .single();
+  }
+
   return client
     .from('profiles')
     .select(
       `
       id,
       full_name,
-      username,
       avatar_url,
-      is_admin,
-      updated_at,
-      website,
+      updated_at
     `
     )
     .eq('id', profileId)

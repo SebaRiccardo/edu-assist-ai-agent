@@ -5,7 +5,7 @@ import {
   columns,
   SubscriptionRow,
 } from '@/components/admin/subscriptions/subscriptions-columns';
-import { useSubscriptions } from '@/hooks/use-subscriptions';
+import { useSubscriptions } from '@/hooks/use-mp-subscriptions';
 import { Loader2 } from 'lucide-react';
 
 export function SubscriptionsPageContent() {

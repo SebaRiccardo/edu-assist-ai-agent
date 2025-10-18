@@ -21,10 +21,19 @@ const GMAIL_TOOLS = {
   SEARCH: 'GMAIL_SEARCH',
 } as const;
 
+const OUTLOOK_TOOLS = {
+  FETCH_EMAILS: 'OUTLOOK_QUERY_EMAILS',
+  SEND_EMAIL: 'OUTLOOK_SEND_EMAIL',
+  REPLY_TO_THREAD: 'OUTLOOK_REPLY_EMAIL',
+  SEARCH: 'OUTLOOK_SEARCH_MESSAGES',
+} as const;
+
 /**
  * Gmail Toolkits
  */
 const GMAIL_TOOLKIT = 'GMAIL';
+
+const OUTLOOK_TOOLKIT = 'OUTLOOK';
 
 /**
  * Connection Status Types
@@ -53,6 +62,11 @@ export interface FetchEmailsWithAIOptions {
   labelIds?: string[];
 }
 
+const authConfigMap = {
+  gmail: process.env.GMAIL_AUTH_CONFIG_ID,
+  outlook: process.env.OUTLOOK_AUTH_CONFIG_ID,
+};
+
 export class ComposioService {
   private static instance: Composio<VercelProvider> | null = null;
 
@@ -78,6 +92,41 @@ export class ComposioService {
   // ============================================================================
   // CONNECTION MANAGEMENT
   // ============================================================================
+
+  private static async initConnection(userId: string, authConfig: string) {
+    const client = this.getClient();
+    const connectionRequest = await client.connectedAccounts.initiate(
+      userId,
+      authConfig,
+      {
+        allowMultiple: true,
+        //callbackUrl,
+      }
+    );
+    return connectionRequest;
+  }
+
+  /**
+   * Initialize email connection for a user with Gmail or Outlook
+   * @param userId - The user ID to initiate connection for
+   * @param emailProvider - The email provider slug ('gmail' or 'outlook')
+   * @returns Connection initiation response
+   */
+  static async initEmailConnection(
+    userId: string,
+    emailProvider: 'gmail' | 'outlook'
+  ) {
+    const authConfig =
+      authConfigMap[
+        emailProvider.toLocaleLowerCase() as keyof typeof authConfigMap
+      ];
+
+    if (!authConfig) {
+      throw new Error(`Unsupported email provider: ${emailProvider}`);
+    }
+
+    return await this.initConnection(userId, authConfig);
+  }
 
   /**
    * Get Gmail connected accounts
@@ -131,6 +180,20 @@ export class ComposioService {
   }
 
   /**
+   * List all connected email accounts for a user
+   *
+   * @param userId - The user ID
+   * @returns List of connected email accounts
+   */
+  static async getConnectedEmailAccounts(userId: string) {
+    const client = this.getClient();
+    return await client.connectedAccounts.list({
+      userIds: [userId],
+      toolkitSlugs: [GMAIL_TOOLKIT, OUTLOOK_TOOLKIT],
+    });
+  }
+
+  /**
    * Delete a connected account
    *
    * @param connectionId - The connected account ID to delete
@@ -165,15 +228,16 @@ export class ComposioService {
     }
   }
 
-  /**
-   * Get all Gmail tools for a specific user
-   *
-   * @param userId - The connected account ID from Composio
-   * @returns Gmail tools that can be used with AI SDK
-   */
   static async getGmailTools(userId: string, limit?: number) {
     return await this.getClient().tools.get(userId, {
       toolkits: [GMAIL_TOOLKIT],
+      limit,
+    });
+  }
+
+  static async getOutlookTools(userId: string, limit?: number) {
+    return await this.getClient().tools.get(userId, {
+      toolkits: [OUTLOOK_TOOLKIT],
       limit,
     });
   }

@@ -28,14 +28,6 @@ export function getAllSubscriptionsQuery(client: TypedSupabaseClient) {
         email,
         avatar_url
       ),
-      subscription_plans (
-        id,
-        name,
-        price,
-        currency,
-        interval,
-        interval_count
-      )
     `
     )
     .order('created_at', { ascending: false });
@@ -44,7 +36,7 @@ export function getAllSubscriptionsQuery(client: TypedSupabaseClient) {
 /**
  * Query builder for fetching active subscriptions only
  */
-export function getActiveSubscriptionsQuery(client: TypedSupabaseClient) {
+export function getActiveUserSubscriptionsQuery(client: TypedSupabaseClient) {
   return client
     .from('user_subscriptions')
     .select(
@@ -57,50 +49,24 @@ export function getActiveSubscriptionsQuery(client: TypedSupabaseClient) {
       current_period_end,
       created_at,
       profiles (
+        id,
         full_name,
-        username
+        username,
+        email,
+        avatar_url
       ),
-      subscription_plans (
-        name,
-        price,
-        currency
-      )
     `
     )
     .eq('status', 'authorized')
+    .eq('status', 'active')
     .order('created_at', { ascending: false });
 }
 
-/**
- * Query builder for fetching subscriptions by user ID
- */
-export function getSubscriptionsByUserIdQuery(
+export function getUserSubscriptionById(
   client: TypedSupabaseClient,
   userId: string
 ) {
-  return client
-    .from('user_subscriptions')
-    .select(
-      `
-      id,
-      plan_id,
-      status,
-      current_period_start,
-      current_period_end,
-      trial_start,
-      trial_end,
-      cancel_at_period_end,
-      created_at,
-      subscription_plans (
-        name,
-        price,
-        currency,
-        interval
-      )
-    `
-    )
-    .eq('user_id', userId)
-    .order('created_at', { ascending: false });
+  return client.from('user_subscriptions').select(`*`).eq('user_id', userId);
 }
 
 /**

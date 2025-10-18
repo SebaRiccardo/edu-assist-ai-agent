@@ -1,6 +1,9 @@
 'use client';
 
-import { useQuery } from '@supabase-cache-helpers/postgrest-react-query';
+import {
+  useQuery,
+  useUpdateMutation,
+} from '@supabase-cache-helpers/postgrest-react-query';
 import useSupabaseBrowser from '@/lib/supabase/client';
 import {
   getAllProfilesQuery,
@@ -23,12 +26,24 @@ export function useProfiles() {
 export function useProfile(profileId: string | undefined) {
   const client = useSupabaseBrowser();
 
-  return useQuery(
-    profileId ? getProfileByIdQuery(client, profileId) : (null as any),
-    {
-      enabled: !!profileId,
-    }
-  );
+  return useQuery(getProfileByIdQuery(client, profileId), {
+    enabled: !!profileId,
+  });
+}
+
+/**
+ * Hook to fetch a single profile by ID
+ */
+export function useUpdateProfile(
+  callbacks?: {
+    onSuccess: () => void
+  }
+) {
+  const client = useSupabaseBrowser();
+
+  return useUpdateMutation(client.from('profiles'), ['id'], null, {
+    onSuccess: callbacks?.onSuccess,
+  });
 }
 
 /**

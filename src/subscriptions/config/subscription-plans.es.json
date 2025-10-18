@@ -14,7 +14,7 @@
       "Filtrado consciente de cursos",
       "2 borradores de correo con IA por día",
       "100 correos procesados por mes",
-      "Sugerencias de etiquetas basadas en cursos (impulsadas por IA)"
+      "Sugerencias de etiquetas basadas en cursos"
     ],
     "free_trial_count": 7,
     "free_trial_interval": "dias",
@@ -32,9 +32,9 @@
       "Todo lo incluido en Básico",
       "Análisis inteligente para 2 bandejas de entrada",
       "Cursos ilimitados",
-      "Auto-etiquetado (impulsado por IA)",
-      "Respuestas automáticas (impulsadas por IA)",
-      "Ordenamiento prioritario (impulsado por IA)",
+      "Auto-etiquetado",
+      "Respuestas automáticas",
+      "Ordenamiento prioritario",
       "10 borradores de correo con IA por día",
       "1,000 correos procesados por mes"
     ],
@@ -49,16 +49,17 @@
     "price": 32500,
     "currency": "ARS",
     "period": "por mes",
-    "description": "Tu bandeja de entrada se gestiona sola — limpieza de fondo, respuestas en tiempo real, y priorización inteligente.",
+    "description": "Tu bandeja se gestiona sola, respuestas en tiempo real, y priorización inteligente.",
     "features": [
       "Todo lo incluido en Pro",
       "Análisis inteligente para 10 bandejas de entrada",
-      "Respuestas en tiempo real (impulsadas por IA)",
+      "Respuestas en tiempo real (Agente IA)",
       "Limpieza de fondo",
       "Priorización inteligente",
       "Organización continua (Agente IA)",
       "Borradores de correo con IA ilimitados",
-      "Correos procesados ilimitados"
+      "Correos procesados ilimitados",
+      "Chatea con tu bandeja de entrada"
     ],
     "free_trial_count": 0,
     "free_trial_interval": "dias",

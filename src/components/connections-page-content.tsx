@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useConnections } from '@/hooks/use-connections';
-import { GmailAccountCard } from '@/components/gmail-account-card';
+import { EmailConnectedAccountCard } from '@/components/gmail-account-card';
 import { ConnectGmailDialog } from '@/components/connect-gmail-dialog';
 import { ComposioConnectedAccount } from '@/app/api/connections/route';
 import {
@@ -17,6 +17,7 @@ import { toast } from 'sonner';
 import { Loader2, MailPlus, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import gmailLogo from '@/assets/gmail-logo.png';
+import outlookLogo from '@/assets/svg/outlook-logo.svg';
 import {
   Dialog,
   DialogContent,
@@ -30,23 +31,27 @@ export function ConnectionsPageContent() {
   const router = useRouter();
   const { data: accounts = [], isLoading, refetch } = useConnections();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDialogOpen2, setIsDialogOpen2] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
+  const [isConnectingOutlook, setIsConnectingOutlook] = useState(false);
   const [deletingAccountId, setDeletingAccountId] = useState<string | null>(
     null
   );
   const [accountToDelete, setAccountToDelete] =
     useState<ComposioConnectedAccount | null>(null);
 
-  const handleConnect = async () => {
+  const handleConnect = async (provider: string) => {
     try {
-      setIsConnecting(true);
+      provider === 'OUTLOOK'
+        ? setIsConnectingOutlook(true)
+        : setIsConnecting(true);
 
       const response = await fetch('/api/connections/initiate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ courseId: 'settings' }),
+        body: JSON.stringify({ emailProvider: provider }),
       });
 
       const data = await response.json();
@@ -54,13 +59,15 @@ export function ConnectionsPageContent() {
       if (!response.ok) {
         throw new Error(data.error || 'Failed to initiate connection');
       }
-
+      console.log(data);
       if (data.redirectUrl) {
         window.open(data.redirectUrl, '_blank');
-        toast.success('Opening Gmail authorization...', {
+        toast.success('Opening email authorization...', {
           description: 'Complete the authorization to connect your account.',
         });
-        setIsDialogOpen(false);
+        provider === 'OUTLOOK'
+          ? setIsDialogOpen2(false)
+          : setIsDialogOpen(false);
 
         // Start polling for new connections
         const pollInterval = setInterval(async () => {
@@ -70,7 +77,7 @@ export function ConnectionsPageContent() {
           // Check if we have a new account
           if (newAccounts.length > accounts.length) {
             clearInterval(pollInterval);
-            toast.success('Gmail account connected successfully!');
+            toast.success('Email account connected successfully!');
           }
         }, 3000);
 
@@ -78,13 +85,14 @@ export function ConnectionsPageContent() {
         setTimeout(() => clearInterval(pollInterval), 300000);
       }
     } catch (error) {
-      console.error('Error connecting Gmail:', error);
-      toast.error('Failed to connect Gmail account', {
+      console.error('Error connecting Email:', error);
+      toast.error('Failed to connect Email account', {
         description:
           error instanceof Error ? error.message : 'Please try again later.',
       });
     } finally {
       setIsConnecting(false);
+      setIsConnectingOutlook(false);
     }
   };
 
@@ -139,7 +147,7 @@ export function ConnectionsPageContent() {
         <div className="w-full flex flex-col gap-6">
           {/* Header */}
           <div className="flex flex-col gap-2">
-            <h1 className="text-3xl font-bold">Gmail Connections</h1>
+            <h1 className="text-3xl font-bold">Email Connections</h1>
             <p className="text-muted-foreground">
               Manage your connected Gmail accounts. Connect new accounts or
               remove existing ones.
@@ -149,14 +157,14 @@ export function ConnectionsPageContent() {
           {/* Accounts Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {accounts.map(account => (
-              <div key={account.id} className="relative">
-                <GmailAccountCard
-                  account={account}
-                  disabled={!!deletingAccountId}
-                  onDelete={() => handleDeleteClick(account)}
-                  isDeleting={deletingAccountId === account.id}
-                />
-              </div>
+              <EmailConnectedAccountCard
+                key={account.id}
+                type={account.toolkitSlug}
+                account={account}
+                disabled={!!deletingAccountId}
+                onDelete={() => handleDeleteClick(account)}
+                isDeleting={deletingAccountId === account.id}
+              />
             ))}
 
             {/* Add New Connection Card */}
@@ -164,19 +172,21 @@ export function ConnectionsPageContent() {
               open={isDialogOpen}
               onOpenChange={setIsDialogOpen}
               onConnect={handleConnect}
+              isLoading={isConnectingOutlook}
+              type="GMAIL"
               triggerButton={
-                <Card className="min-w-[380px] max-w-[380px] gap-2 bg-blue-100 border-2 border-blue-500 border-dashed hover:shadow-md transition-shadow cursor-pointer">
+                <Card className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 gap-2 transition-all duration-150 hover:bg-red-50 border-2 hover:border-red-500 hover:border-dashed hover:shadow-md cursor-pointer border-transparent">
                   <CardHeader>
-                    <div className="flex flex-col items-center gap-4">
+                    <div className="flex flex-col items-center gap-2">
                       <div className="">
                         <Image
                           src={gmailLogo}
-                          width={30}
-                          height={30}
+                          width={40}
+                          height={40}
                           alt="Gmail Logo"
                         />
                       </div>
-                      <div className="flex flex-col gap-1">
+                      <div className="flex flex-col ">
                         <span className="text-base font-semibold">
                           Connect new Gmail Account
                         </span>
@@ -186,12 +196,12 @@ export function ConnectionsPageContent() {
                   <CardContent className="flex-1">
                     <p className="text-center text-muted-foreground text-sm">
                       Connect a new Gmail account to manage your emails across
-                      multiple accounts.
+                      multiple courses.
                     </p>
                   </CardContent>
                   <CardFooter className="border-t-0 bg-transparent hover:bg-transparent">
                     <Button
-                      className="w-full"
+                      className="w-full text-red-500"
                       size="sm"
                       variant="link"
                       disabled={isConnecting || !!deletingAccountId}
@@ -212,26 +222,61 @@ export function ConnectionsPageContent() {
                 </Card>
               }
             />
+            <ConnectGmailDialog
+              open={isDialogOpen2}
+              onOpenChange={setIsDialogOpen2}
+              onConnect={handleConnect}
+              isLoading={isConnectingOutlook}
+              type="OUTLOOK"
+              triggerButton={
+                <Card className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60  gap-2 transition-all duration-150 hover:bg-blue-100 border-2 hover:border-blue-500 hover:border-dashed hover:shadow-md cursor-pointer border-transparent">
+                  <CardHeader>
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="">
+                        <Image
+                          src={outlookLogo}
+                          width={40}
+                          height={40}
+                          alt="outlook Logo"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <span className="text-base font-semibold">
+                          Connect new Outlook Account
+                        </span>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="flex-1">
+                    <p className="text-center text-muted-foreground text-sm">
+                      Connect a new Outlook account to manage your emails across
+                      multiple courses.
+                    </p>
+                  </CardContent>
+                  <CardFooter className="border-t-0 bg-transparent hover:bg-transparent">
+                    <Button
+                      className="w-full "
+                      size="sm"
+                      variant="link"
+                      disabled={isConnectingOutlook || !!deletingAccountId}
+                    >
+                      {isConnectingOutlook ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Connecting...
+                        </>
+                      ) : (
+                        <>
+                          <MailPlus className="mr-2 h-4 w-4" />
+                          Connect Account
+                        </>
+                      )}
+                    </Button>
+                  </CardFooter>
+                </Card>
+              }
+            />
           </div>
-
-          {/* Empty State */}
-          {accounts.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-12 gap-4">
-              <div className="text-center">
-                <h3 className="text-lg font-semibold mb-2">
-                  No Gmail accounts connected
-                </h3>
-                <p className="text-muted-foreground mb-6">
-                  Connect your first Gmail account to get started with email
-                  management.
-                </p>
-                <Button onClick={() => setIsDialogOpen(true)}>
-                  <MailPlus className="mr-2 h-4 w-4" />
-                  Connect Gmail Account
-                </Button>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
@@ -242,7 +287,7 @@ export function ConnectionsPageContent() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Gmail Connection?</DialogTitle>
+            <DialogTitle>Delete Email Connection?</DialogTitle>
             <DialogDescription>
               Are you sure you want to delete the connection to{' '}
               <span className="font-semibold">{accountToDelete?.email}</span>?
