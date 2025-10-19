@@ -5,7 +5,7 @@ import Providers from '@/components/providers';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale } from '@/lib/i18n/get-locale';
 import { getMessages } from '@/lib/i18n/get-messages';
-
+import { Analytics } from '@vercel/analytics/next';
 const montserrat = Montserrat({
   variable: '--font-montserrat',
   subsets: ['latin'],
@@ -36,10 +36,13 @@ export default async function RootLayout({
   const messages = await getMessages(locale);
   return (
     <html lang={locale}>
-      <body className={`${montserrat.variable} ${geistMono.variable} ${poppins.variable} antialiased`}>
+      <body
+        className={`${montserrat.variable} ${geistMono.variable} ${poppins.variable} antialiased`}
+      >
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Providers>{children}</Providers>
         </NextIntlClientProvider>
+        <Analytics />
       </body>
     </html>
   );
