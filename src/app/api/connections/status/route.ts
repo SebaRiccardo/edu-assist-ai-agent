@@ -1,4 +1,4 @@
-import composio from '@/lib/services/composio';
+import { ComposioService } from '@/lib/services/composio';
 import { getCurrentUser } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 
@@ -26,12 +26,15 @@ export async function GET(request: Request) {
   const connectionId = searchParams.get('connectionId');
 
   if (!connectionId) {
-    return NextResponse.json({ error: 'connection id required' }, { status: 401 });
+    return NextResponse.json(
+      { error: 'connection id required' },
+      { status: 401 }
+    );
   }
 
   try {
     // Wait for connection to complete (with timeout)
-    const connection = (await composio.connectedAccounts.waitForConnection(connectionId)) as ConnectionStatus;
+    const connection = await ComposioService.waitForConnection(connectionId);
 
     return NextResponse.json({
       id: connection.id,
@@ -46,6 +49,9 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
-    return NextResponse.json({ error: 'Failed to get connection status' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to get connection status' },
+      { status: 500 }
+    );
   }
 }

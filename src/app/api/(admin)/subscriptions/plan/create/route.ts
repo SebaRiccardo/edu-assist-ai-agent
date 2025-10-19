@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createSubscriptionPlan } from '@/lib/mercadopago/service';
-import { InsertSubscriptionPlan } from '@/lib/supabase/types/subscription-plans.types';
 import { z } from 'zod';
 
 // Extend the route timeout for MercadoPago API calls
@@ -36,7 +35,10 @@ export async function POST(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized. Please log in.' }, { status: 401 });
+      return NextResponse.json(
+        { error: 'Unauthorized. Please log in.' },
+        { status: 401 }
+      );
     }
 
     // 2. Parse and validate request body
@@ -75,7 +77,10 @@ export async function POST(request: NextRequest) {
     });
 
     if (!mercadoPagoResult.success || !mercadoPagoResult.data) {
-      console.error('MercadoPago plan creation failed:', mercadoPagoResult.error);
+      console.error(
+        'MercadoPago plan creation failed:',
+        mercadoPagoResult.error
+      );
       return NextResponse.json(
         {
           error: 'Failed to create subscription plan in MercadoPago',
@@ -87,37 +92,41 @@ export async function POST(request: NextRequest) {
 
     console.log(mercadoPagoResult);
 
-    // 4. Prepare data for Supabase
-    const supabasePlan: InsertSubscriptionPlan = {
-      name: planData.name,
-      description: planData.description || null,
-      price: planData.price,
-      currency: planData.currency,
-      interval: planData.interval,
-      interval_count: planData.intervalCount,
-      trial_period_days: planData.trialPeriodDays || null,
-      features: planData.features ? (planData.features as any) : null,
-      is_active: planData.isActive,
-      mercadopago_plan_id: mercadoPagoResult.data.id || null,
-    };
+    // // 4. Prepare data for Supabase
+    // const supabasePlan: InsertSubscriptionPlan = {
+    //   name: planData.name,
+    //   description: planData.description || null,
+    //   price: planData.price,
+    //   currency: planData.currency,
+    //   interval: planData.interval,
+    //   interval_count: planData.intervalCount,
+    //   trial_period_days: planData.trialPeriodDays || null,
+    //   features: planData.features ? (planData.features as any) : null,
+    //   is_active: planData.isActive,
+    //   mercadopago_plan_id: mercadoPagoResult.data.id || null,
+    // };
 
-    // 5. Save plan to Supabase
-    const { data: savedPlan, error: dbError } = await supabase.from('subscription_plans').insert(supabasePlan).select().single();
+    // // 5. Save plan to Supabase
+    // const { data: savedPlan, error: dbError } = await supabase
+    //   .from('subscription_plans')
+    //   .insert(supabasePlan)
+    //   .select()
+    //   .single();
 
-    if (dbError) {
-      console.error('Database insert error:', dbError);
+    // if (dbError) {
+    //   console.error('Database insert error:', dbError);
 
-      // Note: You may want to implement a rollback mechanism here
-      // to delete the MercadoPago plan if the database insert fails
+    //   // Note: You may want to implement a rollback mechanism here
+    //   // to delete the MercadoPago plan if the database insert fails
 
-      return NextResponse.json(
-        {
-          error: 'Failed to save subscription plan to database',
-          details: dbError.message,
-        },
-        { status: 500 }
-      );
-    }
+    //   return NextResponse.json(
+    //     {
+    //       error: 'Failed to save subscription plan to database',
+    //       details: dbError.message,
+    //     },
+    //     { status: 500 }
+    //   );
+    // }
 
     // 6. Return success response
     return NextResponse.json(
@@ -125,7 +134,6 @@ export async function POST(request: NextRequest) {
         success: true,
         message: 'Subscription plan created successfully',
         data: {
-          plan: savedPlan,
           mercadoPago: {
             planId: mercadoPagoResult.data.id,
             initPoint: mercadoPagoResult.data.init_point,

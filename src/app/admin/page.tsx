@@ -5,7 +5,6 @@ import { getQueryClient } from '@/providers/tankstack-query/get-query-client';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { prefetchQuery } from '@supabase-cache-helpers/postgrest-react-query';
 import { getAllProfilesQuery } from '@/hooks/queries/profiles';
-import { getAllPlansQuery } from '@/hooks/queries/subscription-plans';
 
 /**
  * Admin Dashboard Page
@@ -16,7 +15,7 @@ export default async function AdminPage() {
 
   const queryClient = getQueryClient();
 
-  await Promise.all([prefetchQuery(queryClient, getAllProfilesQuery(supabase)), prefetchQuery(queryClient, getAllPlansQuery(supabase))]);
+  await prefetchQuery(queryClient, getAllProfilesQuery(supabase));
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

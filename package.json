@@ -6,6 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
+    "type-check": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "generate-types": "npx supabase gen types typescript --project-id wbckhmzpyaabafkdeuhn > src\\lib\\supabase\\types\\database.types.ts"

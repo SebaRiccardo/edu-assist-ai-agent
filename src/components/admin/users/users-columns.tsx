@@ -18,7 +18,7 @@ export type UserRow = {
   id: string;
   email: string;
   full_name: string;
-  username: string | null;
+
   avatar_url: string | null;
   created_at: string | null;
   updated_at: string | null;
@@ -31,7 +31,10 @@ export const columns: ColumnDef<UserRow>[] = [
     accessorKey: 'full_name',
     header: ({ column }) => {
       return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
           User
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
@@ -54,7 +57,6 @@ export const columns: ColumnDef<UserRow>[] = [
           </Avatar>
           <div className="flex flex-col">
             <span className="font-medium">{user.full_name}</span>
-            {user.username && <span className="text-muted-foreground text-xs">@{user.username}</span>}
           </div>
         </div>
       );
@@ -64,7 +66,10 @@ export const columns: ColumnDef<UserRow>[] = [
     accessorKey: 'email',
     header: ({ column }) => {
       return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
           Email
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
@@ -87,8 +92,10 @@ export const columns: ColumnDef<UserRow>[] = [
       const plan = row.original.subscription_plan;
 
       const statusColors: Record<string, string> = {
-        authorized: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-        pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+        authorized:
+          'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+        pending:
+          'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
         cancelled: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
         paused: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300',
         none: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300',
@@ -96,10 +103,15 @@ export const columns: ColumnDef<UserRow>[] = [
 
       return (
         <div className="flex flex-col gap-1">
-          <Badge variant="outline" className={statusColors[status] || statusColors.none}>
+          <Badge
+            variant="outline"
+            className={statusColors[status] || statusColors.none}
+          >
             {status === 'none' ? 'No subscription' : status}
           </Badge>
-          {plan !== 'None' && <span className="text-muted-foreground text-xs">{plan}</span>}
+          {plan !== 'None' && (
+            <span className="text-muted-foreground text-xs">{plan}</span>
+          )}
         </div>
       );
     },
@@ -108,7 +120,10 @@ export const columns: ColumnDef<UserRow>[] = [
     accessorKey: 'created_at',
     header: ({ column }) => {
       return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
           Joined
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
@@ -140,12 +155,22 @@ export const columns: ColumnDef<UserRow>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(user.id)}>Copy user ID</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(user.email)}>Copy email</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(user.id)}
+            >
+              Copy user ID
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(user.email)}
+            >
+              Copy email
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View details</DropdownMenuItem>
             <DropdownMenuItem>View subscriptions</DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">Suspend user</DropdownMenuItem>
+            <DropdownMenuItem className="text-destructive">
+              Suspend user
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

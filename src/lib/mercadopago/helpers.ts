@@ -1,5 +1,5 @@
 /**
- * InboxProfs AI - MercadoPago Helpers
+ * AuxilIAr - MercadoPago Helpers
  * Common subscription and payment helpers for the application
  */
 
@@ -7,7 +7,7 @@ import { mercadoPagoService } from './service';
 import { SUBSCRIPTION_PLANS_CONFIG } from '../../subscriptions/plans';
 
 /**
- * Creates all InboxProfs AI subscription plans in MercadoPago
+ * Creates all AuxilIAr subscription plans in MercadoPago
  * Run this once during initial setup
  * @param currencyId - Currency code (e.g., 'USD', 'ARS', 'BRL')
  * @returns Created plan IDs
@@ -21,7 +21,7 @@ export async function setupInboxProfPlans(currencyId: string = 'ARS') {
 
   // Free Plan (for tracking purposes, even though it's $0)
   const freePlanResult = await mercadoPagoService.createPlan({
-    reason: 'InboxProfs AI - Free Plan',
+    reason: 'AuxilIAr - Free Plan',
     autoRecurring: {
       frequency: 1,
       frequencyType: 'months',
@@ -37,7 +37,7 @@ export async function setupInboxProfPlans(currencyId: string = 'ARS') {
 
   // Basic Plan
   const basicPlanResult = await mercadoPagoService.createPlan({
-    reason: 'InboxProfs AI - Basic Plan',
+    reason: 'AuxilIAr - Basic Plan',
     autoRecurring: {
       frequency: 1,
       frequencyType: 'months',
@@ -53,7 +53,7 @@ export async function setupInboxProfPlans(currencyId: string = 'ARS') {
 
   // Pro Plan
   const proPlanResult = await mercadoPagoService.createPlan({
-    reason: 'InboxProfs AI - Pro Plan',
+    reason: 'AuxilIAr - Pro Plan',
     autoRecurring: {
       frequency: 1,
       frequencyType: 'months',
@@ -71,13 +71,16 @@ export async function setupInboxProfPlans(currencyId: string = 'ARS') {
 }
 
 /**
- * Creates InboxProfs AI subscription plans WITH free trial
+ * Creates AuxilIAr subscription plans WITH free trial
  * Run this once during initial setup if you want to offer trial periods
  * @param currencyId - Currency code (e.g., 'USD', 'ARS', 'BRL')
  * @param trialDays - Number of trial days (default: 7)
  * @returns Created plan IDs
  */
-export async function setupInboxProfPlansWithTrial(currencyId: string = 'ARS', trialDays: number = 7) {
+export async function setupInboxProfPlansWithTrial(
+  currencyId: string = 'ARS',
+  trialDays: number = 7
+) {
   const results = {
     free: null as string | null,
     basic: null as string | null,
@@ -86,7 +89,7 @@ export async function setupInboxProfPlansWithTrial(currencyId: string = 'ARS', t
 
   // Free Plan (no trial needed, already free)
   const freePlanResult = await mercadoPagoService.createPlan({
-    reason: 'InboxProfs AI - Free Plan',
+    reason: 'AuxilIAr - Free Plan',
     autoRecurring: {
       frequency: 1,
       frequencyType: 'months',
@@ -102,7 +105,7 @@ export async function setupInboxProfPlansWithTrial(currencyId: string = 'ARS', t
 
   // Basic Plan with trial
   const basicPlanResult = await mercadoPagoService.createPlan({
-    reason: 'InboxProfs AI - Basic Plan (with trial)',
+    reason: 'AuxilIAr - Basic Plan (with trial)',
     autoRecurring: {
       frequency: 1,
       frequencyType: 'months',
@@ -122,7 +125,7 @@ export async function setupInboxProfPlansWithTrial(currencyId: string = 'ARS', t
 
   // Pro Plan with trial
   const proPlanResult = await mercadoPagoService.createPlan({
-    reason: 'InboxProfs AI - Pro Plan (with trial)',
+    reason: 'AuxilIAr - Pro Plan (with trial)',
     autoRecurring: {
       frequency: 1,
       frequencyType: 'months',
@@ -150,13 +153,17 @@ export async function setupInboxProfPlansWithTrial(currencyId: string = 'ARS', t
  * @param userName - User's full name
  * @returns Subscription details with checkout URL
  */
-export async function subscribeUserToPlan(planId: string, userEmail: string, userName: string) {
+export async function subscribeUserToPlan(
+  planId: string,
+  userEmail: string,
+  userName: string
+) {
   const [firstName, ...lastNameParts] = userName.split(' ');
   const lastName = lastNameParts.join(' ');
 
   const result = await mercadoPagoService.createSubscription({
     preApprovalPlanId: planId,
-    reason: 'InboxProfs AI Monthly Subscription',
+    reason: 'AuxilIAr Monthly Subscription',
     payer: {
       email: userEmail,
       firstName: firstName,

@@ -2,9 +2,9 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { createSubscriptionPlan as createMercadoPagoPlan } from '@/lib/mercadopago/service';
-import { InsertSubscriptionPlan } from '@/lib/supabase/types/subscription-plans.types';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
+import { getLocalizedPlan } from '@/subscriptions/plans';
 
 // Request validation schema
 const createPlanSchema = z.object({
@@ -26,7 +26,6 @@ type CreatePlanResult =
       success: true;
       message: string;
       data: {
-        plan: any;
         mercadoPago: {
           planId: string | undefined;
           initPoint: string | undefined;
@@ -46,7 +45,9 @@ type CreatePlanResult =
  * @param formData - Plan creation data
  * @returns Result object with success status and data or error
  */
-export async function createSubscriptionPlan(formData: CreatePlanRequest): Promise<CreatePlanResult> {
+export async function createSubscriptionPlan(
+  formData: CreatePlanRequest
+): Promise<CreatePlanResult> {
   try {
     // 1. Authenticate user
     const supabase = await createClient();
@@ -95,7 +96,10 @@ export async function createSubscriptionPlan(formData: CreatePlanRequest): Promi
     });
 
     if (!mercadoPagoResult.success || !mercadoPagoResult.data) {
-      console.error('MercadoPago plan creation failed:', mercadoPagoResult.error);
+      console.error(
+        'MercadoPago plan creation failed:',
+        mercadoPagoResult.error
+      );
       return {
         success: false,
         error: 'Failed to create subscription plan in MercadoPago',
@@ -112,7 +116,6 @@ export async function createSubscriptionPlan(formData: CreatePlanRequest): Promi
       success: true,
       message: 'Subscription plan created successfully',
       data: {
-        plan: savedPlan,
         mercadoPago: {
           planId: mercadoPagoResult.data.id,
           initPoint: mercadoPagoResult.data.init_point,
@@ -143,8 +146,6 @@ export async function createSubscriptionPlanFromTemplate(
   locale: 'en' | 'es' = 'en'
 ): Promise<CreatePlanResult> {
   try {
-    const { getLocalizedPlan } = await import('@/subscriptions/plans-utils');
-
     // Get plan configuration from template
     const planConfig = getLocalizedPlan(planType, locale);
 
