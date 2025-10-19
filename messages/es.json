@@ -83,8 +83,8 @@
   },
   "Landing": {
     "title": "Tu bandeja de entrada, por fin con ",
-    "title-2":"titularidad",
-    "subtitlesList":[
+    "title-2": "titularidad",
+    "subtitlesList": [
       "AuxilIAr organiza",
       "AuxilIAr etiqueta",
       "AuxilIAr responde"
@@ -450,7 +450,21 @@
     "hideContext": "Ocultar Contexto",
     "students": "{count, plural, =1 {# estudiante} other {# estudiantes}}",
     "analyzeInbox": "Analizar Bandeja",
-    "analyzing": "Analizando..."
+    "analyzing": "Analizando...",
+    "maxEmailsLabel": "Máximo de Correos",
+    "selectAccountFirst": "Por favor selecciona una cuenta de correo primero",
+    "analyzingInbox": "Analizando bandeja...",
+    "accountNotActive": "La cuenta de correo no está activa. Por favor reconecta.",
+    "failedToAnalyze": "Error al analizar correos",
+    "errorAnalyzing": "Ocurrió un error al analizar los correos. Por favor, inténtalo de nuevo.",
+    "foundCourseEmails": "Se encontraron {courseRelated} correos relacionados con el curso de {total} analizados",
+    "sendingEmailReply": "Enviando respuesta de correo...",
+    "emailNotFound": "Correo no encontrado",
+    "emailReplySent": "¡Respuesta de correo enviada con éxito!",
+    "replyDescription": "Tu respuesta ha sido enviada a: {email}",
+    "failedToSendEmail": "Error al enviar correo: {error}",
+    "errorSendingEmail": "Ocurrió un error al enviar el correo",
+    "autoTaggingEmails": "Etiquetando automáticamente todos los correos..."
   },
   "EmailList": {
     "noEmails": "Sin Correos Aún",
@@ -458,6 +472,15 @@
     "analyzeButton": "Analizar Bandeja",
     "analyzing": "Analizando tu bandeja...",
     "analyzingDescription": "Esto puede tomar unos momentos",
+    "analyzingTitle": "Analizando Tu Bandeja",
+    "noAnalysisTitle": "Listo para Analizar",
+    "noAnalysisDescription": "Haz clic en 'Analizar Bandeja' para escanear tu buzón en busca de correos relacionados con el curso usando IA.",
+    "cleanInboxTitle": "¡Todo al Día!",
+    "cleanInboxDescription": "No se encontraron correos relacionados con el curso en {count} mensajes analizados. Tu bandeja está limpia.",
+    "courseEmails": "{count, plural, =1 {# Correo del Curso} other {# Correos del Curso}}",
+    "reAnalyze": "Re-Analizar",
+    "selectEmailTitle": "Selecciona un Correo",
+    "selectEmailDescription": "Elige un correo de la lista para ver detalles y generar una respuesta.",
     "foundEmails": "Se encontraron {count} correos relacionados con el curso",
     "foundEmailsDescription": "De {total} correos analizados",
     "autoTagAll": "Auto-Etiquetar Todos",

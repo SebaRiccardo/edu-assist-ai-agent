@@ -83,8 +83,8 @@
   },
   "Landing": {
     "title": "Your inbox, finally earns ",
-    "title-2":"tenure",
-    "subtitlesList":[
+    "title-2": "tenure",
+    "subtitlesList": [
       "AuxilIAr organizes",
       "AuxilIAr labels",
       "AuxilIAr replies"
@@ -450,7 +450,21 @@
     "hideContext": "Hide Context",
     "students": "{count, plural, =1 {# student} other {# students}}",
     "analyzeInbox": "Analyze Inbox",
-    "analyzing": "Analyzing..."
+    "analyzing": "Analyzing...",
+    "maxEmailsLabel": "Max Emails",
+    "selectAccountFirst": "Please select an Email account first",
+    "analyzingInbox": "Analyzing inbox...",
+    "accountNotActive": "Email account is not active. Please reconnect.",
+    "failedToAnalyze": "Failed to analyze emails",
+    "errorAnalyzing": "An error occurred while analyzing emails. Please try again.",
+    "foundCourseEmails": "Found {courseRelated} course-related emails out of {total} analyzed",
+    "sendingEmailReply": "Sending email reply...",
+    "emailNotFound": "Email not found",
+    "emailReplySent": "Email reply sent successfully!",
+    "replyDescription": "Your reply has been sent to: {email}",
+    "failedToSendEmail": "Failed to send email: {error}",
+    "errorSendingEmail": "An error occurred while sending the email",
+    "autoTaggingEmails": "Auto-tagging all emails..."
   },
   "EmailList": {
     "noEmails": "No Emails Yet",
@@ -458,6 +472,15 @@
     "analyzeButton": "Analyze Inbox",
     "analyzing": "Analyzing your inbox...",
     "analyzingDescription": "This may take a few moments",
+    "analyzingTitle": "Analyzing Your Inbox",
+    "noAnalysisTitle": "Ready to Analyze",
+    "noAnalysisDescription": "Click 'Analyze Inbox' to scan your inbox for course-related emails using AI.",
+    "cleanInboxTitle": "All Caught Up!",
+    "cleanInboxDescription": "No course-related emails found in {count} messages analyzed. Your inbox is clean.",
+    "courseEmails": "{count, plural, =1 {# Course Email} other {# Course Emails}}",
+    "reAnalyze": "Re-Analyze",
+    "selectEmailTitle": "Select an Email",
+    "selectEmailDescription": "Choose an email from the list to view details and generate a response.",
     "foundEmails": "Found {count} Course-Related Emails",
     "foundEmailsDescription": "Out of {total} emails analyzed",
     "autoTagAll": "Auto-Tag All",

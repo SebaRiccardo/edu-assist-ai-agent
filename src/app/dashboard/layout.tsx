@@ -10,7 +10,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <div className="min-h-screen bg-gradient-to-bl from-pink-100 to-blue-200">
       <DashboardNavBar user={user} />
-      <main className="relative py-6 xl:py-20">{children}</main>
+      <main className="relative md:py-5 lg:xl:py-10 xl:py-20">{children}</main>
     </div>
   );
 }

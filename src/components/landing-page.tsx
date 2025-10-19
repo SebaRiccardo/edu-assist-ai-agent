@@ -16,7 +16,7 @@ export function LandingPage() {
       <AuroraBackground>
         <div className="relative w-full h-full flex flex-col">
           <Navbar />
-          <div className="mt-40">
+          <div className="mt-20 xl:mt-40">
             <HeroSection />
           </div>
         </div>

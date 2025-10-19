@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { CourseDetailsHeader } from '@/components/course-details-header';
 import { CourseFormDialog } from '@/components/course-form-dialog';
 import { EmailListStates } from '@/components/email-list-states';
@@ -16,12 +17,15 @@ import { NoAccountsEmptyState } from '@/components/no-accounts-empty-state';
 import { InsertCourse } from '@/lib/supabase/types/courses.types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 import { sendEmailReply, analyzeInbox } from '@/actions';
 import { toast } from 'sonner';
 
 export default function CourseDetailsPage() {
   const router = useRouter();
   const params = useParams();
+  const t = useTranslations('CourseDetails');
 
   const courseId = params.id as string;
   const { user } = useCurrentUser();
@@ -34,6 +38,7 @@ export default function CourseDetailsPage() {
   // Edit course dialog state
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [emailProvider, setEmailProvider] = useState(undefined);
+  const [maxEmails, setMaxEmails] = useState<number>(20);
 
   const emailConnection = useEmailConnection({
     emailProvider,
@@ -57,18 +62,18 @@ export default function CourseDetailsPage() {
   // Transform Supabase data to DomainCourse type
   const domainCourse: DomainCourse | null = courseData
     ? {
-        id: courseData.id,
-        name: courseData.name,
-        year: courseData.year ?? '',
-        description: courseData.description,
-        context: courseData.context,
-        professorId: courseData.professor_id,
-        studentCount: courseData.student_count,
-        startAt: courseData.start_at ? new Date(courseData.start_at!) : undefined,
-        endAt: courseData.end_at ? new Date(courseData.end_at!) : undefined,
-        createdAt: new Date(courseData.created_at),
-        updatedAt: new Date(courseData.updated_at),
-      }
+      id: courseData.id,
+      name: courseData.name,
+      year: courseData.year ?? '',
+      description: courseData.description,
+      context: courseData.context,
+      professorId: courseData.professor_id,
+      studentCount: courseData.student_count,
+      startAt: courseData.start_at ? new Date(courseData.start_at!) : undefined,
+      endAt: courseData.end_at ? new Date(courseData.end_at!) : undefined,
+      createdAt: new Date(courseData.created_at),
+      updatedAt: new Date(courseData.updated_at),
+    }
     : null;
 
   // Email state per account - using a map to store emails for each account
@@ -130,34 +135,34 @@ export default function CourseDetailsPage() {
     if (!domainCourse || !user || !courseData) return;
 
     if (!connectedAccountId) {
-      toast.error('Please select a Email account first');
+      toast.error(t('selectAccountFirst'));
       return;
     }
 
     setCheckingAccounts(prev => new Set(prev).add(connectedAccountId));
 
     const toastId = `analyze-${connectedAccountId}`;
-    toast.loading('Analyzing inbox...', { id: toastId });
+    toast.loading(t('analyzingInbox'), { id: toastId });
 
     try {
       const result = await analyzeInbox({
         course: courseData,
         connectedAccountId,
         reasoningLanguage: 'spanish',
-        maxEmails: 10,
+        maxEmails: maxEmails,
         includeRead: false,
         verbose: true,
       });
 
       if (!result.success) {
         if (result.account.status !== 'ACTIVE') {
-          toast.error('Email account is not active. Please reconnect.', {
+          toast.error(t('accountNotActive'), {
             id: toastId,
           });
           return;
         }
 
-        throw new Error(result.error || 'Failed to analyze emails');
+        throw new Error(result.error || t('failedToAnalyze'));
       }
 
       if (result.data && result.data.emails && result.data.analysis) {
@@ -176,13 +181,18 @@ export default function CourseDetailsPage() {
           },
         }));
 
-        toast.success(`Found ${result.data.analysis.stats.totalCourseRelated} course-related emails out of ${result.data.totalAnalyzed} analyzed`, {
-          id: toastId,
-        });
+        toast.success(
+          t('foundCourseEmails', {
+            courseRelated: result.data.analysis.stats.totalCourseRelated,
+            total: result.data.totalAnalyzed,
+          }),
+          {
+            id: toastId,
+          }
+        );
       }
     } catch (error) {
-      const errorMessage = 'Ocurrió un error al analizar los correos. Por favor, inténtalo de nuevo.';
-      toast.error(errorMessage, { id: toastId });
+      toast.error(t('errorAnalyzing'), { id: toastId });
     } finally {
       setCheckingAccounts(prev => {
         const next = new Set(prev);
@@ -199,12 +209,12 @@ export default function CourseDetailsPage() {
     const email = accountEmails.find(e => e.id === emailId);
 
     if (!email) {
-      console.error('Email not found:', emailId);
+      console.error(t('emailNotFound'), emailId);
       return;
     }
 
     setReplyingEmails(prev => new Set(prev).add(emailId));
-    toast.loading('Sending email reply...', { id: `reply-${emailId}` });
+    toast.loading(t('sendingEmailReply'), { id: `reply-${emailId}` });
 
     try {
       const result = await sendEmailReply({
@@ -229,18 +239,18 @@ export default function CourseDetailsPage() {
       });
 
       if (result.success) {
-        toast.success('Email reply sent successfully!', {
+        toast.success(t('emailReplySent'), {
           id: `reply-${emailId}`,
-          description: `Your reply has been sent to: ${email.from} `,
+          description: t('replyDescription', { email: email.from }),
         });
       } else {
-        toast.error(`Failed to send email: ${result.error}`, {
+        toast.error(t('failedToSendEmail', { error: result.error }), {
           id: `reply-${emailId}`,
         });
       }
     } catch (error) {
       console.error('Error in auto-reply:', error);
-      toast.error('An error occurred while sending the email', {
+      toast.error(t('errorSendingEmail'), {
         id: `reply-${emailId}`,
       });
     } finally {
@@ -253,7 +263,7 @@ export default function CourseDetailsPage() {
   };
 
   const handleAutoTagAll = async (accountId: string) => {
-    toast.info('Auto-tagging all emails...');
+    toast.info(t('autoTaggingEmails'));
     // Implement auto-tagging logic here
   };
 
@@ -278,8 +288,7 @@ export default function CourseDetailsPage() {
   return (
     <div className="flex flex-1 flex-col">
       <div className="mx-auto max-w-7xl w-full px-6 space-y-6">
-        <CourseDetailsHeader course={domainCourse} isChecking={false} onAnalyze={() => {}} onEdit={handleEditCourse} />
-
+        <CourseDetailsHeader course={domainCourse} isChecking={false} onAnalyze={() => { }} onEdit={handleEditCourse} />
         <ConnectionStatusCard status={emailConnection.connectionStatus} onCancel={emailConnection.cancelConnection} />
       </div>
 
@@ -299,7 +308,7 @@ export default function CourseDetailsPage() {
         <div className="flex-1 overflow-hidden mx-auto max-w-7xl w-full px-6 pt-6">
           <Tabs value={selectedAccountId} onValueChange={setSelectedAccountId} className="gap-0">
             {/* Gmail Account Tabs */}
-            <TabsList className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-lg rounded-b-none border-b p-0">
+            <TabsList className=" justify-between bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-lg rounded-b-none border-b p-0">
               {activeConnections.map(account => (
                 <TabsTrigger
                   key={account.id}
@@ -308,7 +317,7 @@ export default function CourseDetailsPage() {
                   className="px-4 rounded-md rounded-b-none data-[state=active]:border-primary dark:data-[state=active]:border-primary data-[state=active]:text-foreground text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground hover:border-muted-foreground/30 h-full border-0 border-b-2 border-transparent data-[state=active]:shadow-none"
                 >
                   {/* <Mail className="h-4 w-4" /> */}
-                  <span className="hidden sm:inline text-[13px]">{account.email}</span>
+                  <span className="hidden sm:inline text-[13px]">{account.email || account.id}</span>
                   {account.status !== 'ACTIVE' && (
                     <Badge variant="destructive" className="ml-2">
                       {account.status}
@@ -324,6 +333,26 @@ export default function CourseDetailsPage() {
                   )}
                 </TabsTrigger>
               ))}
+              {/* Max Emails Selector */}
+              <div className="ml-10">
+                {/* <Label htmlFor="maxEmails" className="text-sm font-medium">
+                  {t('maxEmailsLabel')}:
+                </Label> */}
+                <Select value={maxEmails.toString()} onValueChange={value => setMaxEmails(Number(value))}>
+                  <SelectTrigger id="maxEmails" className="bg-white shadow-none border-none text-black w-[180px]">
+                    <SelectValue placeholder={t('maxEmailsLabel')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="10">Ultimos 10 emails</SelectItem>
+                    <SelectItem value="20">Ultimos 20 emails</SelectItem>
+                    <SelectItem value="30">Ultimos 30 emails</SelectItem>
+                    <SelectItem value="40">Ultimos 40 emails</SelectItem>
+                    <SelectItem value="50">Ultimos 50 emails</SelectItem>
+                    <SelectItem value="75">Ultimos 75 emails</SelectItem>
+                    <SelectItem value="100">Ultimos 100 emails</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </TabsList>
 
             {/* Content for each Gmail account */}

@@ -26,6 +26,7 @@ export default function DashboardPageContent({ serverSideUser }: { serverSideUse
   const { data: courses, isLoading } = useCourses(user?.id);
   const { mutateAsync: createCourse, isPending: isCreatingCourse } = useCreateCourse();
   const { mutateAsync: updateCourse, isPending: isUpdatingCourse } = useUpdateCourse();
+  
   const handleCreateCourse = async (courseData: Omit<InsertCourse, 'professor_id' | 'created_at' | 'updated_at' | 'id'>) => {
     try {
       await createCourse([

@@ -47,10 +47,6 @@ const batchEmailAnalysisSchema = z.object({
  * @returns Transformed email in application format
  */
 function transformGmailMessage(message: GmailMessageBody): TransformedEmail {
-  console.log('Transforming Gmail message:', message);
-  if (!message) {
-    throw new Error('Invalid Gmail message');
-  }
   return {
     id: message.messageId || '',
     threadId: message.threadId || '',
@@ -184,7 +180,10 @@ Important:
 
   // STEP 5: Map analysis results back to original emails
   const categorizedEmails: CategorizedEmail[] = analysisResult.object.results.map(analysis => {
-    const originalEmail = fetchedEmails.find((e: GmailMessageBody) => e.messageId === analysis.emailId);
+    const originalEmail = fetchedEmails.find((e: GmailMessageBody) => {
+      console.log(`📧 Id Comp: ${e.messageId} - ${analysis.emailId}`);
+      return e.messageId === analysis.emailId
+    })
 
     return {
       ...transformGmailMessage(originalEmail!),
@@ -195,7 +194,7 @@ Important:
       reasoning: analysis.reasoning,
     };
   });
-
+  console.log(`🏷️ Categorized ${categorizedEmails.length} emails`);
   // Calculate statistics
   const stats = {
     totalAnalyzed: categorizedEmails.length,
