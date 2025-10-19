@@ -10,14 +10,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { PasswordInput } from '@/components/auth/password-input';
 import { signIn } from '@/auth/service';
 import { signInSchema, type SignInFormData } from '@/auth/schemas';
@@ -27,11 +20,7 @@ interface LoginFormProps extends React.ComponentPropsWithoutRef<'div'> {
   redirectTo?: string;
 }
 
-export function LoginForm({
-  className,
-  redirectTo = '/dashboard',
-  ...props
-}: LoginFormProps) {
+export function LoginForm({ className, redirectTo = '/dashboard', ...props }: LoginFormProps) {
   const t = useTranslations('Auth');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -85,12 +74,7 @@ export function LoginForm({
                 <span className="text-destructive">*</span>
               </FormLabel>
               <FormControl>
-                <Input
-                  type="email"
-                  placeholder={t('email')}
-                  {...field}
-                  disabled={isLoading}
-                />
+                <Input type="email" placeholder={t('email')} {...field} disabled={isLoading} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -108,21 +92,12 @@ export function LoginForm({
                   {t('password')}
                   <span className="text-destructive">*</span>
                 </FormLabel>
-                <Link
-                  href="/auth/forgot-password"
-                  className="text-sm text-primary hover:underline underline-offset-4"
-                  tabIndex={-1}
-                >
+                <Link href="/auth/forgot-password" className="text-sm text-primary hover:underline underline-offset-4" tabIndex={-1}>
                   {t('forgotPassword')}
                 </Link>
               </div>
               <FormControl>
-                <PasswordInput
-                  placeholder="············"
-                  showStrengthIndicator={false}
-                  {...field}
-                  disabled={isLoading}
-                />
+                <PasswordInput placeholder="············" showStrengthIndicator={false} {...field} disabled={isLoading} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -130,19 +105,10 @@ export function LoginForm({
         />
 
         {/* Global Error Message */}
-        {error && (
-          <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20">
-            {error}
-          </div>
-        )}
+        {error && <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20">{error}</div>}
 
         {/* Submit Button */}
-        <Button
-          type="submit"
-          className="w-full mt-6"
-          size="lg"
-          disabled={isLoading}
-        >
+        <Button type="submit" className="w-full mt-6" size="lg" disabled={isLoading}>
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

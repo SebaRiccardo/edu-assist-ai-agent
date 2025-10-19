@@ -16,20 +16,10 @@ export default function LanguageSwitcher() {
 
   return (
     <div className="flex items-center gap-1">
-      <Button
-        variant={locale === 'es' ? 'default' : 'ghost'}
-        size="sm"
-        onClick={() => setLocale('es')}
-        aria-pressed={locale === 'es'}
-      >
+      <Button variant={locale === 'es' ? 'default' : 'ghost'} size="sm" onClick={() => setLocale('es')} aria-pressed={locale === 'es'}>
         ES
       </Button>
-      <Button
-        variant={locale === 'en' ? 'default' : 'ghost'}
-        size="sm"
-        onClick={() => setLocale('en')}
-        aria-pressed={locale === 'en'}
-      >
+      <Button variant={locale === 'en' ? 'default' : 'ghost'} size="sm" onClick={() => setLocale('en')} aria-pressed={locale === 'en'}>
         EN
       </Button>
     </div>

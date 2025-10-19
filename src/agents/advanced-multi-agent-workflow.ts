@@ -12,34 +12,15 @@
  */
 
 import { inboxAnalyzerAgent } from '@/agents/inbox-analyzer';
-import {
-  priorityClassificatorAgent,
-  getPriorityStats,
-  filterByPriority,
-  type PriorityLevel,
-} from '@/agents/priority-classificator';
-import {
-  generateBatchResponses,
-  getResponseStats,
-  type EmailInfo,
-  type PriorityInfo,
-} from '@/agents/generate-responses';
-import {
-  reviewBatchQuality,
-  calculateQualityStats,
-  filterByApproval,
-  type DraftResponse,
-} from '@/agents/review-quality';
+import { priorityClassificatorAgent, getPriorityStats, filterByPriority, type PriorityLevel } from '@/agents/priority-classificator';
+import { generateBatchResponses, getResponseStats, type EmailInfo, type PriorityInfo } from '@/agents/generate-responses';
+import { reviewBatchQuality, calculateQualityStats, filterByApproval, type DraftResponse } from '@/agents/review-quality';
 import { Course } from '@/lib/supabase/types/courses.types';
 
 /**
  * Complete multi-agent email processing workflow
  */
-export async function advancedEmailWorkflow(
-  connectedAccountId: string,
-  course: Course,
-  maxEmails: number = 30
-) {
+export async function advancedEmailWorkflow(connectedAccountId: string, course: Course, maxEmails: number = 30) {
   console.log('🚀 Starting Advanced 4-Agent Workflow\n');
   console.log('═'.repeat(70) + '\n');
 
@@ -65,30 +46,20 @@ export async function advancedEmailWorkflow(
 
   console.log('✅ Results:');
   console.log(`   • Total emails: ${emailAnalysis.totalAnalyzed}`);
-  console.log(
-    `   • Course-related: ${emailAnalysis.analysis.stats.totalCourseRelated}`
-  );
-  console.log(
-    `   • Avg confidence: ${emailAnalysis.analysis.stats.avgConfidence}%`
-  );
+  console.log(`   • Course-related: ${emailAnalysis.analysis.stats.totalCourseRelated}`);
+  console.log(`   • Avg confidence: ${emailAnalysis.analysis.stats.avgConfidence}%`);
   console.log(`   • Processing time: ${analysisTime}ms`);
   console.log(`   • Course: ${emailAnalysis.courseName}`);
 
   console.log('\n   Category breakdown:');
-  Object.entries(emailAnalysis.analysis.stats.categoryBreakdown).forEach(
-    ([category, count]) => {
-      console.log(`     - ${category}: ${count}`);
-    }
-  );
+  Object.entries(emailAnalysis.analysis.stats.categoryBreakdown).forEach(([category, count]) => {
+    console.log(`     - ${category}: ${count}`);
+  });
 
   // Filter course-related emails with good confidence
-  const relevantEmails = emailAnalysis.emails.filter(
-    email => email.isRelated && email.confidence > 75
-  );
+  const relevantEmails = emailAnalysis.emails.filter(email => email.isRelated && email.confidence > 75);
 
-  console.log(
-    `\n   • Relevant emails (>75% confidence): ${relevantEmails.length}\n`
-  );
+  console.log(`\n   • Relevant emails (>75% confidence): ${relevantEmails.length}\n`);
 
   if (relevantEmails.length === 0) {
     console.log('No relevant emails found. Workflow complete.\n');
@@ -132,14 +103,9 @@ export async function advancedEmailWorkflow(
   console.log('Task: Generate draft responses for high-priority emails\n');
 
   // Focus on critical and high priority emails
-  const highPriorityList = filterByPriority(prioritizationResult, [
-    'critical',
-    'high',
-  ] as PriorityLevel[]);
+  const highPriorityList = filterByPriority(prioritizationResult, ['critical', 'high'] as PriorityLevel[]);
 
-  console.log(
-    `   Processing ${highPriorityList.length} high-priority emails...\n`
-  );
+  console.log(`   Processing ${highPriorityList.length} high-priority emails...\n`);
 
   // Prepare emails with priority info for batch generation
   const emailsToRespond = highPriorityList
@@ -164,18 +130,11 @@ export async function advancedEmailWorkflow(
         } as PriorityInfo,
       };
     })
-    .filter(
-      (item): item is { email: EmailInfo; priority: PriorityInfo } =>
-        item !== null
-    );
+    .filter((item): item is { email: EmailInfo; priority: PriorityInfo } => item !== null);
 
-  const draftResponses = await generateBatchResponses(
-    emailsToRespond,
-    emailAnalysis.courseName,
-    {
-      maxResponses: 3,
-    }
-  );
+  const draftResponses = await generateBatchResponses(emailsToRespond, emailAnalysis.courseName, {
+    maxResponses: 3,
+  });
 
   // ========================================
   // AGENT 4: QUALITY REVIEW
@@ -184,10 +143,7 @@ export async function advancedEmailWorkflow(
   console.log('─'.repeat(70));
   console.log('Task: Review and score draft responses\n');
 
-  const qualityReviews = await reviewBatchQuality(
-    draftResponses as DraftResponse[],
-    emailAnalysis.courseName
-  );
+  const qualityReviews = await reviewBatchQuality(draftResponses as DraftResponse[], emailAnalysis.courseName);
 
   // Calculate statistics
   const qualityStats = calculateQualityStats(qualityReviews);
@@ -216,9 +172,7 @@ export async function advancedEmailWorkflow(
   console.log('Agent 4 (Quality Review):');
   console.log(`  • Reviewed ${qualityReviews.length} responses`);
   console.log(`  • Avg quality score: ${qualityStats.averageScore}/100`);
-  console.log(
-    `  • Approved: ${qualityStats.approvedCount}/${qualityReviews.length}\n`
-  );
+  console.log(`  • Approved: ${qualityStats.approvedCount}/${qualityReviews.length}\n`);
 
   console.log('🎉 Workflow Complete!\n');
 

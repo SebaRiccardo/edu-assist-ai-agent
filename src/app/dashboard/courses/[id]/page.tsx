@@ -27,15 +27,9 @@ export default function CourseDetailsPage() {
   const { user } = useCurrentUser();
 
   // Data fetching hooks
-  const {
-    data: courseData,
-    isLoading: isLoadingCourse,
-    isError: isErrorCourse,
-  } = useCourse(courseId);
-  const { data: connections, isLoading: isLoadingConnections } =
-    useConnections();
-  const { mutateAsync: updateCourse, isPending: isUpdatingCourse } =
-    useUpdateCourse();
+  const { data: courseData, isLoading: isLoadingCourse, isError: isErrorCourse } = useCourse(courseId);
+  const { data: connections, isLoading: isLoadingConnections } = useConnections();
+  const { mutateAsync: updateCourse, isPending: isUpdatingCourse } = useUpdateCourse();
 
   // Edit course dialog state
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -53,9 +47,7 @@ export default function CourseDetailsPage() {
   // Set default tab when connections load
   React.useEffect(() => {
     if (!selectedAccountId && connections && connections.length > 0) {
-      const activeConnection = connections.find(
-        conn => conn.status === 'ACTIVE' && conn.email
-      );
+      const activeConnection = connections.find(conn => conn.status === 'ACTIVE' && conn.email);
       if (activeConnection) {
         setSelectedAccountId(activeConnection.id);
       }
@@ -72,9 +64,7 @@ export default function CourseDetailsPage() {
         context: courseData.context,
         professorId: courseData.professor_id,
         studentCount: courseData.student_count,
-        startAt: courseData.start_at
-          ? new Date(courseData.start_at!)
-          : undefined,
+        startAt: courseData.start_at ? new Date(courseData.start_at!) : undefined,
         endAt: courseData.end_at ? new Date(courseData.end_at!) : undefined,
         createdAt: new Date(courseData.created_at),
         updatedAt: new Date(courseData.updated_at),
@@ -82,12 +72,8 @@ export default function CourseDetailsPage() {
     : null;
 
   // Email state per account - using a map to store emails for each account
-  const [emailsByAccount, setEmailsByAccount] = useState<
-    Record<string, CategorizedEmail[]>
-  >({});
-  const [checkingAccounts, setCheckingAccounts] = useState<Set<string>>(
-    new Set()
-  );
+  const [emailsByAccount, setEmailsByAccount] = useState<Record<string, CategorizedEmail[]>>({});
+  const [checkingAccounts, setCheckingAccounts] = useState<Set<string>>(new Set());
   const [replyingEmails, setReplyingEmails] = useState<Set<string>>(new Set());
 
   const [statsByAccount, setStatsByAccount] = useState<
@@ -116,12 +102,7 @@ export default function CourseDetailsPage() {
     setIsEditDialogOpen(false);
   };
 
-  const handleSubmitCourseEdit = async (
-    data: Omit<
-      InsertCourse,
-      'professor_id' | 'created_at' | 'updated_at' | 'id'
-    >
-  ) => {
+  const handleSubmitCourseEdit = async (data: Omit<InsertCourse, 'professor_id' | 'created_at' | 'updated_at' | 'id'>) => {
     try {
       if (!courseData) {
         console.error('No course data available');
@@ -195,14 +176,12 @@ export default function CourseDetailsPage() {
           },
         }));
 
-        toast.success(
-          `Found ${result.data.analysis.stats.totalCourseRelated} course-related emails out of ${result.data.totalAnalyzed} analyzed`,
-          { id: toastId }
-        );
+        toast.success(`Found ${result.data.analysis.stats.totalCourseRelated} course-related emails out of ${result.data.totalAnalyzed} analyzed`, {
+          id: toastId,
+        });
       }
     } catch (error) {
-      const errorMessage =
-        'Ocurrió un error al analizar los correos. Por favor, inténtalo de nuevo.';
+      const errorMessage = 'Ocurrió un error al analizar los correos. Por favor, inténtalo de nuevo.';
       toast.error(errorMessage, { id: toastId });
     } finally {
       setCheckingAccounts(prev => {
@@ -213,10 +192,7 @@ export default function CourseDetailsPage() {
     }
   };
 
-  const handleAutoReply = async (
-    emailId: string,
-    connectedAccountId: string
-  ) => {
+  const handleAutoReply = async (emailId: string, connectedAccountId: string) => {
     if (!domainCourse || !user) return;
 
     const accountEmails = emailsByAccount[connectedAccountId] || [];
@@ -295,25 +271,16 @@ export default function CourseDetailsPage() {
     );
   }
 
-  const activeConnections =
-    connections?.filter(conn => conn.status === 'ACTIVE' && conn.email) || [];
+  const activeConnections = connections?.filter(conn => conn.status === 'ACTIVE' && conn.email) || [];
 
   const hasNoConnections = activeConnections.length === 0;
 
   return (
     <div className="flex flex-1 flex-col">
       <div className="mx-auto max-w-7xl w-full px-6 space-y-6">
-        <CourseDetailsHeader
-          course={domainCourse}
-          isChecking={false}
-          onAnalyze={() => {}}
-          onEdit={handleEditCourse}
-        />
+        <CourseDetailsHeader course={domainCourse} isChecking={false} onAnalyze={() => {}} onEdit={handleEditCourse} />
 
-        <ConnectionStatusCard
-          status={emailConnection.connectionStatus}
-          onCancel={emailConnection.cancelConnection}
-        />
+        <ConnectionStatusCard status={emailConnection.connectionStatus} onCancel={emailConnection.cancelConnection} />
       </div>
 
       {/* Main Content Area */}
@@ -330,11 +297,7 @@ export default function CourseDetailsPage() {
         />
       ) : (
         <div className="flex-1 overflow-hidden mx-auto max-w-7xl w-full px-6 pt-6">
-          <Tabs
-            value={selectedAccountId}
-            onValueChange={setSelectedAccountId}
-            className="gap-0"
-          >
+          <Tabs value={selectedAccountId} onValueChange={setSelectedAccountId} className="gap-0">
             {/* Gmail Account Tabs */}
             <TabsList className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-lg rounded-b-none border-b p-0">
               {activeConnections.map(account => (
@@ -345,22 +308,18 @@ export default function CourseDetailsPage() {
                   className="px-4 rounded-md rounded-b-none data-[state=active]:border-primary dark:data-[state=active]:border-primary data-[state=active]:text-foreground text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground hover:border-muted-foreground/30 h-full border-0 border-b-2 border-transparent data-[state=active]:shadow-none"
                 >
                   {/* <Mail className="h-4 w-4" /> */}
-                  <span className="hidden sm:inline text-[13px]">
-                    {account.email}
-                  </span>
+                  <span className="hidden sm:inline text-[13px]">{account.email}</span>
                   {account.status !== 'ACTIVE' && (
                     <Badge variant="destructive" className="ml-2">
                       {account.status}
                     </Badge>
                   )}
-                  {checkingAccounts.has(account.id) &&
-                    !statsByAccount[account.id] && (
-                      <Loader2 className="ml-1 h-4 w-4 animate-spin text-muted-foreground" />
-                    )}
+                  {checkingAccounts.has(account.id) && !statsByAccount[account.id] && (
+                    <Loader2 className="ml-1 h-4 w-4 animate-spin text-muted-foreground" />
+                  )}
                   {statsByAccount[account.id] && (
                     <Badge variant="secondary" className="ml-1">
-                      {statsByAccount[account.id].courseRelated} /{' '}
-                      {statsByAccount[account.id].totalAnalyzed}
+                      {statsByAccount[account.id].courseRelated} / {statsByAccount[account.id].totalAnalyzed}
                     </Badge>
                   )}
                 </TabsTrigger>
@@ -390,9 +349,7 @@ export default function CourseDetailsPage() {
                     replyingToEmailId={null}
                     onAutoTagAll={() => handleAutoTagAll(account.id)}
                     onAnalyze={() => handleAnalyzeInbox(account.id)}
-                    onAutoReply={emailId =>
-                      handleAutoReply(emailId, account.id)
-                    }
+                    onAutoReply={emailId => handleAutoReply(emailId, account.id)}
                   />
                 </TabsContent>
               );

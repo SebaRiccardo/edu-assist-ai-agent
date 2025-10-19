@@ -1,11 +1,7 @@
 'use server';
 
 import { cookies } from 'next/headers';
-import {
-  isValidBetaCode,
-  createBetaAccessToken,
-  getBetaAccessCookieName,
-} from '@/lib/beta-access';
+import { isValidBetaCode, createBetaAccessToken, getBetaAccessCookieName } from '@/lib/beta-access';
 
 export interface VerifyBetaCodeResult {
   success: boolean;
@@ -15,9 +11,7 @@ export interface VerifyBetaCodeResult {
 /**
  * Server action to verify beta access code and set cookie
  */
-export async function verifyBetaCode(
-  code: string
-): Promise<VerifyBetaCodeResult> {
+export async function verifyBetaCode(code: string): Promise<VerifyBetaCodeResult> {
   try {
     // Validate code format (6 digits)
     if (!/^\d{6}$/.test(code)) {

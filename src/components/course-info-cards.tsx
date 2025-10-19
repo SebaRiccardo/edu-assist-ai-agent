@@ -14,9 +14,7 @@ export function CourseInfoCards({ course }: CourseInfoCardsProps) {
           <Users className="h-5 w-5 text-primary" />
         </div>
         <div>
-          <div className="text-lg font-bold text-foreground">
-            {course.studentCount}
-          </div>
+          <div className="text-lg font-bold text-foreground">{course.studentCount}</div>
           <div className="text-xs text-muted-foreground">Students</div>
         </div>
       </div>
@@ -40,9 +38,7 @@ export function CourseInfoCards({ course }: CourseInfoCardsProps) {
           <Clock className="h-5 w-5 text-chart-2" />
         </div>
         <div>
-          <div className="text-sm font-semibold text-foreground">
-            {new Date(course.updatedAt).toLocaleDateString()}
-          </div>
+          <div className="text-sm font-semibold text-foreground">{new Date(course.updatedAt).toLocaleDateString()}</div>
           <div className="text-xs text-muted-foreground">Last Analyzed</div>
         </div>
       </div>

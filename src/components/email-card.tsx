@@ -2,29 +2,11 @@
 
 import { useState } from 'react';
 import { CategorizedEmail } from '@/types';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible';
-import {
-  Mail,
-  Tag,
-  Sparkles,
-  ChevronsUpDown,
-  FileText,
-  Loader2,
-  RefreshCw,
-} from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Mail, Tag, Sparkles, ChevronsUpDown, FileText, Loader2, RefreshCw } from 'lucide-react';
 import { generateEmailDraft } from '@/actions/inbox/email-draft';
 
 interface EmailCardProps {
@@ -78,21 +60,13 @@ const emailCategoryConfig = {
 };
 
 // Send button component
-const SendButton = ({
-  isSending,
-  onClick,
-  label = 'Auto Reply',
-}: {
-  isSending: boolean;
-  onClick: () => void;
-  label?: string;
-}) => (
+const SendButton = ({ isSending, onClick, label = 'Auto Reply' }: { isSending: boolean; onClick: () => void; label?: string }) => (
   <Button
     size="sm"
     variant="default"
     onClick={onClick}
     disabled={isSending}
-  // className="bg-blue-600 cursor-pointer hover:bg-blue-700"
+    // className="bg-blue-600 cursor-pointer hover:bg-blue-700"
   >
     {isSending ? (
       <>
@@ -114,45 +88,27 @@ const EmailHeader = ({
   categoryConfig,
 }: {
   email: CategorizedEmail;
-  categoryConfig:
-  | (typeof emailCategoryConfig)[keyof typeof emailCategoryConfig]
-  | undefined;
+  categoryConfig: (typeof emailCategoryConfig)[keyof typeof emailCategoryConfig] | undefined;
 }) => (
   <CardHeader>
     <div className="flex items-start justify-between">
       <div className="flex-1 space-y-1">
         <div className="flex items-end gap-2">
           <Mail className="text-red-500 size-6" />
-          <CardTitle className="text-base font-semibold">
-            {email.subject}
-          </CardTitle>
-          {categoryConfig && (
-            <Badge variant={categoryConfig.variant}>
-              {categoryConfig.label}
-            </Badge>
-          )}
+          <CardTitle className="text-base font-semibold">{email.subject}</CardTitle>
+          {categoryConfig && <Badge variant={categoryConfig.variant}>{categoryConfig.label}</Badge>}
           <Badge variant="success">{email.suggestedLabel}</Badge>
           {email.isUnread && <Badge variant="default">New</Badge>}
         </div>
-        <CardDescription className="text-sm">
-          From: {email.from}
-        </CardDescription>
+        <CardDescription className="text-sm">From: {email.from}</CardDescription>
       </div>
-      <div className="text-sm text-muted-foreground">
-        {new Date(email.receivedAt).toLocaleString()}
-      </div>
+      <div className="text-sm text-muted-foreground">{new Date(email.receivedAt).toLocaleString()}</div>
     </div>
   </CardHeader>
 );
 
 // Email snippet component
-const EmailSnippet = ({
-  snippet,
-  suggestedLabel,
-}: {
-  snippet: string;
-  suggestedLabel: string;
-}) => (
+const EmailSnippet = ({ snippet, suggestedLabel }: { snippet: string; suggestedLabel: string }) => (
   <>
     <p className="text-sm text-muted-foreground line-clamp-2">{snippet}</p>
     {/* <div className="flex flex-wrap gap-2 items-center">
@@ -166,20 +122,10 @@ const EmailSnippet = ({
 );
 
 // AI Reasoning collapsible component
-const AIReasoningSection = ({
-  reasoning,
-  confidencePercentage,
-}: {
-  reasoning: string;
-  confidencePercentage: number;
-}) => (
+const AIReasoningSection = ({ reasoning, confidencePercentage }: { reasoning: string; confidencePercentage: number }) => (
   <Collapsible className="w-full">
     <CollapsibleTrigger asChild>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="hover:text-blue-500 hover:bg-transparent has-[>svg]:px-0"
-      >
+      <Button variant="ghost" size="sm" className="hover:text-blue-500 hover:bg-transparent has-[>svg]:px-0">
         <Sparkles className="size-4 mr-1" />
         Explain reasoning
         <ChevronsUpDown className="size-4 ml-1" />
@@ -221,11 +167,7 @@ const DraftResponseSection = ({
   onAutoReply?: (emailId: string) => void;
   emailId: string;
 }) => (
-  <Collapsible
-    open={isDraftOpen}
-    onOpenChange={setIsDraftOpen}
-    className="w-full mb-4"
-  >
+  <Collapsible open={isDraftOpen} onOpenChange={setIsDraftOpen} className="w-full mb-4">
     <div className="flex items-center gap-2 flex-wrap">
       <CollapsibleTrigger asChild>
         <Button
@@ -272,17 +214,13 @@ const DraftResponseSection = ({
         {isGeneratingDraft && (
           <div className="flex items-center justify-center py-4">
             <Loader2 className="h-6 w-6 animate-spin text-green-600" />
-            <span className="ml-2 text-sm text-muted-foreground">
-              Generating draft response...
-            </span>
+            <span className="ml-2 text-sm text-muted-foreground">Generating draft response...</span>
           </div>
         )}
 
         {draftError && (
           <div className="flex items-start gap-2 p-3 rounded-md bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800">
-            <p className="text-sm text-red-600 dark:text-red-400">
-              {draftError}
-            </p>
+            <p className="text-sm text-red-600 dark:text-red-400">{draftError}</p>
           </div>
         )}
 
@@ -290,36 +228,19 @@ const DraftResponseSection = ({
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <FileText className="h-4 w-4 text-green-600 dark:text-green-400" />
-              <p className="text-sm font-semibold text-foreground">
-                Draft Response
-              </p>
-              <Badge
-                variant="outline"
-                className="text-xs text-white border-none bg-green-500 dark:bg-green-900/30"
-              >
+              <p className="text-sm font-semibold text-foreground">Draft Response</p>
+              <Badge variant="outline" className="text-xs text-white border-none bg-green-500 dark:bg-green-900/30">
                 AI Generated
               </Badge>
             </div>
             <div className="rounded-md bg-background border p-3">
-              <p className="text-sm text-foreground whitespace-pre-wrap">
-                {draftResponse}
-              </p>
+              <p className="text-sm text-foreground whitespace-pre-wrap">{draftResponse}</p>
             </div>
             <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigator.clipboard.writeText(draftResponse)}
-              >
+              <Button variant="outline" size="sm" onClick={() => navigator.clipboard.writeText(draftResponse)}>
                 Copy to Clipboard
               </Button>
-              {onAutoReply && (
-                <SendButton
-                  isSending={isSendingReply}
-                  onClick={() => onAutoReply(emailId)}
-                  label="Send This Draft"
-                />
-              )}
+              {onAutoReply && <SendButton isSending={isSendingReply} onClick={() => onAutoReply(emailId)} label="Send This Draft" />}
             </div>
           </div>
         )}
@@ -339,8 +260,7 @@ export function EmailCard({
   onDelete,
   onAutoReply,
 }: EmailCardProps) {
-  const categoryConfig =
-    emailCategoryConfig[email.category as keyof typeof emailCategoryConfig];
+  const categoryConfig = emailCategoryConfig[email.category as keyof typeof emailCategoryConfig];
   const confidencePercentage = Math.round(email.confidence * 100);
 
   const [isDraftOpen, setIsDraftOpen] = useState(false);
@@ -396,15 +316,9 @@ export function EmailCard({
     <Card className="hover:shadow-xl cursor-pointer transition-all gap-1 duration-200 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-none shadow-none hover:bg-background/70">
       <EmailHeader email={email} categoryConfig={categoryConfig} />
       <CardContent>
-        <EmailSnippet
-          snippet={email.snippet}
-          suggestedLabel={email.suggestedLabel}
-        />
+        <EmailSnippet snippet={email.snippet} suggestedLabel={email.suggestedLabel} />
         <div className="flex flex-col gap-2 pt-2">
-          <AIReasoningSection
-            reasoning={email.reasoning}
-            confidencePercentage={confidencePercentage}
-          />
+          <AIReasoningSection reasoning={email.reasoning} confidencePercentage={confidencePercentage} />
 
           <DraftResponseSection
             isDraftOpen={isDraftOpen}
@@ -422,11 +336,7 @@ export function EmailCard({
         {/* Auto Reply Button - Bottom Right */}
         {onAutoReply && (
           <div className="flex justify-end ">
-            <SendButton
-              isSending={isSendingReply}
-              onClick={() => onAutoReply(email.id)}
-              label="Auto Reply"
-            />
+            <SendButton isSending={isSendingReply} onClick={() => onAutoReply(email.id)} label="Auto Reply" />
           </div>
         )}
       </CardContent>

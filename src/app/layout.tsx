@@ -36,9 +36,7 @@ export default async function RootLayout({
   const messages = await getMessages(locale);
   return (
     <html lang={locale}>
-      <body
-        className={`${montserrat.variable} ${geistMono.variable} ${poppins.variable} antialiased`}
-      >
+      <body className={`${montserrat.variable} ${geistMono.variable} ${poppins.variable} antialiased`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Providers>{children}</Providers>
         </NextIntlClientProvider>

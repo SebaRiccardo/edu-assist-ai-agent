@@ -129,8 +129,7 @@ export const PLAN_LIMITS = {
     prioritySupport: subscriptionLimits.basic.prioritySupport,
     autoLabels: subscriptionLimits.basic.autoLabels,
     realTimeReplies: subscriptionLimits.basic.realTimeReplies,
-    autonomousEmailManagement:
-      subscriptionLimits.basic.autonomousEmailManagement,
+    autonomousEmailManagement: subscriptionLimits.basic.autonomousEmailManagement,
     chatWithInboxUsage: subscriptionLimits.basic.chatWithInboxUsage,
   },
   pro: {
@@ -148,16 +147,13 @@ export const PLAN_LIMITS = {
   pro_plus: {
     maxInboxes: subscriptionLimits.pro_plus.maxInboxes,
     maxCourses: subscriptionLimits.pro_plus.maxCourses ?? Infinity,
-    aiEmailDraftPerDay:
-      subscriptionLimits.pro_plus.aiEmailDraftPerDay ?? Infinity,
-    emailsProcessedPerMonth:
-      subscriptionLimits.pro_plus.emailsProcessedPerMonth ?? Infinity,
+    aiEmailDraftPerDay: subscriptionLimits.pro_plus.aiEmailDraftPerDay ?? Infinity,
+    emailsProcessedPerMonth: subscriptionLimits.pro_plus.emailsProcessedPerMonth ?? Infinity,
     autoReplies: subscriptionLimits.pro_plus.autoReplies,
     autoLabels: subscriptionLimits.pro_plus.autoLabels,
     prioritySupport: subscriptionLimits.pro_plus.prioritySupport,
     realTimeReplies: subscriptionLimits.pro_plus.realTimeReplies,
-    autonomousEmailManagement:
-      subscriptionLimits.pro_plus.autonomousEmailManagement,
+    autonomousEmailManagement: subscriptionLimits.pro_plus.autonomousEmailManagement,
     chatWithInboxUsage: subscriptionLimits.pro_plus.chatWithInboxUsage,
   },
 } as const;
@@ -168,10 +164,7 @@ export const PLAN_LIMITS = {
  * @param feature - Feature to check
  * @returns Whether user has access
  */
-export function hasFeatureAccess(
-  planType: PlanType,
-  feature: keyof typeof PLAN_FEATURES
-): boolean {
+export function hasFeatureAccess(planType: PlanType, feature: keyof typeof PLAN_FEATURES): boolean {
   const allowedPlans = PLAN_FEATURES[feature] as readonly string[];
   return allowedPlans.includes(planType);
 }
@@ -192,11 +185,7 @@ export function getPlanLimits(planType: PlanType) {
  * @param currentUsage - Current usage amount
  * @returns Whether limit is exceeded
  */
-export function isLimitExceeded(
-  planType: PlanType,
-  limitType: keyof typeof PLAN_LIMITS.basic,
-  currentUsage: number
-): boolean {
+export function isLimitExceeded(planType: PlanType, limitType: keyof typeof PLAN_LIMITS.basic, currentUsage: number): boolean {
   const limits = PLAN_LIMITS[planType];
   const limit = limits[limitType];
 
@@ -214,11 +203,7 @@ export function isLimitExceeded(
  * @param currentUsage - Current usage amount
  * @returns Remaining usage or Infinity if unlimited
  */
-export function getRemainingUsage(
-  planType: PlanType,
-  limitType: keyof typeof PLAN_LIMITS.basic,
-  currentUsage: number
-): number {
+export function getRemainingUsage(planType: PlanType, limitType: keyof typeof PLAN_LIMITS.basic, currentUsage: number): number {
   const limits = PLAN_LIMITS[planType];
   const limit = limits[limitType];
 
@@ -235,14 +220,8 @@ export function getRemainingUsage(
  * @param currencyId - Currency code (default: 'ARS')
  * @returns Formatted price string
  */
-export function formatPlanPrice(
-  planType: PlanType,
-  currencyId: string = 'ARS'
-): string {
-  const price =
-    SUBSCRIPTION_PLANS_CONFIG[
-      planType.toUpperCase() as keyof typeof SUBSCRIPTION_PLANS_CONFIG
-    ].price;
+export function formatPlanPrice(planType: PlanType, currencyId: string = 'ARS'): string {
+  const price = SUBSCRIPTION_PLANS_CONFIG[planType.toUpperCase() as keyof typeof SUBSCRIPTION_PLANS_CONFIG].price;
 
   // if (price === 0) {
   //   return '$0';
@@ -264,8 +243,7 @@ export function getPlanBadgeColor(planType: PlanType): string {
   const colors = {
     basic: 'bg-gray-100 text-gray-800 border-gray-300',
     pro: 'bg-primary/10 text-primary border-primary/30',
-    pro_plus:
-      'bg-gradient-to-r from-purple-500/10 to-pink-500/10 text-purple-700 border-purple-300',
+    pro_plus: 'bg-gradient-to-r from-purple-500/10 to-pink-500/10 text-purple-700 border-purple-300',
   };
 
   return colors[planType];
@@ -283,9 +261,7 @@ export function getPlanDetails(planType: PlanType) {
     pro_plus: 'PRO_PLUS',
   } as const;
 
-  return SUBSCRIPTION_PLANS_CONFIG[
-    planMap[planType] as keyof typeof SUBSCRIPTION_PLANS_CONFIG
-  ];
+  return SUBSCRIPTION_PLANS_CONFIG[planMap[planType] as keyof typeof SUBSCRIPTION_PLANS_CONFIG];
 }
 
 /**
@@ -294,10 +270,7 @@ export function getPlanDetails(planType: PlanType) {
  * @param feature - Feature to access
  * @returns Required plan tier or null if user has access
  */
-export function getRequiredPlanForFeature(
-  currentPlan: PlanType,
-  feature: keyof typeof PLAN_FEATURES
-): PlanType | null {
+export function getRequiredPlanForFeature(currentPlan: PlanType, feature: keyof typeof PLAN_FEATURES): PlanType | null {
   if (hasFeatureAccess(currentPlan, feature)) {
     return null;
   }
@@ -321,10 +294,7 @@ export function getRequiredPlanForFeature(
  * @param requiredPlan - Required plan tier
  * @returns User-friendly upgrade message
  */
-export function getUpgradeMessage(
-  feature: string,
-  requiredPlan: PlanType
-): string {
+export function getUpgradeMessage(feature: string, requiredPlan: PlanType): string {
   const planDetails = getPlanDetails(requiredPlan);
   return `Upgrade to ${planDetails.name} (${formatPlanPrice(requiredPlan)}/month) to unlock ${feature.replace(/-/g, ' ')}.`;
 }
@@ -336,11 +306,7 @@ export function getUpgradeMessage(
  * @param currentUsage - Current usage amount
  * @returns Percentage used (0-100) or null if unlimited
  */
-export function getLimitUsagePercentage(
-  planType: PlanType,
-  limitType: keyof typeof PLAN_LIMITS.basic,
-  currentUsage: number
-): number | null {
+export function getLimitUsagePercentage(planType: PlanType, limitType: keyof typeof PLAN_LIMITS.basic, currentUsage: number): number | null {
   const limits = PLAN_LIMITS[planType];
   const limit = limits[limitType];
 
@@ -358,11 +324,7 @@ export function getLimitUsagePercentage(
  * @param currentUsage - Current usage amount
  * @returns Whether user is approaching limit
  */
-export function isApproachingLimit(
-  planType: PlanType,
-  limitType: keyof typeof PLAN_LIMITS.basic,
-  currentUsage: number
-): boolean {
+export function isApproachingLimit(planType: PlanType, limitType: keyof typeof PLAN_LIMITS.basic, currentUsage: number): boolean {
   const percentage = getLimitUsagePercentage(planType, limitType, currentUsage);
   return percentage !== null && percentage >= 80;
 }
@@ -402,10 +364,7 @@ export function getLocalizedPlansWithLimits(locale: 'en' | 'es' = 'en') {
  * @param locale - Language locale ('en' or 'es')
  * @returns Plan configuration with limits
  */
-export function getLocalizedPlan(
-  planType: PlanType,
-  locale: 'en' | 'es' = 'en'
-) {
+export function getLocalizedPlan(planType: PlanType, locale: 'en' | 'es' = 'en') {
   const config = locale === 'es' ? plansConfigES : plansConfigEN;
 
   return {
@@ -421,10 +380,7 @@ export function getLocalizedPlan(
  * @param currency - Currency code (USD or ARS)
  * @returns Formatted price string
  */
-export function formatPrice(
-  price: number,
-  currency: 'USD' | 'ARS' = 'USD'
-): string {
+export function formatPrice(price: number, currency: 'USD' | 'ARS' = 'USD'): string {
   if (currency === 'ARS') {
     return new Intl.NumberFormat('es-AR', {
       style: 'currency',
@@ -464,10 +420,7 @@ export function convertArsToUsd(arsPrice: number): number {
  * @param locale - Language locale
  * @returns Display name
  */
-export function getPlanDisplayName(
-  planType: PlanType,
-  locale: 'en' | 'es' = 'en'
-): string {
+export function getPlanDisplayName(planType: PlanType, locale: 'en' | 'es' = 'en'): string {
   const config = locale === 'es' ? plansConfigES : plansConfigEN;
   return config[planType].name;
 }

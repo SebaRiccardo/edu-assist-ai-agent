@@ -1,11 +1,7 @@
 import { DashboardNavBar } from '@/components/top-nav';
 import { getCurrentUser } from '@/lib/supabase/server';
 
-export default async function SettingsLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function SettingsLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
 
   return (

@@ -51,18 +51,9 @@ interface EmailReplyResult {
  * Server action to generate and send an email reply
  * Workflow: Generate draft response → Send email via Gmail
  */
-export async function sendEmailReply(
-  input: EmailReplyInput
-): Promise<EmailReplyResult> {
+export async function sendEmailReply(input: EmailReplyInput): Promise<EmailReplyResult> {
   try {
-    const {
-      email,
-      priority,
-      courseName,
-      professorName = 'Professor',
-      connectedAccountId,
-      language = 'English',
-    } = input;
+    const { email, priority, courseName, professorName = 'Professor', connectedAccountId, language = 'English' } = input;
 
     // Get current user
     const user = await getCurrentUser();
@@ -108,8 +99,7 @@ export async function sendEmailReply(
 
     // Check Gmail connection before processing
     console.log('🔍 Checking Gmail connection...');
-    const connectedAccount =
-      await ComposioService.getConnectedAccountById(connectedAccountId);
+    const connectedAccount = await ComposioService.getConnectedAccountById(connectedAccountId);
 
     if (!connectedAccount) {
       return {

@@ -12,14 +12,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import {
-  LayoutDashboard,
-  Users,
-  CreditCard,
-  Receipt,
-  ScrollText,
-  BarChart3,
-} from 'lucide-react';
+import { LayoutDashboard, Users, CreditCard, Receipt, ScrollText, BarChart3 } from 'lucide-react';
 import Link from 'next/link';
 import { signOut } from '@/auth/service';
 import { useRouter } from 'next/navigation';
@@ -86,9 +79,7 @@ export function AdminSidebar({ user, ...props }: AdminSidebarProps) {
             </div>
             <div className="flex flex-col gap-0.5 leading-none">
               <span className="font-semibold">Admin Panel</span>
-              <span className="text-muted-foreground text-xs">
-                EduAssist AI
-              </span>
+              <span className="text-muted-foreground text-xs">EduAssist AI</span>
             </div>
           </div>
         </Link>
@@ -155,9 +146,7 @@ export function AdminSidebar({ user, ...props }: AdminSidebarProps) {
           }}
         />
 
-        <div className="text-muted-foreground px-2 py-2 text-xs">
-          © 2025 EduAssist AI
-        </div>
+        <div className="text-muted-foreground px-2 py-2 text-xs">© 2025 EduAssist AI</div>
       </SidebarFooter>
     </Sidebar>
   );

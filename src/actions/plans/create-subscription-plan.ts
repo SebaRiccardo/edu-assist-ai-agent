@@ -46,9 +46,7 @@ type CreatePlanResult =
  * @param formData - Plan creation data
  * @returns Result object with success status and data or error
  */
-export async function createSubscriptionPlan(
-  formData: CreatePlanRequest
-): Promise<CreatePlanResult> {
+export async function createSubscriptionPlan(formData: CreatePlanRequest): Promise<CreatePlanResult> {
   try {
     // 1. Authenticate user
     const supabase = await createClient();
@@ -97,10 +95,7 @@ export async function createSubscriptionPlan(
     });
 
     if (!mercadoPagoResult.success || !mercadoPagoResult.data) {
-      console.error(
-        'MercadoPago plan creation failed:',
-        mercadoPagoResult.error
-      );
+      console.error('MercadoPago plan creation failed:', mercadoPagoResult.error);
       return {
         success: false,
         error: 'Failed to create subscription plan in MercadoPago',

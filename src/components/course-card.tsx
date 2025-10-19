@@ -13,15 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  BookOpen,
-  Mail,
-  Users,
-  MoreVertical,
-  Edit,
-  Trash2,
-  Eye,
-} from 'lucide-react';
+import { BookOpen, Mail, Users, MoreVertical, Edit, Trash2, Eye } from 'lucide-react';
 import { Course } from '@/lib/supabase/types/courses.types';
 
 interface CourseCardProps {
@@ -71,10 +63,7 @@ export function CourseCard({ course, onEdit, onDelete }: CourseCardProps) {
                 <span className="sr-only">More actions</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/90"
-            >
+            <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/90">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem
@@ -112,21 +101,15 @@ export function CourseCard({ course, onEdit, onDelete }: CourseCardProps) {
 
         <div className="flex items-start justify-between ">
           <div className="flex-1 pr-8">
-            <CardTitle className="text-xl font-bold mb-2">
-              {course.name}
-            </CardTitle>
+            <CardTitle className="text-xl font-bold mb-2">{course.name}</CardTitle>
 
-            <p className="text-sm text-muted-foreground whitespace-pre-wrap break-all">
-              {course.description}
-            </p>
+            <p className="text-sm text-muted-foreground whitespace-pre-wrap break-all">{course.description}</p>
           </div>
         </div>
       </CardHeader>
 
       <CardContent className="flex-1 flex">
-        <div className="text-xs text-muted-foreground">
-          Updated {new Date(course.updated_at).toLocaleDateString()}
-        </div>
+        <div className="text-xs text-muted-foreground">Updated {new Date(course.updated_at).toLocaleDateString()}</div>
       </CardContent>
     </Card>
   );

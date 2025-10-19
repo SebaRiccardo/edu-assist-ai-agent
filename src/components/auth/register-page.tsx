@@ -21,20 +21,12 @@ const Register = () => {
 
           {/* Header */}
           <div className="space-y-3">
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">
-              {t('registerWelcomeTitle')}
-            </h1>
-            <p className="text-base text-muted-foreground">
-              {t('registerWelcomeSubtitle')}
-            </p>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('registerWelcomeTitle')}</h1>
+            <p className="text-base text-muted-foreground">{t('registerWelcomeSubtitle')}</p>
           </div>
 
           {/* Google Sign In */}
-          <Button
-            disabled
-            variant="outline"
-            className="w-full bg-background hover:bg-muted h-10"
-          >
+          <Button disabled variant="outline" className="w-full bg-background hover:bg-muted h-10">
             <img
               src="https://cdn.shadcnstudio.com/ss-assets/brand-logo/google-icon.png?width=20&height=20&format=auto"
               alt="Google Icon"
@@ -58,16 +50,11 @@ const Register = () => {
             <div className="space-y-3 text-center">
               <p className="text-sm text-muted-foreground">
                 {t('alreadyHaveAccount')}{' '}
-                <Link
-                  href="/auth/login"
-                  className="font-medium text-foreground hover:underline"
-                >
+                <Link href="/auth/login" className="font-medium text-foreground hover:underline">
                   {t('signIn')}
                 </Link>
               </p>
-              <p className="text-xs text-muted-foreground/70">
-                {t('noCreditCardCancel')}
-              </p>
+              <p className="text-xs text-muted-foreground/70">{t('noCreditCardCancel')}</p>
             </div>
           </div>
         </div>
@@ -78,12 +65,8 @@ const Register = () => {
         <div className="max-w-lg space-y-8 text-center">
           {/* Main Hero Content */}
           <div className="space-y-4">
-            <h2 className="text-4xl font-bold leading-tight text-primary-foreground">
-              {t('createAccountCta')}
-            </h2>
-            <p className="text-lg text-primary-foreground/90 leading-relaxed">
-              {t('createAccountBenefit')}
-            </p>
+            <h2 className="text-4xl font-bold leading-tight text-primary-foreground">{t('createAccountCta')}</h2>
+            <p className="text-lg text-primary-foreground/90 leading-relaxed">{t('createAccountBenefit')}</p>
           </div>
 
           {/* Feature Card */}
@@ -93,12 +76,8 @@ const Register = () => {
                 <Mail className="h-6 w-6 text-primary" />
               </div>
               <div className="flex-1 space-y-2">
-                <h3 className="text-xl font-semibold text-foreground">
-                  {t('communityTitle')}
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {t('communitySubtitle')}
-                </p>
+                <h3 className="text-xl font-semibold text-foreground">{t('communityTitle')}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{t('communitySubtitle')}</p>
               </div>
             </div>
 

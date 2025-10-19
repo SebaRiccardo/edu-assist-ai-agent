@@ -177,8 +177,7 @@ Set the agent's role and expertise:
 ```ts
 const agent = new Agent({
   model: 'openai/gpt-4o',
-  system:
-    'You are an expert data analyst. You provide clear insights from complex data.',
+  system: 'You are an expert data analyst. You provide clear insights from complex data.',
 });
 ```
 
@@ -318,10 +317,7 @@ export async function POST(request: Request) {
 You can infer types for your Agent's `UIMessage`s:
 
 ```ts
-import {
-  Experimental_Agent as Agent,
-  Experimental_InferAgentUIMessage as InferAgentUIMessage,
-} from 'ai';
+import { Experimental_Agent as Agent, Experimental_InferAgentUIMessage as InferAgentUIMessage } from 'ai';
 
 const myAgent = new Agent({
   // ... configuration

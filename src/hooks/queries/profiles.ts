@@ -4,19 +4,13 @@ import { TypedSupabaseClient } from '@/lib/supabase/types/client.types';
  * Query builder for fetching all profiles with their subscriptions
  */
 export function getAllProfilesQuery(client: TypedSupabaseClient) {
-  return client
-    .from('profiles')
-    .select(`*`)
-    .order('updated_at', { ascending: false });
+  return client.from('profiles').select(`*`).order('updated_at', { ascending: false });
 }
 
 /**
  * Query builder for fetching a single profile by ID
  */
-export function getProfileByIdQuery(
-  client: TypedSupabaseClient,
-  profileId: string | undefined
-) {
+export function getProfileByIdQuery(client: TypedSupabaseClient, profileId: string | undefined) {
   if (!profileId) {
     return client
       .from('profiles')

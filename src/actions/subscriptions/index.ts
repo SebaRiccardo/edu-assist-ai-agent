@@ -1,11 +1,7 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
-import {
-  getPlanAction,
-  createSubscriptionAction,
-  cancelSubscriptionAction,
-} from '@/lib/mercadopago/actions';
+import { getPlanAction, createSubscriptionAction, cancelSubscriptionAction } from '@/lib/mercadopago/actions';
 import type { PlanType } from '@/subscriptions/plans';
 
 /**
@@ -235,9 +231,7 @@ export async function cancelUserSubscriptionAction(subscriptionId: string) {
 
     // Cancel in MercadoPago if there's a preapproval ID
     if (subscription.mercadopago_preapproval_id) {
-      const mpResult = await cancelSubscriptionAction(
-        subscription.mercadopago_preapproval_id
-      );
+      const mpResult = await cancelSubscriptionAction(subscription.mercadopago_preapproval_id);
       // mpResult is the data, not a success object
       console.log('MercadoPago subscription cancelled:', mpResult);
     }

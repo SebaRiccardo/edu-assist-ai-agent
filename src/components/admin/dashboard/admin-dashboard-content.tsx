@@ -1,13 +1,7 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Users,
-  CreditCard,
-  DollarSign,
-  TrendingUp,
-  Loader2,
-} from 'lucide-react';
+import { Users, CreditCard, DollarSign, TrendingUp, Loader2 } from 'lucide-react';
 import { useProfiles } from '@/hooks/use-profiles';
 import { usePlans } from '@/hooks/use-subscription-plans';
 import { useActiveSubscriptions } from '@/hooks/use-mp-subscriptions';
@@ -19,8 +13,7 @@ export function AdminDashboardContent() {
   const { data: plans, isLoading: plansLoading } = usePlans({
     status: 'active',
   });
-  const { data: subscriptions, isLoading: subscriptionsLoading } =
-    useActiveSubscriptions();
+  const { data: subscriptions, isLoading: subscriptionsLoading } = useActiveSubscriptions();
 
   const isLoading = usersLoading || plansLoading || subscriptionsLoading;
 
@@ -66,9 +59,7 @@ export function AdminDashboardContent() {
     <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
       <div className="px-4 lg:px-6">
         <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
-        <p className="text-muted-foreground mt-2">
-          Manage users, subscription plans, and monitor system activity.
-        </p>
+        <p className="text-muted-foreground mt-2">Manage users, subscription plans, and monitor system activity.</p>
       </div>
 
       {/* Stats Grid */}
@@ -76,9 +67,7 @@ export function AdminDashboardContent() {
         {stats.map(stat => (
           <Card className="border" key={stat.title}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {stat.title}
-              </CardTitle>
+              <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
               <stat.icon className="text-muted-foreground size-4" />
             </CardHeader>
             <CardContent>
@@ -89,9 +78,7 @@ export function AdminDashboardContent() {
               ) : (
                 <div className="text-2xl font-bold">{stat.value}</div>
               )}
-              <p className="text-muted-foreground text-xs">
-                {stat.description}
-              </p>
+              <p className="text-muted-foreground text-xs">{stat.description}</p>
             </CardContent>
           </Card>
         ))}

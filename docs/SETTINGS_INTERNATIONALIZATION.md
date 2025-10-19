@@ -258,23 +258,12 @@ CREATE TABLE profiles (
 ### Profile Query (`src/hooks/queries/profiles.ts`)
 
 ```typescript
-export function getProfileByIdQuery(
-  client: TypedSupabaseClient,
-  profileId: string | undefined
-) {
+export function getProfileByIdQuery(client: TypedSupabaseClient, profileId: string | undefined) {
   if (!profileId) {
-    return client
-      .from('profiles')
-      .select('id, full_name, username, avatar_url, is_admin, updated_at')
-      .eq('id', 'impossible-id-to-match')
-      .single();
+    return client.from('profiles').select('id, full_name, username, avatar_url, is_admin, updated_at').eq('id', 'impossible-id-to-match').single();
   }
 
-  return client
-    .from('profiles')
-    .select('id, full_name, username, avatar_url, is_admin, updated_at')
-    .eq('id', profileId)
-    .single();
+  return client.from('profiles').select('id, full_name, username, avatar_url, is_admin, updated_at').eq('id', profileId).single();
 }
 ```
 

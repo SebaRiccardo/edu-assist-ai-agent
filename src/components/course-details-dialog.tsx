@@ -2,25 +2,11 @@
 
 import { useState } from 'react';
 import { DomainCourse, CategorizedEmail } from '@/types';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { EmailCard } from '@/components/email-card';
-import {
-  BookOpen,
-  Users,
-  Mail,
-  RefreshCw,
-  Loader2,
-  ArrowLeft,
-  Calendar,
-} from 'lucide-react';
+import { BookOpen, Users, Mail, RefreshCw, Loader2, ArrowLeft, Calendar } from 'lucide-react';
 
 interface CourseDetailsDialogProps {
   open: boolean;
@@ -28,11 +14,7 @@ interface CourseDetailsDialogProps {
   course: DomainCourse | null;
 }
 
-export function CourseDetailsDialog({
-  open,
-  onOpenChange,
-  course,
-}: CourseDetailsDialogProps) {
+export function CourseDetailsDialog({ open, onOpenChange, course }: CourseDetailsDialogProps) {
   const [emails, setEmails] = useState<CategorizedEmail[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [stats, setStats] = useState<{
@@ -74,11 +56,7 @@ export function CourseDetailsDialog({
   };
 
   const handleMarkAsRead = (emailId: string) => {
-    setEmails(prev =>
-      prev.map(email =>
-        email.id === emailId ? { ...email, isUnread: false } : email
-      )
-    );
+    setEmails(prev => prev.map(email => (email.id === emailId ? { ...email, isUnread: false } : email)));
   };
 
   const handleArchive = (emailId: string) => {
@@ -101,9 +79,7 @@ export function CourseDetailsDialog({
                 <BookOpen className="h-6 w-6 text-primary" />
                 {course.title}
               </DialogTitle>
-              <DialogDescription className="mt-2">
-                {course.description}
-              </DialogDescription>
+              <DialogDescription className="mt-2">{course.description}</DialogDescription>
             </div>
           </div>
         </DialogHeader>
@@ -124,9 +100,7 @@ export function CourseDetailsDialog({
 
           <div className="flex flex-col items-center justify-center p-4 bg-secondary/20 rounded-lg">
             <Calendar className="h-5 w-5 text-muted-foreground mb-2" />
-            <div className="text-sm font-semibold">
-              {new Date(course.createdAt).toLocaleDateString()}
-            </div>
+            <div className="text-sm font-semibold">{new Date(course.createdAt).toLocaleDateString()}</div>
             <div className="text-sm text-muted-foreground">Created</div>
           </div>
         </div>
@@ -154,18 +128,12 @@ export function CourseDetailsDialog({
           {stats && (
             <div className="flex gap-4 p-4 bg-muted/50 rounded-lg">
               <div>
-                <div className="text-sm text-muted-foreground">
-                  Total Analyzed
-                </div>
+                <div className="text-sm text-muted-foreground">Total Analyzed</div>
                 <div className="text-2xl font-bold">{stats.totalAnalyzed}</div>
               </div>
               <div className="border-l pl-4">
-                <div className="text-sm text-muted-foreground">
-                  Course Related
-                </div>
-                <div className="text-2xl font-bold text-green-600">
-                  {stats.totalCategorized}
-                </div>
+                <div className="text-sm text-muted-foreground">Course Related</div>
+                <div className="text-2xl font-bold text-green-600">{stats.totalCategorized}</div>
               </div>
             </div>
           )}
@@ -174,13 +142,7 @@ export function CourseDetailsDialog({
           {emails.length > 0 && (
             <div className="space-y-3 max-h-[400px] overflow-y-auto">
               {emails.map(email => (
-                <EmailCard
-                  key={email.id}
-                  email={email}
-                  onMarkAsRead={handleMarkAsRead}
-                  onArchive={handleArchive}
-                  onDelete={handleDelete}
-                />
+                <EmailCard key={email.id} email={email} onMarkAsRead={handleMarkAsRead} onArchive={handleArchive} onDelete={handleDelete} />
               ))}
             </div>
           )}
@@ -189,28 +151,18 @@ export function CourseDetailsDialog({
           {!isLoading && emails.length === 0 && !stats && (
             <div className="text-center py-12 border-2 border-dashed rounded-lg">
               <Mail className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-sm text-muted-foreground">
-                Click "Check Emails" to analyze unread emails for this course
-              </p>
+              <p className="text-sm text-muted-foreground">Click "Check Emails" to analyze unread emails for this course</p>
             </div>
           )}
 
           {/* No Results */}
-          {!isLoading &&
-            emails.length === 0 &&
-            stats &&
-            stats.totalCategorized === 0 && (
-              <div className="text-center py-12 border-2 border-dashed rounded-lg">
-                <Mail className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-sm text-muted-foreground">
-                  No course-related emails found
-                </p>
-                <p className="text-xs text-muted-foreground mt-2">
-                  Analyzed {stats.totalAnalyzed} emails, none matched this
-                  course
-                </p>
-              </div>
-            )}
+          {!isLoading && emails.length === 0 && stats && stats.totalCategorized === 0 && (
+            <div className="text-center py-12 border-2 border-dashed rounded-lg">
+              <Mail className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-sm text-muted-foreground">No course-related emails found</p>
+              <p className="text-xs text-muted-foreground mt-2">Analyzed {stats.totalAnalyzed} emails, none matched this course</p>
+            </div>
+          )}
         </div>
 
         <div className="flex justify-end pt-4 border-t">

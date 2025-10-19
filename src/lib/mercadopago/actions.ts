@@ -37,10 +37,7 @@ export async function getPlanAction(planId: string) {
   return res.data;
 }
 
-export async function updatePlanAction(
-  planId: string,
-  params: Partial<CreatePlanParams>
-) {
+export async function updatePlanAction(planId: string, params: Partial<CreatePlanParams>) {
   const res = await mercadoPagoService.updatePlan(planId, params);
   if (!res.success) {
     throw new Error(res.error || 'Failed to update plan');
@@ -68,9 +65,7 @@ export async function getActivePlansAction() {
 // SUBSCRIPTIONS ACTIONS
 // ============================================
 
-export async function createSubscriptionAction(
-  params: CreatePreApprovalParams
-) {
+export async function createSubscriptionAction(params: CreatePreApprovalParams) {
   const res = await mercadoPagoService.createSubscription(params);
   if (!res.success) {
     throw new Error(res.error || 'Failed to create subscription');
@@ -86,14 +81,8 @@ export async function getSubscriptionAction(subscriptionId: string) {
   return res.data;
 }
 
-export async function updateSubscriptionAction(
-  subscriptionId: string,
-  params: { status?: 'paused' | 'cancelled'; reason?: string }
-) {
-  const res = await mercadoPagoService.updateSubscription(
-    subscriptionId,
-    params
-  );
+export async function updateSubscriptionAction(subscriptionId: string, params: { status?: 'paused' | 'cancelled'; reason?: string }) {
+  const res = await mercadoPagoService.updateSubscription(subscriptionId, params);
   if (!res.success) {
     throw new Error(res.error || 'Failed to update subscription');
   }
@@ -116,9 +105,7 @@ export async function pauseSubscriptionAction(subscriptionId: string) {
   return res.data;
 }
 
-export async function searchSubscriptionsAction(
-  params?: PreApprovalSearchParams
-) {
+export async function searchSubscriptionsAction(params?: PreApprovalSearchParams) {
   const res = await mercadoPagoService.searchSubscriptions(params);
   if (!res.success) {
     throw new Error(res.error || 'Failed to search subscriptions');

@@ -7,9 +7,7 @@ interface AdminDashboardLayoutProps {
   children: React.ReactNode;
 }
 
-export async function AdminDashboardLayout({
-  children,
-}: AdminDashboardLayoutProps) {
+export async function AdminDashboardLayout({ children }: AdminDashboardLayoutProps) {
   const user = await getCurrentUser();
   return (
     <SidebarProvider
@@ -24,9 +22,7 @@ export async function AdminDashboardLayout({
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col gap-2">
-            {children}
-          </div>
+          <div className="@container/main flex flex-1 flex-col gap-2">{children}</div>
         </div>
       </SidebarInset>
     </SidebarProvider>

@@ -12,12 +12,8 @@ export default function ValuePropositionSection() {
           <br />
           <span className="text-primary">{t('handleInbox')}</span>
         </h2>
-        <p className="text-lg sm:text-xl text-muted-foreground mb-6 leading-relaxed max-w-3xl mx-auto">
-          {t('learnsFromYou')}
-        </p>
-        <p className="text-xl font-semibold text-foreground">
-          {t('inboxCalm')}
-        </p>
+        <p className="text-lg sm:text-xl text-muted-foreground mb-6 leading-relaxed max-w-3xl mx-auto">{t('learnsFromYou')}</p>
+        <p className="text-xl font-semibold text-foreground">{t('inboxCalm')}</p>
       </div>
     </section>
   );

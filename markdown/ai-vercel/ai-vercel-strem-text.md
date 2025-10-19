@@ -275,11 +275,7 @@ export default function Chat() {
               case 'text':
                 return <div key={`${message.id}-${i}`}>{part.text}</div>;
               case 'tool-weather':
-                return (
-                  <pre key={`${message.id}-${i}`}>
-                    {JSON.stringify(part, null, 2)}
-                  </pre>
-                );
+                return <pre key={`${message.id}-${i}`}>{JSON.stringify(part, null, 2)}</pre>;
             }
           })}
         </div>
@@ -320,13 +316,7 @@ Modify your `app/api/chat/route.ts` file to include the `stopWhen` condition:
 
 ```tsx filename="app/api/chat/route.ts"
 import { openai } from '@ai-sdk/openai';
-import {
-  streamText,
-  UIMessage,
-  convertToModelMessages,
-  tool,
-  stepCountIs,
-} from 'ai';
+import { streamText, UIMessage, convertToModelMessages, tool, stepCountIs } from 'ai';
 import { z } from 'zod';
 
 export const maxDuration = 30;
@@ -374,13 +364,7 @@ Update your `app/api/chat/route.ts` file to add a new tool to convert the temper
 
 ```tsx filename="app/api/chat/route.ts" highlight="34-47"
 import { openai } from '@ai-sdk/openai';
-import {
-  streamText,
-  UIMessage,
-  convertToModelMessages,
-  tool,
-  stepCountIs,
-} from 'ai';
+import { streamText, UIMessage, convertToModelMessages, tool, stepCountIs } from 'ai';
 import { z } from 'zod';
 
 export const maxDuration = 30;
@@ -409,9 +393,7 @@ export async function POST(req: Request) {
       convertFahrenheitToCelsius: tool({
         description: 'Convert a temperature in fahrenheit to celsius',
         inputSchema: z.object({
-          temperature: z
-            .number()
-            .describe('The temperature in fahrenheit to convert'),
+          temperature: z.number().describe('The temperature in fahrenheit to convert'),
         }),
         execute: async ({ temperature }) => {
           const celsius = Math.round((temperature - 32) * (5 / 9));
@@ -451,11 +433,7 @@ export default function Chat() {
                 return <div key={`${message.id}-${i}`}>{part.text}</div>;
               case 'tool-weather':
               case 'tool-convertFahrenheitToCelsius':
-                return (
-                  <pre key={`${message.id}-${i}`}>
-                    {JSON.stringify(part, null, 2)}
-                  </pre>
-                );
+                return <pre key={`${message.id}-${i}`}>{JSON.stringify(part, null, 2)}</pre>;
             }
           })}
         </div>
@@ -508,11 +486,7 @@ You've built an AI chatbot using the AI SDK! From here, you have several paths t
 
 import TextareaAutosize from 'react-textarea-autosize';
 
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-} from '@/components/ui/input-group';
+import { InputGroup, InputGroupAddon, InputGroupButton } from '@/components/ui/input-group';
 
 export function InputGroupCustom() {
   return (

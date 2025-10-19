@@ -9,17 +9,12 @@ const passwordSchema = z
   .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
   .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
   .regex(/[0-9]/, 'Password must contain at least one number')
-  .regex(
-    /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]/,
-    'Password must contain at least one special character'
-  );
+  .regex(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]/, 'Password must contain at least one special character');
 
 /**
  * Email validation schema
  */
-const emailSchema = z
-  .email('Please enter a valid email address')
-  .min(1, 'Email is required');
+const emailSchema = z.email('Please enter a valid email address').min(1, 'Email is required');
 
 /**
  * Username validation schema
@@ -28,10 +23,7 @@ const usernameSchema = z
   .string()
   .min(3, 'Username must be at least 3 characters')
   .max(50, 'Username must be less than 50 characters')
-  .regex(
-    /^[a-zA-Z0-9_-]+$/,
-    'Username can only contain letters, numbers, underscores, and hyphens'
-  );
+  .regex(/^[a-zA-Z0-9_-]+$/, 'Username can only contain letters, numbers, underscores, and hyphens');
 
 /**
  * Sign up form schema

@@ -1,26 +1,10 @@
 'use client';
 
-import {
-  useCancelSubscription,
-  useUserSubscription,
-} from '@/hooks/use-user-subscription';
+import { useCancelSubscription, useUserSubscription } from '@/hooks/use-user-subscription';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import {
-  Loader2,
-  CheckCircle,
-  XCircle,
-  Clock,
-  AlertCircle,
-} from 'lucide-react';
+import { Loader2, CheckCircle, XCircle, Clock, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import { PLAN_LIMITS, getPlanDetails } from '@/subscriptions/plans';
 // Helper to format dates
@@ -63,9 +47,7 @@ export default function SubscriptionPage() {
         <Card>
           <CardHeader>
             <CardTitle>Error Loading Subscription</CardTitle>
-            <CardDescription>
-              Failed to load your subscription details
-            </CardDescription>
+            <CardDescription>Failed to load your subscription details</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-destructive"></p>
@@ -86,14 +68,10 @@ export default function SubscriptionPage() {
         <Card>
           <CardHeader>
             <CardTitle>No Active Subscription</CardTitle>
-            <CardDescription>
-              You don't have an active subscription yet
-            </CardDescription>
+            <CardDescription>You don't have an active subscription yet</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground">
-              Choose a plan to get started with EduAssist AI
-            </p>
+            <p className="text-muted-foreground">Choose a plan to get started with EduAssist AI</p>
           </CardContent>
           <CardFooter>
             <Button asChild>
@@ -158,9 +136,7 @@ export default function SubscriptionPage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold">Subscription</h1>
-          <p className="text-muted-foreground">
-            Manage your subscription and billing details
-          </p>
+          <p className="text-muted-foreground">Manage your subscription and billing details</p>
         </div>
 
         {/* Current Plan */}
@@ -193,24 +169,14 @@ export default function SubscriptionPage() {
               </div>
               {subscription.current_period_start && (
                 <div>
-                  <p className="text-sm text-muted-foreground">
-                    Current Period Start
-                  </p>
-                  <p className="font-medium">
-                    {formatDate(subscription.current_period_start)}
-                  </p>
+                  <p className="text-sm text-muted-foreground">Current Period Start</p>
+                  <p className="font-medium">{formatDate(subscription.current_period_start)}</p>
                 </div>
               )}
               {subscription.current_period_end && (
                 <div>
-                  <p className="text-sm text-muted-foreground">
-                    {subscription.status === 'trialing'
-                      ? 'Trial Ends'
-                      : 'Next Billing'}
-                  </p>
-                  <p className="font-medium">
-                    {formatDate(subscription.current_period_end)}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{subscription.status === 'trialing' ? 'Trial Ends' : 'Next Billing'}</p>
+                  <p className="font-medium">{formatDate(subscription.current_period_end)}</p>
                 </div>
               )}
             </div>
@@ -218,26 +184,20 @@ export default function SubscriptionPage() {
             {subscription.status === 'trialing' && subscription.trial_end && (
               <div className="bg-muted p-3 rounded-lg">
                 <p className="text-sm">
-                  <strong>Free Trial:</strong> Your trial ends on{' '}
-                  {formatDate(subscription.trial_end)}. You won't be charged
-                  until then.
+                  <strong>Free Trial:</strong> Your trial ends on {formatDate(subscription.trial_end)}. You won't be charged until then.
                 </p>
               </div>
             )}
           </CardContent>
           <CardFooter className="flex gap-2">
-            {subscription.status === 'active' ||
-            subscription.status === 'trialing' ? (
+            {subscription.status === 'active' || subscription.status === 'trialing' ? (
               <>
                 <Button asChild variant="default">
                   <Link href="/pricing">Upgrade Plan</Link>
                 </Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      disabled={cancelMutation.isPending}
-                    >
+                    <Button variant="outline" disabled={cancelMutation.isPending}>
                       {cancelMutation.isPending ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -252,16 +212,12 @@ export default function SubscriptionPage() {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        This will cancel your subscription. You'll continue to
-                        have access until the end of your current billing
-                        period.
+                        This will cancel your subscription. You'll continue to have access until the end of your current billing period.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>No, keep it</AlertDialogCancel>
-                      <AlertDialogAction onClick={handleCancelSubscription}>
-                        Yes, cancel
-                      </AlertDialogAction>
+                      <AlertDialogAction onClick={handleCancelSubscription}>Yes, cancel</AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
@@ -285,38 +241,22 @@ export default function SubscriptionPage() {
               <li className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-green-600" />
                 <span>
-                  {limits.maxInboxes === Infinity
-                    ? 'Unlimited'
-                    : limits.maxInboxes}{' '}
-                  inbox{limits.maxInboxes !== 1 ? 'es' : ''}
+                  {limits.maxInboxes === Infinity ? 'Unlimited' : limits.maxInboxes} inbox{limits.maxInboxes !== 1 ? 'es' : ''}
                 </span>
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-green-600" />
                 <span>
-                  {limits.maxCourses === Infinity
-                    ? 'Unlimited'
-                    : limits.maxCourses}{' '}
-                  course{limits.maxCourses !== 1 ? 's' : ''}
+                  {limits.maxCourses === Infinity ? 'Unlimited' : limits.maxCourses} course{limits.maxCourses !== 1 ? 's' : ''}
                 </span>
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-green-600" />
-                <span>
-                  {limits.aiEmailDraftPerDay === Infinity
-                    ? 'Unlimited'
-                    : limits.aiEmailDraftPerDay}{' '}
-                  AI email drafts per day
-                </span>
+                <span>{limits.aiEmailDraftPerDay === Infinity ? 'Unlimited' : limits.aiEmailDraftPerDay} AI email drafts per day</span>
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-green-600" />
-                <span>
-                  {limits.emailsProcessedPerMonth === Infinity
-                    ? 'Unlimited'
-                    : limits.emailsProcessedPerMonth}{' '}
-                  emails processed per month
-                </span>
+                <span>{limits.emailsProcessedPerMonth === Infinity ? 'Unlimited' : limits.emailsProcessedPerMonth} emails processed per month</span>
               </li>
               {limits.autoLabels && (
                 <li className="flex items-center gap-2">

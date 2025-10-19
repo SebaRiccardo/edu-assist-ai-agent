@@ -143,10 +143,7 @@ export async function POST(request: Request) {
   const { authConfigId } = requestBody;
 
   // Initiate connection with Composio
-  const connectionRequest = await composio.connectedAccounts.initiate(
-    session.user.id,
-    authConfigId
-  );
+  const connectionRequest = await composio.connectedAccounts.initiate(session.user.id, authConfigId);
 
   return NextResponse.json({
     redirectUrl: connectionRequest.redirectUrl,
@@ -170,8 +167,7 @@ export async function GET(request: Request) {
   const connectionId = searchParams.get('connectionId');
 
   // Wait for connection to complete
-  const connection =
-    await composio.connectedAccounts.waitForConnection(connectionId);
+  const connection = await composio.connectedAccounts.waitForConnection(connectionId);
 
   return NextResponse.json({
     id: connection.id,

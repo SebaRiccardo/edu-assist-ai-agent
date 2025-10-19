@@ -49,19 +49,10 @@ Automatically adjusts height based on content in React applications, handles Ent
 ## Usage
 
 ```tsx
-import {
-  PromptInput,
-  PromptInputTextarea,
-  PromptInputToolbar,
-  PromptInputSubmit,
-} from '@/components/ai/prompt-input';
+import { PromptInput, PromptInputTextarea, PromptInputToolbar, PromptInputSubmit } from '@/components/ai/prompt-input';
 
 <PromptInput onSubmit={() => {}}>
-  <PromptInputTextarea
-    value={input}
-    onChange={e => setInput(e.currentTarget.value)}
-    placeholder="Type your message..."
-  />
+  <PromptInputTextarea value={input} onChange={e => setInput(e.currentTarget.value)} placeholder="Type your message..." />
   <PromptInputToolbar>
     <PromptInputSubmit disabled={!input.trim()} />
   </PromptInputToolbar>
@@ -94,10 +85,7 @@ import {
   PromptInputModelSelectItem,
   PromptInputModelSelectValue,
 } from '@/components/ai/prompt-input';
-import {
-  Conversation,
-  ConversationContent,
-} from '@/components/ai/conversation';
+import { Conversation, ConversationContent } from '@/components/ai/conversation';
 import { Message, MessageContent } from '@/components/ai/message';
 import { useChat } from '@ai-sdk/react';
 import { useState } from 'react';
@@ -137,11 +125,7 @@ export default function Chat() {
       </Conversation>
 
       <PromptInput onSubmit={handleSubmit}>
-        <PromptInputTextarea
-          value={input}
-          onChange={e => setInput(e.currentTarget.value)}
-          placeholder="Type your message..."
-        />
+        <PromptInputTextarea value={input} onChange={e => setInput(e.currentTarget.value)} placeholder="Type your message..." />
         <PromptInputToolbar>
           <PromptInputTools>
             <PromptInputButton>
@@ -151,10 +135,7 @@ export default function Chat() {
               <MicIcon size={16} />
               <span>Voice</span>
             </PromptInputButton>
-            <PromptInputModelSelect
-              value={selectedModel}
-              onValueChange={setSelectedModel}
-            >
+            <PromptInputModelSelect value={selectedModel} onValueChange={setSelectedModel}>
               <PromptInputModelSelectTrigger>
                 <PromptInputModelSelectValue />
               </PromptInputModelSelectTrigger>

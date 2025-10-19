@@ -1,19 +1,6 @@
-export type ErrorType =
-  | 'bad_request'
-  | 'unauthorized'
-  | 'forbidden'
-  | 'not_found'
-  | 'rate_limit'
-  | 'offline';
+export type ErrorType = 'bad_request' | 'unauthorized' | 'forbidden' | 'not_found' | 'rate_limit' | 'offline';
 
-export type Surface =
-  | 'chat'
-  | 'auth'
-  | 'api'
-  | 'stream'
-  | 'database'
-  | 'history'
-  | 'vote';
+export type Surface = 'chat' | 'auth' | 'api' | 'stream' | 'database' | 'history' | 'vote';
 
 export type ErrorCode = `${ErrorType}:${Surface}`;
 
@@ -59,10 +46,7 @@ export class ChatSDKError extends Error {
         cause,
       });
 
-      return Response.json(
-        { code: '', message: 'Something went wrong. Please try again later.' },
-        { status: statusCode }
-      );
+      return Response.json({ code: '', message: 'Something went wrong. Please try again later.' }, { status: statusCode });
     }
 
     return Response.json({ code, message, cause }, { status: statusCode });

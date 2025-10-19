@@ -19,9 +19,7 @@ export interface AuthResponse {
 /**
  * Sign up a new user with email and password
  */
-export async function signUpWithEmailAndPassword(
-  data: SignUpData
-): Promise<AuthResponse> {
+export async function signUpWithEmailAndPassword(data: SignUpData): Promise<AuthResponse> {
   try {
     const supabase = createClient();
 
@@ -47,8 +45,7 @@ export async function signUpWithEmailAndPassword(
   } catch (error) {
     return {
       success: false,
-      error:
-        error instanceof Error ? error.message : 'An unexpected error occurred',
+      error: error instanceof Error ? error.message : 'An unexpected error occurred',
     };
   }
 }
@@ -76,8 +73,7 @@ export async function signIn(data: SignInData): Promise<AuthResponse> {
   } catch (error) {
     return {
       success: false,
-      error:
-        error instanceof Error ? error.message : 'An unexpected error occurred',
+      error: error instanceof Error ? error.message : 'An unexpected error occurred',
     };
   }
 }
@@ -128,8 +124,7 @@ export async function resetPassword(email: string): Promise<AuthResponse> {
   } catch (error) {
     return {
       success: false,
-      error:
-        error instanceof Error ? error.message : 'An unexpected error occurred',
+      error: error instanceof Error ? error.message : 'An unexpected error occurred',
     };
   }
 }

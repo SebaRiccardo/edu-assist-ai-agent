@@ -1,11 +1,6 @@
 'use client';
 
-import {
-  useDeleteMutation,
-  useInsertMutation,
-  useQuery,
-  useUpdateMutation,
-} from '@supabase-cache-helpers/postgrest-react-query';
+import { useDeleteMutation, useInsertMutation, useQuery, useUpdateMutation } from '@supabase-cache-helpers/postgrest-react-query';
 import useSupabaseBrowser from '@/lib/supabase/client';
 import { InsertInboxes } from '@/lib/supabase/types/inboxes.types';
 import { getInboxesByCourseIdQuery } from './queries/inboxes';
@@ -70,12 +65,7 @@ export async function createInbox(params: CreateInboxParams) {
   const { courseId, email, composioConnectionId } = params;
 
   // Check if inbox already exists for this course and email
-  const { data: existingInbox } = await client
-    .from('inboxes')
-    .select('*')
-    .eq('course_id', courseId)
-    .eq('email', email)
-    .maybeSingle();
+  const { data: existingInbox } = await client.from('inboxes').select('*').eq('course_id', courseId).eq('email', email).maybeSingle();
 
   if (existingInbox) {
     // Update the existing inbox with the new connection ID
@@ -106,11 +96,7 @@ export async function createInbox(params: CreateInboxParams) {
     unread_count: 0,
   };
 
-  const { data: inbox, error } = await client
-    .from('inboxes')
-    .insert(newInbox)
-    .select()
-    .single();
+  const { data: inbox, error } = await client.from('inboxes').insert(newInbox).select().single();
 
   if (error) {
     console.error('Error creating inbox:', error);

@@ -5,10 +5,7 @@
  * using the enhanced response generation agent.
  */
 
-import {
-  generateEmailResponse,
-  generateBatchResponses,
-} from '@/agents/generate-responses';
+import { generateEmailResponse, generateBatchResponses } from '@/agents/generate-responses';
 import type { EmailInfo, PriorityInfo } from '@/agents/generate-responses';
 
 // ============================================================================
@@ -169,14 +166,10 @@ async function generateMultilingualBatchResponses() {
   ];
 
   // Generate all responses in Spanish
-  const spanishResponses = await generateBatchResponses(
-    spanishEmails,
-    'CS 101: Programación',
-    {
-      language: 'Spanish', // ✨ All responses in Spanish
-      professorName: 'Dr. Rodríguez',
-    }
-  );
+  const spanishResponses = await generateBatchResponses(spanishEmails, 'CS 101: Programación', {
+    language: 'Spanish', // ✨ All responses in Spanish
+    professorName: 'Dr. Rodríguez',
+  });
 
   console.log(`Generated ${spanishResponses.length} Spanish responses`);
 
@@ -199,14 +192,10 @@ async function generateMultilingualBatchResponses() {
   ];
 
   // Generate all responses in French
-  const frenchResponses = await generateBatchResponses(
-    frenchEmails,
-    "INFO 101: Introduction à l'Informatique",
-    {
-      language: 'French', // ✨ All responses in French
-      professorName: 'Prof. Dubois',
-    }
-  );
+  const frenchResponses = await generateBatchResponses(frenchEmails, "INFO 101: Introduction à l'Informatique", {
+    language: 'French', // ✨ All responses in French
+    professorName: 'Prof. Dubois',
+  });
 
   console.log(`Generated ${frenchResponses.length} French responses`);
 }

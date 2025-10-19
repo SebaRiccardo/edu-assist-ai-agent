@@ -1,11 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTranslations } from 'next-intl';
 
-export default async function Page({
-  searchParams,
-}: {
-  searchParams: Promise<{ error: string }>;
-}) {
+export default async function Page({ searchParams }: { searchParams: Promise<{ error: string }> }) {
   const params = await searchParams;
   const t = useTranslations('Auth');
 
@@ -15,9 +11,7 @@ export default async function Page({
         <div className="flex flex-col gap-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl">
-                {t('errorGenericTitle')}
-              </CardTitle>
+              <CardTitle className="text-2xl">{t('errorGenericTitle')}</CardTitle>
             </CardHeader>
             <CardContent>
               {params?.error ? (
@@ -25,9 +19,7 @@ export default async function Page({
                   {t('errorCode')} {params.error}
                 </p>
               ) : (
-                <p className="text-sm text-muted-foreground">
-                  {t('unspecifiedError')}
-                </p>
+                <p className="text-sm text-muted-foreground">{t('unspecifiedError')}</p>
               )}
             </CardContent>
           </Card>

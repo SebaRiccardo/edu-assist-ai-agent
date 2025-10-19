@@ -17,22 +17,16 @@ export default function Page() {
         <div className="flex flex-col gap-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl">
-                {t('errorGenericTitle')}
-              </CardTitle>
+              <CardTitle className="text-2xl">{t('errorGenericTitle')}</CardTitle>
             </CardHeader>
             <CardContent className="text-center">
               {error ? (
                 <p className="text-sm text-muted-foreground">{error}</p>
               ) : (
-                <p className="text-sm text-muted-foreground">
-                  {t('unspecifiedError')}
-                </p>
+                <p className="text-sm text-muted-foreground">{t('unspecifiedError')}</p>
               )}
             </CardContent>
-            <Button onClick={() => router.push('/subscriptions')}>
-              Continuar
-            </Button>
+            <Button onClick={() => router.push('/subscriptions')}>Continuar</Button>
           </Card>
         </div>
       </div>

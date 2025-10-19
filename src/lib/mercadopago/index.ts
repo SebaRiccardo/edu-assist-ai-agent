@@ -32,12 +32,7 @@ export {
 } from './service';
 
 // Types
-export type {
-  CreatePlanParams,
-  PlanSearchParams,
-  CreatePreApprovalParams,
-  CreatePaymentParams,
-} from './service';
+export type { CreatePlanParams, PlanSearchParams, CreatePreApprovalParams, CreatePaymentParams } from './service';
 
 export type {
   MercadoPagoWebhookEvent,
@@ -54,10 +49,4 @@ export type {
 export { handleMercadoPagoWebhook } from './webhook';
 
 // Helpers
-export {
-  setupInboxProfPlans,
-  setupInboxProfPlansWithTrial,
-  subscribeUserToPlan,
-  getUserSubscriptionStatus,
-  cancelUserSubscription,
-} from './helpers';
+export { setupInboxProfPlans, setupInboxProfPlansWithTrial, subscribeUserToPlan, getUserSubscriptionStatus, cancelUserSubscription } from './helpers';

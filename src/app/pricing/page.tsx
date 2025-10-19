@@ -10,12 +10,8 @@ const PricingPage = () => {
     <div className="min-h-screen flex flex-col items-center justify-center py-12 px-6">
       <Navbar />
       <div className="text-center mb-5 mt-25">
-        <h1 className="text-5xl sm:text-6xl font-semibold tracking-tighter">
-          {t('title')}
-        </h1>
-        <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-          {t('subtitle')}
-        </p>
+        <h1 className="text-5xl sm:text-6xl font-semibold tracking-tighter">{t('title')}</h1>
+        <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">{t('subtitle')}</p>
       </div>
       <PricingPageCards />
       <div className="mt-12 text-center">

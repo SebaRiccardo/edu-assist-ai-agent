@@ -174,13 +174,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 ```
 
 ```tsx showLineNumbers title="components/app-sidebar.tsx"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarHeader,
-} from '@/components/ui/sidebar';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader } from '@/components/ui/sidebar';
 
 export function AppSidebar() {
   return (
@@ -512,15 +506,7 @@ The `useSidebar` hook is used to control the sidebar.
 import { useSidebar } from '@/components/ui/sidebar';
 
 export function AppSidebar() {
-  const {
-    state,
-    open,
-    setOpen,
-    openMobile,
-    setOpenMobile,
-    isMobile,
-    toggleSidebar,
-  } = useSidebar();
+  const { state, open, setOpen, openMobile, setOpenMobile, isMobile, toggleSidebar } = useSidebar();
 }
 ```
 
@@ -616,10 +602,7 @@ export function AppSidebar() {
                     <ChevronUp className="ml-auto" />
                   </SidebarMenuButton>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  side="top"
-                  className="w-[--radix-popper-anchor-width]"
-                >
+                <DropdownMenuContent side="top" className="w-[--radix-popper-anchor-width]">
                   <DropdownMenuItem>
                     <span>Account</span>
                   </DropdownMenuItem>

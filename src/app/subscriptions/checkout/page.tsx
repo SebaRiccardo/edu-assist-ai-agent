@@ -5,14 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useLocaleSubscriptionPlan } from '@/hooks/use-locale-subscription-plans';
 import { usePlan } from '@/hooks/use-subscription-plans';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, Loader2, ArrowLeft } from 'lucide-react';
@@ -34,15 +27,11 @@ function CheckoutContent() {
   const selectedPlan = plans.find(p => p.planType === planType);
 
   // Get MercadoPago plan details
-  const { data: mpPlan, isLoading: mpPlanLoading } = usePlan(
-    selectedPlan?.mercadopago_plan_id || ''
-  );
+  const { data: mpPlan, isLoading: mpPlanLoading } = usePlan(selectedPlan?.mercadopago_plan_id || '');
 
   useEffect(() => {
     if (!userLoading && !user) {
-      router.push(
-        `/auth/signin?redirect=/subscriptions/checkout?plan=${planType}`
-      );
+      router.push(`/auth/signin?redirect=/subscriptions/checkout?plan=${planType}`);
     }
   }, [user, userLoading, router, planType]);
 
@@ -68,9 +57,7 @@ function CheckoutContent() {
       }
     } catch (err) {
       console.error('Checkout error:', err);
-      setError(
-        err instanceof Error ? err.message : 'Failed to create subscription'
-      );
+      setError(err instanceof Error ? err.message : 'Failed to create subscription');
     } finally {
       setIsLoading(false);
     }
@@ -135,9 +122,7 @@ function CheckoutContent() {
                     minimumFractionDigits: 0,
                   }).format(selectedPlan.price)}
                 </span>
-                <span className="text-muted-foreground">
-                  / {selectedPlan.period.replace('por ', '')}
-                </span>
+                <span className="text-muted-foreground">/ {selectedPlan.period.replace('por ', '')}</span>
               </div>
             </div>
 
@@ -184,16 +169,12 @@ function CheckoutContent() {
                 <span className="font-medium">{selectedPlan.name}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">
-                  {t('billingCycle')}
-                </span>
+                <span className="text-muted-foreground">{t('billingCycle')}</span>
                 <span className="font-medium">{selectedPlan.period}</span>
               </div>
               {selectedPlan.freeTrial.count > 0 && (
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">
-                    {t('freeTrial')}
-                  </span>
+                  <span className="text-muted-foreground">{t('freeTrial')}</span>
                   <span className="font-medium text-green-600">
                     {selectedPlan.freeTrial.count} {t('days')}
                   </span>
@@ -233,19 +214,10 @@ function CheckoutContent() {
               )}
             </div>
 
-            {error && (
-              <div className="bg-destructive/10 text-destructive p-3 rounded-lg text-sm">
-                {error}
-              </div>
-            )}
+            {error && <div className="bg-destructive/10 text-destructive p-3 rounded-lg text-sm">{error}</div>}
           </CardContent>
           <CardFooter className="flex flex-col gap-3">
-            <Button
-              onClick={handleSubscribe}
-              disabled={isLoading || !mpPlan}
-              className="w-full"
-              size="lg"
-            >
+            <Button onClick={handleSubscribe} disabled={isLoading || !mpPlan} className="w-full" size="lg">
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -255,9 +227,7 @@ function CheckoutContent() {
                 t('proceedToPayment')
               )}
             </Button>
-            <p className="text-xs text-center text-muted-foreground">
-              {t('redirectNote')}
-            </p>
+            <p className="text-xs text-center text-muted-foreground">{t('redirectNote')}</p>
           </CardFooter>
         </Card>
       </div>

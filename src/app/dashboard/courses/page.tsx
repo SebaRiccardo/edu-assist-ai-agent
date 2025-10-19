@@ -5,12 +5,7 @@ import { Button } from '@/components/ui/button';
 import { CourseCard } from '@/components/course-card';
 import { CourseFormDialog } from '@/components/course-form-dialog';
 import { Loader2, Plus, BookOpen } from 'lucide-react';
-import {
-  useCourses,
-  useCreateCourse,
-  useUpdateCourse,
-  useDeleteCourse,
-} from '@/hooks/use-courses';
+import { useCourses, useCreateCourse, useUpdateCourse, useDeleteCourse } from '@/hooks/use-courses';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { Course, InsertCourse } from '@/lib/supabase/types/courses.types';
 
@@ -21,19 +16,10 @@ export default function CoursesPage() {
   const { user } = useCurrentUser();
   const { data: courses, isLoading } = useCourses(user?.id);
   const { mutateAsync: createCourse } = useCreateCourse();
-  const {
-    mutateAsync: updateCourse,
-    isPending: isUpdatingCourse,
-    variables,
-  } = useUpdateCourse();
+  const { mutateAsync: updateCourse, isPending: isUpdatingCourse, variables } = useUpdateCourse();
   const { mutateAsync: deleteCourse } = useDeleteCourse();
 
-  const handleSubmitCourse = async (
-    courseData: Omit<
-      InsertCourse,
-      'professor_id' | 'created_at' | 'updated_at' | 'id'
-    >
-  ) => {
+  const handleSubmitCourse = async (courseData: Omit<InsertCourse, 'professor_id' | 'created_at' | 'updated_at' | 'id'>) => {
     try {
       if (editingCourse) {
         // Update existing course
@@ -62,11 +48,7 @@ export default function CoursesPage() {
   };
 
   const handleDeleteCourse = async (courseId: string) => {
-    if (
-      !confirm(
-        'Are you sure you want to delete this course? This action cannot be undone.'
-      )
-    ) {
+    if (!confirm('Are you sure you want to delete this course? This action cannot be undone.')) {
       return;
     }
 
@@ -116,9 +98,7 @@ export default function CoursesPage() {
               <BookOpen className="h-6 w-6 text-muted-foreground" />
               <div>
                 <h1 className="text-2xl font-bold">Courses</h1>
-                <p className="text-sm text-muted-foreground">
-                  Manage your courses and check student emails
-                </p>
+                <p className="text-sm text-muted-foreground">Manage your courses and check student emails</p>
               </div>
             </div>
             <Button onClick={handleOpenCreateForm} size="lg" className="gap-2">
@@ -144,9 +124,7 @@ export default function CoursesPage() {
             <div className="text-center py-20 bg-background/50 rounded-2xl border-none">
               <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
               <h2 className="text-2xl font-semibold mb-2">No courses yet</h2>
-              <p className="text-muted-foreground mb-6">
-                Create your first course to get started
-              </p>
+              <p className="text-muted-foreground mb-6">Create your first course to get started</p>
               <Button onClick={handleOpenCreateForm} size="lg">
                 <Plus className="mr-2 h-5 w-5" />
                 Create Your First Course
@@ -158,12 +136,7 @@ export default function CoursesPage() {
           {!isLoading && courses && courses?.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {courses?.map(course => (
-                <CourseCard
-                  key={course.id}
-                  course={course}
-                  onEdit={handleEdit}
-                  onDelete={handleDeleteCourse}
-                />
+                <CourseCard key={course.id} course={course} onEdit={handleEdit} onDelete={handleDeleteCourse} />
               ))}
             </div>
           )}

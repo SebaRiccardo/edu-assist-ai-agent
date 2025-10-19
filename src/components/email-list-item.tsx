@@ -53,15 +53,8 @@ const emailCategoryConfig = {
   },
 };
 
-export function EmailListItem({
-  email,
-  isSelected,
-  isSendingReply,
-  onClick,
-  onAutoReply,
-}: EmailListItemProps) {
-  const categoryConfig =
-    emailCategoryConfig[email.category as keyof typeof emailCategoryConfig];
+export function EmailListItem({ email, isSelected, isSendingReply, onClick, onAutoReply }: EmailListItemProps) {
+  const categoryConfig = emailCategoryConfig[email.category as keyof typeof emailCategoryConfig];
 
   return (
     <div
@@ -82,17 +75,8 @@ export function EmailListItem({
           /> */}
           <div className="flex flex-col gap-1 flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <span
-                className={cn(
-                  'text-sm truncate',
-                  email.isUnread ? 'font-semibold' : 'font-medium'
-                )}
-              >
-                {email.from.split('<')[0]}
-              </span>
-              <span className={cn('text-xs text-muted-foreground truncate')}>
-                {`<${email.from.split('<')[1]}`}
-              </span>
+              <span className={cn('text-sm truncate', email.isUnread ? 'font-semibold' : 'font-medium')}>{email.from.split('<')[0]}</span>
+              <span className={cn('text-xs text-muted-foreground truncate')}>{`<${email.from.split('<')[1]}`}</span>
               {/* {email.isUnread && (
                 <Badge variant="default" className="text-xs px-1 py-0">
                   New
@@ -118,18 +102,9 @@ export function EmailListItem({
       </div>
 
       <div className="flex items-center gap-1">
-        <span
-          className={cn(
-            'text-xs truncate',
-            email.isUnread ? 'font-semibold' : 'font-normal'
-          )}
-        >
-          {email.subject}
-        </span>
+        <span className={cn('text-xs truncate', email.isUnread ? 'font-semibold' : 'font-normal')}>{email.subject}</span>
         <span className="text-gray-200">-</span>
-        <span className="text-xs text-muted-foreground max-w-sm truncate">
-          {email.snippet}
-        </span>
+        <span className="text-xs text-muted-foreground max-w-sm truncate">{email.snippet}</span>
       </div>
 
       {/* Badges and Actions Row */}
@@ -137,9 +112,7 @@ export function EmailListItem({
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-1 flex-wrap">
             <Tags className="text-muted-foreground size-3" />
-            <span className="text-xs text-muted-foreground italic">
-              Etiquetas sugeridas:
-            </span>
+            <span className="text-xs text-muted-foreground italic">Etiquetas sugeridas:</span>
           </div>
           <Badge variant="success" className="text-xs">
             {email.suggestedLabel}

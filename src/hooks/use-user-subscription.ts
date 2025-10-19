@@ -1,9 +1,6 @@
 'use client';
 
-import {
-  useQuery,
-  useUpdateMutation,
-} from '@supabase-cache-helpers/postgrest-react-query';
+import { useQuery, useUpdateMutation } from '@supabase-cache-helpers/postgrest-react-query';
 import useSupabaseBrowser from '@/lib/supabase/client';
 import { getUserSubscriptionById } from './queries/user-subscriptions';
 import { cancelSubscriptionAction } from '@/actions';

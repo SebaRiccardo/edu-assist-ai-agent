@@ -13,13 +13,7 @@ npx ai-elements@latest add tool
 ## Usage
 
 ```tsx
-import {
-  Tool,
-  ToolContent,
-  ToolHeader,
-  ToolOutput,
-  ToolInput,
-} from '@/components/ai-elements/tool';
+import { Tool, ToolContent, ToolHeader, ToolOutput, ToolInput } from '@/components/ai-elements/tool';
 ```
 
 ```tsx
@@ -45,13 +39,7 @@ import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport, type ToolUIPart } from 'ai';
 import { Button } from '@/components/ui/button';
 import { Response } from '@/components/ai-elements/response';
-import {
-  Tool,
-  ToolContent,
-  ToolHeader,
-  ToolInput,
-  ToolOutput,
-} from '@/components/ai-elements/tool';
+import { Tool, ToolContent, ToolHeader, ToolInput, ToolOutput } from '@/components/ai-elements/tool';
 
 type WeatherToolInput = {
   location: string;
@@ -86,9 +74,7 @@ const Example = () => {
   };
 
   const latestMessage = messages[messages.length - 1];
-  const weatherTool = latestMessage?.parts?.find(
-    part => part.type === 'tool-fetch_weather_data'
-  ) as WeatherToolUIPart | undefined;
+  const weatherTool = latestMessage?.parts?.find(part => part.type === 'tool-fetch_weather_data') as WeatherToolUIPart | undefined;
 
   return (
     <div className="max-w-4xl mx-auto p-6 relative size-full rounded-lg border h-[600px]">
@@ -100,20 +86,10 @@ const Example = () => {
 
           {weatherTool && (
             <Tool defaultOpen={true}>
-              <ToolHeader
-                type="tool-fetch_weather_data"
-                state={weatherTool.state}
-              />
+              <ToolHeader type="tool-fetch_weather_data" state={weatherTool.state} />
               <ToolContent>
                 <ToolInput input={weatherTool.input} />
-                <ToolOutput
-                  output={
-                    <Response>
-                      {formatWeatherResult(weatherTool.output)}
-                    </Response>
-                  }
-                  errorText={weatherTool.errorText}
-                />
+                <ToolOutput output={<Response>{formatWeatherResult(weatherTool.output)}</Response>} errorText={weatherTool.errorText} />
               </ToolContent>
             </Tool>
           )}
@@ -156,13 +132,8 @@ export async function POST(req: Request) {
       fetch_weather_data: {
         description: 'Fetch weather information for a specific location',
         parameters: z.object({
-          location: z
-            .string()
-            .describe('The city or location to get weather for'),
-          units: z
-            .enum(['celsius', 'fahrenheit'])
-            .default('celsius')
-            .describe('Temperature units'),
+          location: z.string().describe('The city or location to get weather for'),
+          units: z.enum(['celsius', 'fahrenheit']).default('celsius').describe('Temperature units'),
         }),
         inputSchema: z.object({
           location: z.string(),
@@ -171,10 +142,7 @@ export async function POST(req: Request) {
         execute: async ({ location, units }) => {
           await new Promise(resolve => setTimeout(resolve, 1500));
 
-          const temp =
-            units === 'celsius'
-              ? Math.floor(Math.random() * 35) + 5
-              : Math.floor(Math.random() * 63) + 41;
+          const temp = units === 'celsius' ? Math.floor(Math.random() * 35) + 5 : Math.floor(Math.random() * 63) + 41;
 
           return {
             location,

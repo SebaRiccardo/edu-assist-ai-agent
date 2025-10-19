@@ -210,18 +210,12 @@ export const embeddings = pgTable(
     id: varchar('id', { length: 191 })
       .primaryKey()
       .$defaultFn(() => nanoid()),
-    resourceId: varchar('resource_id', { length: 191 }).references(
-      () => resources.id,
-      { onDelete: 'cascade' }
-    ),
+    resourceId: varchar('resource_id', { length: 191 }).references(() => resources.id, { onDelete: 'cascade' }),
     content: text('content').notNull(),
     embedding: vector('embedding', { dimensions: 1536 }).notNull(),
   },
   table => ({
-    embeddingIndex: index('embeddingIndex').using(
-      'hnsw',
-      table.embedding.op('vector_cosine_ops')
-    ),
+    embeddingIndex: index('embeddingIndex').using('hnsw', table.embedding.op('vector_cosine_ops')),
   })
 );
 ```
@@ -295,9 +289,7 @@ const generateChunks = (input: string): string[] => {
     .filter(i => i !== '');
 };
 
-export const generateEmbeddings = async (
-  value: string
-): Promise<Array<{ embedding: number[]; content: string }>> => {
+export const generateEmbeddings = async (value: string): Promise<Array<{ embedding: number[]; content: string }>> => {
   const chunks = generateChunks(value);
   const { embeddings } = await embedMany({
     model: embeddingModel,
@@ -318,26 +310,18 @@ Open the file at `lib/actions/resources.ts`. This file has one function, `create
 ```tsx filename="lib/actions/resources.ts"
 'use server';
 
-import {
-  NewResourceParams,
-  insertResourceSchema,
-  resources,
-} from '@/lib/db/schema/resources';
+import { NewResourceParams, insertResourceSchema, resources } from '@/lib/db/schema/resources';
 import { db } from '../db';
 
 export const createResource = async (input: NewResourceParams) => {
   try {
     const { content } = insertResourceSchema.parse(input);
 
-    const [resource] = await db
-      .insert(resources)
-      .values({ content })
-      .returning();
+    const [resource] = await db.insert(resources).values({ content }).returning();
 
     return 'Resource successfully created.';
   } catch (e) {
-    if (e instanceof Error)
-      return e.message.length > 0 ? e.message : 'Error, please try again.';
+    if (e instanceof Error) return e.message.length > 0 ? e.message : 'Error, please try again.';
   }
 };
 ```
@@ -349,11 +333,7 @@ Update the file with the following code:
 ```tsx filename="lib/actions/resources.ts" highlight="9-10,21-27,29"
 'use server';
 
-import {
-  NewResourceParams,
-  insertResourceSchema,
-  resources,
-} from '@/lib/db/schema/resources';
+import { NewResourceParams, insertResourceSchema, resources } from '@/lib/db/schema/resources';
 import { db } from '../db';
 import { generateEmbeddings } from '../ai/embedding';
 import { embeddings as embeddingsTable } from '../db/schema/embeddings';
@@ -362,10 +342,7 @@ export const createResource = async (input: NewResourceParams) => {
   try {
     const { content } = insertResourceSchema.parse(input);
 
-    const [resource] = await db
-      .insert(resources)
-      .values({ content })
-      .returning();
+    const [resource] = await db.insert(resources).values({ content }).returning();
 
     const embeddings = await generateEmbeddings(content);
     await db.insert(embeddingsTable).values(
@@ -377,9 +354,7 @@ export const createResource = async (input: NewResourceParams) => {
 
     return 'Resource successfully created and embedded.';
   } catch (error) {
-    return error instanceof Error && error.message.length > 0
-      ? error.message
-      : 'Error, please try again.';
+    return error instanceof Error && error.message.length > 0 ? error.message : 'Error, please try again.';
   }
 };
 ```
@@ -546,9 +521,7 @@ export async function POST(req: Request) {
         description: `add a resource to your knowledge base.
           If the user provides a random piece of knowledge unprompted, use this tool without asking for confirmation.`,
         inputSchema: z.object({
-          content: z
-            .string()
-            .describe('the content or resource to add to the knowledge base'),
+          content: z.string().describe('the content or resource to add to the knowledge base'),
         }),
         execute: async ({ content }) => createResource({ content }),
       }),
@@ -599,11 +572,8 @@ export default function Chat() {
                   case 'tool-getInformation':
                     return (
                       <p>
-                        call{part.state === 'output-available' ? 'ed' : 'ing'}{' '}
-                        tool: {part.type}
-                        <pre className="my-4 bg-zinc-100 p-2 rounded-sm">
-                          {JSON.stringify(part.input, null, 2)}
-                        </pre>
+                        call{part.state === 'output-available' ? 'ed' : 'ing'} tool: {part.type}
+                        <pre className="my-4 bg-zinc-100 p-2 rounded-sm">{JSON.stringify(part.input, null, 2)}</pre>
                       </p>
                     );
                 }
@@ -650,13 +620,7 @@ Open your root page (`api/chat/route.ts`) and add the following key to the `stre
 ```tsx filename="api/chat/route.ts" highlight="8,24"
 import { createResource } from '@/lib/actions/resources';
 import { openai } from '@ai-sdk/openai';
-import {
-  convertToModelMessages,
-  streamText,
-  tool,
-  UIMessage,
-  stepCountIs,
-} from 'ai';
+import { convertToModelMessages, streamText, tool, UIMessage, stepCountIs } from 'ai';
 import { z } from 'zod';
 
 // Allow streaming responses up to 30 seconds
@@ -677,9 +641,7 @@ export async function POST(req: Request) {
         description: `add a resource to your knowledge base.
           If the user provides a random piece of knowledge unprompted, use this tool without asking for confirmation.`,
         inputSchema: z.object({
-          content: z
-            .string()
-            .describe('the content or resource to add to the knowledge base'),
+          content: z.string().describe('the content or resource to add to the knowledge base'),
         }),
         execute: async ({ content }) => createResource({ content }),
       }),
@@ -714,9 +676,7 @@ const generateChunks = (input: string): string[] => {
     .filter(i => i !== '');
 };
 
-export const generateEmbeddings = async (
-  value: string
-): Promise<Array<{ embedding: number[]; content: string }>> => {
+export const generateEmbeddings = async (value: string): Promise<Array<{ embedding: number[]; content: string }>> => {
   const chunks = generateChunks(value);
   const { embeddings } = await embedMany({
     model: embeddingModel,
@@ -736,10 +696,7 @@ export const generateEmbedding = async (value: string): Promise<number[]> => {
 
 export const findRelevantContent = async (userQuery: string) => {
   const userQueryEmbedded = await generateEmbedding(userQuery);
-  const similarity = sql<number>`1 - (${cosineDistance(
-    embeddings.embedding,
-    userQueryEmbedded
-  )})`;
+  const similarity = sql<number>`1 - (${cosineDistance(embeddings.embedding, userQueryEmbedded)})`;
   const similarGuides = await db
     .select({ name: embeddings.content, similarity })
     .from(embeddings)
@@ -762,13 +719,7 @@ Go back to your route handler (`api/chat/route.ts`) and add a new tool called `g
 ```ts filename="api/chat/route.ts" highlight="11,37-43"
 import { createResource } from '@/lib/actions/resources';
 import { openai } from '@ai-sdk/openai';
-import {
-  convertToModelMessages,
-  streamText,
-  tool,
-  UIMessage,
-  stepCountIs,
-} from 'ai';
+import { convertToModelMessages, streamText, tool, UIMessage, stepCountIs } from 'ai';
 import { z } from 'zod';
 import { findRelevantContent } from '@/lib/ai/embedding';
 
@@ -790,9 +741,7 @@ export async function POST(req: Request) {
         description: `add a resource to your knowledge base.
           If the user provides a random piece of knowledge unprompted, use this tool without asking for confirmation.`,
         inputSchema: z.object({
-          content: z
-            .string()
-            .describe('the content or resource to add to the knowledge base'),
+          content: z.string().describe('the content or resource to add to the knowledge base'),
         }),
         execute: async ({ content }) => createResource({ content }),
       }),

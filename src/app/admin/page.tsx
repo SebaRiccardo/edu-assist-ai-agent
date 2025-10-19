@@ -16,10 +16,7 @@ export default async function AdminPage() {
 
   const queryClient = getQueryClient();
 
-  await Promise.all([
-    prefetchQuery(queryClient, getAllProfilesQuery(supabase)),
-    prefetchQuery(queryClient, getAllPlansQuery(supabase)),
-  ]);
+  await Promise.all([prefetchQuery(queryClient, getAllProfilesQuery(supabase)), prefetchQuery(queryClient, getAllPlansQuery(supabase))]);
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

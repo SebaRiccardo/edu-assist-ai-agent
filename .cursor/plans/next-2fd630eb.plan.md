@@ -39,11 +39,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getLocale } from '@/lib/i18n/get-locale';
 import { getMessages } from '@/lib/i18n/get-messages';
 
-export default async function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();
   const messages = await getMessages(locale);
   return (

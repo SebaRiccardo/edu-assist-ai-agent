@@ -9,12 +9,12 @@
     "autoLabels": false,
     "realTimeReplies": false,
     "autonomousEmailManagement": false,
-    "chatWithInbox": false ,
-    "chatWithInboxUsage":{
-        "input": 0,
-        "output": 0,
-        "interval":"day"
-    }  
+    "chatWithInbox": false,
+    "chatWithInboxUsage": {
+      "input": 0,
+      "output": 0,
+      "interval": "day"
+    }
   },
   "pro": {
     "maxInboxes": 2,
@@ -27,11 +27,11 @@
     "prioritySupport": false,
     "autonomousEmailManagement": false,
     "chatWithInbox": false,
-    "chatWithInboxUsage":{
-        "input": 0,
-        "output": 0,
-         "interval":"day"
-    }     
+    "chatWithInboxUsage": {
+      "input": 0,
+      "output": 0,
+      "interval": "day"
+    }
   },
   "pro_plus": {
     "maxInboxes": 10,
@@ -44,10 +44,10 @@
     "prioritySupport": true,
     "autonomousEmailManagement": true,
     "chatWithInbox": true,
-    "chatWithInboxUsage":{
-        "input": 3000000,
-        "output": 6000000,
-        "interval":"day"
-    }    
+    "chatWithInboxUsage": {
+      "input": 3000000,
+      "output": 6000000,
+      "interval": "day"
+    }
   }
 }

@@ -34,9 +34,7 @@ export default function Page() {
       {messages.map(message => (
         <div key={message.id}>
           {message.role === 'user' ? 'User: ' : 'AI: '}
-          {message.parts.map((part, index) =>
-            part.type === 'text' ? <span key={index}>{part.text}</span> : null
-          )}
+          {message.parts.map((part, index) => (part.type === 'text' ? <span key={index}>{part.text}</span> : null))}
         </div>
       ))}
 
@@ -49,12 +47,7 @@ export default function Page() {
           }
         }}
       >
-        <input
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          disabled={status !== 'ready'}
-          placeholder="Say something..."
-        />
+        <input value={input} onChange={e => setInput(e.target.value)} disabled={status !== 'ready'} placeholder="Say something..." />
         <button type="submit" disabled={status !== 'ready'}>
           Submit
         </button>
@@ -137,9 +130,7 @@ export default function Page() {
       {messages.map(message => (
         <div key={message.id}>
           {message.role === 'user' ? 'User: ' : 'AI: '}
-          {message.parts.map((part, index) =>
-            part.type === 'text' ? <span key={index}>{part.text}</span> : null
-          )}
+          {message.parts.map((part, index) => (part.type === 'text' ? <span key={index}>{part.text}</span> : null))}
         </div>
       ))}
 
@@ -161,12 +152,7 @@ export default function Page() {
           }
         }}
       >
-        <input
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          disabled={status !== 'ready'}
-          placeholder="Say something..."
-        />
+        <input value={input} onChange={e => setInput(e.target.value)} disabled={status !== 'ready'} placeholder="Say something..." />
         <button type="submit" disabled={status !== 'ready'}>
           Submit
         </button>
@@ -206,10 +192,7 @@ export default function Chat() {
     <div>
       {messages.map(m => (
         <div key={m.id}>
-          {m.role}:{' '}
-          {m.parts.map((part, index) =>
-            part.type === 'text' ? <span key={index}>{part.text}</span> : null
-          )}
+          {m.role}: {m.parts.map((part, index) => (part.type === 'text' ? <span key={index}>{part.text}</span> : null))}
         </div>
       ))}
 
@@ -231,11 +214,7 @@ export default function Chat() {
           }
         }}
       >
-        <input
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          disabled={error != null}
-        />
+        <input value={input} onChange={e => setInput(e.target.value)} disabled={error != null} />
       </form>
     </div>
   );
@@ -295,10 +274,7 @@ const { regenerate, status } = useChat();
 
 return (
   <>
-    <button
-      onClick={regenerate}
-      disabled={!(status === 'ready' || status === 'error')}
-    >
+    <button onClick={regenerate} disabled={!(status === 'ready' || status === 'error')}>
       Regenerate
     </button>
     ...
@@ -461,10 +437,7 @@ export default function Chat() {
     <div>
       {messages.map(m => (
         <div key={m.id}>
-          {m.role}:{' '}
-          {m.parts.map((part, index) =>
-            part.type === 'text' ? <span key={index}>{part.text}</span> : null
-          )}
+          {m.role}: {m.parts.map((part, index) => (part.type === 'text' ? <span key={index}>{part.text}</span> : null))}
         </div>
       ))}
 
@@ -496,8 +469,7 @@ You can retrieve these custom fields on your server side by destructuring the re
 ```ts filename="app/api/chat/route.ts" highlight="3,4"
 export async function POST(req: Request) {
   // Extract additional information ("customKey") from the body of the request:
-  const { messages, customKey }: { messages: UIMessage[]; customKey: string } =
-    await req.json();
+  const { messages, customKey }: { messages: UIMessage[]; customKey: string } = await req.json();
   //...
 }
 ```
@@ -531,17 +503,11 @@ return result.toUIMessageStreamResponse({
 {
   messages.map(message => (
     <div key={message.id}>
-      {message.role}:{' '}
-      {message.metadata?.createdAt &&
-        new Date(message.metadata.createdAt).toLocaleTimeString()}
+      {message.role}: {message.metadata?.createdAt && new Date(message.metadata.createdAt).toLocaleTimeString()}
       {/* Render message content */}
-      {message.parts.map((part, index) =>
-        part.type === 'text' ? <span key={index}>{part.text}</span> : null
-      )}
+      {message.parts.map((part, index) => (part.type === 'text' ? <span key={index}>{part.text}</span> : null))}
       {/* Show token count if available */}
-      {message.metadata?.totalTokens && (
-        <span>{message.metadata.totalTokens} tokens</span>
-      )}
+      {message.metadata?.totalTokens && <span>{message.metadata.totalTokens} tokens</span>}
     </div>
   ));
 }
@@ -720,12 +686,7 @@ Usage data is attached as metadata to messages and becomes available once the mo
 
 ```ts
 import { openai } from '@ai-sdk/openai';
-import {
-  convertToModelMessages,
-  streamText,
-  UIMessage,
-  type LanguageModelUsage,
-} from 'ai';
+import { convertToModelMessages, streamText, UIMessage, type LanguageModelUsage } from 'ai';
 
 // Create a new metadata type (optional for type-safety)
 type MyMetadata = {
@@ -783,9 +744,7 @@ export default function Chat() {
             }
           })}
           {/* Render usage via metadata */}
-          {m.metadata?.totalUsage && (
-            <div>Total usage: {m.metadata?.totalUsage.totalTokens} tokens</div>
-          )}
+          {m.metadata?.totalUsage && <div>Total usage: {m.metadata?.totalUsage.totalTokens} tokens</div>}
         </div>
       ))}
     </div>
@@ -1018,10 +977,7 @@ export default function Page() {
                   return <span key={index}>{part.text}</span>;
                 }
 
-                if (
-                  part.type === 'file' &&
-                  part.mediaType?.startsWith('image/')
-                ) {
+                if (part.type === 'file' && part.mediaType?.startsWith('image/')) {
                   return <img key={index} src={part.url} alt={part.filename} />;
                 }
 
@@ -1059,12 +1015,7 @@ export default function Page() {
           multiple
           ref={fileInputRef}
         />
-        <input
-          value={input}
-          placeholder="Send message..."
-          onChange={e => setInput(e.target.value)}
-          disabled={status !== 'ready'}
-        />
+        <input value={input} placeholder="Send message..." onChange={e => setInput(e.target.value)} disabled={status !== 'ready'} />
       </form>
     </div>
   );
@@ -1114,10 +1065,7 @@ export default function Page() {
                   return <span key={index}>{part.text}</span>;
                 }
 
-                if (
-                  part.type === 'file' &&
-                  part.mediaType?.startsWith('image/')
-                ) {
+                if (part.type === 'file' && part.mediaType?.startsWith('image/')) {
                   return <img key={index} src={part.url} alt={part.filename} />;
                 }
 
@@ -1140,12 +1088,7 @@ export default function Page() {
           }
         }}
       >
-        <input
-          value={input}
-          placeholder="Send message..."
-          onChange={e => setInput(e.target.value)}
-          disabled={status !== 'ready'}
-        />
+        <input value={input} placeholder="Send message..." onChange={e => setInput(e.target.value)} disabled={status !== 'ready'} />
       </form>
     </div>
   );

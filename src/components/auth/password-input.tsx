@@ -17,23 +17,13 @@ const requirements = [
   },
 ];
 
-interface PasswordInputProps
-  extends Omit<React.ComponentProps<'input'>, 'type'> {
+interface PasswordInputProps extends Omit<React.ComponentProps<'input'>, 'type'> {
   showStrengthIndicator?: boolean;
   showRequirements?: boolean;
 }
 
 export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
-  (
-    {
-      className,
-      showStrengthIndicator = true,
-      showRequirements = false,
-      value = '',
-      ...props
-    },
-    ref
-  ) => {
+  ({ className, showStrengthIndicator = true, showRequirements = false, value = '', ...props }, ref) => {
     const [isVisible, setIsVisible] = useState(false);
 
     const toggleVisibility = () => setIsVisible(prevState => !prevState);
@@ -59,13 +49,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
     return (
       <div className="w-full space-y-2">
         <div className="relative">
-          <Input
-            ref={ref}
-            type={isVisible ? 'text' : 'password'}
-            className={cn('pr-10', className)}
-            value={value}
-            {...props}
-          />
+          <Input ref={ref} type={isVisible ? 'text' : 'password'} className={cn('pr-10', className)} value={value} {...props} />
           <Button
             type="button"
             variant="ghost"
@@ -74,14 +58,8 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             className="text-muted-foreground focus-visible:ring-ring/50 absolute inset-y-0.5 right-0 rounded-l-none hover:bg-transparent"
             tabIndex={-1}
           >
-            {isVisible ? (
-              <EyeOffIcon className="size-5" />
-            ) : (
-              <EyeIcon className="size-5" />
-            )}
-            <span className="sr-only">
-              {isVisible ? 'Hide password' : 'Show password'}
-            </span>
+            {isVisible ? <EyeOffIcon className="size-5" /> : <EyeIcon className="size-5" />}
+            <span className="sr-only">{isVisible ? 'Hide password' : 'Show password'}</span>
           </Button>
         </div>
 
@@ -103,23 +81,10 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           <ul className="space-y-1.5">
             {strength.map((req, index) => (
               <li key={index} className="flex items-center gap-2">
-                {req.met ? (
-                  <CheckIcon className="size-4 text-green-600 dark:text-green-400" />
-                ) : (
-                  <XIcon className="text-muted-foreground size-4" />
-                )}
-                <span
-                  className={cn(
-                    'text-xs',
-                    req.met
-                      ? 'text-green-600 dark:text-green-400'
-                      : 'text-muted-foreground'
-                  )}
-                >
+                {req.met ? <CheckIcon className="size-4 text-green-600 dark:text-green-400" /> : <XIcon className="text-muted-foreground size-4" />}
+                <span className={cn('text-xs', req.met ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground')}>
                   {req.text}
-                  <span className="sr-only">
-                    {req.met ? ' - Requirement met' : ' - Requirement not met'}
-                  </span>
+                  <span className="sr-only">{req.met ? ' - Requirement met' : ' - Requirement not met'}</span>
                 </span>
               </li>
             ))}

@@ -3,12 +3,7 @@
  * Practical examples for implementing subscription features
  */
 
-import {
-  setupInboxProfPlansWithTrial,
-  subscribeUserToPlan,
-  getUserSubscriptionStatus,
-  cancelUserSubscription,
-} from '@/lib/mercadopago';
+import { setupInboxProfPlansWithTrial, subscribeUserToPlan, getUserSubscriptionStatus, cancelUserSubscription } from '@/lib/mercadopago';
 
 // ============================================================================
 // EXAMPLE 1: Check Feature Access
@@ -32,27 +27,17 @@ function checkUserAccess(userPlan: 'basic' | 'pro' | 'pro_plus') {
 // EXAMPLE 2: Check Usage Limits
 // ============================================================================
 
-async function checkUsageLimits(
-  userPlan: 'basic' | 'pro' | 'pro_plus',
-  currentCourseCount: number
-) {
+async function checkUsageLimits(userPlan: 'basic' | 'pro' | 'pro_plus', currentCourseCount: number) {
   const limits = getPlanLimits(userPlan);
 
   // Check if user exceeded course limit
-  const exceededCourses = isLimitExceeded(
-    userPlan,
-    'maxCourses',
-    currentCourseCount
-  );
+  const exceededCourses = isLimitExceeded(userPlan, 'maxCourses', currentCourseCount);
 
   if (exceededCourses) {
     console.log('Course limit exceeded!');
 
     // Get required plan for unlimited courses
-    const requiredPlan = getRequiredPlanForFeature(
-      userPlan,
-      'unlimited-courses'
-    );
+    const requiredPlan = getRequiredPlanForFeature(userPlan, 'unlimited-courses');
 
     if (requiredPlan) {
       const upgradeMsg = getUpgradeMessage('unlimited courses', requiredPlan);
@@ -144,11 +129,7 @@ async function createCustomPlanWithTrial() {
 // EXAMPLE 4: Subscribe User to Plan
 // ============================================================================
 
-async function handleSubscription(
-  planId: string,
-  userEmail: string,
-  userName: string
-) {
+async function handleSubscription(planId: string, userEmail: string, userName: string) {
   const result = await subscribeUserToPlan(planId, userEmail, userName);
 
   if (result.success && result.data?.init_point) {
@@ -220,18 +201,12 @@ function PricingComponent() {
   return (
     <div className="grid md:grid-cols-3 gap-6">
       {plans.map(plan => (
-        <div
-          key={plan.id}
-          className={`p-6 rounded-lg border ${plan.highlighted ? 'ring-2 ring-primary' : ''}`}
-        >
+        <div key={plan.id} className={`p-6 rounded-lg border ${plan.highlighted ? 'ring-2 ring-primary' : ''}`}>
           <h3 className="text-2xl font-bold">{plan.name}</h3>
           <p className="text-sm text-muted-foreground">{plan.subtitle}</p>
           <div className="my-4">
             <span className="text-4xl font-bold">${plan.price}</span>
-            <span className="text-sm text-muted-foreground">
-              {' '}
-              {plan.period}
-            </span>
+            <span className="text-sm text-muted-foreground"> {plan.period}</span>
           </div>
           <p className="text-sm mb-4">{plan.description}</p>
           <ul className="space-y-2 mb-6">
@@ -273,21 +248,10 @@ import {
   setupInboxProfPlans,
 } from './helpers';
 
-function trackUsage(
-  userPlan: 'basic' | 'pro' | 'pro_plus',
-  currentCourses: number
-) {
-  const percentage = getLimitUsagePercentage(
-    userPlan,
-    'maxCourses',
-    currentCourses
-  );
+function trackUsage(userPlan: 'basic' | 'pro' | 'pro_plus', currentCourses: number) {
+  const percentage = getLimitUsagePercentage(userPlan, 'maxCourses', currentCourses);
 
-  const approaching = isApproachingLimit(
-    userPlan,
-    'maxCourses',
-    currentCourses
-  );
+  const approaching = isApproachingLimit(userPlan, 'maxCourses', currentCourses);
 
   if (approaching && percentage) {
     console.log(`Warning: ${percentage}% of course limit used`);
@@ -308,11 +272,7 @@ async function completeSubscriptionFlow() {
 
   // Step 2: Create subscription
   const BASIC_PLAN_ID = process.env.NEXT_PUBLIC_MERCADOPAGO_BASIC_PLAN_ID!;
-  const subscription = await subscribeUserToPlan(
-    BASIC_PLAN_ID,
-    'user@example.com',
-    'John Doe'
-  );
+  const subscription = await subscribeUserToPlan(BASIC_PLAN_ID, 'user@example.com', 'John Doe');
 
   if (!subscription.success) {
     console.error('Failed to create subscription');

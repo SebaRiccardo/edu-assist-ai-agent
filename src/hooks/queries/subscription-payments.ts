@@ -30,27 +30,13 @@ export function getAllPaymentsQuery(client: TypedSupabaseClient) {
 /**
  * Query builder for fetching payments by user ID
  */
-export function getPaymentsByUserIdQuery(
-  client: TypedSupabaseClient,
-  userId: string
-) {
-  return client
-    .from('subscription_payments')
-    .select('*')
-    .eq('user_id', userId)
-    .order('created_at', { ascending: false });
+export function getPaymentsByUserIdQuery(client: TypedSupabaseClient, userId: string) {
+  return client.from('subscription_payments').select('*').eq('user_id', userId).order('created_at', { ascending: false });
 }
 
 /**
  * Query builder for fetching payments by subscription ID
  */
-export function getPaymentsBySubscriptionIdQuery(
-  client: TypedSupabaseClient,
-  subscriptionId: string
-) {
-  return client
-    .from('subscription_payments')
-    .select('*')
-    .eq('subscription_id', subscriptionId)
-    .order('created_at', { ascending: false });
+export function getPaymentsBySubscriptionIdQuery(client: TypedSupabaseClient, subscriptionId: string) {
+  return client.from('subscription_payments').select('*').eq('subscription_id', subscriptionId).order('created_at', { ascending: false });
 }

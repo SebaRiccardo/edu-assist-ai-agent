@@ -48,10 +48,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : 'Failed to delete connection',
+        error: error instanceof Error ? error.message : 'Failed to delete connection',
         details: process.env.NODE_ENV === 'development' ? error : undefined,
       },
       { status: 500 }

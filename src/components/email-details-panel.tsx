@@ -6,22 +6,8 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible';
-import {
-  Mail,
-  Sparkles,
-  ChevronsUpDown,
-  FileText,
-  Loader2,
-  RefreshCw,
-  X,
-  Pencil,
-  Check,
-} from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Mail, Sparkles, ChevronsUpDown, FileText, Loader2, RefreshCw, X, Pencil, Check } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
 import { generateEmailDraft } from '@/actions/inbox/email-draft';
@@ -76,8 +62,7 @@ const emailCategoryConfig = {
 
 // Sub-component: Email Header
 function EmailHeader({ email }: { email: CategorizedEmail }) {
-  const categoryConfig =
-    emailCategoryConfig[email.category as keyof typeof emailCategoryConfig];
+  const categoryConfig = emailCategoryConfig[email.category as keyof typeof emailCategoryConfig];
 
   return (
     <div className="space-y-3">
@@ -120,23 +105,13 @@ function EmailBody({ body }: { body: string }) {
 }
 
 // Sub-component: AI Reasoning
-function AIReasoning({
-  reasoning,
-  confidence,
-}: {
-  reasoning: string;
-  confidence: number;
-}) {
+function AIReasoning({ reasoning, confidence }: { reasoning: string; confidence: number }) {
   const confidencePercentage = Math.round(confidence * 100);
 
   return (
     <Collapsible className="w-full">
       <CollapsibleTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className="w-full justify-start shadow-none border-none"
-        >
+        <Button variant="outline" size="sm" className="w-full justify-start shadow-none border-none">
           <Sparkles className="size-4 mr-2" />
           View AI Reasoning
           <ChevronsUpDown className="size-4 ml-auto" />
@@ -146,9 +121,7 @@ function AIReasoning({
         <Card className="border-none shadow-none bg-background/50">
           <CardContent className="space-y-2">
             <div className="flex items-center gap-2">
-              <p className="text-sm font-semibold text-foreground">
-                AI Reasoning
-              </p>
+              <p className="text-sm font-semibold text-foreground">AI Reasoning</p>
               <Badge variant="outline" className="text-xs">
                 {confidencePercentage}% confidence
               </Badge>
@@ -184,13 +157,8 @@ function DraftEditor({
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <FileText className="h-4 w-4 text-green-600 dark:text-green-400" />
-          <p className="text-sm font-semibold text-foreground">
-            Draft Response
-          </p>
-          <Badge
-            variant="outline"
-            className="text-xs text-white border-none bg-green-500 dark:bg-green-900/30"
-          >
+          <p className="text-sm font-semibold text-foreground">Draft Response</p>
+          <Badge variant="outline" className="text-xs text-white border-none bg-green-500 dark:bg-green-900/30">
             AI Generated
           </Badge>
         </div>
@@ -230,9 +198,7 @@ function DraftEditor({
         />
       ) : (
         <div className="rounded-md bg-background border p-3 border-none shadow-none">
-          <p className="text-sm text-foreground whitespace-pre-wrap">
-            {editedDraft || draftResponse}
-          </p>
+          <p className="text-sm text-foreground whitespace-pre-wrap">{editedDraft || draftResponse}</p>
         </div>
       )}
     </div>
@@ -378,17 +344,10 @@ export function EmailDetailsPanel({
           <EmailBody body={email.body} />
 
           {/* AI Reasoning Section */}
-          <AIReasoning
-            reasoning={email.reasoning}
-            confidence={email.confidence}
-          />
+          <AIReasoning reasoning={email.reasoning} confidence={email.confidence} />
 
           {/* Draft Response Section */}
-          <Collapsible
-            open={isDraftOpen}
-            onOpenChange={setIsDraftOpen}
-            className="w-full"
-          >
+          <Collapsible open={isDraftOpen} onOpenChange={setIsDraftOpen} className="w-full">
             <div className="flex items-center gap-2 flex-wrap">
               <CollapsibleTrigger asChild>
                 <Button
@@ -408,12 +367,7 @@ export function EmailDetailsPanel({
               </CollapsibleTrigger>
 
               {draftResponse && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleGenerateDraft}
-                  disabled={isGeneratingDraft}
-                >
+                <Button variant="ghost" size="sm" onClick={handleGenerateDraft} disabled={isGeneratingDraft}>
                   {isGeneratingDraft ? (
                     <>
                       <Loader2 className="size-4 mr-2 animate-spin" />
@@ -435,17 +389,13 @@ export function EmailDetailsPanel({
                   {isGeneratingDraft && (
                     <div className="flex items-center justify-center py-4">
                       <Loader2 className="h-6 w-6 animate-spin text-green-600" />
-                      <span className="ml-2 text-sm text-muted-foreground">
-                        Generating draft response...
-                      </span>
+                      <span className="ml-2 text-sm text-muted-foreground">Generating draft response...</span>
                     </div>
                   )}
 
                   {draftError && (
                     <div className="flex items-start gap-2 p-3 rounded-md bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800">
-                      <p className="text-sm text-red-600 dark:text-red-400">
-                        {draftError}
-                      </p>
+                      <p className="text-sm text-red-600 dark:text-red-400">{draftError}</p>
                     </div>
                   )}
 
@@ -473,9 +423,7 @@ export function EmailDetailsPanel({
                         isEditingDraft={isEditingDraft}
                         isSendingReply={isSendingReply}
                         onCopy={() => {
-                          navigator.clipboard.writeText(
-                            editedDraft || draftResponse
-                          );
+                          navigator.clipboard.writeText(editedDraft || draftResponse);
                         }}
                         onCancel={() => {
                           setEditedDraft(draftResponse);

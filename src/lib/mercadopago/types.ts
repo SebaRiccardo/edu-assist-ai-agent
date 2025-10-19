@@ -6,12 +6,7 @@
 export interface MercadoPagoWebhookEvent {
   id: number;
   live_mode: boolean;
-  type:
-    | 'payment'
-    | 'plan'
-    | 'subscription'
-    | 'invoice'
-    | 'point_integration_wh';
+  type: 'payment' | 'plan' | 'subscription' | 'invoice' | 'point_integration_wh';
   date_created: string;
   application_id: number;
   user_id: number;
@@ -80,13 +75,7 @@ export interface MpSubscription {
 
 export interface PaymentData {
   id: number;
-  status:
-    | 'approved'
-    | 'pending'
-    | 'in_process'
-    | 'rejected'
-    | 'cancelled'
-    | 'refunded';
+  status: 'approved' | 'pending' | 'in_process' | 'rejected' | 'cancelled' | 'refunded';
   status_detail: string;
   payment_type_id: string;
   payment_method_id: string;
@@ -109,19 +98,8 @@ export interface PaymentData {
 }
 
 export type PlanStatus = 'active' | 'inactive';
-export type SubscriptionStatus =
-  | 'authorized'
-  | 'paused'
-  | 'cancelled'
-  | 'pending'
-  | 'ended';
-export type PaymentStatus =
-  | 'approved'
-  | 'pending'
-  | 'in_process'
-  | 'rejected'
-  | 'cancelled'
-  | 'refunded';
+export type SubscriptionStatus = 'authorized' | 'paused' | 'cancelled' | 'pending' | 'ended';
+export type PaymentStatus = 'approved' | 'pending' | 'in_process' | 'rejected' | 'cancelled' | 'refunded';
 
 export interface ServiceResponse<T = any> {
   success: boolean;

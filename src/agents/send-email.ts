@@ -50,19 +50,8 @@ export interface SendEmailResult {
  * });
  * ```
  */
-export async function sendEmail(
-  params: SendEmailParams
-): Promise<SendEmailResult> {
-  const {
-    userId,
-    to,
-    subject,
-    draft,
-    cc = [],
-    bcc = [],
-    model = 'gemini-2.0-flash-lite',
-    threadId,
-  } = params;
+export async function sendEmail(params: SendEmailParams): Promise<SendEmailResult> {
+  const { userId, to, subject, draft, cc = [], bcc = [], model = 'gemini-2.0-flash-lite', threadId } = params;
 
   console.log(`📧 Sending email to: ${to}`);
   console.log(`   Subject: ${subject}`);
@@ -71,9 +60,7 @@ export async function sendEmail(
     // Get Gmail send email tool from Composio
     const tools = await ComposioService.getSendEmailTools(userId);
 
-    const prePropt = threadId
-      ? `Reply to: ${to} using this threadId: ${threadId},`
-      : `Send an email to ${to}`;
+    const prePropt = threadId ? `Reply to: ${to} using this threadId: ${threadId},` : `Send an email to ${to}`;
     // Use AI to execute the send email action
     const { text } = await generateText({
       model: google(model),
@@ -117,9 +104,7 @@ ${bcc.length > 0 ? `- BCC: ${bcc.join(', ')}` : ''}
  * @param emails - Array of email parameters
  * @returns Array of send results
  */
-export async function sendBatchEmails(
-  emails: SendEmailParams[]
-): Promise<SendEmailResult[]> {
+export async function sendBatchEmails(emails: SendEmailParams[]): Promise<SendEmailResult[]> {
   console.log(`\n📬 Sending ${emails.length} emails...`);
 
   const results: SendEmailResult[] = [];
@@ -144,10 +129,7 @@ export async function sendBatchEmails(
  */
 function extractMessageId(text: string): string | undefined {
   // Try to extract message ID from common patterns
-  const patterns = [
-    /message[_\s]?id[:\s]+([a-zA-Z0-9]+)/i,
-    /id[:\s]+([a-zA-Z0-9]+)/i,
-  ];
+  const patterns = [/message[_\s]?id[:\s]+([a-zA-Z0-9]+)/i, /id[:\s]+([a-zA-Z0-9]+)/i];
 
   for (const pattern of patterns) {
     const match = text.match(pattern);

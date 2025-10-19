@@ -84,9 +84,7 @@ export interface GeneratedResponse {
  * });
  * ```
  */
-export async function generateEmailResponse(
-  params: ResponseGenerationParams
-): Promise<GeneratedResponse> {
+export async function generateEmailResponse(params: ResponseGenerationParams): Promise<GeneratedResponse> {
   const {
     email,
     priority,
@@ -205,8 +203,7 @@ export async function generateBatchResponses(
     model?: string;
   } = {}
 ): Promise<GeneratedResponse[]> {
-  const { maxResponses, professorName, additionalContext, language, model } =
-    options;
+  const { maxResponses, professorName, additionalContext, language, model } = options;
 
   const emailsToProcess = maxResponses ? emails.slice(0, maxResponses) : emails;
 
@@ -240,9 +237,7 @@ export async function generateBatchResponses(
  * @returns Response statistics
  */
 export function getResponseStats(responses: GeneratedResponse[]) {
-  const avgLength =
-    responses.reduce((sum, r) => sum + r.draftResponse.length, 0) /
-    responses.length;
+  const avgLength = responses.reduce((sum, r) => sum + r.draftResponse.length, 0) / responses.length;
 
   const byPriority = {
     critical: responses.filter(r => r.priority === 'critical').length,

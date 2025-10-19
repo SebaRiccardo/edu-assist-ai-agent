@@ -11,16 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  ArrowUpDown,
-  MoreHorizontal,
-  AlertCircle,
-  CheckCircle,
-  XCircle,
-  Clock,
-  Pause,
-  ExternalLink,
-} from 'lucide-react';
+import { ArrowUpDown, MoreHorizontal, AlertCircle, CheckCircle, XCircle, Clock, Pause, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 
 // MercadoPago PreApproval type (subscription)
@@ -57,27 +48,24 @@ export type SubscriptionRow = {
 };
 
 const getStatusBadge = (status?: string) => {
-  const statusConfig: Record<string, { color: string; icon: React.ReactNode }> =
-    {
-      authorized: {
-        color:
-          'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-        icon: <CheckCircle className="mr-1 size-3" />,
-      },
-      pending: {
-        color:
-          'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-        icon: <Clock className="mr-1 size-3" />,
-      },
-      paused: {
-        color: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300',
-        icon: <Pause className="mr-1 size-3" />,
-      },
-      cancelled: {
-        color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
-        icon: <XCircle className="mr-1 size-3" />,
-      },
-    };
+  const statusConfig: Record<string, { color: string; icon: React.ReactNode }> = {
+    authorized: {
+      color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+      icon: <CheckCircle className="mr-1 size-3" />,
+    },
+    pending: {
+      color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+      icon: <Clock className="mr-1 size-3" />,
+    },
+    paused: {
+      color: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300',
+      icon: <Pause className="mr-1 size-3" />,
+    },
+    cancelled: {
+      color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
+      icon: <XCircle className="mr-1 size-3" />,
+    },
+  };
 
   const config = statusConfig[status || ''] || statusConfig.pending;
 
@@ -94,10 +82,7 @@ export const columns: ColumnDef<SubscriptionRow>[] = [
     accessorKey: 'payer_first_name',
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
           Payer
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
@@ -112,9 +97,7 @@ export const columns: ColumnDef<SubscriptionRow>[] = [
       return (
         <div className="flex flex-col">
           <span className="font-medium">{fullName}</span>
-          <span className="text-muted-foreground text-xs">
-            ID: {subscription.payer_id || 'N/A'}
-          </span>
+          <span className="text-muted-foreground text-xs">ID: {subscription.payer_id || 'N/A'}</span>
         </div>
       );
     },
@@ -123,10 +106,7 @@ export const columns: ColumnDef<SubscriptionRow>[] = [
     accessorKey: 'id',
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
           Subscription ID
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
@@ -136,11 +116,7 @@ export const columns: ColumnDef<SubscriptionRow>[] = [
       const subscription = row.original;
       return (
         <Button variant="link" className="h-auto p-0">
-          <Link
-            target="_blank"
-            className="flex flex-row items-center"
-            href={`https://www.mercadopago.com.ar/subscriptions/${subscription.id}`}
-          >
+          <Link target="_blank" className="flex flex-row items-center" href={`https://www.mercadopago.com.ar/subscriptions/${subscription.id}`}>
             <span className="font-mono text-xs">{subscription.id}</span>
             <ExternalLink className="ml-1 size-3" />
           </Link>
@@ -152,10 +128,7 @@ export const columns: ColumnDef<SubscriptionRow>[] = [
     accessorKey: 'reason',
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
           Plan / Reason
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
@@ -174,16 +147,11 @@ export const columns: ColumnDef<SubscriptionRow>[] = [
         currency: currency,
       }).format(price);
 
-      const intervalText =
-        frequency === 1
-          ? frequencyType.slice(0, -1)
-          : `${frequency} ${frequencyType}`;
+      const intervalText = frequency === 1 ? frequencyType.slice(0, -1) : `${frequency} ${frequencyType}`;
 
       return (
         <div className="flex flex-col">
-          <span className="font-medium">
-            {subscription.reason || 'Unnamed Plan'}
-          </span>
+          <span className="font-medium">{subscription.reason || 'Unnamed Plan'}</span>
           <span className="text-muted-foreground text-xs">
             {formatted} / {intervalText}
           </span>
@@ -203,10 +171,7 @@ export const columns: ColumnDef<SubscriptionRow>[] = [
     accessorKey: 'next_payment_date',
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
           Next Payment
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
@@ -241,10 +206,7 @@ export const columns: ColumnDef<SubscriptionRow>[] = [
     accessorKey: 'date_created',
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
           Created
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
@@ -276,42 +238,21 @@ export const columns: ColumnDef<SubscriptionRow>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() =>
-                subscription.id &&
-                navigator.clipboard.writeText(subscription.id)
-              }
-            >
+            <DropdownMenuItem onClick={() => subscription.id && navigator.clipboard.writeText(subscription.id)}>
               Copy subscription ID
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() =>
-                subscription.preapproval_plan_id &&
-                navigator.clipboard.writeText(subscription.preapproval_plan_id)
-              }
-            >
+            <DropdownMenuItem onClick={() => subscription.preapproval_plan_id && navigator.clipboard.writeText(subscription.preapproval_plan_id)}>
               Copy plan ID
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() =>
-                subscription.init_point &&
-                navigator.clipboard.writeText(subscription.init_point)
-              }
-            >
+            <DropdownMenuItem onClick={() => subscription.init_point && navigator.clipboard.writeText(subscription.init_point)}>
               Copy init point URL
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View details</DropdownMenuItem>
             <DropdownMenuItem>View payment history</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              {subscription.status === 'authorized'
-                ? 'Pause subscription'
-                : 'Resume subscription'}
-            </DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">
-              Cancel subscription
-            </DropdownMenuItem>
+            <DropdownMenuItem>{subscription.status === 'authorized' ? 'Pause subscription' : 'Resume subscription'}</DropdownMenuItem>
+            <DropdownMenuItem className="text-destructive">Cancel subscription</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

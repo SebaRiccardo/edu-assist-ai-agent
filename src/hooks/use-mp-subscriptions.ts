@@ -11,10 +11,7 @@ import {
   cancelSubscriptionAction,
   pauseSubscriptionAction,
 } from '@/lib/mercadopago/actions';
-import type {
-  CreatePreApprovalParams,
-  PreApprovalSearchParams,
-} from '@/lib/mercadopago/service';
+import type { CreatePreApprovalParams, PreApprovalSearchParams } from '@/lib/mercadopago/service';
 
 /**
  * Hook to fetch all subscriptions
@@ -108,13 +105,7 @@ export function useUpdateSubscription() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      subscriptionId,
-      params,
-    }: {
-      subscriptionId: string;
-      params: { status?: 'paused' | 'cancelled'; reason?: string };
-    }) => {
+    mutationFn: async ({ subscriptionId, params }: { subscriptionId: string; params: { status?: 'paused' | 'cancelled'; reason?: string } }) => {
       return await updateSubscriptionAction(subscriptionId, params);
     },
     onSuccess: (_, variables) => {

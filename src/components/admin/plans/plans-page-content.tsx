@@ -23,9 +23,7 @@ export function PlansPageContent() {
     return (
       <div className="flex flex-col gap-4 p-4">
         <h1 className="text-3xl font-bold">Subscription Plans</h1>
-        <p className="text-destructive">
-          Error loading plans. Please try again.
-        </p>
+        <p className="text-destructive">Error loading plans. Please try again.</p>
       </div>
     );
   }
@@ -37,12 +35,8 @@ export function PlansPageContent() {
     <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
       <div className="flex items-center justify-between px-4 lg:px-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Subscription Plans
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Manage subscription plans and pricing.
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight">Subscription Plans</h1>
+          <p className="text-muted-foreground mt-2">Manage subscription plans and pricing.</p>
         </div>
         <Button asChild>
           <Link href="/admin/plans/create">
@@ -60,12 +54,7 @@ export function PlansPageContent() {
             <p className="text-muted-foreground">Loading plans...</p>
           </div>
         ) : (
-          <PlansDataTable
-            isRefresing={isRefetching}
-            onRefresh={refetch}
-            columns={columns}
-            data={plansData}
-          />
+          <PlansDataTable isRefresing={isRefetching} onRefresh={refetch} columns={columns} data={plansData} />
         )}
       </div>
       {/* Template Cards */}

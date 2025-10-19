@@ -20,19 +20,13 @@ interface InboxConnectionCardsProps {
   onSelectInbox: (inboxId: string) => void;
 }
 
-export function InboxConnectionCards({
-  inboxes,
-  selectedInbox,
-  onSelectInbox,
-}: InboxConnectionCardsProps) {
+export function InboxConnectionCards({ inboxes, selectedInbox, onSelectInbox }: InboxConnectionCardsProps) {
   return (
     <div className="w-full mb-6">
       <div className="flex items-center gap-2 mb-2">
         <Mail className="size-4 text-muted-foreground" />
         <h2 className="text-md font-semibold">Your accounts</h2>
-        <span className="text-sm text-muted-foreground">
-          ({inboxes.length})
-        </span>
+        <span className="text-sm text-muted-foreground">({inboxes.length})</span>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {inboxes.map(inbox => {
@@ -49,8 +43,7 @@ export function InboxConnectionCards({
                 isSelected
                   ? 'border-primary scale-105  ring-2 ring-primary/20 hover:shadow-xl'
                   : 'border-border hover:border-primary/50 hover:shadow-md hover:scale-[1.02]',
-                !isActive &&
-                  'opacity-50 cursor-not-allowed hover:scale-100 hover:shadow-none'
+                !isActive && 'opacity-50 cursor-not-allowed hover:scale-100 hover:shadow-none'
               )}
             >
               {/* Selection Indicator */}
@@ -65,9 +58,7 @@ export function InboxConnectionCards({
                 <div
                   className={cn(
                     'flex-shrink-0 border size-9 rounded-md flex items-center justify-center transition-all duration-300',
-                    isSelected
-                      ? 'scale-110 bg-white'
-                      : 'bg-muted/50 group-hover:bg-muted group-hover:scale-105'
+                    isSelected ? 'scale-110 bg-white' : 'bg-muted/50 group-hover:bg-muted group-hover:scale-105'
                   )}
                 >
                   <Image
@@ -75,12 +66,7 @@ export function InboxConnectionCards({
                     alt="Gmail"
                     width={22}
                     height={22}
-                    className={cn(
-                      'transition-all duration-300',
-                      isSelected
-                        ? 'drop-shadow-md'
-                        : 'opacity-90 group-hover:opacity-100'
-                    )}
+                    className={cn('transition-all duration-300', isSelected ? 'drop-shadow-md' : 'opacity-90 group-hover:opacity-100')}
                   />
                 </div>
 
@@ -88,20 +74,12 @@ export function InboxConnectionCards({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <h3
-                      className={cn(
-                        'font-semibold text-sm truncate transition-colors duration-300',
-                        isSelected ? 'text-primary' : 'text-foreground'
-                      )}
+                      className={cn('font-semibold text-sm truncate transition-colors duration-300', isSelected ? 'text-primary' : 'text-foreground')}
                     >
                       {inbox.name || 'Gmail Account'}
                     </h3>
                   </div>
-                  <p
-                    className={cn(
-                      'text-xs truncate transition-colors duration-300',
-                      isSelected ? 'text-primary/80' : 'text-muted-foreground'
-                    )}
-                  >
+                  <p className={cn('text-xs truncate transition-colors duration-300', isSelected ? 'text-primary/80' : 'text-muted-foreground')}>
                     {inbox.email}
                   </p>
                 </div>
@@ -134,9 +112,7 @@ export function InboxConnectionCards({
               <div
                 className={cn(
                   'absolute inset-0 rounded-lg pointer-events-none transition-opacity duration-300',
-                  isSelected
-                    ? 'bg-gradient-to-br from-primary/10 to-transparent opacity-100'
-                    : 'opacity-0'
+                  isSelected ? 'bg-gradient-to-br from-primary/10 to-transparent opacity-100' : 'opacity-0'
                 )}
               />
             </Card>

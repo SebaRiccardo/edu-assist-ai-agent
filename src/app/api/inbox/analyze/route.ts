@@ -5,15 +5,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const {
-      maxEmails = 50,
-      includeRead = false,
-      reasoningLanguage,
-      verbose,
-      courseId,
-      course,
-      connectedAccountId,
-    } = await request.json();
+    const { maxEmails = 50, includeRead = false, reasoningLanguage, verbose, courseId, course, connectedAccountId } = await request.json();
 
     const supabase = await createClient();
 
@@ -25,27 +17,17 @@ export async function POST(request: NextRequest) {
     }
 
     if (!course) {
-      return NextResponse.json(
-        { error: 'Course ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Course ID is required' }, { status: 400 });
     }
 
     if (!connectedAccountId) {
-      return NextResponse.json(
-        { error: 'Connected Account ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Connected Account ID is required' }, { status: 400 });
     }
 
-    const connectedGmailAccount =
-      await ComposioService.getConnectedAccountById(connectedAccountId);
+    const connectedGmailAccount = await ComposioService.getConnectedAccountById(connectedAccountId);
 
     if (!connectedGmailAccount) {
-      return NextResponse.json(
-        { error: 'Connected Account not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Connected Account not found' }, { status: 404 });
     }
 
     if (connectedGmailAccount.status !== 'ACTIVE') {

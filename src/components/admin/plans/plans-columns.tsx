@@ -11,15 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  ArrowUpDown,
-  MoreHorizontal,
-  CheckCircle,
-  XCircle,
-  ExternalLink,
-  Clock,
-  Pause,
-} from 'lucide-react';
+import { ArrowUpDown, MoreHorizontal, CheckCircle, XCircle, ExternalLink, Clock, Pause } from 'lucide-react';
 import Link from 'next/link';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import type { PreApprovalPlanResponse } from 'mercadopago/dist/clients/preApprovalPlan/commonTypes';
@@ -64,10 +56,7 @@ export const columns: ColumnDef<PlanRow>[] = [
     accessorKey: 'reason',
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
           Plan Name
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
@@ -83,9 +72,7 @@ export const columns: ColumnDef<PlanRow>[] = [
           </Avatar>
           <div className="flex flex-col">
             <span className="font-medium">{reason}</span>
-            <span className="text-muted-foreground text-xs truncate max-w-xs">
-              ID: {plan.id}
-            </span>
+            <span className="text-muted-foreground text-xs truncate max-w-xs">ID: {plan.id}</span>
           </div>
         </div>
       );
@@ -95,10 +82,7 @@ export const columns: ColumnDef<PlanRow>[] = [
     accessorKey: 'id',
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
           MercadoPago ID
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
@@ -124,10 +108,7 @@ export const columns: ColumnDef<PlanRow>[] = [
     accessorKey: 'auto_recurring',
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
           Price
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
@@ -145,17 +126,12 @@ export const columns: ColumnDef<PlanRow>[] = [
         currency: currency,
       }).format(price);
 
-      const intervalText =
-        frequency === 1
-          ? frequencyType.slice(0, -1)
-          : `${frequency} ${frequencyType}`;
+      const intervalText = frequency === 1 ? frequencyType.slice(0, -1) : `${frequency} ${frequencyType}`;
 
       return (
         <div className="flex flex-col">
           <span className="font-medium">{formatted}</span>
-          <span className="text-muted-foreground text-xs">
-            per {intervalText}
-          </span>
+          <span className="text-muted-foreground text-xs">per {intervalText}</span>
         </div>
       );
     },
@@ -197,10 +173,7 @@ export const columns: ColumnDef<PlanRow>[] = [
     accessorKey: 'date_created',
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
           Created
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
@@ -232,29 +205,14 @@ export const columns: ColumnDef<PlanRow>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => plan.id && navigator.clipboard.writeText(plan.id)}
-            >
-              Copy plan ID
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() =>
-                plan.init_point &&
-                navigator.clipboard.writeText(plan.init_point)
-              }
-            >
-              Copy checkout URL
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => plan.id && navigator.clipboard.writeText(plan.id)}>Copy plan ID</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => plan.init_point && navigator.clipboard.writeText(plan.init_point)}>Copy checkout URL</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View details</DropdownMenuItem>
             <DropdownMenuItem>View subscribers</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              {plan.status === 'active' ? 'Pause plan' : 'Activate plan'}
-            </DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">
-              Cancel plan
-            </DropdownMenuItem>
+            <DropdownMenuItem>{plan.status === 'active' ? 'Pause plan' : 'Activate plan'}</DropdownMenuItem>
+            <DropdownMenuItem className="text-destructive">Cancel plan</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

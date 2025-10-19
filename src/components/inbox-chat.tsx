@@ -1,13 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
-import {
-  Conversation,
-  ConversationContent,
-  ConversationEmptyState,
-} from '@/components/ai-elements/conversation';
+import { Conversation, ConversationContent, ConversationEmptyState } from '@/components/ai-elements/conversation';
 import { Message, MessageContent } from '@/components/ai-elements/message';
 import { Response } from '@/components/ai-elements/response';
 import {
@@ -33,31 +30,16 @@ import {
   PromptInputActionAddAttachments,
   PromptInputSpeechButton,
 } from '@/components/ai-elements/prompt-input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Mail, Loader2, PaperclipIcon, MicIcon, GlobeIcon } from 'lucide-react';
 import { useConnections } from '@/hooks/use-connections';
 import { ComposioConnectedAccount } from '@/app/api/connections/route';
 import { Suggestion, Suggestions } from './ai-elements/suggestion';
 import { InboxConnectionCards } from '@/components/inbox-connection-cards';
-import {
-  Tool,
-  ToolContent,
-  ToolHeader,
-  ToolInput,
-  ToolOutput,
-} from '@/components/ai-elements/tool';
+import { Tool, ToolContent, ToolHeader, ToolInput, ToolOutput } from '@/components/ai-elements/tool';
 import type { ToolUIPart } from 'ai';
 import { Loader } from './ai-elements/loader';
-import {
-  GmailToolOutput,
-  CourseToolOutput,
-} from '@/components/tool-output-formatters';
+import { GmailToolOutput, CourseToolOutput } from '@/components/tool-output-formatters';
 
 interface InboxChatProps {
   userId: string;
@@ -91,9 +73,7 @@ const models = [
  * Converts snake_case or SCREAMING_SNAKE_CASE to Title Case
  */
 function formatToolName(toolName: string): string {
-  return toolName
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, char => char.toUpperCase());
+  return toolName.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
 }
 
 /**
@@ -102,18 +82,12 @@ function formatToolName(toolName: string): string {
  */
 function formatToolOutput(toolName: string, output: any): React.ReactNode {
   // Gmail tools
-  if (
-    toolName.includes('GMAIL_FETCH_EMAILS') ||
-    toolName.includes('fetch_emails')
-  ) {
+  if (toolName.includes('GMAIL_FETCH_EMAILS') || toolName.includes('fetch_emails')) {
     return <GmailToolOutput output={output} />;
   }
 
   // Course tools
-  if (
-    toolName.includes('getUserCourses') ||
-    toolName.includes('getCourseDetails')
-  ) {
+  if (toolName.includes('getUserCourses') || toolName.includes('getCourseDetails')) {
     return <CourseToolOutput output={output} />;
   }
 
@@ -122,10 +96,9 @@ function formatToolOutput(toolName: string, output: any): React.ReactNode {
 }
 
 export function InboxChat({ userId }: InboxChatProps) {
+  const t = useTranslations('InboxChat');
   const [input, setInput] = useState('');
-  const [selectedInbox, setSelectedInbox] = useState<string | undefined>(
-    undefined
-  );
+  const [selectedInbox, setSelectedInbox] = useState<string | undefined>(undefined);
   const [model, setModel] = useState<string>(models[0].id);
   // Fetch connected inboxes using the existing hook
   const { data: connections, isLoading: loading } = useConnections();
@@ -194,9 +167,7 @@ export function InboxChat({ userId }: InboxChatProps) {
         <Mail className="h-16 w-16 text-muted-foreground" />
         <div className="text-center space-y-2">
           <h2 className="text-2xl font-semibold">No Inboxes Connected</h2>
-          <p className="text-muted-foreground">
-            Please connect a Gmail account to start chatting with your inbox.
-          </p>
+          <p className="text-muted-foreground">Please connect a Gmail account to start chatting with your inbox.</p>
         </div>
       </div>
     );
@@ -223,28 +194,16 @@ export function InboxChat({ userId }: InboxChatProps) {
                 <Mail className="h-10 w-10 text-primary" />
               </div>
               <div className="space-y-2 max-w-md text-center">
-                <h3 className="text-xl font-semibold">
-                  Select an Inbox to Start
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Choose one of your connected Gmail accounts above to begin
-                  chatting with your emails.
-                </p>
+                <h3 className="text-xl font-semibold">{t('selectInboxTitle')}</h3>
+                <p className="text-sm text-muted-foreground">{t('selectInboxDescription')}</p>
               </div>
             </ConversationEmptyState>
           ) : messages.length === 0 ? (
-            <ConversationEmptyState
-              icon={<Mail className="h-12 w-12" />}
-              title="Chat with Your Inbox"
-              description="Ask me to fetch emails, search for specific messages, find emails related to your courses, or help you manage your inbox."
-            >
+            <ConversationEmptyState icon={<Mail className="h-12 w-12" />} title={t('chatTitle')} description={t('chatDescription')}>
               <Mail className="h-12 w-12 text-muted-foreground" />
               <div className="space-y-2 max-w-md">
-                <h3 className="text-xl font-semibold">Chat with Your Inbox</h3>
-                <p className="text-sm text-muted-foreground">
-                  Ask me to fetch emails, search for specific messages, find
-                  emails related to your courses, or help you manage your inbox.
-                </p>
+                <h3 className="text-xl font-semibold">{t('chatTitle')}</h3>
+                <p className="text-sm text-muted-foreground">{t('chatDescription')}</p>
                 {/* <div className="pt-4 space-y-2 text-xs text-left">
                   <p className="font-medium">Try asking:</p>
                   <ul className="space-y-1 text-muted-foreground">
@@ -265,11 +224,7 @@ export function InboxChat({ userId }: InboxChatProps) {
                   {message.parts.map((part, index) => {
                     switch (part.type) {
                       case 'text':
-                        return (
-                          <Response key={`${message.id}-${index}`}>
-                            {part.text}
-                          </Response>
-                        );
+                        return <Response key={`${message.id}-${index}`}>{part.text}</Response>;
 
                       // Handle tool invocations dynamically
                       default:
@@ -279,36 +234,17 @@ export function InboxChat({ userId }: InboxChatProps) {
                           const toolName = toolPart.type.replace('tool-', '');
 
                           // Determine if tool should be open by default
-                          const defaultOpen =
-                            toolPart.state === 'output-available' ||
-                            toolPart.state === 'output-error';
+                          const defaultOpen = toolPart.state === 'output-available' || toolPart.state === 'output-error';
 
                           return (
-                            <Tool
-                              key={`${message.id}-${index}`}
-                              defaultOpen={defaultOpen}
-                              className="my-2"
-                            >
-                              <ToolHeader
-                                title={formatToolName(toolName)}
-                                type={toolPart.type}
-                                state={toolPart.state}
-                              />
+                            <Tool key={`${message.id}-${index}`} defaultOpen={defaultOpen} className="my-2">
+                              <ToolHeader title={formatToolName(toolName)} type={toolPart.type} state={toolPart.state} />
                               <ToolContent>
                                 {(toolPart.state === 'input-available' ||
                                   toolPart.state === 'output-available' ||
-                                  toolPart.state === 'output-error') && (
-                                  <ToolInput input={toolPart.input} />
-                                )}
-                                {(toolPart.state === 'output-available' ||
-                                  toolPart.state === 'output-error') && (
-                                  <ToolOutput
-                                    output={formatToolOutput(
-                                      toolName,
-                                      toolPart.output
-                                    )}
-                                    errorText={toolPart.errorText}
-                                  />
+                                  toolPart.state === 'output-error') && <ToolInput input={toolPart.input} />}
+                                {(toolPart.state === 'output-available' || toolPart.state === 'output-error') && (
+                                  <ToolOutput output={formatToolOutput(toolName, toolPart.output)} errorText={toolPart.errorText} />
                                 )}
                               </ToolContent>
                             </Tool>
@@ -333,17 +269,10 @@ export function InboxChat({ userId }: InboxChatProps) {
 
       <Suggestions className="max-w-4xl mx-auto overflow-hidden bg-transparent">
         {suggestions.map(suggestion => (
-          <Suggestion
-            key={suggestion}
-            onClick={handleSuggestionClick}
-            suggestion={suggestion}
-          />
+          <Suggestion key={suggestion} onClick={handleSuggestionClick} suggestion={suggestion} />
         ))}
       </Suggestions>
-      <PromptInput
-        onSubmit={handleSubmit}
-        className="mt-4 bg-transparent max-w-4xl mx-auto relative"
-      >
+      <PromptInput onSubmit={handleSubmit} className="mt-4 bg-transparent max-w-4xl mx-auto relative">
         <PromptInputBody>
           <PromptInputTextarea
             value={input}
@@ -377,11 +306,7 @@ export function InboxChat({ userId }: InboxChatProps) {
               </PromptInputModelSelectContent>
             </PromptInputModelSelect> */}
           </PromptInputTools>
-          <PromptInputSubmit
-            disabled={!input.trim() || !selectedInbox}
-            status={status}
-            onClick={status === 'streaming' ? handleStop : undefined}
-          />
+          <PromptInputSubmit disabled={!input.trim() || !selectedInbox} status={status} onClick={status === 'streaming' ? handleStop : undefined} />
         </PromptInputFooter>
       </PromptInput>
     </div>

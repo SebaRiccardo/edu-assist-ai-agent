@@ -9,15 +9,7 @@ import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { PasswordInput } from '@/components/auth/password-input';
 import { signUpWithEmailAndPassword } from '@/auth/service';
 import { signUpSchema, type SignUpFormData } from '@/auth/schemas';
@@ -73,9 +65,7 @@ export default function RegisterForm() {
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
         <div className="text-center space-y-2">
           <h3 className="text-lg font-semibold">{t('accountCreated')}</h3>
-          <p className="text-sm text-muted-foreground">
-            {t('redirectingGetStarted')}
-          </p>
+          <p className="text-sm text-muted-foreground">{t('redirectingGetStarted')}</p>
         </div>
       </div>
     );
@@ -100,11 +90,7 @@ export default function RegisterForm() {
                 <span className="text-destructive">*</span>
               </FormLabel>
               <FormControl>
-                <Input
-                  placeholder={t('enterName')}
-                  {...field}
-                  disabled={isLoading}
-                />
+                <Input placeholder={t('enterName')} {...field} disabled={isLoading} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -122,12 +108,7 @@ export default function RegisterForm() {
                 <span className="text-destructive">*</span>
               </FormLabel>
               <FormControl>
-                <Input
-                  type="email"
-                  placeholder={t('enterEmail')}
-                  {...field}
-                  disabled={isLoading}
-                />
+                <Input type="email" placeholder={t('enterEmail')} {...field} disabled={isLoading} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -145,12 +126,7 @@ export default function RegisterForm() {
                 <span className="text-destructive">*</span>
               </FormLabel>
               <FormControl>
-                <PasswordInput
-                  placeholder={t('aSecurePassword')}
-                  showStrengthIndicator={false}
-                  {...field}
-                  disabled={isLoading}
-                />
+                <PasswordInput placeholder={t('aSecurePassword')} showStrengthIndicator={false} {...field} disabled={isLoading} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -186,17 +162,10 @@ export default function RegisterForm() {
           render={({ field }) => (
             <FormItem className="flex flex-row items-start space-x-3 space-y-0 pt-2">
               <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                  disabled={isLoading}
-                  className="mt-0.5"
-                />
+                <Checkbox checked={field.value} onCheckedChange={field.onChange} disabled={isLoading} className="mt-0.5" />
               </FormControl>
               <div className="space-y-1 leading-none">
-                <FormLabel className="text-sm font-normal text-muted-foreground">
-                  {t('agreeToTerms')}
-                </FormLabel>
+                <FormLabel className="text-sm font-normal text-muted-foreground">{t('agreeToTerms')}</FormLabel>
                 <FormMessage />
               </div>
             </FormItem>
@@ -204,19 +173,10 @@ export default function RegisterForm() {
         />
 
         {/* Global Error Message */}
-        {error && (
-          <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20">
-            {error}
-          </div>
-        )}
+        {error && <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20">{error}</div>}
 
         {/* Submit Button */}
-        <Button
-          type="submit"
-          className="w-full mt-6 cursor-pointer"
-          size="lg"
-          disabled={isLoading}
-        >
+        <Button type="submit" className="w-full mt-6 cursor-pointer" size="lg" disabled={isLoading}>
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

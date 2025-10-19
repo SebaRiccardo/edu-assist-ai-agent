@@ -16,11 +16,7 @@ import { CategorizedEmail } from '@/types';
 /**
  * Two-agent workflow: Analyze emails + Generate responses
  */
-export async function analyzeAndRespondToEmails(
-  userId: string,
-  courseId: string,
-  maxEmails: number = 20
-) {
+export async function analyzeAndRespondToEmails(userId: string, courseId: string, maxEmails: number = 20) {
   console.log('🚀 Starting two-agent workflow...\n');
 
   // ========================================
@@ -39,25 +35,16 @@ export async function analyzeAndRespondToEmails(
 
   console.log(`✅ Analysis complete!`);
   console.log(`   Total analyzed: ${analysisResult.totalAnalyzed}`);
-  console.log(
-    `   Course-related: ${analysisResult.analysis.stats.totalCourseRelated}`
-  );
-  console.log(
-    `   Avg confidence: ${analysisResult.analysis.stats.avgConfidence}%`
-  );
+  console.log(`   Course-related: ${analysisResult.analysis.stats.totalCourseRelated}`);
+  console.log(`   Avg confidence: ${analysisResult.analysis.stats.avgConfidence}%`);
   console.log(`   Course: ${analysisResult.courseName}\n`);
 
   // Filter student emails with high confidence
   const studentEmails = analysisResult.emails.filter(
-    (email: CategorizedEmail) =>
-      email.category === 'student_email' &&
-      email.confidence > 80 &&
-      email.isRelated
+    (email: CategorizedEmail) => email.category === 'student_email' && email.confidence > 80 && email.isRelated
   );
 
-  console.log(
-    `📚 Found ${studentEmails.length} high-confidence student emails\n`
-  );
+  console.log(`📚 Found ${studentEmails.length} high-confidence student emails\n`);
 
   if (studentEmails.length === 0) {
     console.log('No student emails to process. Workflow complete.');

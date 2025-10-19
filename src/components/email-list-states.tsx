@@ -1,13 +1,7 @@
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
-import {
-  Empty,
-  EmptyHeader,
-  EmptyTitle,
-  EmptyDescription,
-  EmptyContent,
-  EmptyMedia,
-} from '@/components/ui/empty';
+import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyContent, EmptyMedia } from '@/components/ui/empty';
 import { EmailListItem } from '@/components/email-list-item';
 import { EmailDetailsPanel } from '@/components/email-details-panel';
 import { CategorizedEmail } from '@/types';
@@ -45,9 +39,8 @@ export function EmailListStates({
   onAutoTagAll,
   selectedAccountId,
 }: EmailListStatesProps) {
-  const [selectedEmail, setSelectedEmail] = useState<CategorizedEmail | null>(
-    null
-  );
+  const t = useTranslations('EmailList');
+  const [selectedEmail, setSelectedEmail] = useState<CategorizedEmail | null>(null);
 
   // Loading State - Checking Emails
   if (isChecking) {
@@ -57,11 +50,8 @@ export function EmailListStates({
           <EmptyMedia variant="icon">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
           </EmptyMedia>
-          <EmptyTitle>Analyzing your inbox...</EmptyTitle>
-          <EmptyDescription>
-            Our AI is scanning your emails and categorizing them by course. This
-            may take a few moments.
-          </EmptyDescription>
+          <EmptyTitle>{t('analyzingTitle')}</EmptyTitle>
+          <EmptyDescription>{t('analyzingDescription')}</EmptyDescription>
         </EmptyHeader>
       </Empty>
     );
@@ -75,16 +65,13 @@ export function EmailListStates({
           <EmptyMedia variant="icon">
             <Inbox className="h-6 w-6" />
           </EmptyMedia>
-          <EmptyTitle>No emails analyzed yet</EmptyTitle>
-          <EmptyDescription>
-            Click the "Analyze Inbox" button to scan your inbox for
-            course-related messages using AI
-          </EmptyDescription>
+          <EmptyTitle>{t('noAnalysisTitle')}</EmptyTitle>
+          <EmptyDescription>{t('noAnalysisDescription')}</EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
           <Button onClick={onAnalyze} size="lg" className="gap-2">
             <IconMailSpark className="size-5" />
-            Analyze Inbox
+            {t('analyzeButton')}
           </Button>
         </EmptyContent>
       </Empty>
@@ -99,11 +86,8 @@ export function EmailListStates({
           <EmptyMedia variant="icon">
             <CheckCircle className="h-6 w-6 text-green-500" />
           </EmptyMedia>
-          <EmptyTitle>Inbox is clean!</EmptyTitle>
-          <EmptyDescription>
-            Analyzed {stats.totalAnalyzed} emails, but none are related to this
-            course
-          </EmptyDescription>
+          <EmptyTitle>{t('cleanInboxTitle')}</EmptyTitle>
+          <EmptyDescription>{t('cleanInboxDescription', { count: stats.totalAnalyzed })}</EmptyDescription>
         </EmptyHeader>
       </Empty>
     );
@@ -116,23 +100,15 @@ export function EmailListStates({
         {/* Email List - Left Side */}
         <div className="col-span-6 flex-col border-r">
           <div className="flex items-center justify-between p-2 px-4 border-b">
-            <h2 className="text-sm font-semibold text-foreground">
-              Course Emails ({emails.length})
-            </h2>
+            <h2 className="text-sm font-semibold text-foreground">{t('courseEmails', { count: emails.length })}</h2>
             <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => onAutoTagAll(selectedAccountId)}
-                size="sm"
-                disabled
-                className="gap-2 h-7"
-              >
+              <Button variant="outline" onClick={() => onAutoTagAll(selectedAccountId)} size="sm" disabled className="gap-2 h-7">
                 <Tags />
-                Auto tag all
+                {t('autoTagAll')}
               </Button>
               <Button onClick={onAnalyze} size="sm" className="gap-2 h-7">
                 <Sparkles />
-                Re-Analyze
+                {t('reAnalyze')}
               </Button>
             </div>
           </div>
@@ -144,9 +120,7 @@ export function EmailListStates({
                   key={email.id}
                   email={email}
                   isSelected={selectedEmail?.id === email.id}
-                  isSendingReply={
-                    !!isSendingReply && replyingToEmailId === email.id
-                  }
+                  isSendingReply={!!isSendingReply && replyingToEmailId === email.id}
                   onClick={() => setSelectedEmail(email)}
                   onAutoReply={onAutoReply}
                 />
@@ -163,9 +137,7 @@ export function EmailListStates({
               email={selectedEmail}
               courseName={courseName}
               userId={userId}
-              isSendingReply={
-                isSendingReply && replyingToEmailId === selectedEmail.id
-              }
+              isSendingReply={isSendingReply && replyingToEmailId === selectedEmail.id}
               onClose={() => setSelectedEmail(null)}
               onAutoReply={onAutoReply}
             />
@@ -176,11 +148,8 @@ export function EmailListStates({
                   <EmptyMedia variant="icon">
                     <Inbox className="h-8 w-8 text-muted-foreground" />
                   </EmptyMedia>
-                  <EmptyTitle>Select an email</EmptyTitle>
-                  <EmptyDescription>
-                    Choose an email from the list to view its details and take
-                    actions
-                  </EmptyDescription>
+                  <EmptyTitle>{t('selectEmailTitle')}</EmptyTitle>
+                  <EmptyDescription>{t('selectEmailDescription')}</EmptyDescription>
                 </EmptyHeader>
               </Empty>
             </div>

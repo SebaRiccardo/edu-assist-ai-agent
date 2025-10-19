@@ -37,11 +37,7 @@ import { embedMany } from 'ai';
 // It is sorted in the same order as the input values.
 const { embeddings } = await embedMany({
   model: openai.textEmbeddingModel('text-embedding-3-small'),
-  values: [
-    'sunny day at the beach',
-    'rainy afternoon in the city',
-    'snowy night in the mountains',
-  ],
+  values: ['sunny day at the beach', 'rainy afternoon in the city', 'snowy night in the mountains'],
 });
 ```
 
@@ -60,9 +56,7 @@ const { embeddings } = await embedMany({
   values: ['sunny day at the beach', 'rainy afternoon in the city'],
 });
 
-console.log(
-  `cosine similarity: ${cosineSimilarity(embeddings[0], embeddings[1])}`
-);
+console.log(`cosine similarity: ${cosineSimilarity(embeddings[0], embeddings[1])}`);
 ```
 
 ## Token Usage
@@ -114,11 +108,7 @@ import { embedMany } from 'ai';
 const { embeddings, usage } = await embedMany({
   maxParallelCalls: 2, // Limit parallel requests
   model: openai.textEmbeddingModel('text-embedding-3-small'),
-  values: [
-    'sunny day at the beach',
-    'rainy afternoon in the city',
-    'snowy night in the mountains',
-  ],
+  values: ['sunny day at the beach', 'rainy afternoon in the city', 'snowy night in the mountains'],
 });
 ```
 

@@ -8,9 +8,7 @@ export default function HowItWorksSection() {
     <section className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-            {t('howItWorks')}
-          </h2>
+          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">{t('howItWorks')}</h2>
         </div>
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {[1, 2, 3, 4].map(step => (
@@ -24,27 +22,13 @@ export default function HowItWorksSection() {
                   {step}
                 </div>
                 {step === 4 && (
-                  <div className="inline-block bg-primary/20 text-primary text-xs font-semibold px-3 py-1 rounded-full mb-3">
-                    {t('step4Badge')}
-                  </div>
+                  <div className="inline-block bg-primary/20 text-primary text-xs font-semibold px-3 py-1 rounded-full mb-3">{t('step4Badge')}</div>
                 )}
                 <h3 className="text-xl font-semibold text-foreground mb-3 mt-2">
-                  {step === 1
-                    ? t('step1Title')
-                    : step === 2
-                      ? t('step2Title')
-                      : step === 3
-                        ? t('step3Title')
-                        : t('step4Title')}
+                  {step === 1 ? t('step1Title') : step === 2 ? t('step2Title') : step === 3 ? t('step3Title') : t('step4Title')}
                 </h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  {step === 1
-                    ? t('step1Text')
-                    : step === 2
-                      ? t('step2Text')
-                      : step === 3
-                        ? t('step3Text')
-                        : t('step4Text')}
+                  {step === 1 ? t('step1Text') : step === 2 ? t('step2Text') : step === 3 ? t('step3Text') : t('step4Text')}
                 </p>
               </div>
             </div>

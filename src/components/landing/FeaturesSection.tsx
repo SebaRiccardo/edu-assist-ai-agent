@@ -48,9 +48,7 @@ export default function FeaturesSection() {
     <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-            {t('featuresTitle')}
-          </h2>
+          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">{t('featuresTitle')}</h2>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {features.map(({ icon, title, text, iconWrap }) => (
@@ -58,14 +56,8 @@ export default function FeaturesSection() {
               key={title}
               className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-8 rounded-2xl border-none shadow-none hover:bg-background/80 transition-all"
             >
-              <div
-                className={`w-12 h-12 ${iconWrap} rounded-lg flex items-center justify-center mb-4`}
-              >
-                {icon}
-              </div>
-              <h3 className="text-xl font-semibold text-foreground mb-3">
-                {title}
-              </h3>
+              <div className={`w-12 h-12 ${iconWrap} rounded-lg flex items-center justify-center mb-4`}>{icon}</div>
+              <h3 className="text-xl font-semibold text-foreground mb-3">{title}</h3>
               <p className="text-muted-foreground leading-relaxed">{text}</p>
             </div>
           ))}

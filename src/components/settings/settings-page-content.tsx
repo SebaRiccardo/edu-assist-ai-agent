@@ -1,13 +1,7 @@
 'use client';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  User as UserIcon,
-  CreditCard,
-  Shield,
-  Bell,
-  UserCircle,
-} from 'lucide-react';
+import { User as UserIcon, CreditCard, Shield, Bell, UserCircle } from 'lucide-react';
 import { AccountSettings, SubscriptionSettings } from '@/components/settings';
 import { User } from '@supabase/supabase-js';
 import { useTranslations } from 'next-intl';

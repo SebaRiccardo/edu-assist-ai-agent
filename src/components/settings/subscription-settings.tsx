@@ -1,28 +1,12 @@
 'use client';
 
-import {
-  useCancelSubscription,
-  useUserSubscription,
-} from '@/hooks/use-user-subscription';
+import { useCancelSubscription, useUserSubscription } from '@/hooks/use-user-subscription';
 import { useUserPayments } from '@/hooks/use-payments';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import {
-  Loader2,
-  CheckCircle,
-  XCircle,
-  Clock,
-  AlertCircle,
-} from 'lucide-react';
+import { Loader2, CheckCircle, XCircle, Clock, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import { PLAN_LIMITS, getPlanDetails } from '@/subscriptions/plans';
 import {
@@ -37,14 +21,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Separator } from '@/components/ui/separator';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useTranslations } from 'next-intl';
 import { User } from '@supabase/supabase-js';
 
@@ -64,9 +41,7 @@ interface SubscriptionPageContentProps {
 export function SubscriptionSettings({ user }: SubscriptionPageContentProps) {
   const t = useTranslations('Settings.Subscription');
   const { data, isLoading, error } = useUserSubscription(user?.id);
-  const { data: payments, isLoading: paymentsLoading } = useUserPayments(
-    user?.email
-  );
+  const { data: payments, isLoading: paymentsLoading } = useUserPayments(user?.email);
   const cancelMutation = useCancelSubscription();
 
   if (isLoading) {
@@ -194,24 +169,14 @@ export function SubscriptionSettings({ user }: SubscriptionPageContentProps) {
             </div>
             {subscription.current_period_start && (
               <div>
-                <p className="text-sm text-muted-foreground">
-                  {t('currentPeriodStart')}
-                </p>
-                <p className="font-medium">
-                  {formatDate(subscription.current_period_start)}
-                </p>
+                <p className="text-sm text-muted-foreground">{t('currentPeriodStart')}</p>
+                <p className="font-medium">{formatDate(subscription.current_period_start)}</p>
               </div>
             )}
             {subscription.current_period_end && (
               <div>
-                <p className="text-sm text-muted-foreground">
-                  {subscription.status === 'cancelled'
-                    ? t('accessUntil')
-                    : t('currentPeriodEnd')}
-                </p>
-                <p className="font-medium">
-                  {formatDate(subscription.current_period_end)}
-                </p>
+                <p className="text-sm text-muted-foreground">{subscription.status === 'cancelled' ? t('accessUntil') : t('currentPeriodEnd')}</p>
+                <p className="font-medium">{formatDate(subscription.current_period_end)}</p>
               </div>
             )}
           </div>
@@ -223,40 +188,20 @@ export function SubscriptionSettings({ user }: SubscriptionPageContentProps) {
             <p className="text-sm font-medium mb-2">{t('planLimits')}</p>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">
-                  {t('aiDraftsPerDay')}
-                </span>
-                <span className="font-medium">
-                  {limits?.aiEmailDraftPerDay === Infinity
-                    ? t('unlimited')
-                    : limits?.aiEmailDraftPerDay}
-                </span>
+                <span className="text-sm text-muted-foreground">{t('aiDraftsPerDay')}</span>
+                <span className="font-medium">{limits?.aiEmailDraftPerDay === Infinity ? t('unlimited') : limits?.aiEmailDraftPerDay}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">
-                  {t('connectedInboxes')}
-                </span>
-                <span className="font-medium">
-                  {limits?.maxInboxes === Infinity
-                    ? t('unlimited')
-                    : limits?.maxInboxes}
-                </span>
+                <span className="text-sm text-muted-foreground">{t('connectedInboxes')}</span>
+                <span className="font-medium">{limits?.maxInboxes === Infinity ? t('unlimited') : limits?.maxInboxes}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">
-                  {t('autoReplies')}
-                </span>
-                <span className="font-medium">
-                  {limits?.autoReplies ? '✓' : '✗'}
-                </span>
+                <span className="text-sm text-muted-foreground">{t('autoReplies')}</span>
+                <span className="font-medium">{limits?.autoReplies ? '✓' : '✗'}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">
-                  {t('prioritySupport')}
-                </span>
-                <span className="font-medium">
-                  {limits?.prioritySupport ? '✓' : '✗'}
-                </span>
+                <span className="text-sm text-muted-foreground">{t('prioritySupport')}</span>
+                <span className="font-medium">{limits?.prioritySupport ? '✓' : '✗'}</span>
               </div>
             </div>
           </div>
@@ -269,10 +214,7 @@ export function SubscriptionSettings({ user }: SubscriptionPageContentProps) {
               </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button
-                    variant="destructive"
-                    disabled={cancelMutation.isPending}
-                  >
+                  <Button variant="destructive" disabled={cancelMutation.isPending}>
                     {cancelMutation.isPending ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -285,9 +227,7 @@ export function SubscriptionSettings({ user }: SubscriptionPageContentProps) {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      {t('cancelConfirmTitle')}
-                    </AlertDialogTitle>
+                    <AlertDialogTitle>{t('cancelConfirmTitle')}</AlertDialogTitle>
                     <AlertDialogDescription>
                       {t('cancelConfirmDescription', {
                         date: formatDate(subscription.current_period_end || ''),
@@ -295,12 +235,8 @@ export function SubscriptionSettings({ user }: SubscriptionPageContentProps) {
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>
-                      {t('keepSubscription')}
-                    </AlertDialogCancel>
-                    <AlertDialogAction onClick={handleCancelSubscription}>
-                      {t('cancelSubscription')}
-                    </AlertDialogAction>
+                    <AlertDialogCancel>{t('keepSubscription')}</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleCancelSubscription}>{t('cancelSubscription')}</AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
@@ -343,11 +279,7 @@ export function SubscriptionSettings({ user }: SubscriptionPageContentProps) {
                       string,
                       {
                         label: string;
-                        variant:
-                          | 'default'
-                          | 'secondary'
-                          | 'destructive'
-                          | 'outline';
+                        variant: 'default' | 'secondary' | 'destructive' | 'outline';
                       }
                     > = {
                       approved: { label: t('approved'), variant: 'default' },
@@ -366,14 +298,11 @@ export function SubscriptionSettings({ user }: SubscriptionPageContentProps) {
                     return (
                       <TableRow key={payment.id}>
                         <TableCell>
-                          {new Date(payment.date_created).toLocaleDateString(
-                            'en-US',
-                            {
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric',
-                            }
-                          )}
+                          {new Date(payment.date_created).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                          })}
                         </TableCell>
                         <TableCell>
                           {new Intl.NumberFormat('es-AR', {
@@ -383,17 +312,10 @@ export function SubscriptionSettings({ user }: SubscriptionPageContentProps) {
                           }).format(payment.transaction_amount)}
                         </TableCell>
                         <TableCell>
-                          <Badge variant={statusConfig.variant}>
-                            {statusConfig.label}
-                          </Badge>
+                          <Badge variant={statusConfig.variant}>{statusConfig.label}</Badge>
                         </TableCell>
-                        <TableCell className="capitalize">
-                          {payment.payment_method_id?.replace('_', ' ') ||
-                            'N/A'}
-                        </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">
-                          {payment.description || 'N/A'}
-                        </TableCell>
+                        <TableCell className="capitalize">{payment.payment_method_id?.replace('_', ' ') || 'N/A'}</TableCell>
+                        <TableCell className="text-sm text-muted-foreground">{payment.description || 'N/A'}</TableCell>
                       </TableRow>
                     );
                   })}
@@ -401,9 +323,7 @@ export function SubscriptionSettings({ user }: SubscriptionPageContentProps) {
               </Table>
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground text-center py-8">
-              {t('noPayments')}
-            </p>
+            <p className="text-sm text-muted-foreground text-center py-8">{t('noPayments')}</p>
           )}
         </CardContent>
       </Card>

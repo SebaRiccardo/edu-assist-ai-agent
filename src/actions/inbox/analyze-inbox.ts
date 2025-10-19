@@ -26,18 +26,9 @@ interface AnalyzeInboxResponse {
 /**
  * Server action to analyze inbox emails for a specific course
  */
-export async function analyzeInbox(
-  input: AnalyzeInboxInput
-): Promise<AnalyzeInboxResponse> {
+export async function analyzeInbox(input: AnalyzeInboxInput): Promise<AnalyzeInboxResponse> {
   try {
-    const {
-      course,
-      connectedAccountId,
-      maxEmails = 50,
-      includeRead = false,
-      reasoningLanguage,
-      verbose = true,
-    } = input;
+    const { course, connectedAccountId, maxEmails = 50, includeRead = false, reasoningLanguage, verbose = true } = input;
 
     const supabase = await createClient();
 
@@ -65,8 +56,7 @@ export async function analyzeInbox(
       };
     }
 
-    const connectedEmail =
-      await ComposioService.getConnectedAccountById(connectedAccountId);
+    const connectedEmail = await ComposioService.getConnectedAccountById(connectedAccountId);
 
     if (!connectedEmail) {
       return {

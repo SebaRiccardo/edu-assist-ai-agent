@@ -9,10 +9,7 @@ import {
   capturePaymentAction,
   cancelPaymentAction,
 } from '@/lib/mercadopago/actions';
-import type {
-  PaymentSearchParams,
-  CreatePaymentParams,
-} from '@/lib/mercadopago/service';
+import type { PaymentSearchParams, CreatePaymentParams } from '@/lib/mercadopago/service';
 
 /**
  * Hook to fetch all payments

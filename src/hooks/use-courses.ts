@@ -9,12 +9,7 @@ import {
   UseQuerySingleReturn,
   useUpsertMutation,
 } from '@supabase-cache-helpers/postgrest-react-query';
-import {
-  getAllCoursesForProfessorQuery,
-  getAllCoursesQuery,
-  getCourseByIdQuery,
-  getCoursesCountQuery,
-} from './queries/courses';
+import { getAllCoursesForProfessorQuery, getAllCoursesQuery, getCourseByIdQuery, getCoursesCountQuery } from './queries/courses';
 import { Course } from '@/lib/supabase/types/courses.types';
 
 /**
@@ -23,27 +18,18 @@ import { Course } from '@/lib/supabase/types/courses.types';
 export function useCourses(professorId?: string) {
   const client = useSupabaseBrowser();
 
-  return useQuery(
-    professorId
-      ? getAllCoursesForProfessorQuery(client, professorId)
-      : getAllCoursesQuery(client)
-  );
+  return useQuery(professorId ? getAllCoursesForProfessorQuery(client, professorId) : getAllCoursesQuery(client));
 }
 
 /**
  * Hook to fetch a single course by ID
  */
-export function useCourse(
-  courseId: string | undefined
-): UseQuerySingleReturn<Course> {
+export function useCourse(courseId: string | undefined): UseQuerySingleReturn<Course> {
   const client = useSupabaseBrowser();
 
-  return useQuery(
-    courseId ? getCourseByIdQuery(client, courseId) : (null as any),
-    {
-      enabled: !!courseId,
-    }
-  );
+  return useQuery(courseId ? getCourseByIdQuery(client, courseId) : (null as any), {
+    enabled: !!courseId,
+  });
 }
 
 /**

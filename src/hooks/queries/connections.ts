@@ -7,9 +7,7 @@ import { ComposioConnectedAccount } from '@/app/api/connections/route';
 /**
  * Fetch connected accounts from API
  */
-export async function fetchConnectedAccounts(): Promise<
-  ComposioConnectedAccount[]
-> {
+export async function fetchConnectedAccounts(): Promise<ComposioConnectedAccount[]> {
   const response = await fetch('/api/connections');
 
   if (!response.ok) {

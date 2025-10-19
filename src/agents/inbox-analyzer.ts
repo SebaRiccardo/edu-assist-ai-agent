@@ -1,13 +1,7 @@
 import { generateObject } from 'ai';
 import { google } from '@ai-sdk/google';
 import { z } from 'zod';
-import {
-  CategorizedEmail,
-  InboxAnalysisParams,
-  InboxAnalysisResult,
-  GmailMessageBody,
-  TransformedEmail,
-} from '@/types';
+import { CategorizedEmail, InboxAnalysisParams, InboxAnalysisResult, GmailMessageBody, TransformedEmail } from '@/types';
 import { ComposioService } from '@/lib/services/composio';
 
 // Set max duration for this API route to handle AI processing
@@ -77,11 +71,7 @@ function transformGmailMessage(message: GmailMessageBody): TransformedEmail {
  * Falls back to preview or truncated body if available
  */
 function extractSnippet(message: GmailMessageBody): string {
-  if (
-    message.preview &&
-    typeof message.preview === 'object' &&
-    'snippet' in message.preview
-  ) {
+  if (message.preview && typeof message.preview === 'object' && 'snippet' in message.preview) {
     return String(message.preview.snippet);
   }
 
@@ -92,17 +82,8 @@ function extractSnippet(message: GmailMessageBody): string {
   return '';
 }
 
-export async function inboxAnalyzerAgent(
-  params: InboxAnalysisParams
-): Promise<InboxAnalysisResult> {
-  const {
-    course,
-    connectedAccountId,
-    maxEmails = 50,
-    includeRead = false,
-    reasoningLanguage = 'English',
-    verbose = true,
-  } = params;
+export async function inboxAnalyzerAgent(params: InboxAnalysisParams): Promise<InboxAnalysisResult> {
+  const { course, connectedAccountId, maxEmails = 50, includeRead = false, reasoningLanguage = 'English', verbose = true } = params;
 
   if (!course) throw new Error(`Course is required`);
 
@@ -202,37 +183,28 @@ Important:
   console.log(`✨ Analysis complete!`);
 
   // STEP 5: Map analysis results back to original emails
-  const categorizedEmails: CategorizedEmail[] =
-    analysisResult.object.results.map(analysis => {
-      const originalEmail = fetchedEmails.find(
-        (e: GmailMessageBody) => e.messageId === analysis.emailId
-      );
+  const categorizedEmails: CategorizedEmail[] = analysisResult.object.results.map(analysis => {
+    const originalEmail = fetchedEmails.find((e: GmailMessageBody) => e.messageId === analysis.emailId);
 
-      return {
-        ...transformGmailMessage(originalEmail!),
-        category: analysis.category,
-        isRelated: analysis.isRelated,
-        suggestedLabel: analysis.suggestedLabel,
-        confidence: analysis.confidence,
-        reasoning: analysis.reasoning,
-      };
-    });
+    return {
+      ...transformGmailMessage(originalEmail!),
+      category: analysis.category,
+      isRelated: analysis.isRelated,
+      suggestedLabel: analysis.suggestedLabel,
+      confidence: analysis.confidence,
+      reasoning: analysis.reasoning,
+    };
+  });
 
   // Calculate statistics
   const stats = {
     totalAnalyzed: categorizedEmails.length,
     totalCourseRelated: categorizedEmails.filter(e => e.isRelated).length,
-    avgConfidence: Math.round(
-      categorizedEmails.reduce((sum, e) => sum + e.confidence, 0) /
-        categorizedEmails.length
-    ),
-    categoryBreakdown: categorizedEmails.reduce(
-      (acc: Record<string, number>, email) => {
-        acc[email.category] = (acc[email.category] || 0) + 1;
-        return acc;
-      },
-      {}
-    ),
+    avgConfidence: Math.round(categorizedEmails.reduce((sum, e) => sum + e.confidence, 0) / categorizedEmails.length),
+    categoryBreakdown: categorizedEmails.reduce((acc: Record<string, number>, email) => {
+      acc[email.category] = (acc[email.category] || 0) + 1;
+      return acc;
+    }, {}),
   };
 
   return {

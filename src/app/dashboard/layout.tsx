@@ -2,11 +2,7 @@ import { DashboardNavBar } from '@/components/top-nav';
 import { getCurrentUser } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 
-export default async function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
 
   if (!user) return redirect('/auth/login');

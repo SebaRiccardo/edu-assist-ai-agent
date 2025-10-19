@@ -16,12 +16,8 @@ const Login = () => {
         <div className="max-w-lg space-y-8 text-center">
           {/* Main Hero Content */}
           <div className="space-y-4">
-            <h2 className="text-4xl font-bold leading-tight text-primary-foreground">
-              {t('welcomeBackTitle')}
-            </h2>
-            <p className="text-lg text-primary-foreground/90 leading-relaxed">
-              {t('welcomeBackSubtitle')}
-            </p>
+            <h2 className="text-4xl font-bold leading-tight text-primary-foreground">{t('welcomeBackTitle')}</h2>
+            <p className="text-lg text-primary-foreground/90 leading-relaxed">{t('welcomeBackSubtitle')}</p>
           </div>
 
           {/* Feature Card */}
@@ -31,12 +27,8 @@ const Login = () => {
                 <TrendingUp className="h-6 w-6 text-primary" />
               </div>
               <div className="flex-1 space-y-2">
-                <h3 className="text-xl font-semibold text-foreground">
-                  {t('communityTitle')}
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {t('communitySubtitle')}
-                </p>
+                <h3 className="text-xl font-semibold text-foreground">{t('communityTitle')}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{t('communitySubtitle')}</p>
               </div>
             </div>
 
@@ -48,9 +40,7 @@ const Login = () => {
               </div>
               <div>
                 <p className="text-2xl font-bold text-foreground">10K+</p>
-                <p className="text-xs text-muted-foreground">
-                  Active professors
-                </p>
+                <p className="text-xs text-muted-foreground">Active professors</p>
               </div>
             </div>
           </div>
@@ -66,20 +56,12 @@ const Login = () => {
 
           {/* Header */}
           <div className="space-y-3">
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">
-              {t('welcomeBackTitle')}
-            </h1>
-            <p className="text-base text-muted-foreground">
-              {t('welcomeBackSubtitle')}
-            </p>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('welcomeBackTitle')}</h1>
+            <p className="text-base text-muted-foreground">{t('welcomeBackSubtitle')}</p>
           </div>
 
           {/* Google Sign In */}
-          <Button
-            disabled
-            variant="outline"
-            className="w-full bg-background hover:bg-muted"
-          >
+          <Button disabled variant="outline" className="w-full bg-background hover:bg-muted">
             <img
               src="https://cdn.shadcnstudio.com/ss-assets/brand-logo/google-icon.png?width=20&height=20&format=auto"
               alt="Google Icon"
@@ -103,16 +85,11 @@ const Login = () => {
             <div className="space-y-3 text-center">
               <p className="text-sm text-muted-foreground">
                 {t('dontHaveAccount')}{' '}
-                <Link
-                  href="/auth/sign-up"
-                  className="font-medium text-foreground hover:underline"
-                >
+                <Link href="/auth/sign-up" className="font-medium text-foreground hover:underline">
                   {t('signUp')}
                 </Link>
               </p>
-              <p className="text-xs text-muted-foreground/70">
-                {t('protectedBySecurity')}
-              </p>
+              <p className="text-xs text-muted-foreground/70">{t('protectedBySecurity')}</p>
             </div>
           </div>
         </div>

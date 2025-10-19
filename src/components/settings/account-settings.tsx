@@ -2,28 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { useProfile, useUpdateProfile } from '@/hooks/use-profiles';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import {
-  Loader2,
-  Upload,
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  CheckCircle,
-} from 'lucide-react';
+import { Loader2, Upload, Mail, Lock, Eye, EyeOff, CheckCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { User } from '@supabase/supabase-js';
 import { toast } from 'sonner';
@@ -86,16 +72,10 @@ export function AccountSettings({ user }: AccountSettingsProps) {
     );
   }
 
-  const userInitials =
-    formData.firstName[0]?.toUpperCase() ||
-    formData.lastName[0]?.toUpperCase() ||
-    user.email?.[0]?.toUpperCase() ||
-    'U';
+  const userInitials = formData.firstName[0]?.toUpperCase() || formData.lastName[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || 'U';
 
   // Filter out email provider, only show OAuth providers
-  const oauthProviders = (user?.identities || []).filter(
-    (identity: any) => identity.provider !== 'email'
-  );
+  const oauthProviders = (user?.identities || []).filter((identity: any) => identity.provider !== 'email');
 
   return (
     <div className="space-y-6 p-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 rounded-3xl">
@@ -133,18 +113,13 @@ export function AccountSettings({ user }: AccountSettingsProps) {
         <h3 className="text-base font-semibold">{t('fullName')}</h3>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label
-              htmlFor="firstName"
-              className="text-sm text-muted-foreground"
-            >
+            <Label htmlFor="firstName" className="text-sm text-muted-foreground">
               {t('firstName')}
             </Label>
             <Input
               id="firstName"
               value={formData.firstName}
-              onChange={e =>
-                setFormData({ ...formData, firstName: e.target.value })
-              }
+              onChange={e => setFormData({ ...formData, firstName: e.target.value })}
               placeholder="Bryan"
             />
           </div>
@@ -155,9 +130,7 @@ export function AccountSettings({ user }: AccountSettingsProps) {
             <Input
               id="lastName"
               value={formData.lastName}
-              onChange={e =>
-                setFormData({ ...formData, lastName: e.target.value })
-              }
+              onChange={e => setFormData({ ...formData, lastName: e.target.value })}
               placeholder="Cranston"
             />
           </div>
@@ -170,9 +143,7 @@ export function AccountSettings({ user }: AccountSettingsProps) {
       <div className="space-y-4">
         <div>
           <h3 className="text-base font-semibold">{t('contactEmail')}</h3>
-          <p className="text-sm text-muted-foreground">
-            {t('contactEmailDescription')}
-          </p>
+          <p className="text-sm text-muted-foreground">{t('contactEmailDescription')}</p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="email" className="text-sm text-muted-foreground">
@@ -181,13 +152,7 @@ export function AccountSettings({ user }: AccountSettingsProps) {
           <div className="flex items-center gap-2">
             <div className="relative flex-1">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="email"
-                type="email"
-                value={user.email || ''}
-                disabled
-                className="pl-10 pr-24"
-              />
+              <Input id="email" type="email" value={user.email || ''} disabled className="pl-10 pr-24" />
               {user.email_confirmed_at && (
                 <Badge
                   variant="secondary"
@@ -217,16 +182,11 @@ export function AccountSettings({ user }: AccountSettingsProps) {
       <div className="space-y-4">
         <div>
           <h3 className="text-base font-semibold">{t('password')}</h3>
-          <p className="text-sm text-muted-foreground">
-            {t('passwordDescription')}
-          </p>
+          <p className="text-sm text-muted-foreground">{t('passwordDescription')}</p>
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label
-              htmlFor="currentPassword"
-              className="text-sm text-muted-foreground"
-            >
+            <Label htmlFor="currentPassword" className="text-sm text-muted-foreground">
               {t('currentPassword')}
             </Label>
             <div className="relative">
@@ -235,9 +195,7 @@ export function AccountSettings({ user }: AccountSettingsProps) {
                 id="currentPassword"
                 type={showCurrentPassword ? 'text' : 'password'}
                 value={formData.currentPassword}
-                onChange={e =>
-                  setFormData({ ...formData, currentPassword: e.target.value })
-                }
+                onChange={e => setFormData({ ...formData, currentPassword: e.target.value })}
                 placeholder="••••••••••"
                 className="pl-10 pr-10"
               />
@@ -246,19 +204,12 @@ export function AccountSettings({ user }: AccountSettingsProps) {
                 onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               >
-                {showCurrentPassword ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
+                {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
           </div>
           <div className="space-y-2">
-            <Label
-              htmlFor="newPassword"
-              className="text-sm text-muted-foreground"
-            >
+            <Label htmlFor="newPassword" className="text-sm text-muted-foreground">
               {t('newPassword')}
             </Label>
             <div className="relative">
@@ -267,9 +218,7 @@ export function AccountSettings({ user }: AccountSettingsProps) {
                 id="newPassword"
                 type={showNewPassword ? 'text' : 'password'}
                 value={formData.newPassword}
-                onChange={e =>
-                  setFormData({ ...formData, newPassword: e.target.value })
-                }
+                onChange={e => setFormData({ ...formData, newPassword: e.target.value })}
                 placeholder="••••••••••"
                 className="pl-10 pr-10"
               />
@@ -278,11 +227,7 @@ export function AccountSettings({ user }: AccountSettingsProps) {
                 onClick={() => setShowNewPassword(!showNewPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               >
-                {showNewPassword ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
+                {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
           </div>
@@ -295,39 +240,24 @@ export function AccountSettings({ user }: AccountSettingsProps) {
           <Separator />
           <div className="space-y-4">
             <div>
-              <h3 className="text-base font-semibold">
-                {t('integratedAccount')}
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                {t('integratedAccountDescription')}
-              </p>
+              <h3 className="text-base font-semibold">{t('integratedAccount')}</h3>
+              <p className="text-sm text-muted-foreground">{t('integratedAccountDescription')}</p>
             </div>
             <div className="space-y-3">
               {oauthProviders.map((identity: any) => (
-                <div
-                  key={identity.id}
-                  className="flex items-center justify-between p-4 rounded-lg border"
-                >
+                <div key={identity.id} className="flex items-center justify-between p-4 rounded-lg border">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded bg-orange-100 dark:bg-orange-900/20 flex items-center justify-center">
-                      <span className="text-lg font-semibold capitalize text-orange-600 dark:text-orange-400">
-                        {identity.provider[0]}
-                      </span>
+                      <span className="text-lg font-semibold capitalize text-orange-600 dark:text-orange-400">{identity.provider[0]}</span>
                     </div>
                     <div>
-                      <p className="font-medium capitalize">
-                        {identity.provider}
-                      </p>
+                      <p className="font-medium capitalize">{identity.provider}</p>
                       <p className="text-sm text-muted-foreground">
-                        {identity.identity_data?.email ||
-                          `Navigate the ${identity.provider} interface and reports.`}
+                        {identity.identity_data?.email || `Navigate the ${identity.provider} interface and reports.`}
                       </p>
                     </div>
                   </div>
-                  <Badge
-                    variant="secondary"
-                    className="text-green-600 bg-green-50 dark:bg-green-900/20"
-                  >
+                  <Badge variant="secondary" className="text-green-600 bg-green-50 dark:bg-green-900/20">
                     {t('connected')}
                   </Badge>
                 </div>

@@ -1,17 +1,9 @@
 import { SignJWT, jwtVerify } from 'jose';
 
 // List of valid beta access codes
-export const VALID_BETA_CODES = [
-  '789012',
-  '345678',
-  '901234',
-  '567890',
-  '246813',
-];
+export const VALID_BETA_CODES = ['789012', '345678', '901234', '567890', '246813'];
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.BETA_ACCESS_SECRET || 'your-secret-key-change-this-in-production'
-);
+const JWT_SECRET = new TextEncoder().encode(process.env.BETA_ACCESS_SECRET || 'your-secret-key-change-this-in-production');
 
 const COOKIE_NAME = 'beta_access_token';
 
@@ -43,17 +35,11 @@ export async function createBetaAccessToken(code: string): Promise<string> {
 /**
  * Verifies a beta access JWT token
  */
-export async function verifyBetaAccessToken(
-  token: string
-): Promise<BetaAccessPayload | null> {
+export async function verifyBetaAccessToken(token: string): Promise<BetaAccessPayload | null> {
   try {
     const { payload } = await jwtVerify(token, JWT_SECRET);
 
-    if (
-      payload &&
-      typeof payload.code === 'string' &&
-      typeof payload.accessedAt === 'number'
-    ) {
+    if (payload && typeof payload.code === 'string' && typeof payload.accessedAt === 'number') {
       return {
         code: payload.code,
         accessedAt: payload.accessedAt,

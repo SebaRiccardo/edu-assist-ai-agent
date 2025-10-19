@@ -36,10 +36,7 @@ export async function POST(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized. Please log in.' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized. Please log in.' }, { status: 401 });
     }
 
     // 2. Parse and validate request body
@@ -78,10 +75,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!mercadoPagoResult.success || !mercadoPagoResult.data) {
-      console.error(
-        'MercadoPago plan creation failed:',
-        mercadoPagoResult.error
-      );
+      console.error('MercadoPago plan creation failed:', mercadoPagoResult.error);
       return NextResponse.json(
         {
           error: 'Failed to create subscription plan in MercadoPago',
@@ -108,11 +102,7 @@ export async function POST(request: NextRequest) {
     };
 
     // 5. Save plan to Supabase
-    const { data: savedPlan, error: dbError } = await supabase
-      .from('subscription_plans')
-      .insert(supabasePlan)
-      .select()
-      .single();
+    const { data: savedPlan, error: dbError } = await supabase.from('subscription_plans').insert(supabasePlan).select().single();
 
     if (dbError) {
       console.error('Database insert error:', dbError);

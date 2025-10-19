@@ -81,15 +81,8 @@ const priorityListSchema = z.object({
  * const criticalEmails = result.priorities.filter(p => p.priority === 'critical');
  * ```
  */
-export async function priorityClassificatorAgent(
-  params: PriorityClassificationParams
-): Promise<PrioritizationResult> {
-  const {
-    emails,
-    courseName,
-    analysisSummary = '',
-    model = 'gemini-2.0-flash',
-  } = params;
+export async function priorityClassificatorAgent(params: PriorityClassificationParams): Promise<PrioritizationResult> {
+  const { emails, courseName, analysisSummary = '', model = 'gemini-2.0-flash' } = params;
 
   console.log(`⚡ Classifying priorities for ${emails.length} emails...`);
 
@@ -178,9 +171,6 @@ export function getPriorityStats(result: PrioritizationResult) {
  * @param priorities - Priority levels to include
  * @returns Filtered email priorities
  */
-export function filterByPriority(
-  result: PrioritizationResult,
-  priorities: PriorityLevel[]
-): EmailPriority[] {
+export function filterByPriority(result: PrioritizationResult, priorities: PriorityLevel[]): EmailPriority[] {
   return result.priorities.filter(p => priorities.includes(p.priority));
 }

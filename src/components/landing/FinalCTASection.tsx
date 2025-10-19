@@ -13,9 +13,7 @@ export default function FinalCTASection() {
           <br />
           <span className="text-primary">{t('finalCtaTitle2')}</span>
         </h2>
-        <p className="text-xl text-muted-foreground mb-10">
-          {t('finalCtaSubtitle')}
-        </p>
+        <p className="text-xl text-muted-foreground mb-10">{t('finalCtaSubtitle')}</p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Link href="/auth/sign-up">
             <button className="rounded-full bg-primary text-primary-foreground px-8 py-4 cursor-pointer text-lg font-semibold hover:opacity-90 transition-all shadow-lg hover:shadow-xl flex items-center gap-2">

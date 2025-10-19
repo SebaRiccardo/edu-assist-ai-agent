@@ -1,8 +1,4 @@
-﻿import MercadoPagoConfig, {
-  PreApprovalPlan,
-  PreApproval,
-  Payment,
-} from 'mercadopago';
+﻿import MercadoPagoConfig, { PreApprovalPlan, PreApproval, Payment } from 'mercadopago';
 import { mercadoPagoClient } from '@/lib/mercadopago/mercadopago-client';
 import type { ServiceResponse } from './types';
 import { PreApprovalPlanSearchPaging } from 'mercadopago/dist/clients/preApprovalPlan/search/types';
@@ -151,10 +147,7 @@ export class MercadoPagoService {
     }
   }
 
-  async updatePlan(
-    planId: string,
-    params: Partial<CreatePlanParams>
-  ): Promise<ServiceResponse> {
+  async updatePlan(planId: string, params: Partial<CreatePlanParams>): Promise<ServiceResponse> {
     try {
       const updateBody: any = { preApprovalPlanId: planId };
       if (params.reason) updateBody.reason = params.reason;
@@ -193,9 +186,7 @@ export class MercadoPagoService {
           ...params,
         },
       });
-      const cleanResults = response.results?.map(
-        ({ api_response, ...res }) => res
-      );
+      const cleanResults = response.results?.map(({ api_response, ...res }) => res);
       return {
         success: true,
         data: { paging: response.paging, results: cleanResults },
@@ -213,9 +204,7 @@ export class MercadoPagoService {
     return await this.searchPlans({ status: 'active' });
   }
 
-  async createSubscription(
-    params: CreatePreApprovalParams
-  ): Promise<ServiceResponse> {
+  async createSubscription(params: CreatePreApprovalParams): Promise<ServiceResponse> {
     try {
       const body: any = {
         preapproval_plan_id: params.preApprovalPlanId,
@@ -248,9 +237,7 @@ export class MercadoPagoService {
     }
   }
 
-  async getSubscription(
-    subscriptionId: string
-  ): Promise<ServiceResponse<Omit<PreApprovalResponse, 'api_response'>>> {
+  async getSubscription(subscriptionId: string): Promise<ServiceResponse<Omit<PreApprovalResponse, 'api_response'>>> {
     try {
       const response = await this.preApprovalClient.get({ id: subscriptionId });
       const { api_response, ...res } = response;
@@ -264,10 +251,7 @@ export class MercadoPagoService {
     }
   }
 
-  async updateSubscription(
-    subscriptionId: string,
-    params: { status?: 'paused' | 'cancelled'; reason?: string }
-  ): Promise<ServiceResponse> {
+  async updateSubscription(subscriptionId: string, params: { status?: 'paused' | 'cancelled'; reason?: string }): Promise<ServiceResponse> {
     try {
       const response = await this.preApprovalClient.update({
         id: subscriptionId,
@@ -318,20 +302,17 @@ export class MercadoPagoService {
     }
   }
 
-  async searchSubscriptions(
-    params?: PreApprovalSearchParams
-  ): Promise<ServiceResponse<PreApprovalSearchResponse>> {
+  async searchSubscriptions(params?: PreApprovalSearchParams): Promise<ServiceResponse<PreApprovalSearchResponse>> {
     try {
       //PreApprovalSearchResponse do not have the api_response field because the SDK
       //does not return it but it is there and will cause the server action to throw an error
-      const response: PreApprovalSearchResponse =
-        await this.preApprovalClient.search({
-          options: {
-            limit: params?.limit || 10,
-            offset: params?.offset || 0,
-            ...params?.filters,
-          },
-        });
+      const response: PreApprovalSearchResponse = await this.preApprovalClient.search({
+        options: {
+          limit: params?.limit || 10,
+          offset: params?.offset || 0,
+          ...params?.filters,
+        },
+      });
       const { api_response, ...res } = response as any;
       return { success: true, data: res };
     } catch (error: any) {
@@ -359,11 +340,9 @@ export class MercadoPagoService {
         payment_method_id: params.paymentMethodId,
         payer: { email: params.payer.email },
       };
-      if (params.payer.firstName)
-        body.payer.first_name = params.payer.firstName;
+      if (params.payer.firstName) body.payer.first_name = params.payer.firstName;
       if (params.payer.lastName) body.payer.last_name = params.payer.lastName;
-      if (params.payer.identification)
-        body.payer.identification = params.payer.identification;
+      if (params.payer.identification) body.payer.identification = params.payer.identification;
       if (params.token) body.token = params.token;
       if (params.installments) body.installments = params.installments;
       if (params.metadata) body.metadata = params.metadata;
@@ -404,9 +383,7 @@ export class MercadoPagoService {
           ...params?.filters,
         },
       });
-      const cleanResults = (response.results as any[])?.map(
-        ({ api_response, ...res }) => res
-      );
+      const cleanResults = (response.results as any[])?.map(({ api_response, ...res }) => res);
       return { success: true, data: { ...response, results: cleanResults } };
     } catch (error: any) {
       console.error('Error searching payments:', error);
@@ -449,11 +426,7 @@ export class MercadoPagoService {
     }
   }
 
-  validateWebhookSignature(
-    xSignature: string,
-    xRequestId: string,
-    dataId: string
-  ): boolean {
+  validateWebhookSignature(xSignature: string, xRequestId: string, dataId: string): boolean {
     try {
       const secret = process.env.MERCADOPAGO_WEBHOOK_SECRET;
       if (!secret) {
@@ -502,52 +475,27 @@ export class MercadoPagoService {
 
 export const mercadoPagoService = new MercadoPagoService();
 
-export const createSubscriptionPlan = (params: CreatePlanParams) =>
-  mercadoPagoService.createPlan(params);
-export const getSubscriptionPlan = (planId: string) =>
-  mercadoPagoService.getPlan(planId);
-export const updateSubscriptionPlan = (
-  planId: string,
-  params: Partial<CreatePlanParams>
-) => mercadoPagoService.updatePlan(planId, params);
-export const searchSubscriptionPlans = (params?: PlanSearchParams) =>
-  mercadoPagoService.searchPlans(params);
-export const createPreApproval = (params: CreatePreApprovalParams) =>
-  mercadoPagoService.createSubscription(params);
-export const getPreApproval = (subscriptionId: string) =>
-  mercadoPagoService.getSubscription(subscriptionId);
-export const updatePreApproval = (
-  subscriptionId: string,
-  params: { status?: 'paused' | 'cancelled'; reason?: string }
-) => mercadoPagoService.updateSubscription(subscriptionId, params);
-export const cancelPreApproval = (subscriptionId: string) =>
-  mercadoPagoService.cancelSubscription(subscriptionId);
-export const pausePreApproval = (subscriptionId: string) =>
-  mercadoPagoService.pauseSubscription(subscriptionId);
-export const searchPreApprovals = (params?: PreApprovalSearchParams) =>
-  mercadoPagoService.searchSubscriptions(params);
-export const createPayment = (params: CreatePaymentParams) =>
-  mercadoPagoService.createPayment(params);
-export const getPayment = (paymentId: string) =>
-  mercadoPagoService.getPayment(paymentId);
-export const searchPayments = (params?: PaymentSearchParams) =>
-  mercadoPagoService.searchPayments(params);
-export const capturePayment = (paymentId: string) =>
-  mercadoPagoService.capturePayment(paymentId);
-export const cancelPayment = (paymentId: string) =>
-  mercadoPagoService.cancelPayment(paymentId);
-export const validateWebhookSignature = (
-  xSignature: string,
-  xRequestId: string,
-  dataId: string
-) =>
+export const createSubscriptionPlan = (params: CreatePlanParams) => mercadoPagoService.createPlan(params);
+export const getSubscriptionPlan = (planId: string) => mercadoPagoService.getPlan(planId);
+export const updateSubscriptionPlan = (planId: string, params: Partial<CreatePlanParams>) => mercadoPagoService.updatePlan(planId, params);
+export const searchSubscriptionPlans = (params?: PlanSearchParams) => mercadoPagoService.searchPlans(params);
+export const createPreApproval = (params: CreatePreApprovalParams) => mercadoPagoService.createSubscription(params);
+export const getPreApproval = (subscriptionId: string) => mercadoPagoService.getSubscription(subscriptionId);
+export const updatePreApproval = (subscriptionId: string, params: { status?: 'paused' | 'cancelled'; reason?: string }) =>
+  mercadoPagoService.updateSubscription(subscriptionId, params);
+export const cancelPreApproval = (subscriptionId: string) => mercadoPagoService.cancelSubscription(subscriptionId);
+export const pausePreApproval = (subscriptionId: string) => mercadoPagoService.pauseSubscription(subscriptionId);
+export const searchPreApprovals = (params?: PreApprovalSearchParams) => mercadoPagoService.searchSubscriptions(params);
+export const createPayment = (params: CreatePaymentParams) => mercadoPagoService.createPayment(params);
+export const getPayment = (paymentId: string) => mercadoPagoService.getPayment(paymentId);
+export const searchPayments = (params?: PaymentSearchParams) => mercadoPagoService.searchPayments(params);
+export const capturePayment = (paymentId: string) => mercadoPagoService.capturePayment(paymentId);
+export const cancelPayment = (paymentId: string) => mercadoPagoService.cancelPayment(paymentId);
+export const validateWebhookSignature = (xSignature: string, xRequestId: string, dataId: string) =>
   mercadoPagoService.validateWebhookSignature(xSignature, xRequestId, dataId);
-export const formatCurrency = (amount: number, currencyId: string) =>
-  mercadoPagoService.formatCurrency(amount, currencyId);
-export const getSubscriptionStatusLabel = (status: string) =>
-  mercadoPagoService.getSubscriptionStatusLabel(status);
-export const getPaymentStatusLabel = (status: string) =>
-  mercadoPagoService.getPaymentStatusLabel(status);
+export const formatCurrency = (amount: number, currencyId: string) => mercadoPagoService.formatCurrency(amount, currencyId);
+export const getSubscriptionStatusLabel = (status: string) => mercadoPagoService.getSubscriptionStatusLabel(status);
+export const getPaymentStatusLabel = (status: string) => mercadoPagoService.getPaymentStatusLabel(status);
 export const refundPayment = async (paymentId: string, amount?: number) => {
   console.warn('refundPayment is not yet implemented in MercadoPago SDK');
   return { success: false, error: 'Refund functionality not yet implemented' };

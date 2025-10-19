@@ -100,9 +100,7 @@ const qualityReviewSchema = z.object({
  * }
  * ```
  */
-export async function reviewEmailQuality(
-  params: QualityReviewParams
-): Promise<QualityReview> {
+export async function reviewEmailQuality(params: QualityReviewParams): Promise<QualityReview> {
   const { draftResponse, courseName = '', model = 'gemini-2.0-flash' } = params;
 
   console.log(`🔍 Reviewing: ${draftResponse.originalEmail.subject}`);
@@ -198,11 +196,7 @@ Be thorough and constructive in your feedback.`,
  * const approved = reviews.filter(r => r.approved);
  * ```
  */
-export async function reviewBatchQuality(
-  draftResponses: DraftResponse[],
-  courseName?: string,
-  model?: string
-): Promise<QualityReview[]> {
+export async function reviewBatchQuality(draftResponses: DraftResponse[], courseName?: string, model?: string): Promise<QualityReview[]> {
   console.log(`\n🔍 Reviewing ${draftResponses.length} draft responses...`);
 
   const reviews: QualityReview[] = [];
@@ -230,17 +224,14 @@ export async function reviewBatchQuality(
  */
 export function calculateQualityStats(reviews: QualityReview[]): QualityStats {
   const totalReviewed = reviews.length;
-  const averageScore =
-    reviews.reduce((sum, r) => sum + r.qualityScore, 0) / totalReviewed;
+  const averageScore = reviews.reduce((sum, r) => sum + r.qualityScore, 0) / totalReviewed;
   const approvedCount = reviews.filter(r => r.approved).length;
   const approvalRate = (approvedCount / totalReviewed) * 100;
 
   const scoreDistribution = {
     excellent: reviews.filter(r => r.qualityScore >= 90).length,
-    good: reviews.filter(r => r.qualityScore >= 70 && r.qualityScore < 90)
-      .length,
-    fair: reviews.filter(r => r.qualityScore >= 50 && r.qualityScore < 70)
-      .length,
+    good: reviews.filter(r => r.qualityScore >= 70 && r.qualityScore < 90).length,
+    fair: reviews.filter(r => r.qualityScore >= 50 && r.qualityScore < 70).length,
     poor: reviews.filter(r => r.qualityScore < 50).length,
   };
 
@@ -260,10 +251,7 @@ export function calculateQualityStats(reviews: QualityReview[]): QualityStats {
  * @param approved - Filter by approval status
  * @returns Filtered reviews
  */
-export function filterByApproval(
-  reviews: QualityReview[],
-  approved: boolean
-): QualityReview[] {
+export function filterByApproval(reviews: QualityReview[], approved: boolean): QualityReview[] {
   return reviews.filter(r => r.approved === approved);
 }
 
@@ -274,10 +262,7 @@ export function filterByApproval(
  * @param minScore - Minimum quality score threshold
  * @returns Filtered reviews
  */
-export function filterByScore(
-  reviews: QualityReview[],
-  minScore: number
-): QualityReview[] {
+export function filterByScore(reviews: QualityReview[], minScore: number): QualityReview[] {
   return reviews.filter(r => r.qualityScore >= minScore);
 }
 
@@ -287,9 +272,7 @@ export function filterByScore(
  * @param reviews - Array of quality reviews
  * @returns Map of emailId to suggestions
  */
-export function getImprovementSuggestions(
-  reviews: QualityReview[]
-): Map<string, string[]> {
+export function getImprovementSuggestions(reviews: QualityReview[]): Map<string, string[]> {
   const suggestions = new Map<string, string[]>();
 
   reviews

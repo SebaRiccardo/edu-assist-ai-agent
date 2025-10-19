@@ -2,20 +2,9 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from '@/components/ui/input-otp';
+import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { verifyBetaCode } from '@/actions/beta-access';
 import { ShieldCheck, AlertCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -63,9 +52,7 @@ export default function BetaAccessPage() {
             <ShieldCheck className="w-6 h-6 text-primary" />
           </div>
           <CardTitle className="text-2xl font-bold">{t('title')}</CardTitle>
-          <CardDescription className="text-base">
-            {t('description')}
-          </CardDescription>
+          <CardDescription className="text-base">{t('description')}</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-6 p-6">
@@ -98,11 +85,7 @@ export default function BetaAccessPage() {
             </div>
           </CardContent>
           <CardFooter>
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isPending || code.length !== 6}
-            >
+            <Button type="submit" className="w-full" disabled={isPending || code.length !== 6}>
               {isPending ? t('verifying') : t('submit')}
             </Button>
           </CardFooter>

@@ -4,21 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DomainInbox } from '@/types';
 
 const FormSchema = z.object({
@@ -39,8 +26,7 @@ export function InboxEmailSelect({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       email: inboxes && inboxes.length > 0 ? inboxes[0].email : '',
-      connectedAccountId:
-        inboxes && inboxes.length > 0 ? inboxes[0].connectedAccountId : '',
+      connectedAccountId: inboxes && inboxes.length > 0 ? inboxes[0].connectedAccountId : '',
     },
   });
 
@@ -82,10 +68,7 @@ export function InboxEmailSelect({
                         {inbox.email}
                       </SelectItem>
                       {canAddNew && (
-                        <SelectItem
-                          className="text-blue-500 font-semibold"
-                          value="__add_new"
-                        >
+                        <SelectItem className="text-blue-500 font-semibold" value="__add_new">
                           Click to add new
                         </SelectItem>
                       )}

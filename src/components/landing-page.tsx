@@ -39,13 +39,9 @@ export function LandingPage() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
               <Mail className="w-6 h-6 text-primary" />
-              <span className="text-lg font-bold text-foreground">
-                InboxProfs AI
-              </span>
+              <span className="text-lg font-bold text-foreground">InboxProfs AI</span>
             </div>
-            <p className="text-muted-foreground text-sm">
-              © 2025 InboxProfs AI. All rights reserved.
-            </p>
+            <p className="text-muted-foreground text-sm">© 2025 InboxProfs AI. All rights reserved.</p>
           </div>
         </div>
       </footer>

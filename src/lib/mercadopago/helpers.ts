@@ -77,10 +77,7 @@ export async function setupInboxProfPlans(currencyId: string = 'ARS') {
  * @param trialDays - Number of trial days (default: 7)
  * @returns Created plan IDs
  */
-export async function setupInboxProfPlansWithTrial(
-  currencyId: string = 'ARS',
-  trialDays: number = 7
-) {
+export async function setupInboxProfPlansWithTrial(currencyId: string = 'ARS', trialDays: number = 7) {
   const results = {
     free: null as string | null,
     basic: null as string | null,
@@ -153,11 +150,7 @@ export async function setupInboxProfPlansWithTrial(
  * @param userName - User's full name
  * @returns Subscription details with checkout URL
  */
-export async function subscribeUserToPlan(
-  planId: string,
-  userEmail: string,
-  userName: string
-) {
+export async function subscribeUserToPlan(planId: string, userEmail: string, userName: string) {
   const [firstName, ...lastNameParts] = userName.split(' ');
   const lastName = lastNameParts.join(' ');
 

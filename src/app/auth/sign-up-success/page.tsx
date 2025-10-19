@@ -1,10 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTranslations } from 'next-intl';
 
 export default function Page() {
@@ -19,9 +13,7 @@ export default function Page() {
               <CardDescription>{t('confirmEmail')}</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">
-                {t('confirmEmailBody')}
-              </p>
+              <p className="text-sm text-muted-foreground">{t('confirmEmailBody')}</p>
             </CardContent>
           </Card>
         </div>

@@ -12,9 +12,7 @@ import type { MercadoPagoWebhookEvent } from './types';
  * @param request - Next.js request object
  * @returns Response indicating success or failure
  */
-export async function handleMercadoPagoWebhook(
-  request: NextRequest
-): Promise<NextResponse> {
+export async function handleMercadoPagoWebhook(request: NextRequest): Promise<NextResponse> {
   try {
     // Get webhook headers for signature validation
     const xSignature = request.headers.get('x-signature');
@@ -22,10 +20,7 @@ export async function handleMercadoPagoWebhook(
 
     if (!xSignature || !xRequestId) {
       console.error('Missing webhook signature headers');
-      return NextResponse.json(
-        { error: 'Missing signature headers' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Missing signature headers' }, { status: 400 });
     }
 
     // Parse webhook body
@@ -70,10 +65,7 @@ export async function handleMercadoPagoWebhook(
     return NextResponse.json({ received: true }, { status: 200 });
   } catch (error: any) {
     console.error('Error processing MercadoPago webhook:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -131,8 +123,7 @@ async function handlePaymentEvent(event: MercadoPagoWebhookEvent) {
 async function handleSubscriptionEvent(event: MercadoPagoWebhookEvent) {
   try {
     const subscriptionId = event.data.id;
-    const subscriptionResult =
-      await mercadoPagoService.getSubscription(subscriptionId);
+    const subscriptionResult = await mercadoPagoService.getSubscription(subscriptionId);
 
     if (!subscriptionResult.success) {
       console.error('Failed to fetch subscription:', subscriptionResult.error);
@@ -268,11 +259,7 @@ async function handleAuthorizedPaymentEvent(event: MercadoPagoWebhookEvent) {
  * Validates webhook authenticity
  * Implement according to: https://www.mercadopago.com/developers/en/docs/your-integrations/notifications/webhooks
  */
-export function validateWebhookSignature(
-  xSignature: string,
-  xRequestId: string,
-  dataId: string
-): boolean {
+export function validateWebhookSignature(xSignature: string, xRequestId: string, dataId: string): boolean {
   try {
     // TODO: Implement signature validation
     // This requires:

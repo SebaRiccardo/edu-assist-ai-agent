@@ -62,23 +62,15 @@ export function getActiveUserSubscriptionsQuery(client: TypedSupabaseClient) {
     .order('created_at', { ascending: false });
 }
 
-export function getUserSubscriptionById(
-  client: TypedSupabaseClient,
-  userId: string
-) {
+export function getUserSubscriptionById(client: TypedSupabaseClient, userId: string) {
   return client.from('user_subscriptions').select(`*`).eq('user_id', userId);
 }
 
 /**
  * Query builder for fetching subscriptions count
  */
-export function getSubscriptionsCountQuery(
-  client: TypedSupabaseClient,
-  status?: string
-) {
-  const query = client
-    .from('user_subscriptions')
-    .select('id', { count: 'exact', head: true });
+export function getSubscriptionsCountQuery(client: TypedSupabaseClient, status?: string) {
+  const query = client.from('user_subscriptions').select('id', { count: 'exact', head: true });
 
   if (status) {
     query.eq('status', status);

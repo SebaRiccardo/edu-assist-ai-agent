@@ -2,30 +2,12 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { DomainCourse } from '@/types';
-import {
-  Loader2,
-  Sparkles,
-  Clock,
-  Home,
-  Users,
-  Pencil,
-  ChevronDown,
-} from 'lucide-react';
+import { Loader2, Sparkles, Clock, Home, Users, Pencil, ChevronDown } from 'lucide-react';
 import { Badge } from './ui/badge';
 
 interface CourseDetailsHeaderProps {
@@ -35,13 +17,9 @@ interface CourseDetailsHeaderProps {
   onEdit?: () => void;
 }
 
-export function CourseDetailsHeader({
-  course,
-  isChecking,
-  onAnalyze,
-  onEdit,
-}: CourseDetailsHeaderProps) {
+export function CourseDetailsHeader({ course, isChecking, onAnalyze, onEdit }: CourseDetailsHeaderProps) {
   const router = useRouter();
+  const t = useTranslations('CourseDetails');
   const [isContextOpen, setIsContextOpen] = useState(false);
 
   return (
@@ -53,21 +31,16 @@ export function CourseDetailsHeader({
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <button
-                    onClick={() => router.push('/dashboard')}
-                    className="flex items-center gap-1"
-                  >
+                  <button onClick={() => router.push('/dashboard')} className="flex items-center gap-1">
                     <Home className="h-4 w-4 mr-2" />
-                    <span>Dashboard</span>
+                    <span>{t('dashboard')}</span>
                   </button>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <button onClick={() => router.push('/dashboard/courses')}>
-                    Courses
-                  </button>
+                  <button onClick={() => router.push('/dashboard/courses')}>{t('courses')}</button>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
@@ -80,14 +53,9 @@ export function CourseDetailsHeader({
           {/* Created Date and Edit Button */}
           <div className="flex items-center gap-3">
             {onEdit && (
-              <Button
-                onClick={onEdit}
-                variant="ghost"
-                size="sm"
-                className="gap-2 shadow-none"
-              >
+              <Button onClick={onEdit} variant="ghost" size="sm" className="gap-2 shadow-none">
                 <Pencil className="h-4 w-4" />
-                Edit Course
+                {t('editCourse')}
               </Button>
             )}
           </div>
@@ -103,9 +71,7 @@ export function CourseDetailsHeader({
             </div> */}
             <div className="flex items-center justify-between gap-4 ">
               <div className="flex flex-row gap-2 items-center mb-2">
-                <h1 className="text-3xl font-bold tracking-tight text-foreground">
-                  {course.name}
-                </h1>
+                <h1 className="text-3xl font-bold tracking-tight text-foreground">{course.name}</h1>
                 <Badge>{course.year}</Badge>
               </div>
               {/* Analyze Button */}
@@ -128,43 +94,26 @@ export function CourseDetailsHeader({
                 )}
               </Button> */}
             </div>
-            <p className="text-sm text-pretty max-w-sm lg:max-w-5xl truncate text-muted-foreground ">
-              {course.description}
-            </p>
+            <p className="text-sm text-pretty max-w-sm lg:max-w-5xl truncate text-muted-foreground ">{course.description}</p>
 
             {course.studentCount > 0 && (
               <div className="flex items-center gap-2 pt-4 text-muted-foreground">
-                <Badge variant="info">
-                  {course.studentCount}{' '}
-                  {course.studentCount === 1 ? 'student' : 'students'}
-                </Badge>
+                <Badge variant="info">{t('students', { count: course.studentCount })}</Badge>
               </div>
             )}
 
             {/* Course Context Collapsible */}
             {course.context && (
-              <Collapsible
-                open={isContextOpen}
-                onOpenChange={setIsContextOpen}
-                className="mt-4"
-              >
+              <Collapsible open={isContextOpen} onOpenChange={setIsContextOpen} className="mt-4">
                 <CollapsibleTrigger asChild>
                   <Button variant="link" size="sm" className=" p-0">
-                    <span className="text-sm font-normal">
-                      {isContextOpen ? 'Hide' : 'Read'} course context
-                    </span>
-                    <ChevronDown
-                      className={`h-4 w-4 transition-transform duration-300 ${
-                        isContextOpen ? 'rotate-180' : ''
-                      }`}
-                    />
+                    <span className="text-sm font-normal">{isContextOpen ? t('hideContext') : t('readContext')}</span>
+                    <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${isContextOpen ? 'rotate-180' : ''}`} />
                   </Button>
                 </CollapsibleTrigger>
                 <CollapsibleContent className="collapsible-content">
                   <div className="mt-3 p-4 rounded-lg bg-muted/50 border border-none">
-                    <p className="text-base text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                      {course.context}
-                    </p>
+                    <p className="text-base text-muted-foreground whitespace-pre-wrap leading-relaxed">{course.context}</p>
                   </div>
                 </CollapsibleContent>
               </Collapsible>

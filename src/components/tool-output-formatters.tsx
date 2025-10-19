@@ -25,20 +25,13 @@ export function GmailToolOutput({ output }: GmailToolOutputProps) {
   const emails = output.data?.messages || [];
 
   if (emails.length === 0) {
-    return (
-      <div className="p-4 text-sm text-muted-foreground">
-        No emails found matching your criteria.
-      </div>
-    );
+    return <div className="p-4 text-sm text-muted-foreground">No emails found matching your criteria.</div>;
   }
 
   return (
     <div className="space-y-3">
       {emails.map((email, index) => (
-        <div
-          key={email.messageId || index}
-          className="rounded-lg border bg-card p-4 space-y-2 hover:bg-accent/50 transition-colors"
-        >
+        <div key={email.messageId || index} className="rounded-lg border bg-card p-4 space-y-2 hover:bg-accent/50 transition-colors">
           {/* Sender */}
           <div className="flex items-center gap-2 text-sm">
             <User className="h-4 w-4 text-muted-foreground" />
@@ -56,9 +49,7 @@ export function GmailToolOutput({ output }: GmailToolOutputProps) {
           {/* Message Preview */}
           {email.messageText && (
             <div className="pl-6">
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                {email.messageText}
-              </p>
+              <p className="text-sm text-muted-foreground line-clamp-2">{email.messageText}</p>
             </div>
           )}
 
@@ -75,19 +66,11 @@ export function GmailToolOutput({ output }: GmailToolOutputProps) {
               <div className="flex items-center gap-1 flex-wrap">
                 <Tag className="h-3 w-3" />
                 {email.labelIds.slice(0, 3).map(label => (
-                  <Badge
-                    key={label}
-                    variant="secondary"
-                    className="text-xs h-5"
-                  >
+                  <Badge key={label} variant="secondary" className="text-xs h-5">
                     {label}
                   </Badge>
                 ))}
-                {email.labelIds.length > 3 && (
-                  <span className="text-muted-foreground">
-                    +{email.labelIds.length - 3}
-                  </span>
-                )}
+                {email.labelIds.length > 3 && <span className="text-muted-foreground">+{email.labelIds.length - 3}</span>}
               </div>
             )}
           </div>
@@ -121,18 +104,13 @@ export function CourseToolOutput({ output }: CourseToolOutputProps) {
   const courses = output.courses || [];
 
   if (courses.length === 0) {
-    return (
-      <div className="p-4 text-sm text-muted-foreground">No courses found.</div>
-    );
+    return <div className="p-4 text-sm text-muted-foreground">No courses found.</div>;
   }
 
   return (
     <div className="space-y-3">
       {courses.map(course => (
-        <div
-          key={course.id}
-          className="rounded-lg border bg-card p-4 space-y-2 hover:bg-accent/50 transition-colors"
-        >
+        <div key={course.id} className="rounded-lg border bg-card p-4 space-y-2 hover:bg-accent/50 transition-colors">
           <div className="flex items-start justify-between gap-2">
             <h4 className="font-semibold text-sm">{course.name}</h4>
             {course.year && (
@@ -142,11 +120,7 @@ export function CourseToolOutput({ output }: CourseToolOutputProps) {
             )}
           </div>
 
-          {course.description && (
-            <p className="text-sm text-muted-foreground line-clamp-2">
-              {course.description}
-            </p>
-          )}
+          {course.description && <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>}
 
           {course.studentCount !== undefined && (
             <div className="flex items-center gap-2 text-xs text-muted-foreground">

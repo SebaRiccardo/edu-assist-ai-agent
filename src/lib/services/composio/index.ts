@@ -1,12 +1,6 @@
 import { Composio } from '@composio/core';
 import { VercelProvider } from '@composio/vercel';
-import {
-  FetchEmailsParams,
-  GmailFetchEmailsData,
-  GmailFetchEmailsResponse,
-  GmailMessageBody,
-  TransformedEmail,
-} from '@/types';
+import { FetchEmailsParams, GmailFetchEmailsData, GmailFetchEmailsResponse, GmailMessageBody, TransformedEmail } from '@/types';
 
 /**
  * Gmail Tool Names - Constants for available Gmail tools
@@ -38,11 +32,7 @@ const OUTLOOK_TOOLKIT = 'OUTLOOK';
 /**
  * Connection Status Types
  */
-export type ConnectionStatus =
-  | 'ACTIVE'
-  | 'NOT_CONNECTED'
-  | 'ERROR'
-  | 'INACTIVE';
+export type ConnectionStatus = 'ACTIVE' | 'NOT_CONNECTED' | 'ERROR' | 'INACTIVE';
 
 /**
  * Gmail Connection Details
@@ -95,14 +85,10 @@ export class ComposioService {
 
   private static async initConnection(userId: string, authConfig: string) {
     const client = this.getClient();
-    const connectionRequest = await client.connectedAccounts.initiate(
-      userId,
-      authConfig,
-      {
-        allowMultiple: true,
-        //callbackUrl,
-      }
-    );
+    const connectionRequest = await client.connectedAccounts.initiate(userId, authConfig, {
+      allowMultiple: true,
+      //callbackUrl,
+    });
     return connectionRequest;
   }
 
@@ -112,14 +98,8 @@ export class ComposioService {
    * @param emailProvider - The email provider slug ('gmail' or 'outlook')
    * @returns Connection initiation response
    */
-  static async initEmailConnection(
-    userId: string,
-    emailProvider: 'gmail' | 'outlook'
-  ) {
-    const authConfig =
-      authConfigMap[
-        emailProvider.toLocaleLowerCase() as keyof typeof authConfigMap
-      ];
+  static async initEmailConnection(userId: string, emailProvider: 'gmail' | 'outlook') {
+    const authConfig = authConfigMap[emailProvider.toLocaleLowerCase() as keyof typeof authConfigMap];
 
     if (!authConfig) {
       throw new Error(`Unsupported email provider: ${emailProvider}`);
@@ -133,9 +113,7 @@ export class ComposioService {
    * @param userId - The user ID to check connection for
    * @returns Gmail connected accounts
    */
-  static async getUserGmailConnections(
-    userId: string
-  ): Promise<GmailConnectedAccounts> {
+  static async getUserGmailConnections(userId: string): Promise<GmailConnectedAccounts> {
     try {
       const client = this.getClient();
       const connectedAccounts = await client.connectedAccounts.list({
@@ -264,11 +242,7 @@ export class ComposioService {
   static async getGmailFetchAndLabelsTools(userId: string) {
     const client = this.getClient();
     return await client.tools.get(userId, {
-      tools: [
-        GMAIL_TOOLS.FETCH_EMAILS,
-        GMAIL_TOOLS.ADD_LABEL,
-        GMAIL_TOOLS.CREATE_LABEL,
-      ],
+      tools: [GMAIL_TOOLS.FETCH_EMAILS, GMAIL_TOOLS.ADD_LABEL, GMAIL_TOOLS.CREATE_LABEL],
     });
   }
 
@@ -307,10 +281,7 @@ export class ComposioService {
    * @param params - Fetch email parameters
    * @returns Gmail fetch emails response
    */
-  static async fetchEmails(
-    accountId: string,
-    params: FetchEmailsParams = {}
-  ): Promise<GmailFetchEmailsResponse> {
+  static async fetchEmails(accountId: string, params: FetchEmailsParams = {}): Promise<GmailFetchEmailsResponse> {
     const client = this.getClient();
 
     // Set default values according to Gmail API spec
@@ -345,16 +316,8 @@ export class ComposioService {
    * @param options - Email fetching options
    * @returns Promise with tools and configuration for AI agent
    */
-  static async fetchEmailsWithAI(
-    userId: string,
-    options: FetchEmailsWithAIOptions = {}
-  ) {
-    const {
-      maxEmails = 10,
-      includeRead = false,
-      searchQuery = '',
-      courseContext = '',
-    } = options;
+  static async fetchEmailsWithAI(userId: string, options: FetchEmailsWithAIOptions = {}) {
+    const { maxEmails = 10, includeRead = false, searchQuery = '', courseContext = '' } = options;
 
     // Get Gmail tools for the user
     const tools = await this.getGmailTools(userId);
@@ -400,9 +363,7 @@ export class ComposioService {
    * @param messages - Array of Gmail message bodies
    * @returns Array of transformed emails
    */
-  static transformGmailMessages(
-    messages: GmailMessageBody[]
-  ): TransformedEmail[] {
+  static transformGmailMessages(messages: GmailMessageBody[]): TransformedEmail[] {
     return messages.map(message => this.transformGmailMessage(message));
   }
 

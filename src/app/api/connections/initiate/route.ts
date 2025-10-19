@@ -33,24 +33,16 @@ export async function POST(req: NextRequest) {
     const validationError = validateRequest({ userId: user.id, emailProvider });
 
     if (validationError) {
-      return NextResponse.json(
-        { error: validationError.error },
-        { status: validationError.status }
-      );
+      return NextResponse.json({ error: validationError.error }, { status: validationError.status });
     }
 
-    const emailAccounts = await ComposioService.getConnectedEmailAccounts(
-      user.id
-    );
+    const emailAccounts = await ComposioService.getConnectedEmailAccounts(user.id);
 
     //todo:
     //Using emailAccounts.length
     //must check the amount of connected accounts and check if allowed given the subscription type.
 
-    const res = await ComposioService.initEmailConnection(
-      user.id,
-      emailProvider
-    );
+    const res = await ComposioService.initEmailConnection(user.id, emailProvider);
 
     return NextResponse.json(
       {

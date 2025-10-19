@@ -48,13 +48,7 @@ Use the `resume` option in the `useChat` hook to enable stream resumption. When 
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport, type UIMessage } from 'ai';
 
-export function Chat({
-  chatData,
-  resume = false,
-}: {
-  chatData: { id: string; messages: UIMessage[] };
-  resume?: boolean;
-}) {
+export function Chat({ chatData, resume = false }: { chatData: { id: string; messages: UIMessage[] }; resume?: boolean }) {
   const { messages, sendMessage, status } = useChat({
     id: chatData.id,
     messages: chatData.messages,
@@ -92,12 +86,7 @@ The POST handler creates resumable streams using the `consumeSseStream` callback
 ```ts filename="app/api/chat/route.ts"
 import { openai } from '@ai-sdk/openai';
 import { readChat, saveChat } from '@util/chat-store';
-import {
-  convertToModelMessages,
-  generateId,
-  streamText,
-  type UIMessage,
-} from 'ai';
+import { convertToModelMessages, generateId, streamText, type UIMessage } from 'ai';
 import { after } from 'next/server';
 import { createResumableStreamContext } from 'resumable-stream';
 
@@ -159,10 +148,7 @@ import { UI_MESSAGE_STREAM_HEADERS } from 'ai';
 import { after } from 'next/server';
 import { createResumableStreamContext } from 'resumable-stream';
 
-export async function GET(
-  _: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   const chat = await readChat(id);
@@ -176,10 +162,7 @@ export async function GET(
     waitUntil: after,
   });
 
-  return new Response(
-    await streamContext.resumeExistingStream(chat.activeStreamId),
-    { headers: UI_MESSAGE_STREAM_HEADERS }
-  );
+  return new Response(await streamContext.resumeExistingStream(chat.activeStreamId), { headers: UI_MESSAGE_STREAM_HEADERS });
 }
 ```
 

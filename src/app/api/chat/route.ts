@@ -37,10 +37,7 @@ export async function POST(req: Request) {
         inputSchema: z.object({}),
         execute: async () => {
           try {
-            const coursesQuery = getAllCoursesForProfessorQuery(
-              supabase,
-              user.id
-            );
+            const coursesQuery = getAllCoursesForProfessorQuery(supabase, user.id);
             const { data: courses, error } = await coursesQuery;
 
             if (error) {
@@ -59,10 +56,7 @@ export async function POST(req: Request) {
           } catch (error) {
             return {
               success: false,
-              error:
-                error instanceof Error
-                  ? error.message
-                  : 'Failed to fetch courses',
+              error: error instanceof Error ? error.message : 'Failed to fetch courses',
               courses: [],
             };
           }
@@ -72,18 +66,11 @@ export async function POST(req: Request) {
         description:
           'Get detailed information about a specific course by its name or ID. Use this when you need detailed course information to match with emails.',
         inputSchema: z.object({
-          courseIdentifier: z
-            .string()
-            .describe(
-              'The course name or ID to search for. Can be a partial match.'
-            ),
+          courseIdentifier: z.string().describe('The course name or ID to search for. Can be a partial match.'),
         }),
         execute: async ({ courseIdentifier }: { courseIdentifier: string }) => {
           try {
-            const coursesQuery = getAllCoursesForProfessorQuery(
-              supabase,
-              user.id
-            );
+            const coursesQuery = getAllCoursesForProfessorQuery(supabase, user.id);
             const { data: courses, error } = await coursesQuery;
 
             if (error) {
@@ -95,11 +82,7 @@ export async function POST(req: Request) {
             }
 
             // Search for course by name (case-insensitive) or ID
-            const course = courses?.find(
-              c =>
-                c.name.toLowerCase().includes(courseIdentifier.toLowerCase()) ||
-                c.id === courseIdentifier
-            );
+            const course = courses?.find(c => c.name.toLowerCase().includes(courseIdentifier.toLowerCase()) || c.id === courseIdentifier);
 
             if (!course) {
               return {
@@ -125,10 +108,7 @@ export async function POST(req: Request) {
           } catch (error) {
             return {
               success: false,
-              error:
-                error instanceof Error
-                  ? error.message
-                  : 'Failed to fetch course details',
+              error: error instanceof Error ? error.message : 'Failed to fetch course details',
               course: null,
             };
           }
@@ -138,11 +118,7 @@ export async function POST(req: Request) {
         description:
           'Analyze emails to determine if they are related to a specific course. Use this after fetching emails to filter them by course relevance.',
         inputSchema: z.object({
-          courseContext: z
-            .string()
-            .describe(
-              'The course context, description, or keywords to match against'
-            ),
+          courseContext: z.string().describe('The course context, description, or keywords to match against'),
           emails: z
             .array(
               z.object({
@@ -172,12 +148,9 @@ export async function POST(req: Request) {
               .filter(word => word.length > 3);
 
             const matchedEmails = emails.map(email => {
-              const emailContent =
-                `${email.subject} ${email.sender} ${email.messageText}`.toLowerCase();
+              const emailContent = `${email.subject} ${email.sender} ${email.messageText}`.toLowerCase();
 
-              const matches = keywords.filter(keyword =>
-                emailContent.includes(keyword)
-              );
+              const matches = keywords.filter(keyword => emailContent.includes(keyword));
 
               return {
                 ...email,
@@ -198,10 +171,7 @@ export async function POST(req: Request) {
           } catch (error) {
             return {
               success: false,
-              error:
-                error instanceof Error
-                  ? error.message
-                  : 'Failed to match emails with course',
+              error: error instanceof Error ? error.message : 'Failed to match emails with course',
               totalEmails: 0,
               relatedEmails: 0,
               emails: [],

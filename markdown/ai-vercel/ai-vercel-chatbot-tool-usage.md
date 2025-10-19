@@ -64,9 +64,7 @@ export async function POST(req: Request) {
         inputSchema: z.object({ city: z.string() }),
         execute: async ({}: { city: string }) => {
           const weatherOptions = ['sunny', 'cloudy', 'rainy', 'snowy', 'windy'];
-          return weatherOptions[
-            Math.floor(Math.random() * weatherOptions.length)
-          ];
+          return weatherOptions[Math.floor(Math.random() * weatherOptions.length)];
         },
       },
       // client-side tool that starts user interaction:
@@ -78,8 +76,7 @@ export async function POST(req: Request) {
       },
       // client-side tool that is automatically executed on the client:
       getLocation: {
-        description:
-          'Get the user location. Always ask for confirmation before using this tool.',
+        description: 'Get the user location. Always ask for confirmation before using this tool.',
         inputSchema: z.object({}),
       },
     },
@@ -119,10 +116,7 @@ There are three things worth mentioning:
 'use client';
 
 import { useChat } from '@ai-sdk/react';
-import {
-  DefaultChatTransport,
-  lastAssistantMessageIsCompleteWithToolCalls,
-} from 'ai';
+import { DefaultChatTransport, lastAssistantMessageIsCompleteWithToolCalls } from 'ai';
 import { useState } from 'react';
 
 export default function Chat() {
@@ -171,9 +165,7 @@ export default function Chat() {
 
                 switch (part.state) {
                   case 'input-streaming':
-                    return (
-                      <div key={callId}>Loading confirmation request...</div>
-                    );
+                    return <div key={callId}>Loading confirmation request...</div>;
                   case 'input-available':
                     return (
                       <div key={callId}>
@@ -205,11 +197,7 @@ export default function Chat() {
                       </div>
                     );
                   case 'output-available':
-                    return (
-                      <div key={callId}>
-                        Location access allowed: {part.output}
-                      </div>
-                    );
+                    return <div key={callId}>Location access allowed: {part.output}</div>;
                   case 'output-error':
                     return <div key={callId}>Error: {part.errorText}</div>;
                 }
@@ -221,19 +209,13 @@ export default function Chat() {
 
                 switch (part.state) {
                   case 'input-streaming':
-                    return (
-                      <div key={callId}>Preparing location request...</div>
-                    );
+                    return <div key={callId}>Preparing location request...</div>;
                   case 'input-available':
                     return <div key={callId}>Getting location...</div>;
                   case 'output-available':
                     return <div key={callId}>Location: {part.output}</div>;
                   case 'output-error':
-                    return (
-                      <div key={callId}>
-                        Error getting location: {part.errorText}
-                      </div>
-                    );
+                    return <div key={callId}>Error getting location: {part.errorText}</div>;
                 }
                 break;
               }
@@ -244,15 +226,9 @@ export default function Chat() {
                 switch (part.state) {
                   // example of pre-rendering streaming tool inputs:
                   case 'input-streaming':
-                    return (
-                      <pre key={callId}>{JSON.stringify(part, null, 2)}</pre>
-                    );
+                    return <pre key={callId}>{JSON.stringify(part, null, 2)}</pre>;
                   case 'input-available':
-                    return (
-                      <div key={callId}>
-                        Getting weather information for {part.input.city}...
-                      </div>
-                    );
+                    return <div key={callId}>Getting weather information for {part.input.city}...</div>;
                   case 'output-available':
                     return (
                       <div key={callId}>
@@ -262,8 +238,7 @@ export default function Chat() {
                   case 'output-error':
                     return (
                       <div key={callId}>
-                        Error getting weather for {part.input.city}:{' '}
-                        {part.errorText}
+                        Error getting weather for {part.input.city}: {part.errorText}
                       </div>
                     );
                 }
@@ -299,10 +274,7 @@ Sometimes an error may occur during client-side tool execution. Use the `addTool
 'use client';
 
 import { useChat } from '@ai-sdk/react';
-import {
-  DefaultChatTransport,
-  lastAssistantMessageIsCompleteWithToolCalls,
-} from 'ai';
+import { DefaultChatTransport, lastAssistantMessageIsCompleteWithToolCalls } from 'ai';
 import { useState } from 'react';
 
 export default function Chat() {
@@ -361,15 +333,9 @@ When using dynamic tools (tools with unknown types at compile time), the UI part
         return (
           <div key={index}>
             <h4>Tool: {part.toolName}</h4>
-            {part.state === 'input-streaming' && (
-              <pre>{JSON.stringify(part.input, null, 2)}</pre>
-            )}
-            {part.state === 'output-available' && (
-              <pre>{JSON.stringify(part.output, null, 2)}</pre>
-            )}
-            {part.state === 'output-error' && (
-              <div>Error: {part.errorText}</div>
-            )}
+            {part.state === 'input-streaming' && <pre>{JSON.stringify(part.input, null, 2)}</pre>}
+            {part.state === 'output-available' && <pre>{JSON.stringify(part.output, null, 2)}</pre>}
+            {part.state === 'output-error' && <div>Error: {part.errorText}</div>}
           </div>
         );
     }
@@ -489,9 +455,7 @@ export async function POST(req: Request) {
         // tool has execute function:
         execute: async ({}: { city: string }) => {
           const weatherOptions = ['sunny', 'cloudy', 'rainy', 'snowy', 'windy'];
-          return weatherOptions[
-            Math.floor(Math.random() * weatherOptions.length)
-          ];
+          return weatherOptions[Math.floor(Math.random() * weatherOptions.length)];
         },
       },
     },

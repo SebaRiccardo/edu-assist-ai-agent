@@ -1,10 +1,5 @@
 'use client';
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-} from '@/components/ui/navigation-menu';
+import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from '@/components/ui/navigation-menu';
 import { NavigationMenuProps } from '@radix-ui/react-navigation-menu';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
@@ -16,9 +11,7 @@ export const NavMenu = (props: NavigationMenuProps) => {
       <NavigationMenuList className="gap-6 space-x-0 data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-start">
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <Link href="#features">
-              {t('features', { default: 'Features' })}
-            </Link>
+            <Link href="#features">{t('features', { default: 'Features' })}</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
@@ -33,9 +26,7 @@ export const NavMenu = (props: NavigationMenuProps) => {
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <Link href="#testimonials">
-              {t('testimonials', { default: 'Testimonials' })}
-            </Link>
+            <Link href="#testimonials">{t('testimonials', { default: 'Testimonials' })}</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>

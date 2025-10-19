@@ -12,12 +12,7 @@ interface DateRangePickerProps {
   className?: string;
 }
 
-export function DateRangePicker({
-  dateRange,
-  onDateRangeChange,
-  disabled = false,
-  className,
-}: DateRangePickerProps) {
+export function DateRangePicker({ dateRange, onDateRangeChange, disabled = false, className }: DateRangePickerProps) {
   return (
     <div className={cn('flex min-w-0 flex-col', className)}>
       {dateRange?.from && dateRange?.to && (
@@ -27,14 +22,8 @@ export function DateRangePicker({
             <span className="font-medium text-foreground">Course Schedule</span>
           </div>
           <p className="mt-2 text-muted-foreground">
-            Your course runs from{' '}
-            <span className="font-semibold text-foreground">
-              {dateRange.from.toLocaleDateString()}
-            </span>{' '}
-            to{' '}
-            <span className="font-semibold text-foreground">
-              {dateRange.to.toLocaleDateString()}
-            </span>
+            Your course runs from <span className="font-semibold text-foreground">{dateRange.from.toLocaleDateString()}</span> to{' '}
+            <span className="font-semibold text-foreground">{dateRange.to.toLocaleDateString()}</span>
           </p>
         </div>
       )}
@@ -48,8 +37,7 @@ export function DateRangePicker({
       />
       {dateRange?.from && dateRange?.to && (
         <div className="text-muted-foreground text-center text-xs mt-2">
-          {dateRange.from.toLocaleDateString()} -{' '}
-          {dateRange.to.toLocaleDateString()}
+          {dateRange.from.toLocaleDateString()} - {dateRange.to.toLocaleDateString()}
         </div>
       )}
     </div>

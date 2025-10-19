@@ -1,17 +1,8 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  searchPlansAction,
-  getActivePlansAction,
-  getPlanAction,
-  createPlanAction,
-  updatePlanAction,
-} from '@/lib/mercadopago/actions';
-import type {
-  CreatePlanParams,
-  PlanSearchParams,
-} from '@/lib/mercadopago/service';
+import { searchPlansAction, getActivePlansAction, getPlanAction, createPlanAction, updatePlanAction } from '@/lib/mercadopago/actions';
+import type { CreatePlanParams, PlanSearchParams } from '@/lib/mercadopago/service';
 
 /**
  * Hook to fetch all subscription plans
@@ -89,13 +80,7 @@ export function useUpdatePlan() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      planId,
-      params,
-    }: {
-      planId: string;
-      params: Partial<CreatePlanParams>;
-    }) => {
+    mutationFn: async ({ planId, params }: { planId: string; params: Partial<CreatePlanParams> }) => {
       return await updatePlanAction(planId, params);
     },
     onSuccess: (_, variables) => {

@@ -38,18 +38,9 @@ interface EmailDraftResult {
 /**
  * Server action to generate a draft email response without sending
  */
-export async function generateEmailDraft(
-  input: EmailDraftInput
-): Promise<EmailDraftResult> {
+export async function generateEmailDraft(input: EmailDraftInput): Promise<EmailDraftResult> {
   try {
-    const {
-      email,
-      priority,
-      courseName,
-      professorName = 'Professor',
-      connectedAccountId,
-      language = 'English',
-    } = input;
+    const { email, priority, courseName, professorName = 'Professor', connectedAccountId, language = 'English' } = input;
 
     // Get current user
     const user = await getCurrentUser();
@@ -95,8 +86,7 @@ export async function generateEmailDraft(
 
     // Check Gmail connection before processing
     console.log('🔍 Checking Gmail connection...');
-    const connectedAccount =
-      await ComposioService.getConnectedAccountById(connectedAccountId);
+    const connectedAccount = await ComposioService.getConnectedAccountById(connectedAccountId);
 
     if (!connectedAccount) {
       return {

@@ -5,13 +5,7 @@ import { ComposioConnectedAccount } from '@/app/api/connections/route';
 import { createInbox } from './use-inboxes';
 import { on } from 'events';
 
-type ConnectionStatus =
-  | 'idle'
-  | 'connecting'
-  | 'checking'
-  | 'active'
-  | 'failed'
-  | 'expired';
+type ConnectionStatus = 'idle' | 'connecting' | 'checking' | 'active' | 'failed' | 'expired';
 
 interface UseEmailConnectionProps {
   emailProvider?: string;
@@ -19,17 +13,10 @@ interface UseEmailConnectionProps {
   onConnectionSuccess?: (account: ComposioConnectedAccount) => void;
 }
 
-export function useEmailConnection({
-  emailProvider,
-  onSuccess,
-  onConnectionSuccess,
-}: UseEmailConnectionProps) {
+export function useEmailConnection({ emailProvider, onSuccess, onConnectionSuccess }: UseEmailConnectionProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [connectionStatus, setConnectionStatus] =
-    useState<ConnectionStatus>('idle');
-  const [pendingConnectionId, setPendingConnectionId] = useState<string | null>(
-    null
-  );
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('idle');
+  const [pendingConnectionId, setPendingConnectionId] = useState<string | null>(null);
   const [addingAccountId, setAddingAccountId] = useState<string | null>(null);
   const pollingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -46,10 +33,7 @@ export function useEmailConnection({
     setConnectionStatus('checking');
 
     try {
-      const response = await fetch(
-        `/api/connections/status?connectionId=${connectionId}`,
-        { method: 'GET' }
-      );
+      const response = await fetch(`/api/connections/status?connectionId=${connectionId}`, { method: 'GET' });
 
       const data = await response.json();
 
@@ -85,8 +69,7 @@ export function useEmailConnection({
         throw new Error('Failed to initiate connection');
       }
 
-      const data: { id: string; redirectUrl: string; status: string } =
-        await response.json();
+      const data: { id: string; redirectUrl: string; status: string } = await response.json();
 
       if (data.redirectUrl && data.id) {
         setPendingConnectionId(data.id);
@@ -97,11 +80,7 @@ export function useEmailConnection({
         const left = window.screenX + (window.outerWidth - width) / 2;
         const top = window.screenY + (window.outerHeight - height) / 2;
 
-        const authWindow = window.open(
-          data.redirectUrl,
-          'Email Authorization',
-          `width=${width},height=${height},left=${left},top=${top}`
-        );
+        const authWindow = window.open(data.redirectUrl, 'Email Authorization', `width=${width},height=${height},left=${left},top=${top}`);
 
         if (!authWindow) {
           throw new Error('Popup blocked');

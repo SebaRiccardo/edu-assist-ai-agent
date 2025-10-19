@@ -6,10 +6,7 @@ import { CheckIcon, CopyIcon } from 'lucide-react';
 import type { ComponentProps, HTMLAttributes, ReactNode } from 'react';
 import { createContext, useContext, useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import {
-  oneDark,
-  oneLight,
-} from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { oneDark, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 type CodeBlockContextType = {
   code: string;
@@ -26,22 +23,9 @@ export type CodeBlockProps = HTMLAttributes<HTMLDivElement> & {
   children?: ReactNode;
 };
 
-export const CodeBlock = ({
-  code,
-  language,
-  showLineNumbers = false,
-  className,
-  children,
-  ...props
-}: CodeBlockProps) => (
+export const CodeBlock = ({ code, language, showLineNumbers = false, className, children, ...props }: CodeBlockProps) => (
   <CodeBlockContext.Provider value={{ code }}>
-    <div
-      className={cn(
-        'relative w-full overflow-hidden rounded-md border bg-background text-foreground',
-        className
-      )}
-      {...props}
-    >
+    <div className={cn('relative w-full overflow-hidden rounded-md border bg-background text-foreground', className)} {...props}>
       <div className="relative">
         <SyntaxHighlighter
           className="overflow-hidden dark:hidden"
@@ -89,11 +73,7 @@ export const CodeBlock = ({
         >
           {code}
         </SyntaxHighlighter>
-        {children && (
-          <div className="absolute top-2 right-2 flex items-center gap-2">
-            {children}
-          </div>
-        )}
+        {children && <div className="absolute top-2 right-2 flex items-center gap-2">{children}</div>}
       </div>
     </div>
   </CodeBlockContext.Provider>
@@ -105,14 +85,7 @@ export type CodeBlockCopyButtonProps = ComponentProps<typeof Button> & {
   timeout?: number;
 };
 
-export const CodeBlockCopyButton = ({
-  onCopy,
-  onError,
-  timeout = 2000,
-  children,
-  className,
-  ...props
-}: CodeBlockCopyButtonProps) => {
+export const CodeBlockCopyButton = ({ onCopy, onError, timeout = 2000, children, className, ...props }: CodeBlockCopyButtonProps) => {
   const [isCopied, setIsCopied] = useState(false);
   const { code } = useContext(CodeBlockContext);
 
@@ -135,13 +108,7 @@ export const CodeBlockCopyButton = ({
   const Icon = isCopied ? CheckIcon : CopyIcon;
 
   return (
-    <Button
-      className={cn('shrink-0', className)}
-      onClick={copyToClipboard}
-      size="icon"
-      variant="ghost"
-      {...props}
-    >
+    <Button className={cn('shrink-0', className)} onClick={copyToClipboard} size="icon" variant="ghost" {...props}>
       {children ?? <Icon size={14} />}
     </Button>
   );

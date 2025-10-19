@@ -82,9 +82,7 @@ const { messages, sendMessage, status, stop } = useChat({
 Messages use the new `parts` property for rendering:
 
 ```tsx
-message.parts.map(part =>
-  part.type === 'text' ? <Response>{part.text}</Response> : null
-);
+message.parts.map(part => (part.type === 'text' ? <Response>{part.text}</Response> : null));
 ```
 
 ### Server-Side Implementation

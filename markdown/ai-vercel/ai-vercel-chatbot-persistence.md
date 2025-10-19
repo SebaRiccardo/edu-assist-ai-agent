@@ -74,13 +74,7 @@ When processing messages on the server that contain tool calls, custom metadata,
 When your messages include tool calls, validate them against your tool definitions:
 
 ```tsx filename="app/api/chat/route.ts" highlight="7-25,32-37"
-import {
-  convertToModelMessages,
-  streamText,
-  UIMessage,
-  validateUIMessages,
-  tool,
-} from 'ai';
+import { convertToModelMessages, streamText, UIMessage, validateUIMessages, tool } from 'ai';
 import { z } from 'zod';
 import { loadChat, saveChat } from '@util/chat-store';
 import { openai } from '@ai-sdk/openai';
@@ -139,12 +133,7 @@ export async function POST(req: Request) {
 Handle validation errors gracefully when messages from the database don't match current schemas:
 
 ```tsx filename="app/api/chat/route.ts" highlight="3,10-24"
-import {
-  convertToModelMessages,
-  streamText,
-  validateUIMessages,
-  TypeValidationError,
-} from 'ai';
+import { convertToModelMessages, streamText, validateUIMessages, TypeValidationError } from 'ai';
 import { type MyUIMessage } from '@/types';
 
 export async function POST(req: Request) {
@@ -201,10 +190,7 @@ import { UIMessage, useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { useState } from 'react';
 
-export default function Chat({
-  id,
-  initialMessages,
-}: { id?: string | undefined; initialMessages?: UIMessage[] } = {}) {
+export default function Chat({ id, initialMessages }: { id?: string | undefined; initialMessages?: UIMessage[] } = {}) {
   const [input, setInput] = useState('');
   const { sendMessage, messages } = useChat({
     id, // use the provided chat ID
@@ -228,18 +214,12 @@ export default function Chat({
       {messages.map(m => (
         <div key={m.id}>
           {m.role === 'user' ? 'User: ' : 'AI: '}
-          {m.parts
-            .map(part => (part.type === 'text' ? part.text : ''))
-            .join('')}
+          {m.parts.map(part => (part.type === 'text' ? part.text : '')).join('')}
         </div>
       ))}
 
       <form onSubmit={handleSubmit}>
-        <input
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          placeholder="Type a message..."
-        />
+        <input value={input} onChange={e => setInput(e.target.value)} placeholder="Type a message..." />
         <button type="submit">Send</button>
       </form>
     </div>
@@ -272,8 +252,7 @@ import { saveChat } from '@util/chat-store';
 import { convertToModelMessages, streamText, UIMessage } from 'ai';
 
 export async function POST(req: Request) {
-  const { messages, chatId }: { messages: UIMessage[]; chatId: string } =
-    await req.json();
+  const { messages, chatId }: { messages: UIMessage[]; chatId: string } = await req.json();
 
   const result = streamText({
     model: openai('gpt-4o-mini'),
@@ -296,13 +275,7 @@ our file-based chat store is implemented as follows:
 import { UIMessage } from 'ai';
 import { writeFile } from 'fs/promises';
 
-export async function saveChat({
-  chatId,
-  messages,
-}: {
-  chatId: string;
-  messages: UIMessage[];
-}): Promise<void> {
+export async function saveChat({ chatId, messages }: { chatId: string; messages: UIMessage[] }): Promise<void> {
   const content = JSON.stringify(messages, null, 2);
   await writeFile(getChatFile(chatId), content);
 }
@@ -364,12 +337,7 @@ export async function POST(req: Request) {
 Alternatively, you can use `createUIMessageStream` to control the message ID by writing a start message part:
 
 ```tsx filename="app/api/chat/route.ts" highlight="8-18"
-import {
-  generateId,
-  streamText,
-  createUIMessageStream,
-  createUIMessageStreamResponse,
-} from 'ai';
+import { generateId, streamText, createUIMessageStream, createUIMessageStreamResponse } from 'ai';
 
 export async function POST(req: Request) {
   const { messages, chatId } = await req.json();
@@ -497,8 +465,7 @@ import { convertToModelMessages, streamText, UIMessage } from 'ai';
 import { saveChat } from '@util/chat-store';
 
 export async function POST(req: Request) {
-  const { messages, chatId }: { messages: UIMessage[]; chatId: string } =
-    await req.json();
+  const { messages, chatId }: { messages: UIMessage[]; chatId: string } = await req.json();
 
   const result = streamText({
     model,

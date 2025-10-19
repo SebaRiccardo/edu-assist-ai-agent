@@ -44,12 +44,7 @@ const response = await fetch('/api/subscriptions/plan/create', {
     currency: 'ARS',
     interval: 'months',
     intervalCount: 1,
-    features: [
-      'Unlimited email analysis',
-      'Priority support',
-      'Advanced AI features',
-      'Custom course templates',
-    ],
+    features: ['Unlimited email analysis', 'Priority support', 'Advanced AI features', 'Custom course templates'],
     isActive: true,
   }),
 });

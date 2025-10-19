@@ -21,18 +21,11 @@ export async function POST(request: NextRequest) {
     const xRequestId = request.headers.get('x-request-id');
 
     if (xSignature && xRequestId && body.data?.id) {
-      const isValid = mercadoPagoService.validateWebhookSignature(
-        xSignature,
-        xRequestId,
-        body.data.id
-      );
+      const isValid = mercadoPagoService.validateWebhookSignature(xSignature, xRequestId, body.data.id);
 
       if (!isValid) {
         console.error('Invalid webhook signature');
-        return NextResponse.json(
-          { error: 'Invalid signature' },
-          { status: 401 }
-        );
+        return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
       }
     }
 
@@ -55,10 +48,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Webhook error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -113,9 +103,7 @@ async function handleSubscriptionEvent(body: any) {
 
     // Calculate period dates
     const now = new Date();
-    const periodStart = subscription.date_created
-      ? new Date(subscription.date_created)
-      : now;
+    const periodStart = subscription.date_created ? new Date(subscription.date_created) : now;
 
     // Calculate period end based on frequency
     let periodEnd = new Date(periodStart);
