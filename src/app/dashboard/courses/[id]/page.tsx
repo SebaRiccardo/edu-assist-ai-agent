@@ -244,7 +244,7 @@ export default function CourseDetailsPage() {
           description: t('replyDescription', { email: email.from }),
         });
       } else {
-        toast.error(t('failedToSendEmail', { error: result.error }), {
+        toast.error(t('failedToSendEmail'), {
           id: `reply-${emailId}`,
         });
       }
