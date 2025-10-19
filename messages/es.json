@@ -82,7 +82,13 @@
     "confirmEmailBody": "Te has registrado correctamente. Revisa tu correo para confirmar tu cuenta antes de iniciar sesión."
   },
   "Landing": {
-    "title": "Tu bandeja de entrada, por fin con titularidad.",
+    "title": "Tu bandeja de entrada, por fin con ",
+    "title-2":"titularidad",
+    "subtitlesList":[
+      "AuxilIAr organiza",
+      "AuxilIAr etiqueta",
+      "AuxilIAr responde"
+    ],
     "subtitle1": "AuxilIAr organiza, etiqueta y responde correos académicos automáticamente.",
     "subtitle2": "Así pasas menos tiempo gestionando mensajes y más tiempo guiando mentes.",
     "startFreeTrial": "Comenzar prueba gratis",
@@ -369,7 +375,7 @@
     },
     "q2": {
       "question": "¿Qué proveedores de correo son compatibles?",
-      "answer": "Hoy soportamos Gmail. Outlook está planificado; únete a la lista de espera en Configuración > Conexiones."
+      "answer": "Hoy soportamos Gmail y Outlook."
     },
     "q3": {
       "question": "¿Puede responder automáticamente a estudiantes?",

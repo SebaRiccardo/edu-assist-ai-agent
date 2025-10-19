@@ -35,21 +35,32 @@ export default function NavbarClient({ user }: { user: User | null }) {
   };
 
   const handleSignIn = () => router.push('/auth/login');
-  const handleGetStarted = () => router.push(user ? '/dashboard' : '/auth/sign-up');
+  const handleGetStarted = () =>
+    router.push(user ? '/dashboard' : '/auth/sign-up');
 
   return (
     <div className="flex items-center gap-3">
       <LanguageSwitcher />
       {user ? (
         <>
-          <Button variant="ghost" size="sm" asChild className="hidden sm:inline-flex">
+          <Button
+            variant="ghost"
+            size="sm"
+            asChild
+            className="hidden sm:inline-flex"
+          >
             <Link href="/dashboard">Dashboard</Link>
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-9 w-9 rounded-full hover:bg-accent">
+              <Button
+                variant="ghost"
+                className="relative h-9 w-9 rounded-full hover:bg-accent"
+              >
                 <Avatar className="h-9 w-9">
-                  <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-semibold">{initials}</AvatarFallback>
+                  <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-semibold">
+                    {initials}
+                  </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
@@ -63,8 +74,12 @@ export default function NavbarClient({ user }: { user: User | null }) {
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col">
-                      <p className="text-base capitalize font-semibold leading-none">{displayName}</p>
-                      <p className="text-xs leading-none text-muted-foreground mt-1">{user?.email}</p>
+                      <p className="text-base capitalize font-semibold leading-none">
+                        {displayName}
+                      </p>
+                      <p className="text-xs leading-none text-muted-foreground mt-1">
+                        {user?.email}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -73,20 +88,23 @@ export default function NavbarClient({ user }: { user: User | null }) {
               <DropdownMenuItem asChild>
                 <Link href="/dashboard" className="cursor-pointer">
                   <LayoutDashboard className="mr-2 h-4 w-4" />
-                  <span>Dashboard</span>
+                  <span>{t('dashboard')}</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
+                <span>{t('settings')}</span>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <HelpCircle className="mr-2 h-4 w-4" />
                 <span>{t('helpSupport')}</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-destructive focus:text-destructive cursor-pointer" onClick={handleLogout}>
-                <LogOut className="mr-2 h-4 w-4" />
+              <DropdownMenuItem
+                className="text-destructive focus:bg-red-50 focus:text-destructive cursor-pointer"
+                onClick={handleLogout}
+              >
+                <LogOut className="text-red-500 mr-2 h-4 w-4" />
                 <span>{t('logOut')}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -94,10 +112,17 @@ export default function NavbarClient({ user }: { user: User | null }) {
         </>
       ) : (
         <>
-          <Button onClick={handleSignIn} variant="outline" className="hidden sm:inline-flex rounded-full">
+          <Button
+            onClick={handleSignIn}
+            variant="outline"
+            className="hidden sm:inline-flex rounded-full"
+          >
             {t('signIn')}
           </Button>
-          <Button onClick={handleGetStarted} className="hidden sm:inline-flex rounded-full">
+          <Button
+            onClick={handleGetStarted}
+            className="hidden sm:inline-flex rounded-full"
+          >
             {t('getStarted')}
           </Button>
         </>

@@ -82,8 +82,14 @@
     "confirmEmailBody": "You've successfully signed up. Please check your email to confirm your account before signing in."
   },
   "Landing": {
-    "title": "Your inbox, finally earns tenure.",
-    "subtitle1": "AuxilIAr organizes, labels, and replies to academic emails — automatically.",
+    "title": "Your inbox, finally earns ",
+    "title-2":"tenure",
+    "subtitlesList":[
+      "AuxilIAr organizes",
+      "AuxilIAr labels",
+      "AuxilIAr replies"
+    ],
+    "subtitle1": "AuxilIAr organizes, labels, and replies emails automatically.",
     "subtitle2": "So you can spend less time managing messages and more time mentoring minds.",
     "startFreeTrial": "Start Free Trial",
     "or": "or",
@@ -369,7 +375,7 @@
     },
     "q2": {
       "question": "Which email providers are supported?",
-      "answer": "Gmail is supported today. Outlook support is planned; join the waitlist from Settings > Connections."
+      "answer": "Gmail and Outlook is supported today."
     },
     "q3": {
       "question": "Can it reply to students automatically?",

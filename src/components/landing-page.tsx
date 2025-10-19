@@ -40,11 +40,12 @@ export function LandingPage() {
             <div className="flex items-center space-x-2 mb-4 md:mb-0">
               <Mail className="w-6 h-6 text-primary" />
               <span className="text-lg font-bold text-foreground">
-                AuxilIAr
+                Auxil<span className="text-primary">IA</span>r
               </span>
             </div>
             <p className="text-muted-foreground text-sm">
-              © 2025 AuxilIAr. All rights reserved.
+              © 2025 Auxil<span className="text-primary">IA</span>r. All rights
+              reserved.
             </p>
           </div>
         </div>
