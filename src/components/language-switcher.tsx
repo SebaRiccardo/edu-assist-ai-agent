@@ -15,7 +15,7 @@ export default function LanguageSwitcher() {
   }
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1 bg-white rounded-3xl">
       <Button variant={locale === 'es' ? 'default' : 'ghost'} size="sm" onClick={() => setLocale('es')} aria-pressed={locale === 'es'}>
         ES
       </Button>
