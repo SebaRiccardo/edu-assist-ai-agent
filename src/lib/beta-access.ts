@@ -1,7 +1,7 @@
 import { SignJWT, jwtVerify } from 'jose';
 
 // List of valid beta access codes
-export const VALID_BETA_CODES = ['789012', '345678', '901234', '567890', '246813'];
+export const VALID_BETA_CODES = ['789012', '345678', '959385', '567890', '246813'];
 
 const JWT_SECRET = new TextEncoder().encode(process.env.BETA_ACCESS_SECRET || 'your-secret-key-change-this-in-production');
 
