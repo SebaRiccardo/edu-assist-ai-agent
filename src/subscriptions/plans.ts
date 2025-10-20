@@ -10,7 +10,7 @@ import subscriptionLimits from './config/subscription-limits.json';
 /**
  * Convert USD to ARS (1 USD = 1300 ARS)
  */
-export const USD_TO_ARS_RATE = 1300;
+export const USD_TO_ARS_RATE = 1500;
 
 /**
  * Plan type definition

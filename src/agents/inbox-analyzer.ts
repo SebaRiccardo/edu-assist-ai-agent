@@ -97,6 +97,13 @@ export async function inboxAnalyzerAgent(params: InboxAnalysisParams): Promise<I
   }
 
   const fetchedEmails = gmailResponse.data.messages;
+
+  const emailsSet = new Map<string, GmailMessageBody>();
+
+  fetchedEmails.forEach((email: GmailMessageBody) => {
+    emailsSet.set(email.messageId, email);
+  });
+
   console.log(`📬 Successfully fetched ${fetchedEmails.length} emails`);
 
   if (fetchedEmails.length === 0) {
@@ -134,7 +141,7 @@ export async function inboxAnalyzerAgent(params: InboxAnalysisParams): Promise<I
     model: google('gemini-2.0-flash'),
     schema: batchEmailAnalysisSchema,
     system: `You are an expert assistant that helps categorize emails for university professors based on course details(name,description,context, etc.). You understand academic contexts and can identify different types of educational communications.`,
-    prompt: `Analyze these emails to determine if they are related to the course and categorize their type.
+    prompt: `Analyze these emails to determine if they are related to the course and categorize their type and create a suggested label.
                 
 Course Details:
     - Course Name: ${course.name}
@@ -173,17 +180,19 @@ Important:
 - Be thorough but efficient in your analysis.
 - Provide structured analysis for each email with confidence scores and reasoning.
 - Write the reasoning in ${reasoningLanguage}.
-- Write the label Suggestions in ${reasoningLanguage}.`,
+- Write the label Suggestions in ${reasoningLanguage}.
+- Write the category in ${reasoningLanguage}.`,
   });
 
   console.log(`✨ Analysis complete!`);
 
   // STEP 5: Map analysis results back to original emails
   const categorizedEmails: CategorizedEmail[] = analysisResult.object.results.map(analysis => {
-    const originalEmail = fetchedEmails.find((e: GmailMessageBody) => {
-      console.log(`📧 Id Comp: ${e.messageId} - ${analysis.emailId}`);
-      return e.messageId === analysis.emailId
-    })
+    // const originalEmail = fetchedEmails.find((e: GmailMessageBody) => {
+    //   console.log(`📧 Id Comp: ${e.messageId} - ${analysis.emailId}`);
+    //   return e.messageId === analysis.emailId
+    // })
+    const originalEmail = emailsSet.get(analysis.emailId);
 
     return {
       ...transformGmailMessage(originalEmail!),

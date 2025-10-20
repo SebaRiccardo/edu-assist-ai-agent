@@ -16,7 +16,7 @@ export interface GmailAttachment {
  */
 export interface GmailMessageBody {
   /** The message ID of the message */
-  messageId: string | null;
+  messageId: string;
   /** The thread ID of the message */
   threadId: string | null;
   /** The sender of the message (email address with optional name) */

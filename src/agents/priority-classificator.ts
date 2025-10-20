@@ -44,6 +44,7 @@ export interface PriorityClassificationParams {
     category?: string;
     reasoning?: string;
   }>;
+  language: string
   courseName: string;
   analysisSummary?: string;
   model?: string;
@@ -82,7 +83,7 @@ const priorityListSchema = z.object({
  * ```
  */
 export async function priorityClassificatorAgent(params: PriorityClassificationParams): Promise<PrioritizationResult> {
-  const { emails, courseName, analysisSummary = '', model = 'gemini-2.0-flash' } = params;
+  const { emails, courseName, analysisSummary = '', language, model = 'gemini-2.0-flash' } = params;
 
   console.log(`⚡ Classifying priorities for ${emails.length} emails...`);
 
@@ -100,17 +101,17 @@ ${analysisSummary}
 
 Emails to Prioritize:
 ${JSON.stringify(
-  emails.map(e => ({
-    id: e.id,
-    from: e.from,
-    subject: e.subject,
-    body: e.body.substring(0, 300),
-    category: e.category,
-    aiReasoning: e.reasoning,
-  })),
-  null,
-  2
-)}
+      emails.map(e => ({
+        id: e.id,
+        from: e.from,
+        subject: e.subject,
+        body: e.body.substring(0, 300),
+        category: e.category,
+        aiReasoning: e.reasoning,
+      })),
+      null,
+      2
+    )}
 
 **Priority Guidelines:**
 - **CRITICAL**: Technical issues blocking work, urgent admin matters, emergencies
@@ -139,7 +140,12 @@ Consider:
 - Impact on student learning and success
 - Administrative requirements and policies
 - Complexity of required response
-- Number of students affected`,
+- Number of students affected
+
+Important:
+- Be thorough but efficient in your analysis.
+- Write the reasoning in ${language}.
+`,
   });
 
   console.log(`✅ Prioritization complete`);

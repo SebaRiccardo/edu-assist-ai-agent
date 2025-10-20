@@ -21,8 +21,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { sendEmailReply, analyzeInbox } from '@/actions';
 import { toast } from 'sonner';
+import { CourseInboxProvider, useCourseInbox } from '@/contexts/course-inbox-context';
 
 export default function CourseDetailsPage() {
+  return (
+    <CourseInboxProvider>
+      <CourseDetailsPageContent />
+    </CourseInboxProvider>
+  );
+}
+
+function CourseDetailsPageContent() {
   const router = useRouter();
   const params = useParams();
   const t = useTranslations('CourseDetails');
@@ -30,15 +39,28 @@ export default function CourseDetailsPage() {
   const courseId = params.id as string;
   const { user } = useCurrentUser();
 
+  // Context state management
+  const {
+    setAccountEmails,
+    setAccountAnalyzing,
+    setAccountStats,
+    getAccountEmails,
+    getAccountStats,
+    isAccountAnalyzing,
+    setEmailReplying,
+    isEmailReplying,
+  } = useCourseInbox();
+
   // Data fetching hooks
   const { data: courseData, isLoading: isLoadingCourse, isError: isErrorCourse } = useCourse(courseId);
   const { data: connections, isLoading: isLoadingConnections } = useConnections();
   const { mutateAsync: updateCourse, isPending: isUpdatingCourse } = useUpdateCourse();
 
-  // Edit course dialog state
+  // UI state
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [emailProvider, setEmailProvider] = useState(undefined);
   const [maxEmails, setMaxEmails] = useState<number>(20);
+  const [selectedAccountId, setSelectedAccountId] = useState<string>('');
 
   const emailConnection = useEmailConnection({
     emailProvider,
@@ -46,18 +68,6 @@ export default function CourseDetailsPage() {
       // Connection successful, data will auto-refresh
     },
   });
-
-  const [selectedAccountId, setSelectedAccountId] = useState<string>('');
-
-  // Set default tab when connections load
-  React.useEffect(() => {
-    if (!selectedAccountId && connections && connections.length > 0) {
-      const activeConnection = connections.find(conn => conn.status === 'ACTIVE' && conn.email);
-      if (activeConnection) {
-        setSelectedAccountId(activeConnection.id);
-      }
-    }
-  }, [connections, selectedAccountId]);
 
   // Transform Supabase data to DomainCourse type
   const domainCourse: DomainCourse | null = courseData
@@ -76,29 +86,15 @@ export default function CourseDetailsPage() {
     }
     : null;
 
-  // Email state per account - using a map to store emails for each account
-  const [emailsByAccount, setEmailsByAccount] = useState<Record<string, CategorizedEmail[]>>({});
-  const [checkingAccounts, setCheckingAccounts] = useState<Set<string>>(new Set());
-  const [replyingEmails, setReplyingEmails] = useState<Set<string>>(new Set());
-
-  const [statsByAccount, setStatsByAccount] = useState<
-    Record<
-      string,
-      {
-        totalAnalyzed: number;
-        courseRelated: number;
-      }
-    >
-  >({});
-
   // Set initial selected account when connections load
   React.useEffect(() => {
-    if (connections && connections.length > 0 && !selectedAccountId) {
-      setSelectedAccountId(connections[0].id);
+    if (!selectedAccountId && connections && connections.length > 0) {
+      const activeConnection = connections.find(conn => conn.status === 'ACTIVE' && conn.email);
+      if (activeConnection) {
+        setSelectedAccountId(activeConnection.id);
+      }
     }
-  }, [connections, selectedAccountId]);
-
-  // Handlers
+  }, [connections, selectedAccountId]);  // Handlers
   const handleEditCourse = () => {
     setIsEditDialogOpen(true);
   };
@@ -139,7 +135,7 @@ export default function CourseDetailsPage() {
       return;
     }
 
-    setCheckingAccounts(prev => new Set(prev).add(connectedAccountId));
+    setAccountAnalyzing(connectedAccountId, true);
 
     const toastId = `analyze-${connectedAccountId}`;
     toast.loading(t('analyzingInbox'), { id: toastId });
@@ -166,20 +162,14 @@ export default function CourseDetailsPage() {
       }
 
       if (result.data && result.data.emails && result.data.analysis) {
-        // Store emails for this specific account
-        setEmailsByAccount(prev => ({
-          ...prev,
-          [connectedAccountId]: result.data!.emails,
-        }));
+        // Store emails using context
+        setAccountEmails(connectedAccountId, result.data.emails);
 
-        // Store stats for this specific account
-        setStatsByAccount(prev => ({
-          ...prev,
-          [connectedAccountId]: {
-            totalAnalyzed: result.data!.totalAnalyzed,
-            courseRelated: result.data!.analysis.stats.totalCourseRelated,
-          },
-        }));
+        // Store stats using context
+        setAccountStats(connectedAccountId, {
+          totalAnalyzed: result.data.totalAnalyzed,
+          courseRelated: result.data.analysis.stats.totalCourseRelated,
+        });
 
         toast.success(
           t('foundCourseEmails', {
@@ -194,18 +184,14 @@ export default function CourseDetailsPage() {
     } catch (error) {
       toast.error(t('errorAnalyzing'), { id: toastId });
     } finally {
-      setCheckingAccounts(prev => {
-        const next = new Set(prev);
-        next.delete(connectedAccountId);
-        return next;
-      });
+      setAccountAnalyzing(connectedAccountId, false);
     }
   };
 
   const handleAutoReply = async (emailId: string, connectedAccountId: string) => {
     if (!domainCourse || !user) return;
 
-    const accountEmails = emailsByAccount[connectedAccountId] || [];
+    const accountEmails = getAccountEmails(connectedAccountId);
     const email = accountEmails.find(e => e.id === emailId);
 
     if (!email) {
@@ -213,7 +199,7 @@ export default function CourseDetailsPage() {
       return;
     }
 
-    setReplyingEmails(prev => new Set(prev).add(emailId));
+    setEmailReplying(emailId, true);
     toast.loading(t('sendingEmailReply'), { id: `reply-${emailId}` });
 
     try {
@@ -249,16 +235,11 @@ export default function CourseDetailsPage() {
         });
       }
     } catch (error) {
-
       toast.error(t('errorSendingEmail'), {
         id: `reply-${emailId}`,
       });
     } finally {
-      setReplyingEmails(prev => {
-        const next = new Set(prev);
-        next.delete(emailId);
-        return next;
-      });
+      setEmailReplying(emailId, false);
     }
   };
 
@@ -323,12 +304,12 @@ export default function CourseDetailsPage() {
                       {account.status}
                     </Badge>
                   )}
-                  {checkingAccounts.has(account.id) && !statsByAccount[account.id] && (
+                  {isAccountAnalyzing(account.id) && !getAccountStats(account.id) && (
                     <Loader2 className="ml-1 h-4 w-4 animate-spin text-muted-foreground" />
                   )}
-                  {statsByAccount[account.id] && (
+                  {getAccountStats(account.id) && (
                     <Badge variant="secondary" className="ml-1">
-                      {statsByAccount[account.id].courseRelated} / {statsByAccount[account.id].totalAnalyzed}
+                      {getAccountStats(account.id)!.courseRelated} / {getAccountStats(account.id)!.totalAnalyzed}
                     </Badge>
                   )}
                 </TabsTrigger>
@@ -357,9 +338,9 @@ export default function CourseDetailsPage() {
 
             {/* Content for each Gmail account */}
             {activeConnections.map(account => {
-              const emails = emailsByAccount[account.id] || [];
-              const stats = statsByAccount[account.id] || null;
-              const isAnalyzing = checkingAccounts.has(account.id);
+              const emails = getAccountEmails(account.id) || [];
+              const stats = getAccountStats(account.id) || null;
+              const isAnalyzing = isAccountAnalyzing(account.id);
 
               return (
                 <TabsContent

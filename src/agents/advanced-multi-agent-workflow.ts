@@ -14,7 +14,7 @@
 import { inboxAnalyzerAgent } from '@/agents/inbox-analyzer';
 import { priorityClassificatorAgent, getPriorityStats, filterByPriority, type PriorityLevel } from '@/agents/priority-classificator';
 import { generateBatchResponses, getResponseStats, type EmailInfo, type PriorityInfo } from '@/agents/generate-responses';
-import { reviewBatchQuality, calculateQualityStats, filterByApproval, type DraftResponse } from '@/agents/review-quality';
+import { reviewBatchQuality, calculateQualityStats, filterByApproval, type DraftResponse } from '@/agents/email-quality-reviewer';
 import { Course } from '@/lib/supabase/types/courses.types';
 
 /**
@@ -81,7 +81,9 @@ export async function advancedEmailWorkflow(connectedAccountId: string, course: 
       body: e.body,
       category: e.category,
       reasoning: e.reasoning,
+
     })),
+    language: 'English',
     courseName: emailAnalysis.courseName,
     analysisSummary: emailAnalysis.analysis.summary,
   });

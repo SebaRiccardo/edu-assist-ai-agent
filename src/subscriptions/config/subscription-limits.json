@@ -21,7 +21,7 @@
     "maxCourses": null,
     "aiEmailDraftPerDay": 10,
     "emailsProcessedPerMonth": 1000,
-    "autoReplies": false,
+    "autoReplies": true,
     "autoLabels": true,
     "realTimeReplies": false,
     "prioritySupport": false,
