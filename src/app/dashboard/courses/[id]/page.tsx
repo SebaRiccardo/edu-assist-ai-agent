@@ -249,7 +249,7 @@ export default function CourseDetailsPage() {
         });
       }
     } catch (error) {
-      console.error('Error in auto-reply:', error);
+
       toast.error(t('errorSendingEmail'), {
         id: `reply-${emailId}`,
       });

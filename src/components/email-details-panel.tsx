@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { CategorizedEmail } from '@/types';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -22,46 +23,48 @@ interface EmailDetailsPanelProps {
   connectedAccountId?: string;
 }
 
-const emailCategoryConfig = {
-  course_related: {
-    label: 'Course Related',
-    variant: 'default' as const,
-    icon: '📚',
-  },
-  student_email: {
-    label: 'Student Email',
-    variant: 'info' as const,
-    icon: '🎓',
-  },
-  staff_email: {
-    label: 'Staff Email',
-    variant: 'warning' as const,
-    icon: '👨‍🏫',
-  },
-  administrative: {
-    label: 'Administrative',
-    variant: 'secondary' as const,
-    icon: '📋',
-  },
-  assignment: {
-    label: 'Assignment',
-    variant: 'info' as const,
-    icon: '📝',
-  },
-  grade_inquiry: {
-    label: 'Grade Inquiry',
-    variant: 'warning' as const,
-    icon: '📊',
-  },
-  other: {
-    label: 'Other',
-    variant: 'outline' as const,
-    icon: '📧',
-  },
-};
-
 // Sub-component: Email Header
 function EmailHeader({ email }: { email: CategorizedEmail }) {
+  const t = useTranslations('EmailDetails');
+
+  const emailCategoryConfig = {
+    course_related: {
+      label: t('categoryLabels.course_related'),
+      variant: 'default' as const,
+      icon: '📚',
+    },
+    student_email: {
+      label: t('categoryLabels.student_email'),
+      variant: 'info' as const,
+      icon: '🎓',
+    },
+    staff_email: {
+      label: t('categoryLabels.staff_email'),
+      variant: 'warning' as const,
+      icon: '👨‍🏫',
+    },
+    administrative: {
+      label: t('categoryLabels.administrative'),
+      variant: 'secondary' as const,
+      icon: '📋',
+    },
+    assignment: {
+      label: t('categoryLabels.assignment'),
+      variant: 'info' as const,
+      icon: '📝',
+    },
+    grade_inquiry: {
+      label: t('categoryLabels.grade_inquiry'),
+      variant: 'warning' as const,
+      icon: '📊',
+    },
+    other: {
+      label: t('categoryLabels.other'),
+      variant: 'outline' as const,
+      icon: '📧',
+    },
+  };
+
   const categoryConfig = emailCategoryConfig[email.category as keyof typeof emailCategoryConfig];
 
   return (
@@ -76,18 +79,18 @@ function EmailHeader({ email }: { email: CategorizedEmail }) {
               </Badge>
             )}
             <Badge variant="success">{email.suggestedLabel}</Badge>
-            {email.isUnread && <Badge variant="default">New</Badge>}
+            {email.isUnread && <Badge variant="default">{t('new')}</Badge>}
           </div>
         </div>
       </div>
 
       <div className="space-y-1 text-sm">
         <div className="flex items-center gap-2">
-          <span className="text-muted-foreground font-medium">From:</span>
+          <span className="text-muted-foreground font-medium">{t('from')}:</span>
           <span className="font-medium">{email.from}</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-muted-foreground font-medium">Date:</span>
+          <span className="text-muted-foreground font-medium">{t('date')}:</span>
           <span>{new Date(email.receivedAt).toLocaleString()}</span>
         </div>
       </div>
@@ -98,7 +101,7 @@ function EmailHeader({ email }: { email: CategorizedEmail }) {
 // Sub-component: Email Body
 function EmailBody({ body }: { body: string }) {
   return (
-    <div className="border-none shadow-none bg-background/30 p-3 rounded-3xl">
+    <div className="border-none shadow-none bg-background/80 p-3 rounded-lg">
       <p className="text-sm whitespace-pre-wrap break-all">{body}</p>
     </div>
   );
@@ -106,6 +109,7 @@ function EmailBody({ body }: { body: string }) {
 
 // Sub-component: AI Reasoning
 function AIReasoning({ reasoning, confidence }: { reasoning: string; confidence: number }) {
+  const t = useTranslations('EmailDetails');
   const confidencePercentage = Math.round(confidence * 100);
 
   return (
@@ -113,7 +117,7 @@ function AIReasoning({ reasoning, confidence }: { reasoning: string; confidence:
       <CollapsibleTrigger asChild>
         <Button variant="outline" size="sm" className="w-full justify-start shadow-none border-none">
           <Sparkles className="size-4 mr-2" />
-          View AI Reasoning
+          {t('viewAiReasoning')}
           <ChevronsUpDown className="size-4 ml-auto" />
         </Button>
       </CollapsibleTrigger>
@@ -121,9 +125,9 @@ function AIReasoning({ reasoning, confidence }: { reasoning: string; confidence:
         <Card className="border-none shadow-none bg-background/50">
           <CardContent className="space-y-2">
             <div className="flex items-center gap-2">
-              <p className="text-sm font-semibold text-foreground">AI Reasoning</p>
+              <p className="text-sm font-semibold text-foreground">{t('aiReasoning')}</p>
               <Badge variant="outline" className="text-xs">
-                {confidencePercentage}% confidence
+                {t('confidence', { percentage: confidencePercentage })}
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground">{reasoning}</p>
@@ -152,14 +156,16 @@ function DraftEditor({
   onCancel: () => void;
   onChange: (value: string) => void;
 }) {
+  const t = useTranslations('EmailDetails');
+
   return (
     <div className="space-y-3 my-2">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <FileText className="h-4 w-4 text-green-600 dark:text-green-400" />
-          <p className="text-sm font-semibold text-foreground">Draft Response</p>
+          <p className="text-sm font-semibold text-foreground">{t('draftResponse')}</p>
           <Badge variant="outline" className="text-xs text-white border-none bg-green-500 dark:bg-green-900/30">
-            AI Generated
+            {t('aiGenerated')}
           </Badge>
         </div>
         <Button
@@ -168,7 +174,7 @@ function DraftEditor({
           onClick={() => {
             if (isEditingDraft) {
               onSave();
-              toast.success('Draft saved successfully');
+              toast.success(t('draftSaved'));
             } else {
               onEdit();
             }
@@ -178,12 +184,12 @@ function DraftEditor({
           {isEditingDraft ? (
             <>
               <Check className="h-4 w-4 mr-1" />
-              Save
+              {t('save')}
             </>
           ) : (
             <>
               <Pencil className="h-4 w-4 mr-1" />
-              Edit
+              {t('edit')}
             </>
           )}
         </Button>
@@ -194,7 +200,7 @@ function DraftEditor({
           value={editedDraft}
           onChange={e => onChange(e.target.value)}
           className="min-h-[200px] text-sm font-mono resize-y border-none shadow-none bg-background/30"
-          placeholder="Edit your draft response..."
+          placeholder={t('editPlaceholder')}
         />
       ) : (
         <div className="rounded-md bg-background border p-3 border-none shadow-none">
@@ -223,6 +229,8 @@ function DraftActions({
   onCancel: () => void;
   onSend: () => void;
 }) {
+  const t = useTranslations('EmailDetails');
+
   return (
     <div className="flex gap-2 flex-wrap">
       <Button
@@ -231,14 +239,14 @@ function DraftActions({
         className="border-none"
         onClick={() => {
           onCopy();
-          toast.success('Draft copied to clipboard');
+          toast.success(t('draftCopied'));
         }}
       >
-        Copy to Clipboard
+        {t('copyToClipboard')}
       </Button>
       {isEditingDraft && (
         <Button variant="ghost" size="sm" onClick={onCancel}>
-          Cancel
+          {t('cancel')}
         </Button>
       )}
       {!isEditingDraft && (
@@ -246,12 +254,12 @@ function DraftActions({
           {isSendingReply ? (
             <>
               <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-              Sending...
+              {t('sending')}
             </>
           ) : (
             <>
               <Mail className="size-4 mr-1" />
-              Send This Draft
+              {t('sendThisDraft')}
             </>
           )}
         </Button>
@@ -269,6 +277,7 @@ export function EmailDetailsPanel({
   onAutoReply,
   connectedAccountId,
 }: EmailDetailsPanelProps) {
+  const t = useTranslations('EmailDetails');
   const [isDraftOpen, setIsDraftOpen] = useState(false);
   const [draftResponse, setDraftResponse] = useState<string | null>(null);
   const [isGeneratingDraft, setIsGeneratingDraft] = useState(false);
@@ -278,7 +287,7 @@ export function EmailDetailsPanel({
 
   const handleGenerateDraft = async () => {
     if (!userId || !courseName || !connectedAccountId) {
-      const errorMsg = 'Missing user or course information';
+      const errorMsg = t('missingInfo');
       setDraftError(errorMsg);
       toast.error(errorMsg);
       return;
@@ -286,7 +295,7 @@ export function EmailDetailsPanel({
 
     setIsGeneratingDraft(true);
     setDraftError(null);
-    toast.loading('Generating draft response...', { id: 'draft-generation' });
+    toast.loading(t('generatingDraftToast'), { id: 'draft-generation' });
 
     try {
       const result = await generateEmailDraft({
@@ -314,17 +323,17 @@ export function EmailDetailsPanel({
         setEditedDraft(result.data.draftResponse);
         setIsEditingDraft(false);
         setIsDraftOpen(true);
-        toast.success('Draft generated successfully', {
+        toast.success(t('draftGeneratedSuccess'), {
           id: 'draft-generation',
         });
       } else {
-        const errorMsg = result.error || 'Failed to generate draft';
+        const errorMsg = result.error || t('failedToGenerateDraft');
         setDraftError(errorMsg);
         toast.error(errorMsg, { id: 'draft-generation' });
       }
     } catch (error) {
       console.error('Error generating draft:', error);
-      const errorMsg = 'An error occurred while generating the draft';
+      const errorMsg = t('errorGeneratingDraft');
       setDraftError(errorMsg);
       toast.error(errorMsg, { id: 'draft-generation' });
     } finally {
@@ -361,7 +370,7 @@ export function EmailDetailsPanel({
                   }}
                 >
                   <FileText className="size-4 mr-2" />
-                  {draftResponse ? 'View Draft' : 'Generate Draft'}
+                  {draftResponse ? t('viewDraft') : t('generateDraft')}
                   <ChevronsUpDown className="size-4 ml-auto" />
                 </Button>
               </CollapsibleTrigger>
@@ -371,12 +380,12 @@ export function EmailDetailsPanel({
                   {isGeneratingDraft ? (
                     <>
                       <Loader2 className="size-4 mr-2 animate-spin" />
-                      Generating...
+                      {t('generating')}
                     </>
                   ) : (
                     <>
                       <RefreshCw className="size-4 mr-2" />
-                      Regenerate
+                      {t('regenerate')}
                     </>
                   )}
                 </Button>
@@ -389,7 +398,7 @@ export function EmailDetailsPanel({
                   {isGeneratingDraft && (
                     <div className="flex items-center justify-center py-4">
                       <Loader2 className="h-6 w-6 animate-spin text-green-600" />
-                      <span className="ml-2 text-sm text-muted-foreground">Generating draft response...</span>
+                      <span className="ml-2 text-sm text-muted-foreground">{t('generatingDraft')}</span>
                     </div>
                   )}
 
@@ -413,7 +422,7 @@ export function EmailDetailsPanel({
                         onCancel={() => {
                           setEditedDraft(draftResponse);
                           setIsEditingDraft(false);
-                          toast.info('Edit cancelled');
+                          toast.info(t('editCancelled'));
                         }}
                         onChange={setEditedDraft}
                       />
@@ -428,7 +437,7 @@ export function EmailDetailsPanel({
                         onCancel={() => {
                           setEditedDraft(draftResponse);
                           setIsEditingDraft(false);
-                          toast.info('Edit cancelled');
+                          toast.info(t('editCancelled'));
                         }}
                         onSend={() => {
                           if (onAutoReply) {
@@ -458,12 +467,12 @@ export function EmailDetailsPanel({
             {isSendingReply ? (
               <>
                 <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                Sending Reply...
+                {t('sendingReply')}
               </>
             ) : (
               <>
                 <Mail className="size-5 mr-2" />
-                Auto Reply to This Email
+                {t('autoReplyToEmail')}
               </>
             )}
           </Button>

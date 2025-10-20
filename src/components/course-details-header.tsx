@@ -23,42 +23,36 @@ export function CourseDetailsHeader({ course, isChecking, onAnalyze, onEdit }: C
   const [isContextOpen, setIsContextOpen] = useState(false);
 
   return (
-    <div className="mt-3 w-full ">
-      <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-3xl p-8 border-none shadow-none">
+    <div className="w-full">
+      <Breadcrumb className="mb-2 ml-2"  >
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <button onClick={() => router.push('/dashboard')} className="flex items-center gap-1">
+                <Home className="h-4 w-4 mr-2" />
+                <span>{t('dashboard')}</span>
+              </button>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <button onClick={() => router.push('/dashboard/courses')}>{t('courses')}</button>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{course.name}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+      <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-3xl p-6 border-none shadow-none">
         {/* Breadcrumb and Created Date */}
-        <div className="flex items-center justify-between mb-2 ">
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <button onClick={() => router.push('/dashboard')} className="flex items-center gap-1">
-                    <Home className="h-4 w-4 mr-2" />
-                    <span>{t('dashboard')}</span>
-                  </button>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <button onClick={() => router.push('/dashboard/courses')}>{t('courses')}</button>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>{course.name}</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+        <div className="flex items-center justify-end mb-2 ">
+
 
           {/* Created Date and Edit Button */}
-          <div className="flex items-center gap-3">
-            {onEdit && (
-              <Button onClick={onEdit} variant="ghost" size="sm" className="gap-2 shadow-none">
-                <Pencil className="h-4 w-4" />
-                {t('editCourse')}
-              </Button>
-            )}
-          </div>
+
         </div>
 
         {/* Title and Action - Horizontal Layout */}
@@ -69,30 +63,19 @@ export function CourseDetailsHeader({ course, isChecking, onAnalyze, onEdit }: C
                 Created {new Date(course.createdAt).toLocaleDateString()}
               </span>
             </div> */}
-            <div className="flex items-center justify-between gap-4 ">
+            <div className="flex items-start justify-between gap-4 ">
               <div className="flex flex-row gap-2 items-center mb-2">
                 <h1 className="text-3xl font-bold tracking-tight text-foreground">{course.name}</h1>
                 <Badge>{course.year}</Badge>
               </div>
-              {/* Analyze Button */}
-              {/* <Button
-                onClick={onAnalyze}
-                disabled={isChecking}
-                size="lg"
-                className="gap-2 flex-shrink-0"
-              >
-                {isChecking ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Analyzing...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="h-4 w-4" />
-                    Analyze Inbox
-                  </>
+              <div className="flex items-center gap-3">
+                {onEdit && (
+                  <Button onClick={onEdit} variant="ghost" size="sm" className="gap-2 shadow-none">
+                    <Pencil className="h-4 w-4" />
+                    {t('editCourse')}
+                  </Button>
                 )}
-              </Button> */}
+              </div>
             </div>
             <p className="text-sm text-pretty max-w-sm lg:max-w-5xl truncate text-muted-foreground ">{course.description}</p>
 
