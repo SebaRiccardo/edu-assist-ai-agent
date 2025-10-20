@@ -464,7 +464,8 @@
     "replyDescription": "Tu respuesta ha sido enviada a: {email}",
     "failedToSendEmail": "Error al enviar correo: {error}",
     "errorSendingEmail": "Ocurrió un error al enviar el correo",
-    "autoTaggingEmails": "Etiquetando automáticamente todos los correos..."
+    "autoTaggingEmails": "Etiquetando automáticamente todos los correos...",
+    "labelingComplete": "Etiquetado completo"
   },
   "EmailList": {
     "noEmails": "Sin Correos Aún",

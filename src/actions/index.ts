@@ -4,6 +4,7 @@ export { sendEmailReply } from './inbox/email-reply';
 
 // Inbox actions
 export { analyzeInbox } from './inbox/analyze-inbox';
+export { labelEmails, analyzeAndLabelEmails } from './inbox/auto-label-emails';
 
 // Subscription actions
 export {

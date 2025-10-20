@@ -21,6 +21,7 @@ export interface SendEmailParams {
   cc?: string[];
   bcc?: string[];
   model?: string;
+  senderName: string;
 }
 
 /**
@@ -51,7 +52,7 @@ export interface SendEmailResult {
  * ```
  */
 export async function sendEmail(params: SendEmailParams): Promise<SendEmailResult> {
-  const { userId, to, subject, draft, cc = [], bcc = [], model = 'gemini-2.0-flash-lite', threadId } = params;
+  const { senderName, userId, to, subject, draft, cc = [], bcc = [], model = 'gemini-2.0-flash-lite', threadId } = params;
 
   console.log(`📧 Sending email to: ${to}`);
   console.log(`   Subject: ${subject}`);
@@ -65,13 +66,15 @@ export async function sendEmail(params: SendEmailParams): Promise<SendEmailResul
     const { text } = await generateText({
       model: google(model),
       system: `You are an AI assistant that helps send emails via Gmail. You have access to a tool that can send emails on behalf of the user. Use the tool to send the email with the provided details.`,
-      prompt: `${prePropt} use the following draft ${draft}.
+      prompt: `${prePropt} use the following draft: ${draft}.
 
 Rules:
 - Always use the tool to send the email.
 - Analyze the draft content and replace the placeholder values enclosed by square brackets and replace them for real values when necessary.
 - If you don't know the value to replace the placeholders omit them and just rephrase the daft to not include the placeholder values. For example if you don't have a specific date to replace [DATE] just rephrase the draft to not include any date.
 - Never include a sentence which will be left without any sense because you omitted a placeholder value.
+
+Professor name: ${senderName}
 
 ${cc.length > 0 ? `- CC: ${cc.join(', ')}` : ''}
 ${bcc.length > 0 ? `- BCC: ${bcc.join(', ')}` : ''}

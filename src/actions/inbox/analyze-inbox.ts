@@ -165,8 +165,6 @@ export async function analyzeInbox(input: AnalyzeInboxInput): Promise<AnalyzeInb
       }
     }
 
-    console.log(finalResponse.data)
-    console.log(finalResponse.data?.emails)
     return finalResponse;
 
   } catch (error) {

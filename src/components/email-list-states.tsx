@@ -8,6 +8,8 @@ import { CategorizedEmail, CategorizedEmailWithPriority } from '@/types';
 import { Loader2, Sparkles, CheckCircle, Inbox, Tags } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { IconMailSpark } from '@tabler/icons-react';
+import { Loader } from './ai-elements/loader';
+import { useCourseInbox } from '@/contexts/course-inbox-context';
 
 interface EmailListStatesProps {
   emails: (CategorizedEmail | CategorizedEmailWithPriority)[];
@@ -23,6 +25,7 @@ interface EmailListStatesProps {
   onAnalyze: () => void;
   onAutoReply?: (accountId: string) => void;
   onAutoTagAll: (accountId: string) => void;
+  isAutoTagging?: boolean;
   selectedAccountId: string;
 }
 
@@ -37,10 +40,15 @@ export function EmailListStates({
   onAnalyze,
   onAutoReply,
   onAutoTagAll,
+  isAutoTagging,
   selectedAccountId,
 }: EmailListStatesProps) {
   const t = useTranslations('EmailList');
   const [selectedEmail, setSelectedEmail] = useState<CategorizedEmail | CategorizedEmailWithPriority | null>(null);
+
+  const {
+    isEmailReplying,
+  } = useCourseInbox();
 
   // Loading State - Checking Emails
   if (isChecking) {
@@ -102,8 +110,8 @@ export function EmailListStates({
           <div className="flex items-center justify-between p-2 px-4 border-b">
             <h2 className="text-sm font-semibold text-foreground">{t('courseEmails', { count: emails.length })}</h2>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => onAutoTagAll(selectedAccountId)} size="sm" disabled className="gap-2 h-7">
-                <Tags />
+              <Button variant='outline' onClick={() => onAutoTagAll(selectedAccountId)} size="sm" disabled={isAutoTagging} className="gap-2 h-7">
+                {isAutoTagging ? <Loader /> : <Tags />}
                 {t('autoTagAll')}
               </Button>
               <Button onClick={onAnalyze} size="sm" className="gap-2 h-7">
@@ -137,7 +145,7 @@ export function EmailListStates({
               email={selectedEmail}
               courseName={courseName}
               userId={userId}
-              isSendingReply={isSendingReply && replyingToEmailId === selectedEmail.id}
+              isSendingReply={isSendingReply && isEmailReplying(selectedEmail.id)}
               onClose={() => setSelectedEmail(null)}
               onAutoReply={onAutoReply}
             />
@@ -155,7 +163,7 @@ export function EmailListStates({
             </div>
           )}
         </div>
-      </div>
+      </div >
     );
   }
 

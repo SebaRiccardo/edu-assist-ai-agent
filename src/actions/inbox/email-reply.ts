@@ -1,5 +1,6 @@
 'use server';
 
+import { reviewEmailQuality } from '@/agents/email-quality-reviewer';
 import { generateEmailResponse } from '@/agents/generate-responses';
 import { sendEmail } from '@/agents/send-email';
 import { ComposioService } from '@/lib/services/composio';
@@ -99,16 +100,14 @@ export async function sendEmailReply(input: EmailReplyInput): Promise<EmailReply
 
     // Check Gmail connection before processing
     console.log('🔍 Checking Gmail connection...');
-    const connectedAccount = await ComposioService.getConnectedAccountById(connectedAccountId);
+    const { status } = await ComposioService.getConnectedAccountById(connectedAccountId);
 
-    if (!connectedAccount) {
+    if (status !== 'ACTIVE') {
       return {
         success: false,
-        error: 'Gmail not connected',
+        error: 'email not connected',
       };
     }
-
-    console.log('✅ Gmail connection verified');
 
     // STEP 1: Generate draft response using AI
     console.log('\n📝 STEP 1: Generating draft response...');
@@ -131,7 +130,17 @@ export async function sendEmailReply(input: EmailReplyInput): Promise<EmailReply
       language,
     });
 
+
     console.log('✅ Draft response generated');
+
+
+    const review = await reviewEmailQuality({
+      draftResponse: draftResponse,
+      courseName,
+    });
+    console.log('✅ Draft response reviewed');
+
+
 
     // STEP 2: Send email using Gmail
     console.log('\n📧 STEP 2: Sending email via Gmail...');
@@ -141,6 +150,7 @@ export async function sendEmailReply(input: EmailReplyInput): Promise<EmailReply
       draft: draftResponse.draftResponse,
       replyToMessageId: email.id,
       threadId: email.threadId,
+      senderName: professorName,
     });
 
     console.log('✅ Email workflow complete');

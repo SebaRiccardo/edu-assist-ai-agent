@@ -74,7 +74,7 @@ export class ComposioService {
    * Get or create the Composio client instance (Singleton pattern)
    * This ensures we only have one instance throughout the application
    */
-  private static getClient(): Composio<VercelProvider> {
+  static getClient(): Composio<VercelProvider> {
     if (!this.instance) {
       if (!process.env.COMPOSIO_API_KEY) {
         throw new Error('COMPOSIO_API_KEY is not set in environment variables');
@@ -129,7 +129,7 @@ export class ComposioService {
   ) {
     const authConfig =
       authConfigMap[
-        emailProvider.toLocaleLowerCase() as keyof typeof authConfigMap
+      emailProvider.toLocaleLowerCase() as keyof typeof authConfigMap
       ];
 
     if (!authConfig) {

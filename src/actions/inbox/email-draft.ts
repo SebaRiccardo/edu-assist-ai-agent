@@ -40,7 +40,7 @@ interface EmailDraftResult {
  */
 export async function generateEmailDraft(input: EmailDraftInput): Promise<EmailDraftResult> {
   try {
-    const { email, priority, courseName, professorName = 'Professor', connectedAccountId, language = 'English' } = input;
+    const { email, priority, courseName, professorName, connectedAccountId, language = 'Spanish' } = input;
 
     // Get current user
     const user = await getCurrentUser();
@@ -88,7 +88,7 @@ export async function generateEmailDraft(input: EmailDraftInput): Promise<EmailD
     console.log('🔍 Checking Gmail connection...');
     const connectedAccount = await ComposioService.getConnectedAccountById(connectedAccountId);
 
-    if (!connectedAccount) {
+    if (connectedAccount.status !== 'ACTIVE') {
       return {
         success: false,
         error: 'Gmail not connected',

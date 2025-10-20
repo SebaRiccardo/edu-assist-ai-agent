@@ -22,6 +22,7 @@ interface EmailDraftState {
 interface AccountEmailState {
     emails: (CategorizedEmail | CategorizedEmailWithPriority)[];
     isAnalyzing: boolean;
+    isLabeling: boolean;
     stats: {
         totalAnalyzed: number;
         courseRelated: number;
@@ -61,6 +62,7 @@ interface CourseInboxContextState {
     // Actions
     setAccountEmails: (accountId: string, emails: (CategorizedEmail | CategorizedEmailWithPriority)[]) => void;
     setAccountAnalyzing: (accountId: string, isAnalyzing: boolean) => void;
+    setAccountLabeling: (accountId: string, isLabeling: boolean) => void;
     setAccountStats: (accountId: string, stats: { totalAnalyzed: number; courseRelated: number }) => void;
     setAccountPriorityStats: (accountId: string, priorityStats: { summary: string; critical: number; high: number; medium: number; low: number; total: number }) => void;
     clearAccountData: (accountId: string) => void;
@@ -88,6 +90,7 @@ interface CourseInboxContextState {
     getAccountStats: (accountId: string) => { totalAnalyzed: number; courseRelated: number } | null;
     getAccountPriorityStats: (accountId: string) => { summary: string; critical: number; high: number; medium: number; low: number; total: number } | null;
     isAccountAnalyzing: (accountId: string) => boolean;
+    isAccountLabeling: (accountId: string) => boolean;
 }
 
 const CourseInboxContext = createContext<CourseInboxContextState | undefined>(undefined);
@@ -122,6 +125,21 @@ export function CourseInboxProvider({ children }: CourseInboxProviderProps) {
             [accountId]: {
                 ...prev[accountId],
                 isAnalyzing,
+                isLabeling: prev[accountId]?.isLabeling || false,
+                emails: prev[accountId]?.emails || [],
+                stats: prev[accountId]?.stats || null,
+                priorityStats: prev[accountId]?.priorityStats || null,
+            },
+        }));
+    }, []);
+
+    const setAccountLabeling = useCallback((accountId: string, isLabeling: boolean) => {
+        setEmailsByAccount(prev => ({
+            ...prev,
+            [accountId]: {
+                ...prev[accountId],
+                isLabeling,
+                isAnalyzing: prev[accountId]?.isAnalyzing || false,
                 emails: prev[accountId]?.emails || [],
                 stats: prev[accountId]?.stats || null,
                 priorityStats: prev[accountId]?.priorityStats || null,
@@ -138,6 +156,7 @@ export function CourseInboxProvider({ children }: CourseInboxProviderProps) {
                     stats,
                     emails: prev[accountId]?.emails || [],
                     isAnalyzing: prev[accountId]?.isAnalyzing || false,
+                    isLabeling: prev[accountId]?.isLabeling || false,
                     priorityStats: prev[accountId]?.priorityStats || null,
                 },
             }));
@@ -154,6 +173,7 @@ export function CourseInboxProvider({ children }: CourseInboxProviderProps) {
                     priorityStats,
                     emails: prev[accountId]?.emails || [],
                     isAnalyzing: prev[accountId]?.isAnalyzing || false,
+                    isLabeling: prev[accountId]?.isLabeling || false,
                     stats: prev[accountId]?.stats || null,
                 },
             }));
@@ -362,6 +382,13 @@ export function CourseInboxProvider({ children }: CourseInboxProviderProps) {
         [emailsByAccount]
     );
 
+    const isAccountLabeling = useCallback(
+        (accountId: string): boolean => {
+            return emailsByAccount[accountId]?.isLabeling || false;
+        },
+        [emailsByAccount]
+    );
+
     const value: CourseInboxContextState = {
         emailsByAccount,
         draftsByEmail,
@@ -369,6 +396,7 @@ export function CourseInboxProvider({ children }: CourseInboxProviderProps) {
         selectedEmailId,
         setAccountEmails,
         setAccountAnalyzing,
+        setAccountLabeling,
         setAccountStats,
         setAccountPriorityStats,
         clearAccountData,
@@ -388,6 +416,7 @@ export function CourseInboxProvider({ children }: CourseInboxProviderProps) {
         getAccountStats,
         getAccountPriorityStats,
         isAccountAnalyzing,
+        isAccountLabeling,
     };
 
     return <CourseInboxContext.Provider value={value}>{children}</CourseInboxContext.Provider>;

@@ -464,7 +464,8 @@
     "replyDescription": "Your reply has been sent to: {email}",
     "failedToSendEmail": "Failed to send email: {error}",
     "errorSendingEmail": "An error occurred while sending the email",
-    "autoTaggingEmails": "Auto-tagging all emails..."
+    "autoTaggingEmails": "Auto-tagging all emails...",
+    "labelingComplete": "Labeling complete"
   },
   "EmailList": {
     "noEmails": "No Emails Yet",
