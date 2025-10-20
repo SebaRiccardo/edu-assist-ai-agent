@@ -3,8 +3,9 @@
 import { inboxAnalyzerAgent } from '@/agents/inbox-analyzer';
 import { ComposioService } from '@/lib/services/composio';
 import { createClient, getCurrentUser } from '@/lib/supabase/server';
-import type { InboxAnalysisResult } from '@/types';
+import type { CategorizedEmail, CategorizedEmailWithPriority, InboxAnalysisResult } from '@/types';
 import type { Course } from '@/lib/supabase/types/courses.types';
+import { getPriorityStats, priorityClassificatorAgent } from '@/agents/priority-classificator';
 
 interface AnalyzeInboxInput {
   course: Course;
@@ -13,14 +14,29 @@ interface AnalyzeInboxInput {
   includeRead?: boolean;
   reasoningLanguage?: string;
   verbose?: boolean;
+  withPriorityClassification: boolean
+}
+
+interface AnalyzeInboxResponseData extends InboxAnalysisResult {
+  priorityAnalysis?: {
+    summary: string,
+    critical: number,
+    high: number,
+    medium: number,
+    low: number,
+    total: number
+  }
+  emails: CategorizedEmail[] | CategorizedEmailWithPriority[];
 }
 
 interface AnalyzeInboxResponse {
   success: boolean;
-  data?: InboxAnalysisResult;
+  data?: AnalyzeInboxResponseData;
   error?: string;
   details?: unknown;
-  account?: any;
+  account?: {
+    status: "INITIALIZING" | "INITIATED" | "FAILED" | "EXPIRED" | "INACTIVE" | "ACTIVE"
+  };
 }
 
 /**
@@ -28,7 +44,7 @@ interface AnalyzeInboxResponse {
  */
 export async function analyzeInbox(input: AnalyzeInboxInput): Promise<AnalyzeInboxResponse> {
   try {
-    const { course, connectedAccountId, maxEmails = 50, includeRead = false, reasoningLanguage, verbose = true } = input;
+    const { withPriorityClassification = true, course, connectedAccountId, maxEmails = 50, includeRead = false, reasoningLanguage, verbose = true } = input;
 
     const supabase = await createClient();
 
@@ -69,24 +85,90 @@ export async function analyzeInbox(input: AnalyzeInboxInput): Promise<AnalyzeInb
       return {
         success: false,
         error: ` ${connectedEmail.toolkit.slug} account is not active`,
-        account: connectedEmail,
+        account: {
+          status: connectedEmail.status
+        },
       };
     }
 
     // Call the encapsulated analysis function
-    const result = await inboxAnalyzerAgent({
+    const inboxAnalysisResult = await inboxAnalyzerAgent({
       course,
       connectedAccountId,
       maxEmails,
       includeRead,
-      reasoningLanguage: reasoningLanguage || 'English',
+      reasoningLanguage: reasoningLanguage || 'Spanish',
       verbose,
     });
 
-    return {
+    let finalResponse: AnalyzeInboxResponse = {
       success: true,
-      data: result,
-    };
+      data: inboxAnalysisResult
+
+    }
+
+    if (withPriorityClassification) {
+
+      const originalEmailsMap = new Map<string, CategorizedEmail>()
+
+      const emailsToBePrioritized = inboxAnalysisResult.emails.map((e) => {
+        originalEmailsMap.set(e.id, e)
+        return {
+          id: e.id,
+          from: e.from,
+          subject: e.subject,
+          body: e.body,
+          category: e.category,
+          reasoning: e.reasoning,
+        }
+      })
+
+      const prioritizationResult = await priorityClassificatorAgent({
+        emails: emailsToBePrioritized,
+        language: reasoningLanguage || 'Spanish',
+        courseName: course.name,
+        analysisSummary: inboxAnalysisResult.analysis.summary,
+      });
+
+      const { summary, priorities } = prioritizationResult
+
+      const priorityCounts = getPriorityStats(prioritizationResult);
+
+      console.log(`   • Critical: ${priorityCounts.critical}`);
+      console.log(`   • High: ${priorityCounts.high}`);
+      console.log(`   • Medium: ${priorityCounts.medium}`);
+      console.log(`   • Low: ${priorityCounts.low}`);
+
+      const emailsWithPriority: CategorizedEmailWithPriority[] = priorities.map((email) => {
+        const originalEmail = originalEmailsMap.get(email.emailId)!
+        return {
+          ...originalEmail,
+          priority: {
+            level: email.priority,
+            reasoning: email.reasoning,
+            responseDeadline: email.responseDeadline
+          }
+
+        }
+      })
+
+      finalResponse = {
+        ...finalResponse,
+        data: {
+          ...finalResponse.data!,
+          emails: emailsWithPriority,
+          priorityAnalysis: {
+            summary: summary,
+            ...priorityCounts
+          }
+        }
+      }
+    }
+
+    console.log(finalResponse.data)
+    console.log(finalResponse.data?.emails)
+    return finalResponse;
+
   } catch (error) {
     console.error('❌ Error in email analysis:', error);
 

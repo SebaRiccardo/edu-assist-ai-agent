@@ -4,13 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyContent, EmptyMedia } from '@/components/ui/empty';
 import { EmailListItem } from '@/components/email-list-item';
 import { EmailDetailsPanel } from '@/components/email-details-panel';
-import { CategorizedEmail } from '@/types';
+import { CategorizedEmail, CategorizedEmailWithPriority } from '@/types';
 import { Loader2, Sparkles, CheckCircle, Inbox, Tags } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { IconMailSpark } from '@tabler/icons-react';
 
 interface EmailListStatesProps {
-  emails: CategorizedEmail[];
+  emails: (CategorizedEmail | CategorizedEmailWithPriority)[];
   isChecking: boolean;
   stats: {
     totalAnalyzed: number;
@@ -40,7 +40,7 @@ export function EmailListStates({
   selectedAccountId,
 }: EmailListStatesProps) {
   const t = useTranslations('EmailList');
-  const [selectedEmail, setSelectedEmail] = useState<CategorizedEmail | null>(null);
+  const [selectedEmail, setSelectedEmail] = useState<CategorizedEmail | CategorizedEmailWithPriority | null>(null);
 
   // Loading State - Checking Emails
   if (isChecking) {

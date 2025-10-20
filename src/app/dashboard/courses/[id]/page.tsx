@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { CourseDetailsHeader } from '@/components/course-details-header';
 import { CourseFormDialog } from '@/components/course-form-dialog';
 import { EmailListStates } from '@/components/email-list-states';
@@ -35,6 +35,7 @@ function CourseDetailsPageContent() {
   const router = useRouter();
   const params = useParams();
   const t = useTranslations('CourseDetails');
+  const locale = useLocale() as 'es' | 'en';
 
   const courseId = params.id as string;
   const { user } = useCurrentUser();
@@ -44,8 +45,10 @@ function CourseDetailsPageContent() {
     setAccountEmails,
     setAccountAnalyzing,
     setAccountStats,
+    setAccountPriorityStats,
     getAccountEmails,
     getAccountStats,
+    getAccountPriorityStats,
     isAccountAnalyzing,
     setEmailReplying,
     isEmailReplying,
@@ -144,14 +147,15 @@ function CourseDetailsPageContent() {
       const result = await analyzeInbox({
         course: courseData,
         connectedAccountId,
-        reasoningLanguage: 'spanish',
+        reasoningLanguage: locale === 'es' ? 'Spanish' : locale === 'en' ? 'English' : "Spanish",
         maxEmails: maxEmails,
         includeRead: false,
         verbose: true,
+        withPriorityClassification: true
       });
 
       if (!result.success) {
-        if (result.account.status !== 'ACTIVE') {
+        if (result.account?.status !== 'ACTIVE') {
           toast.error(t('accountNotActive'), {
             id: toastId,
           });
@@ -170,6 +174,11 @@ function CourseDetailsPageContent() {
           totalAnalyzed: result.data.totalAnalyzed,
           courseRelated: result.data.analysis.stats.totalCourseRelated,
         });
+
+        // Store priority stats if available
+        if (result.data.priorityAnalysis) {
+          setAccountPriorityStats(connectedAccountId, result.data.priorityAnalysis);
+        }
 
         toast.success(
           t('foundCourseEmails', {

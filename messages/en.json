@@ -556,7 +556,15 @@
       "grade_inquiry": "Grade Inquiry",
       "other": "Other"
     },
+    "priorityLabels": {
+      "critical": "Critical",
+      "high": "High Priority",
+      "medium": "Medium Priority",
+      "low": "Low Priority"
+    },
     "new": "New",
+    "responseDeadline": "Response Deadline",
+    "priorityReasoning": "Priority Reasoning",
     "viewAiReasoning": "View AI Reasoning",
     "aiReasoning": "AI Reasoning",
     "confidence": "{percentage}% confidence",

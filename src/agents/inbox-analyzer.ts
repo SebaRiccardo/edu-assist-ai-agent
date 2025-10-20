@@ -1,8 +1,9 @@
 import { generateObject } from 'ai';
 import { google } from '@ai-sdk/google';
 import { z } from 'zod';
-import { CategorizedEmail, InboxAnalysisParams, InboxAnalysisResult, GmailMessageBody, TransformedEmail } from '@/types';
+import { CategorizedEmail, InboxAnalysisParams, InboxAnalysisResult, GmailMessageBody, TransformedEmail, CategorizedEmailWithPriority } from '@/types';
 import { ComposioService } from '@/lib/services/composio';
+import { priorityClassificatorAgent } from './priority-classificator';
 
 // Set max duration for this API route to handle AI processing
 export const maxDuration = 60;
@@ -98,10 +99,10 @@ export async function inboxAnalyzerAgent(params: InboxAnalysisParams): Promise<I
 
   const fetchedEmails = gmailResponse.data.messages;
 
-  const emailsSet = new Map<string, GmailMessageBody>();
+  const originalEmailMap = new Map<string, GmailMessageBody>();
 
   fetchedEmails.forEach((email: GmailMessageBody) => {
-    emailsSet.set(email.messageId, email);
+    originalEmailMap.set(email.messageId, email);
   });
 
   console.log(`📬 Successfully fetched ${fetchedEmails.length} emails`);
@@ -186,14 +187,12 @@ Important:
 
   console.log(`✨ Analysis complete!`);
 
-  // STEP 5: Map analysis results back to original emails
-  const categorizedEmails: CategorizedEmail[] = analysisResult.object.results.map(analysis => {
-    // const originalEmail = fetchedEmails.find((e: GmailMessageBody) => {
-    //   console.log(`📧 Id Comp: ${e.messageId} - ${analysis.emailId}`);
-    //   return e.messageId === analysis.emailId
-    // })
-    const originalEmail = emailsSet.get(analysis.emailId);
 
+  // STEP 5: Map analysis results back to original emails
+  const relatedEmails = analysisResult.object.results.filter((result) => result.isRelated)
+
+  const categorizedEmails: CategorizedEmail[] = relatedEmails.map(analysis => {
+    const originalEmail = originalEmailMap.get(analysis.emailId);
     return {
       ...transformGmailMessage(originalEmail!),
       category: analysis.category,
@@ -203,7 +202,9 @@ Important:
       reasoning: analysis.reasoning,
     };
   });
+
   console.log(`🏷️ Categorized ${categorizedEmails.length} emails`);
+
   // Calculate statistics
   const stats = {
     totalAnalyzed: categorizedEmails.length,
@@ -216,8 +217,7 @@ Important:
   };
 
   return {
-    emails: categorizedEmails.filter(e => e.isRelated),
-    //emails: categorizedEmails,
+    emails: categorizedEmails,
     analysis: {
       summary: analysisResult.object.summary,
       stats,

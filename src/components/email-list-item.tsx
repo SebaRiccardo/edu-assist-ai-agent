@@ -1,14 +1,14 @@
 'use client';
 
-import { CategorizedEmail } from '@/types';
+import { CategorizedEmail, CategorizedEmailWithPriority } from '@/types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Mail, Loader2, Tags } from 'lucide-react';
+import { Mail, Loader2, Tags, AlertCircle, AlertTriangle, Clock, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { IconLabel, IconMailSpark } from '@tabler/icons-react';
 
 interface EmailListItemProps {
-  email: CategorizedEmail;
+  email: CategorizedEmail | CategorizedEmailWithPriority;
   isSelected: boolean;
   isSendingReply: boolean;
   onClick: () => void;
@@ -53,8 +53,29 @@ const emailCategoryConfig = {
   },
 };
 
+const priorityConfig = {
+  critical: {
+    icon: AlertCircle,
+    className: 'text-red-600 dark:text-red-400',
+  },
+  high: {
+    icon: AlertTriangle,
+    className: 'text-orange-600 dark:text-orange-400',
+  },
+  medium: {
+    icon: Clock,
+    className: 'text-blue-600 dark:text-blue-400',
+  },
+  low: {
+    icon: Info,
+    className: 'text-gray-600 dark:text-gray-400',
+  },
+};
+
 export function EmailListItem({ email, isSelected, isSendingReply, onClick, onAutoReply }: EmailListItemProps) {
   const categoryConfig = emailCategoryConfig[email.category as keyof typeof emailCategoryConfig];
+  const hasPriority = 'priority' in email && email.priority;
+  const priorityInfo = hasPriority ? priorityConfig[email.priority.level as keyof typeof priorityConfig] : null;
 
   return (
     <div
@@ -92,12 +113,17 @@ export function EmailListItem({ email, isSelected, isSendingReply, onClick, onAu
         </div>
 
         <div className="flex flex-col items-end gap-1 flex-shrink-0">
-          <span className="text-xs text-muted-foreground whitespace-nowrap">
-            {new Date(email.receivedAt).toLocaleDateString('en-US', {
-              month: 'short',
-              day: 'numeric',
-            })}
-          </span>
+          <div className="flex items-center gap-2">
+            {priorityInfo && (
+              <priorityInfo.icon className={cn('h-4 w-4', priorityInfo.className)} />
+            )}
+            <span className="text-xs text-muted-foreground whitespace-nowrap">
+              {new Date(email.receivedAt).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+              })}
+            </span>
+          </div>
         </div>
       </div>
 

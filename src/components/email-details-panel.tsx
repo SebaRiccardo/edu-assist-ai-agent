@@ -2,19 +2,19 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { CategorizedEmail } from '@/types';
+import { CategorizedEmail, CategorizedEmailWithPriority } from '@/types';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Mail, Sparkles, ChevronsUpDown, FileText, Loader2, RefreshCw, X, Pencil, Check } from 'lucide-react';
+import { Mail, Sparkles, ChevronsUpDown, FileText, Loader2, RefreshCw, X, Pencil, Check, AlertCircle, AlertTriangle, Clock, Info } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
 import { generateEmailDraft } from '@/actions/inbox/email-draft';
 
 interface EmailDetailsPanelProps {
-  email: CategorizedEmail;
+  email: CategorizedEmail | CategorizedEmailWithPriority;
   courseName?: string;
   userId?: string;
   isSendingReply?: boolean;
@@ -24,7 +24,7 @@ interface EmailDetailsPanelProps {
 }
 
 // Sub-component: Email Header
-function EmailHeader({ email }: { email: CategorizedEmail }) {
+function EmailHeader({ email }: { email: CategorizedEmail | CategorizedEmailWithPriority }) {
   const t = useTranslations('EmailDetails');
 
   const emailCategoryConfig = {
@@ -65,7 +65,32 @@ function EmailHeader({ email }: { email: CategorizedEmail }) {
     },
   };
 
+  const priorityConfig = {
+    critical: {
+      label: t('priorityLabels.critical'),
+      variant: 'destructive' as const,
+      icon: AlertCircle,
+    },
+    high: {
+      label: t('priorityLabels.high'),
+      variant: 'warning' as const,
+      icon: AlertTriangle,
+    },
+    medium: {
+      label: t('priorityLabels.medium'),
+      variant: 'default' as const,
+      icon: Clock,
+    },
+    low: {
+      label: t('priorityLabels.low'),
+      variant: 'secondary' as const,
+      icon: Info,
+    },
+  };
+
   const categoryConfig = emailCategoryConfig[email.category as keyof typeof emailCategoryConfig];
+  const hasPriority = 'priority' in email && email.priority;
+  const priorityInfo = hasPriority ? priorityConfig[email.priority.level as keyof typeof priorityConfig] : null;
 
   return (
     <div className="space-y-3">
@@ -80,6 +105,12 @@ function EmailHeader({ email }: { email: CategorizedEmail }) {
             )}
             <Badge variant="success">{email.suggestedLabel}</Badge>
             {email.isUnread && <Badge variant="default">{t('new')}</Badge>}
+            {priorityInfo && (
+              <Badge variant={priorityInfo.variant} className="gap-1">
+                <priorityInfo.icon className="h-3 w-3" />
+                {priorityInfo.label}
+              </Badge>
+            )}
           </div>
         </div>
       </div>
@@ -93,6 +124,12 @@ function EmailHeader({ email }: { email: CategorizedEmail }) {
           <span className="text-muted-foreground font-medium">{t('date')}:</span>
           <span>{new Date(email.receivedAt).toLocaleString()}</span>
         </div>
+        {hasPriority && email.priority.responseDeadline && (
+          <div className="flex items-center gap-2">
+            <span className="text-muted-foreground font-medium">{t('responseDeadline')}:</span>
+            <span className="font-medium text-orange-600 dark:text-orange-400">{new Date(email.priority.responseDeadline).toLocaleDateString()}</span>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -108,7 +145,15 @@ function EmailBody({ body }: { body: string }) {
 }
 
 // Sub-component: AI Reasoning
-function AIReasoning({ reasoning, confidence }: { reasoning: string; confidence: number }) {
+function AIReasoning({
+  reasoning,
+  confidence,
+  priorityReasoning
+}: {
+  reasoning: string;
+  confidence: number;
+  priorityReasoning?: string;
+}) {
   const t = useTranslations('EmailDetails');
   const confidencePercentage = Math.round(confidence * 100);
 
@@ -133,6 +178,18 @@ function AIReasoning({ reasoning, confidence }: { reasoning: string; confidence:
             <p className="text-sm text-muted-foreground">{reasoning}</p>
           </CardContent>
         </Card>
+
+        {priorityReasoning && (
+          <Card className="border-none shadow-none bg-orange-50 dark:bg-orange-950/20">
+            <CardContent className="space-y-2">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                <p className="text-sm font-semibold text-foreground">{t('priorityReasoning')}</p>
+              </div>
+              <p className="text-sm text-muted-foreground">{priorityReasoning}</p>
+            </CardContent>
+          </Card>
+        )}
       </CollapsibleContent>
     </Collapsible>
   );
@@ -353,7 +410,11 @@ export function EmailDetailsPanel({
           <EmailBody body={email.body} />
 
           {/* AI Reasoning Section */}
-          <AIReasoning reasoning={email.reasoning} confidence={email.confidence} />
+          <AIReasoning
+            reasoning={email.reasoning}
+            confidence={email.confidence}
+            priorityReasoning={'priority' in email && email.priority ? email.priority.reasoning : undefined}
+          />
 
           {/* Draft Response Section */}
           <Collapsible open={isDraftOpen} onOpenChange={setIsDraftOpen} className="w-full">

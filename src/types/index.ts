@@ -1,3 +1,4 @@
+import { EmailPriority, PriorityLevel } from '@/agents/priority-classificator';
 import { Course } from '@/lib/supabase/types/courses.types';
 
 /**
@@ -202,6 +203,14 @@ export interface CategorizedEmail extends TransformedEmail {
   suggestedLabel: string;
   confidence: number;
   reasoning: string;
+}
+
+export interface CategorizedEmailWithPriority extends CategorizedEmail {
+  priority: {
+    level: PriorityLevel,
+    reasoning: string,
+    responseDeadline: string
+  }
 }
 
 /**

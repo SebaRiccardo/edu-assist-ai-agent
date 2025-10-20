@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { CategorizedEmail } from '@/types';
+import { CategorizedEmail, CategorizedEmailWithPriority } from '@/types';
 
 /**
  * Draft state for a specific email
@@ -20,15 +20,21 @@ interface EmailDraftState {
  * Email state per account
  */
 interface AccountEmailState {
-    emails: CategorizedEmail[];
+    emails: (CategorizedEmail | CategorizedEmailWithPriority)[];
     isAnalyzing: boolean;
     stats: {
         totalAnalyzed: number;
         courseRelated: number;
     } | null;
-}
-
-/**
+    priorityStats?: {
+        summary: string;
+        critical: number;
+        high: number;
+        medium: number;
+        low: number;
+        total: number;
+    } | null;
+}/**
  * Reply state tracking
  */
 interface ReplyState {
@@ -53,9 +59,10 @@ interface CourseInboxContextState {
     selectedEmailId: string | null;
 
     // Actions
-    setAccountEmails: (accountId: string, emails: CategorizedEmail[]) => void;
+    setAccountEmails: (accountId: string, emails: (CategorizedEmail | CategorizedEmailWithPriority)[]) => void;
     setAccountAnalyzing: (accountId: string, isAnalyzing: boolean) => void;
     setAccountStats: (accountId: string, stats: { totalAnalyzed: number; courseRelated: number }) => void;
+    setAccountPriorityStats: (accountId: string, priorityStats: { summary: string; critical: number; high: number; medium: number; low: number; total: number }) => void;
     clearAccountData: (accountId: string) => void;
 
     // Draft actions
@@ -74,11 +81,12 @@ interface CourseInboxContextState {
 
     // Selection actions
     selectEmail: (emailId: string | null) => void;
-    getSelectedEmail: (accountId: string) => CategorizedEmail | null;
+    getSelectedEmail: (accountId: string) => (CategorizedEmail | CategorizedEmailWithPriority) | null;
 
     // Helper getters
-    getAccountEmails: (accountId: string) => CategorizedEmail[];
+    getAccountEmails: (accountId: string) => (CategorizedEmail | CategorizedEmailWithPriority)[];
     getAccountStats: (accountId: string) => { totalAnalyzed: number; courseRelated: number } | null;
+    getAccountPriorityStats: (accountId: string) => { summary: string; critical: number; high: number; medium: number; low: number; total: number } | null;
     isAccountAnalyzing: (accountId: string) => boolean;
 }
 
@@ -98,7 +106,7 @@ export function CourseInboxProvider({ children }: CourseInboxProviderProps) {
     const [selectedEmailId, setSelectedEmailId] = useState<string | null>(null);
 
     // Account email management
-    const setAccountEmails = useCallback((accountId: string, emails: CategorizedEmail[]) => {
+    const setAccountEmails = useCallback((accountId: string, emails: (CategorizedEmail | CategorizedEmailWithPriority)[]) => {
         setEmailsByAccount(prev => ({
             ...prev,
             [accountId]: {
@@ -116,6 +124,7 @@ export function CourseInboxProvider({ children }: CourseInboxProviderProps) {
                 isAnalyzing,
                 emails: prev[accountId]?.emails || [],
                 stats: prev[accountId]?.stats || null,
+                priorityStats: prev[accountId]?.priorityStats || null,
             },
         }));
     }, []);
@@ -129,6 +138,23 @@ export function CourseInboxProvider({ children }: CourseInboxProviderProps) {
                     stats,
                     emails: prev[accountId]?.emails || [],
                     isAnalyzing: prev[accountId]?.isAnalyzing || false,
+                    priorityStats: prev[accountId]?.priorityStats || null,
+                },
+            }));
+        },
+        []
+    );
+
+    const setAccountPriorityStats = useCallback(
+        (accountId: string, priorityStats: { summary: string; critical: number; high: number; medium: number; low: number; total: number }) => {
+            setEmailsByAccount(prev => ({
+                ...prev,
+                [accountId]: {
+                    ...prev[accountId],
+                    priorityStats,
+                    emails: prev[accountId]?.emails || [],
+                    isAnalyzing: prev[accountId]?.isAnalyzing || false,
+                    stats: prev[accountId]?.stats || null,
                 },
             }));
         },
@@ -299,7 +325,7 @@ export function CourseInboxProvider({ children }: CourseInboxProviderProps) {
     }, []);
 
     const getSelectedEmail = useCallback(
-        (accountId: string): CategorizedEmail | null => {
+        (accountId: string): (CategorizedEmail | CategorizedEmailWithPriority) | null => {
             if (!selectedEmailId) return null;
             const emails = emailsByAccount[accountId]?.emails || [];
             return emails.find(e => e.id === selectedEmailId) || null;
@@ -309,7 +335,7 @@ export function CourseInboxProvider({ children }: CourseInboxProviderProps) {
 
     // Helper getters
     const getAccountEmails = useCallback(
-        (accountId: string): CategorizedEmail[] => {
+        (accountId: string): (CategorizedEmail | CategorizedEmailWithPriority)[] => {
             return emailsByAccount[accountId]?.emails || [];
         },
         [emailsByAccount]
@@ -318,6 +344,13 @@ export function CourseInboxProvider({ children }: CourseInboxProviderProps) {
     const getAccountStats = useCallback(
         (accountId: string) => {
             return emailsByAccount[accountId]?.stats || null;
+        },
+        [emailsByAccount]
+    );
+
+    const getAccountPriorityStats = useCallback(
+        (accountId: string) => {
+            return emailsByAccount[accountId]?.priorityStats || null;
         },
         [emailsByAccount]
     );
@@ -337,6 +370,7 @@ export function CourseInboxProvider({ children }: CourseInboxProviderProps) {
         setAccountEmails,
         setAccountAnalyzing,
         setAccountStats,
+        setAccountPriorityStats,
         clearAccountData,
         initializeDraft,
         setDraftGenerating,
@@ -352,6 +386,7 @@ export function CourseInboxProvider({ children }: CourseInboxProviderProps) {
         getSelectedEmail,
         getAccountEmails,
         getAccountStats,
+        getAccountPriorityStats,
         isAccountAnalyzing,
     };
 

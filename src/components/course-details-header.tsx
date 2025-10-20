@@ -67,7 +67,12 @@ export function CourseDetailsHeader({ course, isChecking, onAnalyze, onEdit }: C
               <div className="flex flex-row gap-2 items-center mb-2">
                 <h1 className="text-3xl font-bold tracking-tight text-foreground">{course.name}</h1>
                 <Badge>{course.year}</Badge>
+                {course.studentCount > 0 && (
+                  <Badge variant="info">{t('students', { count: course.studentCount })}</Badge>
+                )}
               </div>
+
+
               <div className="flex items-center gap-3">
                 {onEdit && (
                   <Button onClick={onEdit} variant="ghost" size="sm" className="gap-2 shadow-none">
@@ -79,17 +84,12 @@ export function CourseDetailsHeader({ course, isChecking, onAnalyze, onEdit }: C
             </div>
             <p className="text-sm text-pretty max-w-sm lg:max-w-5xl truncate text-muted-foreground ">{course.description}</p>
 
-            {course.studentCount > 0 && (
-              <div className="flex items-center gap-2 pt-4 text-muted-foreground">
-                <Badge variant="info">{t('students', { count: course.studentCount })}</Badge>
-              </div>
-            )}
 
             {/* Course Context Collapsible */}
             {course.context && (
               <Collapsible open={isContextOpen} onOpenChange={setIsContextOpen} className="mt-4">
                 <CollapsibleTrigger asChild>
-                  <Button variant="link" size="sm" className=" p-0">
+                  <Button variant="link" size="sm" className="has-[>svg]:px-0 ">
                     <span className="text-sm font-normal">{isContextOpen ? t('hideContext') : t('readContext')}</span>
                     <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${isContextOpen ? 'rotate-180' : ''}`} />
                   </Button>

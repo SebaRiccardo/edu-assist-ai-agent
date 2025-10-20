@@ -556,7 +556,15 @@
       "grade_inquiry": "Consulta de Calificación",
       "other": "Otro"
     },
+    "priorityLabels": {
+      "critical": "Crítico",
+      "high": "Prioridad Alta",
+      "medium": "Prioridad Media",
+      "low": "Prioridad Baja"
+    },
     "new": "Nuevo",
+    "responseDeadline": "Plazo de Respuesta sugerido",
+    "priorityReasoning": "Razonamiento de Prioridad",
     "viewAiReasoning": "Ver Razonamiento IA",
     "aiReasoning": "Razonamiento IA",
     "confidence": "{percentage}% de confianza",
