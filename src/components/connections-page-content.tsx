@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useConnections } from '@/hooks/use-connections';
 import { useInitiateConnection, useDeleteConnection } from '@/hooks/mutations/use-connection-mutations';
 import { EmailConnectedAccountCard } from '@/components/gmail-account-card';
@@ -20,6 +21,8 @@ interface ConnectionDialogState {
 }
 
 export function ConnectionsPageContent() {
+  const t = useTranslations('Connections');
+  const tCommon = useTranslations('Common');
   const { data: accounts = [], isLoading } = useConnections();
   const initiateConnection = useInitiateConnection();
   const deleteConnection = useDeleteConnection();
@@ -81,8 +84,8 @@ export function ConnectionsPageContent() {
         <div className="w-full flex flex-col gap-6">
           {/* Header */}
           <div className="flex flex-col gap-2">
-            <h1 className="text-3xl font-bold">Email Connections</h1>
-            <p className="text-muted-foreground">Manage your connected Gmail accounts. Connect new accounts or remove existing ones.</p>
+            <h1 className="text-3xl font-bold">{t('title')}</h1>
+            <p className="text-muted-foreground">{t('description')}</p>
           </div>
 
           {/* Accounts Grid */}
@@ -108,8 +111,8 @@ export function ConnectionsPageContent() {
               triggerButton={
                 <AddConnectionCard
                   logo={gmailLogo}
-                  title="Connect new Gmail Account"
-                  description="Connect a new Gmail account to manage your emails across multiple courses."
+                  title={t('connectGmailTitle')}
+                  description={t('connectGmailDescription')}
                   isLoading={initiateConnection.isPending && initiateConnection.variables?.emailProvider === 'GMAIL'}
                   disabled={isAnyMutating}
                   onClick={() => toggleDialog('gmail')}
@@ -128,8 +131,8 @@ export function ConnectionsPageContent() {
               triggerButton={
                 <AddConnectionCard
                   logo={outlookLogo}
-                  title="Connect new Outlook Account"
-                  description="Connect a new Outlook account to manage your emails across multiple courses."
+                  title={t('connectOutlookTitle')}
+                  description={t('connectOutlookDescription')}
                   isLoading={initiateConnection.isPending && initiateConnection.variables?.emailProvider === 'OUTLOOK'}
                   disabled={isAnyMutating}
                   onClick={() => toggleDialog('outlook')}

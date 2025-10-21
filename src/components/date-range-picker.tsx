@@ -15,7 +15,7 @@ interface DateRangePickerProps {
 export function DateRangePicker({ dateRange, onDateRangeChange, disabled = false, className }: DateRangePickerProps) {
   return (
     <div className={cn('flex min-w-0 flex-col', className)}>
-      {dateRange?.from && dateRange?.to && (
+      {/* {dateRange?.from && dateRange?.to && (
         <div className="mb-4 rounded-md bg-muted/50 p-4 text-sm">
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-primary" />
@@ -26,7 +26,7 @@ export function DateRangePicker({ dateRange, onDateRangeChange, disabled = false
             <span className="font-semibold text-foreground">{dateRange.to.toLocaleDateString()}</span>
           </p>
         </div>
-      )}
+      )} */}
       <Calendar
         mode="range"
         selected={dateRange}

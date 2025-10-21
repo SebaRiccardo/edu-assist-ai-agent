@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ExternalLink, Loader2, Trash2, Unlink } from 'lucide-react';
 import { ComposioConnectedAccount } from '@/app/api/connections/route';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import gmailLogo from '@/assets/svg/gmail.svg';
 import outlookLogo from '@/assets/svg/outlook-logo.svg';
@@ -24,8 +25,6 @@ const CARD_STYLES =
 
 const getProviderLogo = (type: string) => (type === 'gmail' ? gmailLogo : outlookLogo);
 
-const getAccountTitle = (type: string) => (type === 'GMAIL' ? 'Gmail Account' : 'Outlook Account');
-
 const getBadgeVariant = (status: string) => {
   if (status === 'ACTIVE') return 'success';
   if (status === 'INITIATED') return 'warning';
@@ -33,8 +32,11 @@ const getBadgeVariant = (status: string) => {
 };
 
 export function EmailConnectedAccountCard({ account, isDeleting, onDelete, type }: EmailConnectedAccountCardProps) {
+  const t = useTranslations('Connections');
+  const tCommon = useTranslations('Common');
   const isActive = account.status === 'ACTIVE';
   const providerLogo = getProviderLogo(type);
+  const accountTitle = type === 'gmail' ? t('gmailAccount') : t('outlookAccount');
 
   const handleDelete = () => onDelete?.(account);
   const handleAuthorize = () => account.redirectUrl && window.open(account.redirectUrl, '_blank');
@@ -49,24 +51,24 @@ export function EmailConnectedAccountCard({ account, isDeleting, onDelete, type 
                 <Image src={providerLogo} width={40} height={40} alt="Provider Logo" />
               </div>
               <div className="flex flex-col gap-1">
-                <span className="text-base font-semibold">Email Account</span>
-                <span className="text-sm truncate text-red-500">Authorization required</span>
+                <span className="text-base font-semibold">{t('emailAccount')}</span>
+                <span className="text-sm truncate text-red-500">{t('authorizationRequired')}</span>
               </div>
             </div>
-            <Badge variant={getBadgeVariant(account.status)}>{account.status}</Badge>
+            <Badge variant={getBadgeVariant(account.status)}>{account.status === 'ACTIVE' ? t('active') : t('initiated')}</Badge>
           </div>
         </CardHeader>
         <CardContent className="flex-1">
-          <p className="text-left text-muted-foreground text-base">Complete the authorization to activate this account.</p>
+          <p className="text-left text-muted-foreground text-base">{t('completeAuth')}</p>
         </CardContent>
         <CardFooter className="flex-1 gap-2">
           <Button size="sm" variant="destructive" disabled={!account.redirectUrl} onClick={handleDelete}>
             <Trash2 className="mr-2 h-4 w-4" />
-            Delete
+            {t('delete')}
           </Button>
           <Button size="sm" className="flex-1" disabled={!account.redirectUrl} onClick={handleAuthorize}>
             <ExternalLink className="mr-2 h-4 w-4" />
-            Complete Authorization
+            {t('completeAuthButton')}
           </Button>
         </CardFooter>
       </Card>
@@ -82,21 +84,21 @@ export function EmailConnectedAccountCard({ account, isDeleting, onDelete, type 
               <Image src={providerLogo} width={40} height={40} alt={`${type} Logo`} />
             </div>
             <div className="flex flex-col">
-              <span className="text-base font-semibold">{getAccountTitle(type)}</span>
+              <span className="text-base font-semibold">{accountTitle}</span>
               <span className="text-sm truncate text-muted-foreground max-w-[230px]">{account.email}</span>
             </div>
           </div>
-          <Badge variant={getBadgeVariant(account.status)}>{account.status}</Badge>
+          <Badge variant={getBadgeVariant(account.status)}>{account.status === 'ACTIVE' ? t('active') : t('initiated')}</Badge>
         </div>
       </CardHeader>
       <CardContent className="flex-1">
-        <p className="text-left text-muted-foreground text-base">Use this email account to analyze course emails.</p>
+        <p className="text-left text-muted-foreground text-base">{t('useAccountDescription')}</p>
       </CardContent>
       <CardFooter className="flex-1">
         {onDelete && (
           <Button variant="link" className="w-full text-red-500" size="sm" onClick={handleDelete}>
             {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Unlink className="h-4 w-4" />}
-            Desconectar cuenta
+            {t('disconnectAccount')}
           </Button>
         )}
       </CardFooter>

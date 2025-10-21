@@ -3,6 +3,7 @@
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader2, MailPlus } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import Image, { StaticImageData } from 'next/image';
 
 interface AddConnectionCardProps {
@@ -21,6 +22,8 @@ const HOVER_STYLES = {
 } as const;
 
 export const AddConnectionCard = ({ logo, title, description, isLoading, disabled, onClick, hoverColor }: AddConnectionCardProps) => {
+  const t = useTranslations('Connections');
+
   return (
     <Card
       className={`bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 gap-2 
@@ -51,12 +54,12 @@ export const AddConnectionCard = ({ logo, title, description, isLoading, disable
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Connecting...
+              {t('connecting')}
             </>
           ) : (
             <>
               <MailPlus className="mr-2 h-4 w-4" />
-              Connect Account
+              {t('connectAccount')}
             </>
           )}
         </Button>

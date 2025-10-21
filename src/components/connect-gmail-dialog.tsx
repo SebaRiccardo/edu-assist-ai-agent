@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { ExternalLink, MailPlus } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import outlookLogo from '@/assets/svg/outlook-logo.svg';
 import gmailLogo from '@/assets/svg/gmail.svg';
@@ -29,6 +30,10 @@ interface ConnectGmailDialogProps {
 }
 
 export function ConnectGmailDialog({ open, onOpenChange, onConnect, triggerButton, type, isLoading }: ConnectGmailDialogProps) {
+  const t = useTranslations('Connections');
+  const provider = type === 'GMAIL' ? t('gmail') : t('outlook');
+  const authProvider = type === 'GMAIL' ? t('google') : t('microsoft');
+
   const handleConnect = () => {
     onConnect(type);
   };
@@ -42,16 +47,11 @@ export function ConnectGmailDialog({ open, onOpenChange, onConnect, triggerButto
             <Image src={type === 'GMAIL' ? gmailLogo : outlookLogo} width={60} height={60} alt="Email Logo" />
           </div>
           <div className="flex flex-col gap-1">
-            <DialogTitle>Connect {type === 'GMAIL' ? 'Gmail' : 'Outlook'} Account</DialogTitle>
-            <DialogDescription>
-              To connect your {type === 'GMAIL' ? 'Gmail' : 'Outlook'} account, you need to authorize this application.
-            </DialogDescription>
+            <DialogTitle>{t('connectDialogTitle', { provider })}</DialogTitle>
+            <DialogDescription>{t('connectDialogDescription', { provider })}</DialogDescription>
           </div>
         </DialogHeader>
-        <p className="text-sm text-muted-foreground">
-          Click the button below to proceed to {type === 'GMAIL' ? "Google's" : "Microsoft's"} authorization page. A new window will open where you
-          can securely connect your account.
-        </p>
+        <p className="text-sm text-muted-foreground">{t('connectDialogContent', { provider: authProvider })}</p>
         <DialogFooter>
           <Button type="button" onClick={handleConnect}>
             {isLoading ? (
@@ -59,7 +59,7 @@ export function ConnectGmailDialog({ open, onOpenChange, onConnect, triggerButto
             ) : (
               <div className="flex gap-1 items-center">
                 <ExternalLink className="mr-2 h-4 w-4" />
-                Open Authorization Page
+                {t('openAuthPage')}
               </div>
             )}
           </Button>

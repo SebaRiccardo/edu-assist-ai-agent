@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -15,7 +15,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { DateRangePicker } from '@/components/date-range-picker';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Loader2, Calendar as CalendarIcon, ChevronDown } from 'lucide-react';
+import { Loader2, Calendar as CalendarIcon, ChevronDown, Maximize2 } from 'lucide-react';
+import { Separator } from './ui/separator';
 
 // Zod validation schema for course form - will be created with translations
 const createCourseFormSchema = (t: any) =>
@@ -71,6 +72,7 @@ interface CourseFormDialogProps {
 export function CourseFormDialog({ open, onOpenChange, course, onSubmit, isLoading = false }: CourseFormDialogProps) {
   const t = useTranslations('CourseForm');
   const isEdit = !!course;
+  const [contextDialogOpen, setContextDialogOpen] = useState(false);
 
   // Initialize form with React Hook Form and Zod validation
   const form = useForm<CourseFormValues>({
@@ -132,7 +134,7 @@ export function CourseFormDialog({ open, onOpenChange, course, onSubmit, isLoadi
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[800px] max-h-[95vh] overflow-y-auto bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background">
+      <DialogContent className="no-scroll sm:max-w-[800px] max-h-[95vh] overflow-y-auto bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background">
         <DialogHeader>
           <DialogTitle>{isEdit ? t('editTitle') : t('createTitle')}</DialogTitle>
           <DialogDescription>{isEdit ? t('editDescription') : t('createDescription')}</DialogDescription>
@@ -251,9 +253,22 @@ export function CourseFormDialog({ open, onOpenChange, course, onSubmit, isLoadi
                 name="context"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      {t('contextLabel')} <span className="text-red-500">*</span>
-                    </FormLabel>
+                    <div className="flex items-center justify-between">
+                      <FormLabel>
+                        {t('contextLabel')} <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setContextDialogOpen(true)}
+                        className="h-7 px-2"
+                        disabled={isLoading}
+                      >
+                        <Maximize2 className="h-4 w-4 mr-1" />
+                        {t('expandContext')}
+                      </Button>
+                    </div>
                     <FormControl>
                       <Textarea
                         placeholder={t('contextPlaceholder')}
@@ -272,9 +287,28 @@ export function CourseFormDialog({ open, onOpenChange, course, onSubmit, isLoadi
                   </FormItem>
                 )}
               />
+              <Separator />
+              <FormDescription>{t('durationDescription')}</FormDescription>
+              <DateRangePicker
+                dateRange={{
+                  from: form.watch('start_at') || undefined,
+                  to: form.watch('end_at') || undefined,
+                }}
+                onDateRangeChange={range => {
+                  form.setValue('start_at', range?.from || null);
+                  form.setValue('end_at', range?.to || null);
 
+                  // Auto-fill year based on the start date
+                  if (range?.from) {
+                    const year = range.from.getFullYear().toString();
+                    form.setValue('year', year);
+                  }
+                }}
+                disabled={isLoading}
+              />
+              {form.formState.errors.end_at && <p className="text-sm font-medium text-destructive">{form.formState.errors.end_at.message}</p>}
               {/* Course Duration (Date Range) - Collapsible */}
-              <Collapsible className="space-y-2">
+              {/* <Collapsible className="space-y-2">
                 <CollapsibleTrigger asChild>
                   <Button type="button" variant="outline" className="w-full justify-between" disabled={isLoading}>
                     <span className="flex items-center gap-2">
@@ -310,7 +344,7 @@ export function CourseFormDialog({ open, onOpenChange, course, onSubmit, isLoadi
                   />
                   {form.formState.errors.end_at && <p className="text-sm font-medium text-destructive">{form.formState.errors.end_at.message}</p>}
                 </CollapsibleContent>
-              </Collapsible>
+              </Collapsible> */}
             </div>
 
             <DialogFooter className="gap-2">
@@ -333,6 +367,38 @@ export function CourseFormDialog({ open, onOpenChange, course, onSubmit, isLoadi
           </form>
         </Form>
       </DialogContent>
+
+      {/* Expanded Context Dialog */}
+      <Dialog open={contextDialogOpen} onOpenChange={setContextDialogOpen}>
+        <DialogContent className="sm:max-w-7xl w-full h-[90vh] max-h-[90vh] flex flex-col bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background">
+          <DialogHeader>
+            <DialogTitle>{t('contextExpandedTitle')}</DialogTitle>
+            <DialogDescription>{t('contextExpandedDescription')}</DialogDescription>
+          </DialogHeader>
+          <div className="flex-1 flex flex-col min-h-0 gap-3">
+            <Textarea
+              value={form.watch('context')}
+              onChange={e => form.setValue('context', e.target.value)}
+              placeholder={t('contextPlaceholder')}
+              className="flex-1 min-h-0 bg-blue-50 border-none resize-none font-mono text-sm shadow-none"
+              disabled={isLoading}
+            />
+            <div className="flex items-center justify-between text-sm text-muted-foreground">
+              <span>
+                {t('contextDescription', {
+                  count: form.watch('context')?.length || 0,
+                })}
+              </span>
+              {form.formState.errors.context && <p className="text-sm font-medium text-destructive">{form.formState.errors.context.message}</p>}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="button" onClick={() => setContextDialogOpen(false)} className="h-11 shadow-none">
+              {t('done')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Dialog>
   );
 }
