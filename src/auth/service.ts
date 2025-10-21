@@ -16,6 +16,7 @@ export interface AuthResponse {
   error?: string;
 }
 
+export const GOOGLE_OAUTH_REDIRECT_URL = process.env.NEXT_PUBLIC_GOOGLE_OAUTH_REDIRECT_URL;
 /**
  * Sign up a new user with email and password
  */
@@ -31,6 +32,36 @@ export async function signUpWithEmailAndPassword(data: SignUpData): Promise<Auth
         data: {
           first_name: data.displayName,
         },
+      },
+    });
+
+    if (error) {
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'An unexpected error occurred',
+    };
+  }
+}
+
+/**
+ * Sign up a new user with email and password
+ */
+export async function signInWithGoogle(): Promise<AuthResponse> {
+  try {
+    const supabase = createClient();
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: GOOGLE_OAUTH_REDIRECT_URL,
       },
     });
 

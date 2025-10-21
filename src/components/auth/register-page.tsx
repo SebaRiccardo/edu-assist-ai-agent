@@ -4,16 +4,24 @@ import { Separator } from '@/components/ui/separator';
 import WordmarkLogo from '@/components/wordmark-logo';
 import RegisterForm from '@/components/auth/register-form';
 import Link from 'next/link';
-import { Mail, Users } from 'lucide-react';
+import { Loader2, Mail, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { signInWithGoogle } from '@/auth/service';
+import { useState } from 'react';
 
 const Register = () => {
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const handleGoogleSignIn = async () => {
+    setIsLoggingIn(true);
+    await signInWithGoogle();
+    setIsLoggingIn(false);
+  };
   const t = useTranslations('Auth');
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       {/* Left Panel - Form */}
       <div className="flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
-        <div className="w-full max-w-md space-y-8">
+        <div className="w-full max-w-md space-y-6">
           {/* Logo */}
           <div className="flex justify-start">
             <WordmarkLogo className="gap-3" />
@@ -22,16 +30,20 @@ const Register = () => {
           {/* Header */}
           <div className="space-y-3">
             <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('registerWelcomeTitle')}</h1>
-            <p className="text-base text-muted-foreground">{t('registerWelcomeSubtitle')}</p>
+            <p className="text-sm text-muted-foreground">{t('registerWelcomeSubtitle')}</p>
           </div>
 
           {/* Google Sign In */}
-          <Button disabled variant="outline" className="w-full bg-background hover:bg-muted h-10">
-            <img
-              src="https://cdn.shadcnstudio.com/ss-assets/brand-logo/google-icon.png?width=20&height=20&format=auto"
-              alt="Google Icon"
-              className="size-5"
-            />
+          <Button onClick={handleGoogleSignIn} variant="outline" className="cursor-pointer w-full bg-background hover:bg-muted h-10">
+            {isLoggingIn ? (
+              <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+            ) : (
+              <img
+                src="https://cdn.shadcnstudio.com/ss-assets/brand-logo/google-icon.png?width=20&height=20&format=auto"
+                alt="Google Icon"
+                className="size-5"
+              />
+            )}
             <span>{t('loginWithGoogle')}</span>
           </Button>
 

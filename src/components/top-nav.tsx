@@ -19,6 +19,7 @@ import { signOut } from '@/auth/service';
 import WordmarkLogo from '@/components/wordmark-logo';
 import { User } from '@supabase/supabase-js';
 import LanguageSwitcher from './language-switcher';
+import { CurrentUserAvatar } from './current-user-avatar';
 
 export function DashboardNavBar({ user }: { user: User | null }) {
   const t = useTranslations('TopNav');
@@ -80,23 +81,15 @@ export function DashboardNavBar({ user }: { user: User | null }) {
           {/* User Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-9 w-9 rounded-full hover:bg-accent" disabled={loading}>
-                <Avatar className="h-9 w-9">
-                  <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-semibold">
-                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : initials}
-                  </AvatarFallback>
-                </Avatar>
+              <Button variant="link" disabled={loading} className="cursor-pointer">
+                <CurrentUserAvatar className="size-10 " />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-64" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-2 ">
                   <div className="flex items-center gap-2">
-                    <Avatar className="size-9">
-                      <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-semibold">
-                        {initials}
-                      </AvatarFallback>
-                    </Avatar>
+                    <CurrentUserAvatar />
                     <div className="flex flex-col">
                       <p className="text-sm font-semibold leading-none">{displayName}</p>
                       <p className="text-xs leading-none text-muted-foreground mt-1">{user?.email || t('loading')}</p>

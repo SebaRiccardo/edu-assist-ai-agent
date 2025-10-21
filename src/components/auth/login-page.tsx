@@ -6,8 +6,16 @@ import { LoginForm } from '@/components/auth/login-form';
 import Link from 'next/link';
 import { Mail, TrendingUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { signInWithGoogle } from '@/auth/service';
+import { useState } from 'react';
 
-const Login = () => {
+const LoginPage = () => {
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const handleGoogleSignIn = async () => {
+    setIsLoggingIn(true);
+    await signInWithGoogle();
+    setIsLoggingIn(false);
+  };
   const t = useTranslations('Auth');
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
@@ -61,7 +69,7 @@ const Login = () => {
           </div>
 
           {/* Google Sign In */}
-          <Button disabled variant="outline" className="w-full bg-background hover:bg-muted">
+          <Button onClick={handleGoogleSignIn} variant="outline" className="w-full bg-background hover:bg-muted">
             <img
               src="https://cdn.shadcnstudio.com/ss-assets/brand-logo/google-icon.png?width=20&height=20&format=auto"
               alt="Google Icon"
@@ -98,4 +106,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginPage;

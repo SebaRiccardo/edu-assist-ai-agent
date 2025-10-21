@@ -161,9 +161,9 @@ export default function RegisterForm() {
           name="agreeToTerms"
           render={({ field }) => (
             <FormItem className="flex flex-row items-start space-x-3 space-y-0 pt-2">
-              <FormControl>
+              {/* <FormControl>
                 <Checkbox checked={field.value} onCheckedChange={field.onChange} disabled={isLoading} className="mt-0.5" />
-              </FormControl>
+              </FormControl> */}
               <div className="space-y-1 leading-none">
                 <FormLabel className="text-sm font-normal text-muted-foreground">{t('agreeToTerms')}</FormLabel>
                 <FormMessage />

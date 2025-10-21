@@ -1,20 +1,21 @@
 import { createClient } from '@/lib/supabase/client'
 import { useEffect, useState } from 'react'
 
-export const useCurrentUserImage = () => {
-  const [image, setImage] = useState<string | null>(null)
+export const useCurrentUserName = () => {
+  const [name, setName] = useState<string | null>(null)
 
   useEffect(() => {
-    const fetchUserImage = async () => {
+    const fetchProfileName = async () => {
       const { data, error } = await createClient().auth.getSession()
       if (error) {
         console.error(error)
       }
 
-      setImage(data.session?.user.user_metadata.avatar_url ?? null)
+      setName(data.session?.user.user_metadata.full_name ?? '?')
     }
-    fetchUserImage()
+
+    fetchProfileName()
   }, [])
 
-  return image
+  return name || '?'
 }
