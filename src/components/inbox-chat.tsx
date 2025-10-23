@@ -174,7 +174,7 @@ export function InboxChat({ userId }: InboxChatProps) {
   }
 
   return (
-    <div className="flex flex-col h-full py-6 ">
+    <div className="flex flex-col flex-1 h-full p-6">
       {/* Connection Cards */}
       {/* <InboxConnectionCards
         inboxes={inboxes}
@@ -267,12 +267,12 @@ export function InboxChat({ userId }: InboxChatProps) {
         </ConversationContent>
       </Conversation>
 
-      <Suggestions className="max-w-4xl mx-auto overflow-hidden bg-transparent">
+      {/* <Suggestions className="max-w-4xl mx-auto overflow-hidden bg-transparent">
         {suggestions.map(suggestion => (
           <Suggestion key={suggestion} onClick={handleSuggestionClick} suggestion={suggestion} />
         ))}
-      </Suggestions>
-      <PromptInput onSubmit={handleSubmit} className="mt-4 bg-transparent max-w-4xl mx-auto relative">
+      </Suggestions> */}
+      <PromptInput onSubmit={handleSubmit} className="sticky bottom-0 bg-background pb-4 max-w-4xl mx-auto">
         <PromptInputBody>
           <PromptInputTextarea
             value={input}

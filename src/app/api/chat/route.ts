@@ -188,9 +188,9 @@ export async function POST(req: Request) {
     };
 
     const result = streamText({
-      model: google('gemini-2.0-flash'),
+      model: google('gemini-2.0-flash-lite'),
       messages: convertToModelMessages(messages),
-      //stopWhen: stepCountIs(5),
+      stopWhen: stepCountIs(10),
       tools: allTools,
       system: `You are an intelligent email assistant that helps users manage and analyze their Gmail inbox. 
 You have access to:
