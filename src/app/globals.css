@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
-
+@custom-variant hover (&:hover);
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -31,8 +31,8 @@
   --sidebar-foreground: oklch(0.14 0 0);
   --sidebar-primary: oklch(0.2 0 0);
   --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.2 0 0);
+  --sidebar-accent: #3981f6;
+  --sidebar-accent-foreground: oklch(100% 0.00011 271.152);
   --sidebar-border: oklch(0.92 0 0);
   --sidebar-ring: oklch(0.71 0 0);
 
@@ -166,12 +166,15 @@
 
 @layer base {
   .no-scrollbar {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
   }
 
   .no-scrollbar::-webkit-scrollbar {
-    display: none; /* Chrome, Safari and Opera */
+    display: none;
+    /* Chrome, Safari and Opera */
   }
 
   /* Hide scrollbar for webkit browsers */
@@ -258,6 +261,7 @@
       height: 0;
       opacity: 0;
     }
+
     to {
       height: var(--radix-collapsible-content-height);
       opacity: 1;
@@ -269,6 +273,7 @@
       height: var(--radix-collapsible-content-height);
       opacity: 1;
     }
+
     to {
       height: 0;
       opacity: 0;

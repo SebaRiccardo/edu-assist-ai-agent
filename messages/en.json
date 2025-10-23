@@ -12,7 +12,7 @@
   "Nav": {
     "home": "Home",
     "dashboard": "Dashboard",
-    "accounts" : "Email Accounts",
+    "accounts": "Email Accounts",
     "courses": "Courses",
     "emails": "Emails",
     "settings": "Settings",
@@ -149,6 +149,56 @@
     "seeMore": "See More",
     "aiReady": "AI Ready"
   },
+  "DashboardNavigation": {
+    "section": "Workspace",
+    "overview": "Overview",
+    "courses": "Courses",
+    "chat": "Inbox Chat",
+    "connections": "Connections",
+    "settings": "Settings"
+  },
+  "DashboardHeader": {
+    "overview": {
+      "title": "Welcome back, {name}!",
+      "description": "Track course progress and inbox insights in one place.",
+      "cta": "Create course"
+    },
+    "courses": {
+      "title": "Courses",
+      "description": "Create, update, and monitor every class you teach.",
+      "cta": "New course"
+    },
+    "courseDetail": {
+      "title": "Course workspace",
+      "description": "Review course activity, AI actions, and student outreach.",
+      "cta": "Back to courses"
+    },
+    "courseAutoLabel": {
+      "title": "Auto-label setup",
+      "description": "Configure automated labels so every email lands in the right folder.",
+      "cta": "Back to course"
+    },
+    "chat": {
+      "title": "Inbox chat",
+      "description": "Ask the AI to search, summarize, and draft replies from your inbox.",
+      "cta": "Analyze inbox"
+    },
+    "connections": {
+      "title": "Email connections",
+      "description": "Manage the inboxes that power your course automations.",
+      "cta": "Connect account"
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "Adjust account preferences, billing, and notifications.",
+      "cta": "Update profile"
+    },
+    "fallback": {
+      "title": "Dashboard",
+      "description": "Navigate through your teaching tools.",
+      "cta": "Go to overview"
+    }
+  },
   "Email": {
     "inbox": "Inbox",
     "analyze": "Analyze",
@@ -185,23 +235,23 @@
       "newPassword": "New password",
       "integratedAccount": "Integrated account",
       "integratedAccountDescription": "Manage your current integrated accounts.",
-  "unlink": "Unlink",
-  "noOauthConnected": "No OAuth accounts connected",
-  "unlinkConfirmTitle": "Unlink identity?",
-  "unlinkConfirmDescription": "You’re about to unlink this OAuth identity from your account. You can re-link it later from the login page.",
-  "identityUnlinked": "Identity unlinked successfully",
-  "identityUnlinkFailed": "Failed to unlink identity. Please try again.",
-  "cannotUnlinkNeedAnotherMethod": "You need at least one other sign-in method before unlinking this identity.",
-  "setPasswordTitle": "Set a password to keep access",
-  "setPasswordDescription": "You’re unlinking your last OAuth identity. Set a password so you can continue signing in with email.",
-  "setPasswordCta": "Set password",
-  "passwordTooShort": "Password must be at least 8 characters",
-  "passwordsDoNotMatch": "Passwords do not match",
-  "passwordSetSuccess": "Password set successfully. You can now unlink the identity.",
-  "passwordSetFailed": "Failed to set password. Please try again.",
-  "linkGoogle": "Link Google account",
-  "linking": "Linking...",
-  "linkFailed": "Failed to start linking. Please try again.",
+      "unlink": "Unlink",
+      "noOauthConnected": "No OAuth accounts connected",
+      "unlinkConfirmTitle": "Unlink identity?",
+      "unlinkConfirmDescription": "You’re about to unlink this OAuth identity from your account. You can re-link it later from the login page.",
+      "identityUnlinked": "Identity unlinked successfully",
+      "identityUnlinkFailed": "Failed to unlink identity. Please try again.",
+      "cannotUnlinkNeedAnotherMethod": "You need at least one other sign-in method before unlinking this identity.",
+      "setPasswordTitle": "Set a password to keep access",
+      "setPasswordDescription": "You’re unlinking your last OAuth identity. Set a password so you can continue signing in with email.",
+      "setPasswordCta": "Set password",
+      "passwordTooShort": "Password must be at least 8 characters",
+      "passwordsDoNotMatch": "Passwords do not match",
+      "passwordSetSuccess": "Password set successfully. You can now unlink the identity.",
+      "passwordSetFailed": "Failed to set password. Please try again.",
+      "linkGoogle": "Link Google account",
+      "linking": "Linking...",
+      "linkFailed": "Failed to start linking. Please try again.",
       "connected": "Connected",
       "verified": "Verified",
       "notVerified": "Not verified",

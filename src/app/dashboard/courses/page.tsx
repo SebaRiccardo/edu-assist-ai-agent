@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CourseCard } from '@/components/course-card';
 import { CourseFormDialog } from '@/components/course-form-dialog';
@@ -8,6 +8,7 @@ import { Loader2, Plus, BookOpen } from 'lucide-react';
 import { useCourses, useCreateCourse, useUpdateCourse, useDeleteCourse } from '@/hooks/use-courses';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { Course, InsertCourse } from '@/lib/supabase/types/courses.types';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function CoursesPage() {
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
@@ -18,6 +19,8 @@ export default function CoursesPage() {
   const { mutateAsync: createCourse } = useCreateCourse();
   const { mutateAsync: updateCourse, isPending: isUpdatingCourse, variables } = useUpdateCourse();
   const { mutateAsync: deleteCourse } = useDeleteCourse();
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const handleSubmitCourse = async (courseData: Omit<InsertCourse, 'professor_id' | 'created_at' | 'updated_at' | 'id'>) => {
     try {
@@ -78,40 +81,29 @@ export default function CoursesPage() {
     setIsFormOpen(true);
   };
 
-  const handleOpenCreateForm = () => {
+  const handleOpenCreateForm = useCallback(() => {
     setEditingCourse(null);
     setIsFormOpen(true);
-  };
+  }, []);
 
-  const handleCloseForm = () => {
+  const handleCloseForm = useCallback(() => {
     setIsFormOpen(false);
     setEditingCourse(null);
-  };
+  }, []);
+
+  const createParam = searchParams.get('create');
+
+  useEffect(() => {
+    if (createParam === 'true') {
+      handleOpenCreateForm();
+      router.replace('/dashboard/courses', { scroll: false });
+    }
+  }, [createParam, handleOpenCreateForm, router]);
 
   return (
-    <div className="flex flex-1 flex-col my-5">
-      {/* Header */}
-      <div className="mx-auto max-w-7xl w-full px-6 mb-6">
-        <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-3xl p-8 border-none shadow-none">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <BookOpen className="h-6 w-6 text-muted-foreground" />
-              <div>
-                <h1 className="text-2xl font-bold">Courses</h1>
-                <p className="text-sm text-muted-foreground">Manage your courses and check student emails</p>
-              </div>
-            </div>
-            <Button onClick={handleOpenCreateForm} size="lg" className="gap-2">
-              <Plus className="h-4 w-4" />
-              Create Course
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="flex-1 mx-auto max-w-7xl w-full px-6 pb-8">
-        <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-3xl p-8 border-none shadow-none">
+    <div className="flex flex-col flex-1">
+      <div className="flex-1 w-full">
+        <div>
           {/* Loading State */}
           {isLoading && (
             <div className="flex items-center justify-center py-20">
@@ -149,7 +141,7 @@ export default function CoursesPage() {
         onOpenChange={handleCloseForm}
         course={editingCourse}
         onSubmit={handleSubmitCourse}
-        isLoading={isUpdatingCourse && editingCourse?.id === variables.id}
+        isLoading={isUpdatingCourse && editingCourse?.id === variables?.id}
       />
     </div>
   );

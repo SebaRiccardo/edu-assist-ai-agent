@@ -323,23 +323,22 @@ function CourseDetailsPageContent() {
 
   if (isLoadingCourse || isLoadingConnections || !domainCourse) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <div className="flex items-center justify-center h-full">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   const activeConnections = connections?.filter(conn => conn.status === 'ACTIVE' && conn.email) || [];
-
   const hasNoConnections = activeConnections.length === 0;
 
   return (
-    <div className="flex flex-1 flex-col">
-      <div className="mx-auto max-w-7xl w-full px-6 space-y-6">
-        <CourseDetailsHeader course={domainCourse} isChecking={false} onAnalyze={() => { }} onEdit={handleEditCourse} />
+    <div className="flex flex-col">
+      <div className="w-full space-y-6">
+        {/* <CourseDetailsHeader course={domainCourse} isChecking={false} onAnalyze={() => { }} onEdit={handleEditCourse} /> */}
 
         {/* Auto-Label Navigation */}
-        {!hasNoConnections && (
+        {/* {!hasNoConnections && (
           <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-lg p-4 border-none shadow-none">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -362,8 +361,7 @@ function CourseDetailsPageContent() {
               </Button>
             </div>
           </div>
-        )}
-
+        )} */}
         <ConnectionStatusCard status={emailConnection.connectionStatus} onCancel={emailConnection.cancelConnection} />
       </div>
 
@@ -380,92 +378,84 @@ function CourseDetailsPageContent() {
           onRetry={emailConnection.retryConnection}
         />
       ) : (
-        <div className="flex-1 overflow-hidden mx-auto max-w-7xl w-full px-6 pt-6">
-          <Tabs value={selectedAccountId} onValueChange={setSelectedAccountId} className="gap-0">
-            {/* Gmail Account Tabs */}
-            <TabsList className=" justify-between bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-lg rounded-b-none border-b p-0">
-              {activeConnections.map(account => (
-                <TabsTrigger
-                  key={account.id}
-                  value={account.id}
-                  disabled={account.status !== 'ACTIVE'}
-                  className="px-4 rounded-md rounded-b-none data-[state=active]:border-primary dark:data-[state=active]:border-primary data-[state=active]:text-foreground text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground hover:border-muted-foreground/30 h-full border-0 border-b-2 border-transparent data-[state=active]:shadow-none"
-                >
-                  {/* <Mail className="h-4 w-4" /> */}
-                  <span className="hidden sm:inline text-sm">{account.email || account.id}</span>
-                  {account.status !== 'ACTIVE' && (
-                    <Badge variant="destructive" className="ml-2">
-                      {account.status}
-                    </Badge>
-                  )}
-                  {isAccountAnalyzing(account.id) && !getAccountStats(account.id) && (
-                    <Loader2 className="ml-1 h-4 w-4 animate-spin text-muted-foreground" />
-                  )}
-                  {getAccountStats(account.id) && (
-                    <Badge variant="secondary" className="ml-1">
-                      {getAccountStats(account.id)!.courseRelated} / {getAccountStats(account.id)!.totalAnalyzed}
-                    </Badge>
-                  )}
-                </TabsTrigger>
-              ))}
-              {/* Max Emails Selector */}
-              <div className="ml-10">
-                {/* <Label htmlFor="maxEmails" className="text-sm font-medium">
-                  {t('maxEmailsLabel')}:
-                </Label> */}
-                <Select value={maxEmails.toString()} onValueChange={value => setMaxEmails(Number(value))}>
-                  <SelectTrigger id="maxEmails" className="bg-primary rounded-b-none text-white shadow-none border-none w-[180px]">
-                    <SelectValue placeholder={t('maxEmailsLabel')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="10">Ultimos 10 emails</SelectItem>
-                    <SelectItem value="20">Ultimos 20 emails</SelectItem>
-                    <SelectItem value="30">Ultimos 30 emails</SelectItem>
-                    <SelectItem value="40">Ultimos 40 emails</SelectItem>
-                    <SelectItem value="50">Ultimos 50 emails</SelectItem>
-                    <SelectItem value="75">Ultimos 75 emails</SelectItem>
-                    <SelectItem value="100">Ultimos 100 emails</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </TabsList>
+        <Tabs value={selectedAccountId} onValueChange={setSelectedAccountId} className="gap-0">
+          <TabsList className="justify-between rounded-3xl rounded-b border p-0">
+            {activeConnections.map(account => (
+              <TabsTrigger
+                key={account.id}
+                value={account.id}
+                disabled={account.status !== 'ACTIVE'}
+                className="px-4 rounded-md rounded-b-none data-[state=active]:border-primary dark:data-[state=active]:border-primary data-[state=active]:text-foreground text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground hover:border-muted-foreground/30 h-full border-0 border-b-2 border-transparent data-[state=active]:shadow-none"
+              >
+                {/* <Mail className="h-4 w-4" /> */}
+                <span className="hidden sm:inline text-sm">{account.email || account.id}</span>
+                {account.status !== 'ACTIVE' && (
+                  <Badge variant="destructive" className="ml-2">
+                    {account.status}
+                  </Badge>
+                )}
+                {isAccountAnalyzing(account.id) && !getAccountStats(account.id) && (
+                  <Loader2 className="ml-1 h-4 w-4 animate-spin text-muted-foreground" />
+                )}
+                {getAccountStats(account.id) && (
+                  <Badge variant="secondary" className="ml-1">
+                    {getAccountStats(account.id)!.courseRelated} / {getAccountStats(account.id)!.totalAnalyzed}
+                  </Badge>
+                )}
+              </TabsTrigger>
+            ))}
+            {/* Max Emails Selector */}
+            <div className="ml-10">
+              <Select value={maxEmails.toString()} onValueChange={value => setMaxEmails(Number(value))}>
+                <SelectTrigger id="maxEmails" className="bg-primary rounded-b-none text-white shadow-none border-none w-[180px]">
+                  <SelectValue placeholder={t('maxEmailsLabel')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">Ultimos 10 emails</SelectItem>
+                  <SelectItem value="20">Ultimos 20 emails</SelectItem>
+                  <SelectItem value="30">Ultimos 30 emails</SelectItem>
+                  <SelectItem value="40">Ultimos 40 emails</SelectItem>
+                  <SelectItem value="50">Ultimos 50 emails</SelectItem>
+                  <SelectItem value="75">Ultimos 75 emails</SelectItem>
+                  <SelectItem value="100">Ultimos 100 emails</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </TabsList>
 
-            {/* Content for each Gmail account */}
-            {activeConnections.map(account => {
-              const emails = getAccountEmails(account.id) || [];
-              const stats = getAccountStats(account.id) || null;
-              const isAnalyzing = isAccountAnalyzing(account.id);
-              const isLabeling = isAccountLabeling(account.id);
+          {/* Content for each Gmail account */}
+          {activeConnections.map(account => {
+            const emails = getAccountEmails(account.id) || [];
+            const stats = getAccountStats(account.id) || null;
+            const isAnalyzing = isAccountAnalyzing(account.id);
+            const isLabeling = isAccountLabeling(account.id);
 
-              return (
-                <TabsContent
-                  key={account.id}
-                  value={account.id}
-                  className="rounded-3xl rounded-tl-none bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
-                >
+            return (
+              <TabsContent
+                key={account.id}
+                value={account.id}
+                className=" rounded-3xl border rounded-tl-none bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+              >
 
-                  <EmailListStates
-                    selectedAccountId={selectedAccountId}
-                    emails={emails}
-                    isChecking={isAnalyzing}
-                    stats={stats}
-                    courseName={domainCourse.name}
-                    userId={user?.id}
-                    isSendingReply={false}
-                    replyingToEmailId={null}
-                    isAutoTagging={isLabeling}
-                    onAutoTagAll={() => handleAutoTagAll(account.id)}
-                    onAnalyze={() => handleAnalyzeInbox(account.id)}
-                    onAutoReply={emailId => handleAutoReply(emailId, account.id)}
-                  />
-                </TabsContent>
-              );
-            })}
-          </Tabs>
-        </div>
+                <EmailListStates
+                  selectedAccountId={selectedAccountId}
+                  emails={emails}
+                  isChecking={isAnalyzing}
+                  stats={stats}
+                  courseName={domainCourse.name}
+                  userId={user?.id}
+                  isSendingReply={false}
+                  replyingToEmailId={null}
+                  isAutoTagging={isLabeling}
+                  onAutoTagAll={() => handleAutoTagAll(account.id)}
+                  onAnalyze={() => handleAnalyzeInbox(account.id)}
+                  onAutoReply={emailId => handleAutoReply(emailId, account.id)}
+                />
+              </TabsContent>
+            );
+          })}
+        </Tabs>
       )}
-
-      {/* Edit Course Dialog */}
       <CourseFormDialog
         open={isEditDialogOpen}
         onOpenChange={handleCloseEditDialog}

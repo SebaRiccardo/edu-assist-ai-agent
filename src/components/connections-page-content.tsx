@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useConnections } from '@/hooks/use-connections';
 import { useInitiateConnection, useDeleteConnection } from '@/hooks/mutations/use-connection-mutations';
 import { EmailConnectedAccountCard } from '@/components/gmail-account-card';
-import { ConnectGmailDialog } from '@/components/connect-gmail-dialog';
+import { ConnectEmailDialog } from '@/components/connect-email-dialog';
 import { AddConnectionCard } from '@/components/add-connection-card';
 import { DeleteConfirmationDialog } from '@/components/delete-confirmation-dialog';
 import { ComposioConnectedAccount } from '@/app/api/connections/route';
@@ -22,7 +22,6 @@ interface ConnectionDialogState {
 
 export function ConnectionsPageContent() {
   const t = useTranslations('Connections');
-  const tCommon = useTranslations('Common');
   const { data: accounts = [], isLoading } = useConnections();
   const initiateConnection = useInitiateConnection();
   const deleteConnection = useDeleteConnection();
@@ -80,13 +79,8 @@ export function ConnectionsPageContent() {
 
   return (
     <>
-      <div className="flex-1 overflow-hidden mx-auto max-w-7xl w-full px-6 pt-6">
+      <div className="flex-1 overflow-hidden w-full">
         <div className="w-full flex flex-col gap-6">
-          {/* Header */}
-          <div className="flex flex-col gap-2">
-            <h1 className="text-3xl font-bold">{t('title')}</h1>
-            <p className="text-muted-foreground">{t('description')}</p>
-          </div>
 
           {/* Accounts Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -102,7 +96,7 @@ export function ConnectionsPageContent() {
             ))}
 
             {/* Gmail Connection Card */}
-            <ConnectGmailDialog
+            <ConnectEmailDialog
               open={dialogOpen.gmail}
               onOpenChange={() => toggleDialog('gmail')}
               onConnect={handleConnect}
@@ -122,7 +116,7 @@ export function ConnectionsPageContent() {
             />
 
             {/* Outlook Connection Card */}
-            <ConnectGmailDialog
+            <ConnectEmailDialog
               open={dialogOpen.outlook}
               onOpenChange={() => toggleDialog('outlook')}
               onConnect={handleConnect}

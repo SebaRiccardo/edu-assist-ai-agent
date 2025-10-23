@@ -24,37 +24,29 @@ export function CourseDetailsHeader({ course, isChecking, onAnalyze, onEdit }: C
 
   return (
     <div className="w-full">
-      <Breadcrumb className="mb-2 ml-2"  >
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <button onClick={() => router.push('/dashboard')} className="flex items-center gap-1">
-                <Home className="h-4 w-4 mr-2" />
-                <span>{t('dashboard')}</span>
-              </button>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <button onClick={() => router.push('/dashboard/courses')}>{t('courses')}</button>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>{course.name}</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-      <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-3xl p-6 border-none shadow-none">
-        {/* Breadcrumb and Created Date */}
-        <div className="flex items-center justify-end mb-2 ">
-
-
-          {/* Created Date and Edit Button */}
-
-        </div>
-
+      <div>
+        <Breadcrumb className="mb-2"  >
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <button onClick={() => router.push('/dashboard')} className="flex items-center gap-1">
+                  <Home className="h-4 w-4 mr-2" />
+                  <span>{t('dashboard')}</span>
+                </button>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <button onClick={() => router.push('/dashboard/courses')}>{t('courses')}</button>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{course.name}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
         {/* Title and Action - Horizontal Layout */}
         <div className="flex items-center justify-between gap-4">
           <div className="flex-1 gap-4">
@@ -63,40 +55,38 @@ export function CourseDetailsHeader({ course, isChecking, onAnalyze, onEdit }: C
                 Created {new Date(course.createdAt).toLocaleDateString()}
               </span>
             </div> */}
-            <div className="flex items-start justify-between gap-4 ">
+            {/* <div className="flex items-start justify-between gap-4 ">
               <div className="flex flex-row gap-2 items-center mb-2">
-                <h1 className="text-3xl font-bold tracking-tight text-foreground">{course.name}</h1>
+                <h1 className="text-2xl font-bold tracking-tight text-foreground">{course.name}</h1>
                 <Badge>{course.year}</Badge>
                 {course.studentCount > 0 && (
                   <Badge variant="info">{t('students', { count: course.studentCount })}</Badge>
                 )}
               </div>
-
-
               <div className="flex items-center gap-3">
                 {onEdit && (
-                  <Button onClick={onEdit} variant="ghost" size="sm" className="gap-2 shadow-none">
+                  <Button onClick={onEdit} variant="ghost" size="sm" className="gap-2 text-primary shadow-none">
                     <Pencil className="h-4 w-4" />
                     {t('editCourse')}
                   </Button>
                 )}
               </div>
             </div>
-            <p className="text-sm text-pretty max-w-sm lg:max-w-5xl truncate text-muted-foreground ">{course.description}</p>
+            <p className="text-sm text-pretty max-w-sm lg:max-w-5xl truncate text-muted-foreground ">{course.description}</p> */}
 
 
             {/* Course Context Collapsible */}
             {course.context && (
-              <Collapsible open={isContextOpen} onOpenChange={setIsContextOpen} className="mt-4">
+              <Collapsible open={isContextOpen} onOpenChange={setIsContextOpen} className="mb-4">
                 <CollapsibleTrigger asChild>
-                  <Button variant="link" size="sm" className="has-[>svg]:px-0 ">
+                  <Button variant="link" size="sm" className="has-[>svg]:px-0 font-semibold ">
                     <span className="text-sm font-normal">{isContextOpen ? t('hideContext') : t('readContext')}</span>
                     <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${isContextOpen ? 'rotate-180' : ''}`} />
                   </Button>
                 </CollapsibleTrigger>
                 <CollapsibleContent className="collapsible-content">
                   <div className="mt-3 p-4 rounded-lg bg-muted/50 border border-none">
-                    <p className="text-base text-muted-foreground whitespace-pre-wrap leading-relaxed">{course.context}</p>
+                    <p className="text-base text-gray-800 whitespace-pre-wrap leading-relaxed">{course.context}</p>
                   </div>
                 </CollapsibleContent>
               </Collapsible>
@@ -107,11 +97,3 @@ export function CourseDetailsHeader({ course, isChecking, onAnalyze, onEdit }: C
     </div>
   );
 }
-
-/**
- *     <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>
-                Created {new Date(course.createdAt).toLocaleDateString()}
-              </span>
-            </div>
- */

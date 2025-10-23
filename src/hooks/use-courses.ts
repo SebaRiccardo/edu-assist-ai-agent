@@ -27,7 +27,7 @@ export function useCourses(professorId?: string) {
 export function useCourse(courseId: string | undefined): UseQuerySingleReturn<Course> {
   const client = useSupabaseBrowser();
 
-  return useQuery(courseId ? getCourseByIdQuery(client, courseId) : (null as any), {
+  return useQuery(getCourseByIdQuery(client, courseId!), {
     enabled: !!courseId,
   });
 }

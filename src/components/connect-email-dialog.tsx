@@ -20,7 +20,7 @@ import { Loader } from './ai-elements/loader';
 
 type EmailProvider = 'GMAIL' | 'OUTLOOK';
 
-interface ConnectGmailDialogProps {
+interface ConnectEmailDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onConnect: (provider: EmailProvider) => void;
@@ -29,7 +29,7 @@ interface ConnectGmailDialogProps {
   isLoading: boolean;
 }
 
-export function ConnectGmailDialog({ open, onOpenChange, onConnect, triggerButton, type, isLoading }: ConnectGmailDialogProps) {
+export function ConnectEmailDialog({ open, onOpenChange, onConnect, triggerButton, type, isLoading }: ConnectEmailDialogProps) {
   const t = useTranslations('Connections');
   const provider = type === 'GMAIL' ? t('gmail') : t('outlook');
   const authProvider = type === 'GMAIL' ? t('google') : t('microsoft');

@@ -16,19 +16,12 @@ interface AddConnectionCardProps {
   hoverColor: 'red' | 'blue';
 }
 
-const HOVER_STYLES = {
-  red: 'hover:bg-red-50 hover:border-red-500',
-  blue: 'hover:bg-blue-100 hover:border-blue-500',
-} as const;
-
 export const AddConnectionCard = ({ logo, title, description, isLoading, disabled, onClick, hoverColor }: AddConnectionCardProps) => {
   const t = useTranslations('Connections');
 
   return (
     <Card
-      className={`bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 gap-2 
-                  transition-all duration-150 border-2 hover:border-dashed hover:shadow-md 
-                  cursor-pointer border-transparent ${HOVER_STYLES[hoverColor]}`}
+      className={`border-2 bg-transparent border-dashed gap-2 transition-all duration-200 hover:border-blue-500 border-blue-400 cursor-pointer`}
       onClick={!disabled && !isLoading ? onClick : undefined}
     >
       <CardHeader>
@@ -42,9 +35,8 @@ export const AddConnectionCard = ({ logo, title, description, isLoading, disable
       </CardContent>
       <CardFooter className="border-t-0 bg-transparent hover:bg-transparent">
         <Button
-          className="w-full"
+          className="w-full cursor-pointer"
           size="sm"
-          variant="link"
           disabled={isLoading || disabled}
           onClick={e => {
             e.stopPropagation();

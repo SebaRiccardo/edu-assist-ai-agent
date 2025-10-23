@@ -92,7 +92,7 @@ export function EmailConnectedAccountCard({ account, isDeleting, onDelete, type 
         </div>
       </CardHeader>
       <CardContent className="flex-1">
-        <p className="text-left text-muted-foreground text-base">{t('useAccountDescription')}</p>
+        <p className="text-left text-muted-foreground text-sm">{t('useAccountDescription')}</p>
       </CardContent>
       <CardFooter className="flex-1">
         {onDelete && (

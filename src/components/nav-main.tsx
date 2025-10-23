@@ -1,55 +1,52 @@
-'use client';
+"use client"
 
-import { IconCirclePlusFilled, IconMail, type Icon } from '@tabler/icons-react';
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { type LucideIcon } from "lucide-react"
 
-import { Button } from '@/components/ui/button';
-import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import Link from 'next/link';
+import {
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar"
+
+export type NavProjectsItem = {
+  label: string
+  href: string
+  icon: LucideIcon
+  matcher?: (pathname: string) => boolean
+}
 
 export function NavMain({
   items,
+  title,
 }: {
-  items: {
-    title: string;
-    url: string;
-    icon?: Icon;
-  }[];
+  items: NavProjectsItem[]
+  title: string
 }) {
+  const pathname = usePathname()
+
   return (
     <SidebarGroup>
-      <SidebarGroupContent className="flex flex-col gap-2">
-        {/* <SidebarMenu>
-          <SidebarMenuItem className="flex items-center gap-2">
-            <SidebarMenuButton
-              tooltip="Quick Create"
-              className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear"
-            >
-              <IconCirclePlusFilled />
-              <span>New Chat</span>
-            </SidebarMenuButton>
-            <Button
-              size="icon"
-              className="size-8 group-data-[collapsible=icon]:opacity-0"
-              variant="outline"
-            >
-              <IconMail />
-              <span className="sr-only">Inbox</span>
-            </Button>
-          </SidebarMenuItem>
-        </SidebarMenu> */}
-        <SidebarMenu>
-          {items.map(item => (
-            <SidebarMenuItem key={item.title}>
-              <Link href={item.url} className="w-full">
-                <SidebarMenuButton tooltip={item.title}>
-                  {item.icon && <item.icon />}
-                  <span>{item.title}</span>
-                </SidebarMenuButton>
-              </Link>
+      <SidebarGroupLabel>{title}</SidebarGroupLabel>
+      <SidebarMenu>
+        {items.map((item) => {
+          const isActive = item.matcher ? item.matcher(pathname) : pathname === item.href
+
+          return (
+            <SidebarMenuItem key={item.href}>
+              <SidebarMenuButton asChild tooltip={item.label} isActive={isActive}>
+                <Link href={item.href}>
+                  <item.icon />
+                  <span>{item.label}</span>
+                </Link>
+              </SidebarMenuButton>
             </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarGroupContent>
+          )
+        })}
+      </SidebarMenu>
     </SidebarGroup>
-  );
+  )
 }

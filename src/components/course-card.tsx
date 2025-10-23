@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { DomainCourse } from '@/types';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { BookOpen, Mail, Users, MoreVertical, Edit, Trash2, Eye } from 'lucide-react';
+import { BookOpen, Mail, Users, MoreVertical, Edit, Trash2, Eye, User2 } from 'lucide-react';
 import { Course } from '@/lib/supabase/types/courses.types';
 
 interface CourseCardProps {
@@ -46,18 +46,19 @@ export function CourseCard({ course, onEdit, onDelete }: CourseCardProps) {
         </div>
       )} */}
 
-      <CardHeader className="flex-1">
+      <CardHeader className=" flex flex-row ">
         {/* Icon with Course Icon */}
-        <div className="flex flex-row justify-between items-start">
-          <div className="flex items-center justify-center size-10 rounded-full bg-primary/10 mb-2">
-            <BookOpen className="size-5 text-primary" />
+        <div className="flex flex-row items-start justify-between w-full">
+          <div className="flex flex-col gap-1">
+            <CardTitle className='text-xl'>{course.name}</CardTitle>
+            <div className='flex flex-row items-center gap-2'><Badge variant='secondary'><Users />{course.student_count}</Badge><Badge>{course.year}</Badge></div>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg hover:bg-background/50"
+                className="h-8 w-8 rounded-lg hover:bg-background bg-muted"
               >
                 <MoreVertical className="h-4 w-4" />
                 <span className="sr-only">More actions</span>
@@ -99,18 +100,14 @@ export function CourseCard({ course, onEdit, onDelete }: CourseCardProps) {
           </DropdownMenu>
         </div>
 
-        <div className="flex items-start justify-between ">
-          <div className="flex-1 pr-8">
-            <CardTitle className="text-xl font-bold mb-2">{course.name}</CardTitle>
-
-            <p className="text-sm text-muted-foreground whitespace-pre-wrap break-all">{course.description}</p>
-          </div>
-        </div>
       </CardHeader>
 
-      <CardContent className="flex-1 flex">
-        <div className="text-xs text-muted-foreground">Updated {new Date(course.updated_at).toLocaleDateString()}</div>
+      <CardContent className="flex-1 flex flex-col gap-4">
+        <p className="text-sm text-muted-foreground whitespace-pre-wrap break-all">{course.description}</p>
       </CardContent>
+      <CardFooter>
+        <div className="text-xs text-muted-foreground">Updated {new Date(course.updated_at).toLocaleDateString()}</div>
+      </CardFooter>
     </Card>
   );
 }

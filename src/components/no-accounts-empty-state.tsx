@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { Button } from '@/components/ui/button';
 import { MailWarning, Loader2, X, Check, MailPlus } from 'lucide-react';
-import { ConnectGmailDialog } from './connect-gmail-dialog';
+import { ConnectEmailDialog } from './connect-email-dialog';
 import Image from 'next/image';
 import outlookLogo from '@/assets/svg/outlook-logo.svg';
 import gmailLogo from '@/assets/svg/gmail.svg';
@@ -82,7 +82,7 @@ export function NoAccountsEmptyState({
                 <Image src={outlookLogo} alt="Outlook Logo" width={20} height={20} className="object-contain" />
                 {t('connectOutlook')}
               </Button>
-              <ConnectGmailDialog
+              <ConnectEmailDialog
                 open={isDialogOpen}
                 onOpenChange={onOpenDialog}
                 onConnect={onConnect}

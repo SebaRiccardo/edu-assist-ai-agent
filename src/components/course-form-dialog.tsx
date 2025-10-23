@@ -347,7 +347,7 @@ export function CourseFormDialog({ open, onOpenChange, course, onSubmit, isLoadi
               </Collapsible> */}
             </div>
 
-            <DialogFooter className="gap-2">
+            <DialogFooter className="self-end gap-2 sticky bottom-0 border p-2 rounded-2xl bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/10 ">
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading} className="h-11 shadow-none">
                 {t('cancel')}
               </Button>
@@ -392,7 +392,7 @@ export function CourseFormDialog({ open, onOpenChange, course, onSubmit, isLoadi
               {form.formState.errors.context && <p className="text-sm font-medium text-destructive">{form.formState.errors.context.message}</p>}
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className=''>
             <Button type="button" onClick={() => setContextDialogOpen(false)} className="h-11 shadow-none">
               {t('done')}
             </Button>

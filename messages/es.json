@@ -12,7 +12,7 @@
   "Nav": {
     "home": "Inicio",
     "dashboard": "Mi Panel",
-    "accounts" : "Cuentas de Correo",
+    "accounts": "Cuentas de Correo",
     "courses": "Materias",
     "emails": "Correos",
     "settings": "Configuración",
@@ -134,7 +134,7 @@
     "lovedBy": "Preferido por docentes. Confiable para bandejas."
   },
   "Dashboard": {
-    "title": "Panel",
+    "title": "Mi Panel",
     "welcomeBack": "Bienvenido de nuevo, {name}! 👋",
     "loading": "Cargando...",
     "takeLook": "Revisa tus materias y correos",
@@ -148,6 +148,56 @@
     "yourCourses": "Tus cursos",
     "seeMore": "Ver más",
     "aiReady": "Listo para IA"
+  },
+  "DashboardNavigation": {
+    "section": "Espacio de trabajo",
+    "overview": "Inicio",
+    "courses": "Tus Materias",
+    "chat": "Chat",
+    "connections": "Tus Cuentas",
+    "settings": "Configuración"
+  },
+  "DashboardHeader": {
+    "overview": {
+      "title": "¡Bienvenido de nuevo, {name}!",
+      "description": "Supervisa el progreso de tus materias y tu bandeja en un solo lugar.",
+      "cta": "Crear materia"
+    },
+    "courses": {
+      "title": "Materias",
+      "description": "Crea, actualiza y controla cada clase que enseñas.",
+      "cta": "Nueva materia"
+    },
+    "courseDetail": {
+      "title": "Espacio de la materia",
+      "description": "Revisa la actividad, acciones de IA y comunicaciones con estudiantes.",
+      "cta": "Volver a materias"
+    },
+    "courseAutoLabel": {
+      "title": "Configuración de autoetiquetado",
+      "description": "Configura etiquetas automáticas para que cada correo llegue al lugar correcto.",
+      "cta": "Volver a la materia"
+    },
+    "chat": {
+      "title": "Chat de bandeja",
+      "description": "Pídele a la IA que busque, resuma y redacte respuestas desde tu bandeja.",
+      "cta": "Analizar bandeja"
+    },
+    "connections": {
+      "title": "Conexiones de correo",
+      "description": "Gestiona las bandejas que impulsan tus automatizaciones.",
+      "cta": "Conectar cuenta"
+    },
+    "settings": {
+      "title": "Configuración",
+      "description": "Ajusta preferencias de cuenta, facturación y notificaciones.",
+      "cta": "Actualizar perfil"
+    },
+    "fallback": {
+      "title": "Panel",
+      "description": "Navega tus herramientas docentes.",
+      "cta": "Ir al resumen"
+    }
   },
   "Email": {
     "inbox": "Bandeja de entrada",
@@ -185,23 +235,23 @@
       "newPassword": "Nueva contraseña",
       "integratedAccount": "Cuenta conectadas",
       "integratedAccountDescription": "Administra tus cuentas conectadas.",
-  "unlink": "Desvincular",
-  "noOauthConnected": "No hay cuentas OAuth conectadas",
-  "unlinkConfirmTitle": "¿Desvincular identidad?",
-  "unlinkConfirmDescription": "Estás por desvincular esta identidad OAuth de tu cuenta. Podrás volver a vincularla desde la pantalla de ingreso.",
-  "identityUnlinked": "Identidad desvinculada correctamente",
-  "identityUnlinkFailed": "No se pudo desvincular la identidad. Intenta nuevamente.",
-  "cannotUnlinkNeedAnotherMethod": "Necesitas al menos otro método de acceso antes de desvincular esta identidad.",
-  "setPasswordTitle": "Configura una contraseña para mantener el acceso",
-  "setPasswordDescription": "Vas a desvincular tu última identidad OAuth. Configura una contraseña para poder ingresar con correo.",
-  "setPasswordCta": "Configurar contraseña",
-  "passwordTooShort": "La contraseña debe tener al menos 8 caracteres",
-  "passwordsDoNotMatch": "Las contraseñas no coinciden",
-  "passwordSetSuccess": "Contraseña configurada. Ya puedes desvincular la identidad.",
-  "passwordSetFailed": "No se pudo configurar la contraseña. Intenta nuevamente.",
-  "linkGoogle": "Vincular cuenta de Google",
-  "linking": "Vinculando...",
-  "linkFailed": "No se pudo iniciar la vinculación. Intenta nuevamente.",
+      "unlink": "Desvincular",
+      "noOauthConnected": "No hay cuentas OAuth conectadas",
+      "unlinkConfirmTitle": "¿Desvincular identidad?",
+      "unlinkConfirmDescription": "Estás por desvincular esta identidad OAuth de tu cuenta. Podrás volver a vincularla desde la pantalla de ingreso.",
+      "identityUnlinked": "Identidad desvinculada correctamente",
+      "identityUnlinkFailed": "No se pudo desvincular la identidad. Intenta nuevamente.",
+      "cannotUnlinkNeedAnotherMethod": "Necesitas al menos otro método de acceso antes de desvincular esta identidad.",
+      "setPasswordTitle": "Configura una contraseña para mantener el acceso",
+      "setPasswordDescription": "Vas a desvincular tu última identidad OAuth. Configura una contraseña para poder ingresar con correo.",
+      "setPasswordCta": "Configurar contraseña",
+      "passwordTooShort": "La contraseña debe tener al menos 8 caracteres",
+      "passwordsDoNotMatch": "Las contraseñas no coinciden",
+      "passwordSetSuccess": "Contraseña configurada. Ya puedes desvincular la identidad.",
+      "passwordSetFailed": "No se pudo configurar la contraseña. Intenta nuevamente.",
+      "linkGoogle": "Vincular cuenta de Google",
+      "linking": "Vinculando...",
+      "linkFailed": "No se pudo iniciar la vinculación. Intenta nuevamente.",
       "connected": "Conectado",
       "verified": "Verificado",
       "notVerified": "No verificado",
@@ -651,10 +701,10 @@
     "delete": "Eliminar",
     "active": "ACTIVA",
     "initiated": "INICIADA",
-    "connectGmailTitle": "Conectar nueva cuenta de Gmail",
-    "connectGmailDescription": "Conecta una nueva cuenta de Gmail para gestionar tus correos en múltiples cursos.",
-    "connectOutlookTitle": "Conectar nueva cuenta de Outlook",
-    "connectOutlookDescription": "Conecta una nueva cuenta de Outlook para gestionar tus correos en múltiples cursos.",
+    "connectGmailTitle": "Conectar cuenta de Gmail",
+    "connectGmailDescription": "Conecta una cuenta de Gmail para gestionar tus correos en múltiples cursos.",
+    "connectOutlookTitle": "Conectar cuenta de Outlook",
+    "connectOutlookDescription": "Conecta una cuenta de Outlook para gestionar tus correos en múltiples cursos.",
     "connecting": "Conectando...",
     "connectAccount": "Conectar Cuenta",
     "deleteDialogTitle": "¿Eliminar Conexión de Correo?",

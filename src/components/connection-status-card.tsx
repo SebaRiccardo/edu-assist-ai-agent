@@ -21,28 +21,28 @@ export function ConnectionStatusCard({ status, onCancel }: ConnectionStatusCardP
 
   const statusConfig = {
     connecting: {
-      title: t('connectingTitle'),
+      title: t('connecting'),
       description: t('connectingDescription'),
       tip: t('connectingTip'),
       icon: Loader2,
       variant: 'blue' as const,
     },
     checking: {
-      title: t('checkingTitle'),
+      title: t('checking'),
       description: t('checkingDescription'),
       tip: t('checkingTip'),
       icon: Loader2,
       variant: 'blue' as const,
     },
     failed: {
-      title: t('failedTitle'),
+      title: t('failed'),
       description: t('failedDescription'),
       tip: t('failedTip'),
       icon: MailWarning,
       variant: 'red' as const,
     },
     expired: {
-      title: t('expiredTitle'),
+      title: t('expired'),
       description: t('expiredDescription'),
       tip: t('expiredTip'),
       icon: MailWarning,
@@ -72,7 +72,7 @@ export function ConnectionStatusCard({ status, onCancel }: ConnectionStatusCardP
   };
 
   return (
-    <Card className={variantClasses[config.variant]}>
+    <Card className={variantClasses[config.variant] + 'bg-white rounded-3xl mb-4'}>
       <CardHeader>
         <div className="flex items-center gap-3">
           <div className={`rounded-full p-2 ${iconClasses[config.variant]}`}>
@@ -87,9 +87,9 @@ export function ConnectionStatusCard({ status, onCancel }: ConnectionStatusCardP
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="flex justify-between items-center">
+      {/* <CardContent className="flex justify-between items-center">
         <p className="text-sm text-muted-foreground">{config.tip}</p>
-      </CardContent>
+      </CardContent> */}
     </Card>
   );
 }
