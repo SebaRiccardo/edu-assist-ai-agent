@@ -24,6 +24,7 @@ type HeaderCopy = {
     titleKey?: string
     descriptionKey?: string
     cta?: HeaderCta
+    backButton?: HeaderCta
 }
 
 const DashboardHeader = ({ user }: { user: User }) => {
@@ -63,7 +64,7 @@ const DashboardHeader = ({ user }: { user: User }) => {
             return {
                 titleKey: "courseAutoLabel.title",
                 descriptionKey: "courseAutoLabel.description",
-                cta: {
+                backButton: {
                     href: courseId ? `/dashboard/courses/${courseId}` : "/dashboard/courses",
                     labelKey: "courseAutoLabel.cta",
                     icon: ArrowLeft,
@@ -76,7 +77,7 @@ const DashboardHeader = ({ user }: { user: User }) => {
             return {
                 titleKey: "courseDetail.title",
                 descriptionKey: "courseDetail.description",
-                cta: courseId
+                backButton: courseId
                     ? {
                         href: "/dashboard/courses",
                         labelKey: "courseDetail.cta",
@@ -168,12 +169,24 @@ const DashboardHeader = ({ user }: { user: User }) => {
             description = courseDescription && courseDescription.length > 0 ? courseDescription : translatedDescription
         }
     }
-
+    //group-has-data-[collapsible=icon]/sidebar-wrapper:h-16
     return (
-        <header className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex border rounded-t-lg h-20 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-16">
+        <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex border rounded-t-md h-20 shrink-0 items-center gap-2 transition-[width,height] ease-linear ">
             <div className="flex items-center gap-2 px-4 w-full">
                 <SidebarTrigger className="-ml-1" />
                 <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
+                {headerCopy.backButton && (
+                    <Button
+                        size="lg"
+                        variant={headerCopy.backButton.variant ?? "default"}
+                        className="gap-2 rounded-xl h-12 border-none"
+                        asChild
+                    >
+                        <Link href={headerCopy.backButton.href}>
+                            <headerCopy.backButton.icon className="h-4 w-4" />
+                        </Link>
+                    </Button>
+                )}
                 <div className="flex items-center justify-between w-full flex-1">
                     <div className="flex flex-col">
                         <div className="flex flex-row items-center gap-2">

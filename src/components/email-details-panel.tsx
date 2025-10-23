@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { CategorizedEmail, CategorizedEmailWithPriority } from '@/types';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,10 @@ import { Mail, Sparkles, ChevronsUpDown, FileText, Loader2, RefreshCw, X, Pencil
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
 import { generateEmailDraft } from '@/actions/inbox/email-draft';
+import { formatDate, formatDistance, formatDistanceToNow } from 'date-fns';
+import { es } from 'date-fns/locale/es';
+import { enUS } from 'date-fns/locale/en-US';
+import { Separator } from './ui/separator';
 
 interface EmailDetailsPanelProps {
   email: CategorizedEmail | CategorizedEmailWithPriority;
@@ -21,12 +25,13 @@ interface EmailDetailsPanelProps {
   onClose: () => void;
   onAutoReply?: (emailId: string) => void;
   connectedAccountId?: string;
+
 }
 
 // Sub-component: Email Header
 function EmailHeader({ email }: { email: CategorizedEmail | CategorizedEmailWithPriority }) {
   const t = useTranslations('EmailDetails');
-
+  const locale = useLocale()
   const emailCategoryConfig = {
     course_related: {
       label: t('categoryLabels.course_related'),
@@ -93,10 +98,15 @@ function EmailHeader({ email }: { email: CategorizedEmail | CategorizedEmailWith
   const priorityInfo = hasPriority ? priorityConfig[email.priority.level as keyof typeof priorityConfig] : null;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 px-4 pt-4">
       <div className="flex items-start justify-between gap-2">
         <div className="space-y-2 flex-1">
-          <h3 className="text-xl font-semibold">{email.subject}</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="text-xl font-semibold">{email.subject}</h3>
+            {email.receivedAt && <div className="ml-auto text-sm text-muted-foreground">
+              {formatDate(new Date(email.receivedAt), "PPpp", { locale: locale === 'en' ? enUS : es })}
+            </div>}
+          </div>
           <div className="flex flex-wrap gap-2">
             {categoryConfig && (
               <Badge variant={categoryConfig.variant}>
@@ -120,14 +130,10 @@ function EmailHeader({ email }: { email: CategorizedEmail | CategorizedEmailWith
           <span className="text-muted-foreground font-medium">{t('from')}:</span>
           <span className="font-medium">{email.from}</span>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-muted-foreground font-medium">{t('date')}:</span>
-          <span>{new Date(email.receivedAt).toLocaleString()}</span>
-        </div>
         {hasPriority && email.priority.responseDeadline && (
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground font-medium">{t('responseDeadline')}:</span>
-            <span className="font-medium text-orange-600 dark:text-orange-400">{new Date(email.priority.responseDeadline).toLocaleDateString()}</span>
+            <span className="font-medium text-orange-600 dark:text-orange-400">{formatDistanceToNow(email.priority.responseDeadline, { addSuffix: true, locale: locale === 'en' ? enUS : es })}</span>
           </div>
         )}
       </div>
@@ -138,7 +144,7 @@ function EmailHeader({ email }: { email: CategorizedEmail | CategorizedEmailWith
 // Sub-component: Email Body
 function EmailBody({ body }: { body: string }) {
   return (
-    <div className="border-none shadow-none bg-background/80 p-3 rounded-lg">
+    <div className="border-none shadow-none px-4">
       <p className="text-sm whitespace-pre-wrap break-all">{body}</p>
     </div>
   );
@@ -158,20 +164,20 @@ function AIReasoning({
   const confidencePercentage = Math.round(confidence * 100);
 
   return (
-    <Collapsible className="w-full">
+    <Collapsible className="w-full p-4">
       <CollapsibleTrigger asChild>
-        <Button variant="outline" size="sm" className="w-full justify-start shadow-none border-none">
+        <Button variant="outline" size="sm" className="w-full justify-start">
           <Sparkles className="size-4 mr-2" />
           {t('viewAiReasoning')}
           <ChevronsUpDown className="size-4 ml-auto" />
         </Button>
       </CollapsibleTrigger>
       <CollapsibleContent className="mt-3 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down flex flex-col gap-2 overflow-hidden transition-all duration-300">
-        <Card className="border-none shadow-none bg-background/50">
+        <Card className="border-none shadow-none bg-muted">
           <CardContent className="space-y-2">
             <div className="flex items-center gap-2">
               <p className="text-sm font-semibold text-foreground">{t('aiReasoning')}</p>
-              <Badge variant="outline" className="text-xs">
+              <Badge className="text-xs">
                 {t('confidence', { percentage: confidencePercentage })}
               </Badge>
             </div>
@@ -219,9 +225,9 @@ function DraftEditor({
     <div className="space-y-3 my-2">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <FileText className="h-4 w-4 text-green-600 dark:text-green-400" />
+          <FileText className="h-4 w-4 text-blue-600 dark:text-green-400" />
           <p className="text-sm font-semibold text-foreground">{t('draftResponse')}</p>
-          <Badge variant="outline" className="text-xs text-white border-none bg-green-500 dark:bg-green-900/30">
+          <Badge variant="outline" className="text-xs text-white border-none bg-blue-500 dark:bg-green-900/30">
             {t('aiGenerated')}
           </Badge>
         </div>
@@ -260,7 +266,7 @@ function DraftEditor({
           placeholder={t('editPlaceholder')}
         />
       ) : (
-        <div className="rounded-md bg-background border p-3 border-none shadow-none">
+        <div className="rounded-md border border-none shadow-none">
           <p className="text-sm text-foreground whitespace-pre-wrap">{editedDraft || draftResponse}</p>
         </div>
       )}
@@ -289,11 +295,10 @@ function DraftActions({
   const t = useTranslations('EmailDetails');
 
   return (
-    <div className="flex gap-2 flex-wrap">
+    <div className="flex gap-2 flex-wrap py-4">
       <Button
         variant="outline"
         size="sm"
-        className="border-none"
         onClick={() => {
           onCopy();
           toast.success(t('draftCopied'));
@@ -302,7 +307,7 @@ function DraftActions({
         {t('copyToClipboard')}
       </Button>
       {isEditingDraft && (
-        <Button variant="ghost" size="sm" onClick={onCancel}>
+        <Button variant="outline" size="sm" onClick={onCancel}>
           {t('cancel')}
         </Button>
       )}
@@ -399,31 +404,29 @@ export function EmailDetailsPanel({
   };
 
   return (
-    <div className="flex flex-col h-full border-l border-border w-full">
-      {/* Scrollable Content */}
-      <ScrollArea className="flex-1 w-full">
-        <div className="p-6 space-y-6">
-          {/* Email Header Info */}
-          <EmailHeader email={email} />
+    // <div className="flex flex-col h-full border-l border-border w-full flex-1">
 
-          {/* Email Body */}
-          <EmailBody body={email.body} />
-
-          {/* AI Reasoning Section */}
+    <ScrollArea className="flex-1 flex h-full">
+      <div className="space-y-4">
+        <EmailHeader email={email} />
+        <Separator />
+        <EmailBody body={email.body} />
+        <div>
           <AIReasoning
             reasoning={email.reasoning}
             confidence={email.confidence}
             priorityReasoning={'priority' in email && email.priority ? email.priority.reasoning : undefined}
           />
 
-          {/* Draft Response Section */}
-          <Collapsible open={isDraftOpen} onOpenChange={setIsDraftOpen} className="w-full">
-            <div className="flex items-center gap-2 flex-wrap">
+        </div>
+      </div>
+      {onAutoReply && (
+        <div className="p-4 border-t flex-1 h-full flex justify-end border-border">
+          <Collapsible open={isDraftOpen} onOpenChange={setIsDraftOpen} className="w-full ">
+            <div className="flex items-center justify-end gap-4 mb-2">
               <CollapsibleTrigger asChild>
                 <Button
                   variant="outline"
-                  size="sm"
-                  className="flex-1 shadow-none border-none justify-start"
                   onClick={() => {
                     if (!draftResponse && !isDraftOpen) {
                       handleGenerateDraft();
@@ -437,28 +440,44 @@ export function EmailDetailsPanel({
               </CollapsibleTrigger>
 
               {draftResponse && (
-                <Button variant="ghost" size="sm" onClick={handleGenerateDraft} disabled={isGeneratingDraft}>
+                <Button variant="outline" size='icon' onClick={handleGenerateDraft} disabled={isGeneratingDraft}>
                   {isGeneratingDraft ? (
                     <>
-                      <Loader2 className="size-4 mr-2 animate-spin" />
-                      {t('generating')}
+                      <Loader2 className="size-4 animate-spin" />
                     </>
                   ) : (
                     <>
-                      <RefreshCw className="size-4 mr-2" />
-                      {t('regenerate')}
+                      <RefreshCw className="size-4" />
+                      {/* {t('regenerate')} */}
                     </>
                   )}
                 </Button>
               )}
+              <Button
+                onClick={() => {
+                  onAutoReply(email.id);
+                }}
+                disabled={isSendingReply}
+              >
+                {isSendingReply ? (
+                  <>
+                    <Loader2 className="size-4 animate-spin" />
+                    {t('sendingReply')}
+                  </>
+                ) : (
+                  <>
+                    <Mail className="size-4" />
+                    {t('autoReplyToEmail')}
+                  </>
+                )}
+              </Button>
             </div>
-
-            <CollapsibleContent className="mt-2">
-              <Card className="border-none shadow-none bg-green-50 dark:bg-green-950/20">
+            <CollapsibleContent className="mt-2 w-full overflow-auto data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down transition-all duration-300">
+              <Card className="border-none shadow-none bg-muted dark:bg-green-950/20">
                 <CardContent>
                   {isGeneratingDraft && (
                     <div className="flex items-center justify-center py-4">
-                      <Loader2 className="h-6 w-6 animate-spin text-green-600" />
+                      <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
                       <span className="ml-2 text-sm text-muted-foreground">{t('generatingDraft')}</span>
                     </div>
                   )}
@@ -512,33 +531,11 @@ export function EmailDetailsPanel({
               </Card>
             </CollapsibleContent>
           </Collapsible>
-        </div>
-      </ScrollArea>
-      {/* Footer Actions */}
-      {onAutoReply && (
-        <div className="p-4 border-t border-border">
-          <Button
-            className="w-full"
-            size="lg"
-            onClick={() => {
-              onAutoReply(email.id);
-            }}
-            disabled={isSendingReply}
-          >
-            {isSendingReply ? (
-              <>
-                <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                {t('sendingReply')}
-              </>
-            ) : (
-              <>
-                <Mail className="size-5 mr-2" />
-                {t('autoReplyToEmail')}
-              </>
-            )}
-          </Button>
-        </div>
-      )}
-    </div>
+
+        </div >
+      )
+      }
+    </ScrollArea >
+    // </div>
   );
 }

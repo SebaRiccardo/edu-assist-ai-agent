@@ -28,7 +28,6 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { IconBrandGoogle } from '@tabler/icons-react';
 import { GOOGLE_OAUTH_REDIRECT_URL } from '@/auth/service';
 interface AccountSettingsProps {
   user: User | null;
@@ -120,9 +119,9 @@ export function AccountSettings({ user }: AccountSettingsProps) {
 
   if (profileLoading || !user) {
     return (
-      <Card className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <Card className="bg-transparent">
         <CardContent className="flex justify-center items-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </CardContent>
       </Card>
     );
@@ -237,65 +236,53 @@ export function AccountSettings({ user }: AccountSettingsProps) {
 
   return (
     <div className="space-y-6 p-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 rounded-3xl">
-      <div>
-        <h2 className="text-2xl font-bold">{t('title')}</h2>
-        <p className="text-sm text-muted-foreground">{t('subtitle')}</p>
-      </div>
+      <h2 className="text-2xl font-bold">{t('title')}</h2>
+      {/* <p className="text-sm text-muted-foreground">{t('subtitle')}</p> */}
 
-      {/* <Separator /> */}
-
-      {/* Profile Picture Section */}
-      {/* <div className="space-y-2">
-        <h3 className="text-base font-semibold">Profile picture</h3>
-        <p className="text-sm text-muted-foreground">PNG, JPEG under 15MB</p>
-        <div className="flex items-center gap-4 mt-4">
-          <Avatar className="h-16 w-16">
-            <AvatarImage src={profile?.avatar_url || undefined} />
-            <AvatarFallback className="text-xl">{userInitials}</AvatarFallback>
-          </Avatar>
-          <div className="flex gap-2">
-            <Button type="button" variant="outline" size="sm">
-              Upload new picture
-            </Button>
-            <Button type="button" variant="ghost" size="sm">
-              Delete
-            </Button>
+      <div className='flex flex-col gap-8'>
+        <div className="flex flex-row gap-20 w-full justify-between">
+          <CurrentUserAvatar className="size-36" />
+          <div className="space-y-8 flex-1">
+            <div className="grid grid-cols-1 gap-10">
+              <div className="grid grid-cols-2 items-start w-full justify-center">
+                <Label htmlFor="firstName" className="text-sm text-black">
+                  {t('firstName')}
+                </Label>
+                <Input
+                  id="firstName"
+                  value={formData.firstName}
+                  onChange={e => setFormData({ ...formData, firstName: e.target.value })}
+                  placeholder="Marty"
+                />
+              </div>
+              <Separator />
+              <div className="grid grid-cols-2 items-start w-full justify-center">
+                <Label htmlFor="lastName" className="text-sm text-black">
+                  {t('lastName')}
+                </Label>
+                <Input
+                  id="lastName"
+                  value={formData.lastName}
+                  onChange={e => setFormData({ ...formData, lastName: e.target.value })}
+                  placeholder="McFly"
+                />
+              </div>
+            </div>
           </div>
         </div>
-      </div> */}
-
-      <div className="flex items-center gap-4 mt-4">
-        <CurrentUserAvatar className="size-24" />
-      </div>
-
-      {/* Full Name Section */}
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="firstName" className="text-sm text-muted-foreground">
-              {t('firstName')}
-            </Label>
-            <Input
-              id="firstName"
-              value={formData.firstName}
-              onChange={e => setFormData({ ...formData, firstName: e.target.value })}
-              placeholder="Marty"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="lastName" className="text-sm text-muted-foreground">
-              {t('lastName')}
-            </Label>
-            <Input
-              id="lastName"
-              value={formData.lastName}
-              onChange={e => setFormData({ ...formData, lastName: e.target.value })}
-              placeholder="McFly"
-            />
-          </div>
+        <div className="flex justify-end">
+          <Button onClick={handleSubmit} disabled={isPending || isSubmitting}>
+            {isSubmitting || isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {t('saving')}
+              </>
+            ) : (
+              t('saveChanges')
+            )}
+          </Button>
         </div>
       </div>
-
       <Separator />
 
       {/* Contact Email Section */}
@@ -329,7 +316,6 @@ export function AccountSettings({ user }: AccountSettingsProps) {
           </div>
         </div>
       </div>
-
       <Separator />
 
       {/* Password Section */}
@@ -449,20 +435,6 @@ export function AccountSettings({ user }: AccountSettingsProps) {
           )}
           {/* {!identitiesLoading && oauthProviders.length === 0 && <p className="text-sm text-muted-foreground">{t('noOauthConnected')}</p>} */}
         </div>
-      </div>
-
-      {/* Save Button */}
-      <div className="flex justify-end pt-4">
-        <Button onClick={handleSubmit} disabled={isPending || isSubmitting}>
-          {isSubmitting || isPending ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {t('saving')}
-            </>
-          ) : (
-            t('saveChanges')
-          )}
-        </Button>
       </div>
 
       {/* Confirm unlink dialog */}

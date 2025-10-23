@@ -364,8 +364,6 @@ function CourseDetailsPageContent() {
         )} */}
         <ConnectionStatusCard status={emailConnection.connectionStatus} onCancel={emailConnection.cancelConnection} />
       </div>
-
-      {/* Main Content Area */}
       {hasNoConnections ? (
         <NoAccountsEmptyState
           selectedEmailProvider={emailProvider}
@@ -378,14 +376,15 @@ function CourseDetailsPageContent() {
           onRetry={emailConnection.retryConnection}
         />
       ) : (
-        <Tabs value={selectedAccountId} onValueChange={setSelectedAccountId} className="gap-0">
-          <TabsList className="justify-between rounded-3xl rounded-b border p-0">
+        <Tabs value={selectedAccountId} onValueChange={setSelectedAccountId} className="gap-4">
+          <TabsList className="w-full justify-between rounded-md rounded-b p-0 bg-transparent border-none">
             {activeConnections.map(account => (
               <TabsTrigger
                 key={account.id}
                 value={account.id}
                 disabled={account.status !== 'ACTIVE'}
-                className="px-4 rounded-md rounded-b-none data-[state=active]:border-primary dark:data-[state=active]:border-primary data-[state=active]:text-foreground text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground hover:border-muted-foreground/30 h-full border-0 border-b-2 border-transparent data-[state=active]:shadow-none"
+                className='max-w-[200px] data-[state=active]:bg-primary data-[state=active]:text-white'
+              // className="px-4 rounded-md rounded-b-none data-[state=active]:border-primary dark:data-[state=active]:border-primary data-[state=active]:text-foreground text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground hover:border-muted-foreground/30 h-full border-0 border-b-2 border-transparent data-[state=active]:shadow-none"
               >
                 {/* <Mail className="h-4 w-4" /> */}
                 <span className="hidden sm:inline text-sm">{account.email || account.id}</span>
@@ -405,9 +404,9 @@ function CourseDetailsPageContent() {
               </TabsTrigger>
             ))}
             {/* Max Emails Selector */}
-            <div className="ml-10">
+            <div className="ml-auto">
               <Select value={maxEmails.toString()} onValueChange={value => setMaxEmails(Number(value))}>
-                <SelectTrigger id="maxEmails" className="bg-primary rounded-b-none text-white shadow-none border-none w-[180px]">
+                <SelectTrigger id="maxEmails" className="bg-white text-black w-[180px]">
                   <SelectValue placeholder={t('maxEmailsLabel')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -434,7 +433,7 @@ function CourseDetailsPageContent() {
               <TabsContent
                 key={account.id}
                 value={account.id}
-                className=" rounded-3xl border rounded-tl-none bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+                className="max-h-[calc(100vh-11.5rem)] min-h-[calc(100vh-11.5rem)] items-center justify-center rounded-md border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
               >
 
                 <EmailListStates

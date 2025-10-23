@@ -18,9 +18,9 @@ export const CurrentUserAvatar = ({ className }: CurrentUserAvatarProps) => {
     ?.toUpperCase()
 
   return (
-    <Avatar className={className}>
+    <Avatar className={className} >
       {profileImage && <AvatarImage src={profileImage} alt={initials} />}
-      <AvatarFallback>{initials}</AvatarFallback>
+      <AvatarFallback className='font-semibold text-lg'>{initials}</AvatarFallback>
     </Avatar>
   )
 }
