@@ -28,7 +28,7 @@ export function useInboxes(courseId: string) {
 export function useCreateInbox() {
   const client = useSupabaseBrowser();
 
-  return useInsertMutation(client.from('inboxes'), ['id'], null, {
+  return useInsertMutation(client.from('inboxes') as any, ['id'], null, {
     onSuccess: () => {
       console.log('Inbox created successfully');
     },
@@ -38,7 +38,7 @@ export function useCreateInbox() {
 export function useUpdateInbox() {
   const client = useSupabaseBrowser();
 
-  return useUpdateMutation(client.from('inboxes'), ['id'], null, {
+  return useUpdateMutation(client.from('inboxes') as any, ['id'], null, {
     onSuccess: () => {
       console.log('Inbox updated successfully');
     },
@@ -48,7 +48,7 @@ export function useUpdateInbox() {
 export function useDeleteInbox() {
   const client = useSupabaseBrowser();
 
-  return useDeleteMutation(client.from('inboxes'), ['id'], null, {
+  return useDeleteMutation(client.from('inboxes') as any, ['id'], null, {
     onSuccess: () => {
       console.log('Inbox deleted successfully');
     },

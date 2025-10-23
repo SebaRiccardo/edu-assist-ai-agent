@@ -114,6 +114,7 @@ export async function labelEmails(input: LabelEmailsInput): Promise<LabelEmailsR
 
         // STEP 4: Execute email labeling agent
         const labelingResult = await emailLabelingAgent({
+            userId: user.id,
             connectedAccountId,
             emails, // Safe to cast after validation
             courseName,

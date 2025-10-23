@@ -49,7 +49,7 @@ export function useCoursesCount(professorId?: string) {
 export function useCreateCourse() {
   const client = useSupabaseBrowser();
 
-  return useInsertMutation(client.from('courses'), ['id'], null, {
+  return useInsertMutation(client.from('courses') as any, ['id'], null, {
     onSuccess: () => {
       console.log('Course created successfully');
     },
@@ -62,7 +62,7 @@ export function useCreateCourse() {
 export function useUpdateCourse() {
   const client = useSupabaseBrowser();
 
-  return useUpdateMutation(client.from('courses'), ['id'], null, {
+  return useUpdateMutation(client.from('courses') as any, ['id'], null, {
     onSuccess: () => {
       console.log('Course updated successfully');
     },
@@ -78,7 +78,7 @@ export function useUpdateCourse() {
 export function useDeleteCourse() {
   const client = useSupabaseBrowser();
 
-  return useDeleteMutation(client.from('courses'), ['id'], null, {
+  return useDeleteMutation(client.from('courses') as any, ['id'], null, {
     onSuccess: () => {
       console.log('Course deleted successfully');
     },

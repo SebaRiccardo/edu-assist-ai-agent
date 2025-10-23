@@ -30,7 +30,7 @@ export function useProfile(profileId: string | undefined) {
 export function useUpdateProfile(callbacks?: { onSuccess: () => void }) {
   const client = useSupabaseBrowser();
 
-  return useUpdateMutation(client.from('profiles'), ['id'], null, {
+  return useUpdateMutation(client.from('profiles') as any, ['id'], null, {
     onSuccess: callbacks?.onSuccess,
   });
 }
