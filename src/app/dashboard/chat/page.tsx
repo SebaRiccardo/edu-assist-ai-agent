@@ -16,7 +16,7 @@ export default async function ChatPage() {
   }
 
   return (
-    <div className="flex flex-col flex-1 h-fit rounded-md bg-background">
+    <div className="max-w-full mx-auto relative size-full h-full bg-background rounded-md">
       <InboxChat userId={user.id} />
     </div>
   );

@@ -109,18 +109,18 @@ export async function GET(request: NextRequest) {
       // Extract user information using helper function
       const { email, name, avatarUrl, decoded } = extractUserInfo(item);
 
-      // Log for debugging (development only)
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🔍 Connection Debug:', {
-          toolkit: item.toolkit.slug,
-          hasIdToken: !!val?.id_token,
-          hasAccessToken: !!val?.access_token,
-          decodedKeys: Object.keys(decoded),
-          email,
-          name,
-          avatarUrl,
-        });
-      }
+      // // Log for debugging (development only)
+      // if (process.env.NODE_ENV === 'development') {
+      //   console.log('🔍 Connection Debug:', {
+      //     toolkit: item.toolkit.slug,
+      //     hasIdToken: !!val?.id_token,
+      //     hasAccessToken: !!val?.access_token,
+      //     decodedKeys: Object.keys(decoded),
+      //     email,
+      //     name,
+      //     avatarUrl,
+      //   });
+      // }
 
       return {
         id: item.id,

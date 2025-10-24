@@ -169,6 +169,9 @@ const DashboardHeader = ({ user }: { user: User }) => {
             description = courseDescription && courseDescription.length > 0 ? courseDescription : translatedDescription
         }
     }
+
+    if (pathname == "/dashboard/chat") return null
+
     //group-has-data-[collapsible=icon]/sidebar-wrapper:h-16
     return (
         <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex border rounded-t-md h-20 shrink-0 items-center gap-2 transition-[width,height] ease-linear ">

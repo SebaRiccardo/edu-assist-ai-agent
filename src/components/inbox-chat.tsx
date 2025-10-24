@@ -13,7 +13,6 @@ import {
   PromptInputTools,
   PromptInputSubmit,
   type PromptInputMessage,
-  PromptInputToolbar,
   PromptInputButton,
   PromptInputModelSelect,
   PromptInputModelSelectTrigger,
@@ -40,6 +39,7 @@ import { Tool, ToolContent, ToolHeader, ToolInput, ToolOutput } from '@/componen
 import type { ToolUIPart } from 'ai';
 import { Loader } from './ai-elements/loader';
 import { GmailToolOutput, CourseToolOutput } from '@/components/tool-output-formatters';
+import { Reasoning, ReasoningContent, ReasoningTrigger } from './ai-elements/reasoning';
 
 interface InboxChatProps {
   userId: string;
@@ -156,7 +156,7 @@ export function InboxChat({ userId }: InboxChatProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -166,45 +166,45 @@ export function InboxChat({ userId }: InboxChatProps) {
       <div className="flex flex-col items-center justify-center h-full gap-4 p-8">
         <Mail className="h-16 w-16 text-muted-foreground" />
         <div className="text-center space-y-2">
-          <h2 className="text-2xl font-semibold">No Inboxes Connected</h2>
-          <p className="text-muted-foreground">Please connect a Gmail account to start chatting with your inbox.</p>
+          <h2 className="text-2xl font-semibold">No hay bandejas conectadas</h2>
+          <p className="text-muted-foreground">Por favor, conecta una cuenta de Email para comenzar a chatear con tu bandeja de entrada.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col flex-1 h-full p-6">
+    <div className="max-w-full relative size-full h-[calc(100vh-3rem)]">
       {/* Connection Cards */}
       {/* <InboxConnectionCards
         inboxes={inboxes}
         selectedInbox={selectedInbox}
         onSelectInbox={setSelectedInbox}
       /> */}
-
-      <Conversation>
-        <ConversationContent className="max-w-4xl mx-auto h-full">
-          {!selectedInbox ? (
-            <ConversationEmptyState
-              icon={<Mail className="h-12 w-12" />}
-              title="Select an Inbox to Start"
-              description="Choose one of your connected Gmail accounts above to begin chatting with your emails."
-            >
-              <div className="flex items-center justify-center w-20 h-20 rounded-full bg-primary/10">
-                <Mail className="h-10 w-10 text-primary" />
-              </div>
-              <div className="space-y-2 max-w-md text-center">
-                <h3 className="text-xl font-semibold">{t('selectInboxTitle')}</h3>
-                <p className="text-sm text-muted-foreground">{t('selectInboxDescription')}</p>
-              </div>
-            </ConversationEmptyState>
-          ) : messages.length === 0 ? (
-            <ConversationEmptyState icon={<Mail className="h-12 w-12" />} title={t('chatTitle')} description={t('chatDescription')}>
-              <Mail className="h-12 w-12 text-muted-foreground" />
-              <div className="space-y-2 max-w-md">
-                <h3 className="text-xl font-semibold">{t('chatTitle')}</h3>
-                <p className="text-sm text-muted-foreground">{t('chatDescription')}</p>
-                {/* <div className="pt-4 space-y-2 text-xs text-left">
+      <div id='conversation-container' className="flex flex-col h-full">
+        <Conversation className="h-full" >
+          <ConversationContent className=' max-w-3xl mx-auto'>
+            {!selectedInbox ? (
+              <ConversationEmptyState
+                icon={<Mail className="h-12 w-12" />}
+                title="Select an Inbox to Start"
+                description="Choose one of your connected Gmail accounts above to begin chatting with your emails."
+              >
+                <div className="flex items-center justify-center w-20 h-20 rounded-full bg-primary/10">
+                  <Mail className="h-10 w-10 text-primary" />
+                </div>
+                <div className="space-y-2 max-w-md text-center">
+                  <h3 className="text-xl font-semibold">{t('selectInboxTitle')}</h3>
+                  <p className="text-sm text-muted-foreground">{t('selectInboxDescription')}</p>
+                </div>
+              </ConversationEmptyState>
+            ) : messages.length === 0 ? (
+              <ConversationEmptyState className='h-full' icon={<Mail className="h-12 w-12" />} title={t('chatTitle')} description={t('chatDescription')}>
+                <Mail className="h-12 w-12 text-muted-foreground" />
+                <div className="space-y-2 max-w-md">
+                  <h3 className="text-xl font-semibold">{t('chatTitle')}</h3>
+                  <p className="text-sm text-muted-foreground">{t('chatDescription')}</p>
+                  {/* <div className="pt-4 space-y-2 text-xs text-left">
                   <p className="font-medium">Try asking:</p>
                   <ul className="space-y-1 text-muted-foreground">
                     <li>• "Show me my latest 10 unread emails"</li>
@@ -215,82 +215,94 @@ export function InboxChat({ userId }: InboxChatProps) {
                     <li>• "List all my courses"</li>
                   </ul>
                 </div> */}
-              </div>
-            </ConversationEmptyState>
-          ) : (
-            messages.map(message => (
-              <Message key={message.id} from={message.role}>
-                <MessageContent>
-                  {message.parts.map((part, index) => {
-                    switch (part.type) {
-                      case 'text':
-                        return <Response key={`${message.id}-${index}`}>{part.text}</Response>;
-
-                      // Handle tool invocations dynamically
-                      default:
-                        // Check if it's a tool part (starts with 'tool-')
-                        if (part.type.startsWith('tool-')) {
-                          const toolPart = part as ToolUIPart;
-                          const toolName = toolPart.type.replace('tool-', '');
-
-                          // Determine if tool should be open by default
-                          const defaultOpen = toolPart.state === 'output-available' || toolPart.state === 'output-error';
-
+                </div>
+              </ConversationEmptyState>
+            ) : (
+              messages.map(message => (
+                <Message key={message.id} from={message.role}>
+                  <MessageContent>
+                    {message.parts.map((part, index) => {
+                      switch (part.type) {
+                        case 'text':
+                          return <Response key={`${message.id}-${index}`}>{part.text}</Response>;
+                        case 'reasoning':
                           return (
-                            <Tool key={`${message.id}-${index}`} defaultOpen={defaultOpen} className="my-2">
-                              <ToolHeader title={formatToolName(toolName)} type={toolPart.type} state={toolPart.state} />
-                              <ToolContent>
-                                {(toolPart.state === 'input-available' ||
-                                  toolPart.state === 'output-available' ||
-                                  toolPart.state === 'output-error') && <ToolInput input={toolPart.input} />}
-                                {(toolPart.state === 'output-available' || toolPart.state === 'output-error') && (
-                                  <ToolOutput output={formatToolOutput(toolName, toolPart.output)} errorText={toolPart.errorText} />
-                                )}
-                              </ToolContent>
-                            </Tool>
+                            <Reasoning
+                              key={`${message.id}-${index}`}
+                              className="w-full"
+                              isStreaming={status === 'streaming' && index === message.parts.length - 1 && message.id === messages.at(-1)?.id}
+                            >
+                              <ReasoningTrigger />
+                              <ReasoningContent>{part.text}</ReasoningContent>
+                            </Reasoning>
                           );
-                        }
-                        return null;
-                    }
-                  })}
-                </MessageContent>
-              </Message>
-            ))
-          )}
-          {status === 'submitted' && <Loader />}
-          {status === 'streaming' && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground px-4">
-              <Loader />
-              <span>Thinking...</span>
-            </div>
-          )}
-        </ConversationContent>
-      </Conversation>
+                        // Handle tool invocations dynamically
+                        default:
+                          // Check if it's a tool part (starts with 'tool-')
+                          if (part.type.startsWith('tool-')) {
+                            const toolPart = part as ToolUIPart;
+                            const toolName = toolPart.type.replace('tool-', '');
 
-      {/* <Suggestions className="max-w-4xl mx-auto overflow-hidden bg-transparent">
-        {suggestions.map(suggestion => (
-          <Suggestion key={suggestion} onClick={handleSuggestionClick} suggestion={suggestion} />
-        ))}
-      </Suggestions> */}
-      <PromptInput onSubmit={handleSubmit} className="sticky bottom-0 bg-background pb-4 max-w-4xl mx-auto">
-        <PromptInputBody>
-          <PromptInputTextarea
-            value={input}
-            onChange={e => setInput(e.currentTarget.value)}
-            placeholder="Ask me anything about your emails..."
-            disabled={!selectedInbox || status === 'streaming'}
-          />
-        </PromptInputBody>
-        <PromptInputFooter>
-          <PromptInputTools>
-            <PromptInputActionMenu>
-              <PromptInputActionMenuTrigger />
-              <PromptInputActionMenuContent>
-                <PromptInputActionAddAttachments />
-              </PromptInputActionMenuContent>
-            </PromptInputActionMenu>
+                            // Determine if tool should be open by default
+                            const defaultOpen = toolPart.state === 'output-available' || toolPart.state === 'output-error';
 
-            {/* <PromptInputModelSelect onValueChange={setModel} value={model}>
+                            return (
+                              <Tool key={`${message.id}-${index}`} defaultOpen={defaultOpen} className="my-2">
+                                <ToolHeader title={formatToolName(toolName)} type={toolPart.type} state={toolPart.state} />
+                                <ToolContent>
+                                  {(toolPart.state === 'input-available' ||
+                                    toolPart.state === 'output-available' ||
+                                    toolPart.state === 'output-error') && <ToolInput input={toolPart.input} />}
+                                  {(toolPart.state === 'output-available' || toolPart.state === 'output-error') && (
+                                    <ToolOutput output={formatToolOutput(toolName, toolPart.output)} errorText={toolPart.errorText} />
+                                  )}
+                                </ToolContent>
+                              </Tool>
+                            );
+                          }
+                          return null;
+                      }
+                    })}
+                  </MessageContent>
+                </Message>
+              ))
+            )}
+            {status === 'submitted' && <Loader />}
+            {status === 'streaming' && (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground px-4">
+                <Loader />
+                <span>Thinking...</span>
+              </div>
+            )}
+          </ConversationContent>
+        </Conversation>
+        <div className="grid shrink-0 gap-4 pt-4  max-w-3xl mx-auto">
+          <Suggestions className="px-4">
+            {suggestions.map(suggestion => (
+              <Suggestion key={suggestion} onClick={handleSuggestionClick} suggestion={suggestion} />
+            ))}
+          </Suggestions>
+          <div className="w-full px-4 pb-4">
+            <PromptInput onSubmit={handleSubmit}>
+              <PromptInputBody >
+                <PromptInputTextarea
+                  value={input}
+
+                  onChange={e => setInput(e.currentTarget.value)}
+                  placeholder="Ask me anything about your emails..."
+                  disabled={!selectedInbox || status === 'streaming'}
+                />
+              </PromptInputBody>
+              <PromptInputFooter>
+                <PromptInputTools>
+                  <PromptInputActionMenu>
+                    <PromptInputActionMenuTrigger />
+                    <PromptInputActionMenuContent>
+                      <PromptInputActionAddAttachments />
+                    </PromptInputActionMenuContent>
+                  </PromptInputActionMenu>
+
+                  {/* <PromptInputModelSelect onValueChange={setModel} value={model}>
               <PromptInputModelSelectTrigger>
                 <PromptInputModelSelectValue />
               </PromptInputModelSelectTrigger>
@@ -305,10 +317,13 @@ export function InboxChat({ userId }: InboxChatProps) {
                 ))}
               </PromptInputModelSelectContent>
             </PromptInputModelSelect> */}
-          </PromptInputTools>
-          <PromptInputSubmit disabled={!input.trim() || !selectedInbox} status={status} onClick={status === 'streaming' ? handleStop : undefined} />
-        </PromptInputFooter>
-      </PromptInput>
+                </PromptInputTools>
+                <PromptInputSubmit disabled={!input.trim() || !selectedInbox} status={status} onClick={status === 'streaming' ? handleStop : undefined} />
+              </PromptInputFooter>
+            </PromptInput>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -14,6 +14,10 @@ export function getAllCoursesForProfessorQuery(client: TypedSupabaseClient, prof
   return client.from('courses').select(`*`).eq('professor_id', professorId).order('updated_at', { ascending: false });
 }
 
+export function getAllCoursesForProfessorFullTextSearch(client: TypedSupabaseClient, professorId: string, courseName: string) {
+  return client.from('courses').select(`*`).eq('professor_id', professorId).textSearch('name', `'${courseName}'`)
+}
+
 /**
  * Query builder for fetching a single course by ID
  */

@@ -16,13 +16,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <SidebarProvider>
-      <AppSidebar user={user} variant="floating" className="bg-gradient-to-tl from-blue-200 to-pink-100" />
+      <AppSidebar user={user} variant='floating' className="bg-gradient-to-tl from-blue-200 to-pink-100" />
       <SidebarInset className='p-2 bg-gradient-to-bl from-pink-100 to-blue-200'>
-        <DashboardHeader user={user} />
+
         {/* max-h-[calc(100vh-6rem)] overflow-hidden */}
-        <main className="flex flex-col flex-1 gap-4 p-4 border rounded-b-md bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="w-full p-4 rounded-b-md bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <DashboardHeader user={user} />
           {children}
-        </main>
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );
