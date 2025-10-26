@@ -77,6 +77,7 @@ export default function CoursesPage() {
       end_at: course.end_at ? course.end_at : null,
       created_at: course.created_at,
       updated_at: course.updated_at,
+      embedding: null
     });
     setIsFormOpen(true);
   };
