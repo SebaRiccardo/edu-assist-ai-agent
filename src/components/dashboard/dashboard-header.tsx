@@ -174,7 +174,7 @@ const DashboardHeader = ({ user }: { user: User }) => {
 
     //group-has-data-[collapsible=icon]/sidebar-wrapper:h-16
     return (
-        <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex border rounded-t-md h-20 shrink-0 items-center gap-2 transition-[width,height] ease-linear ">
+        <header className="sticky top-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex rounded-md h-20 shrink-0 border-none items-center gap-2 transition-[width,height] ease-linear">
             <div className="flex items-center gap-2 px-4 w-full">
                 <SidebarTrigger className="-ml-1" />
                 <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />

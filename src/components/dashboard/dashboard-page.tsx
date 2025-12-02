@@ -77,9 +77,9 @@ export default function DashboardPageContent({ serverSideUser }: { serverSideUse
 
   return (
     <div className="flex flex-col gap-4">
-      <h3 className='text-2xl font-bold'>
+      {/* <h3 className='text-2xl font-bold'>
         {t('title')}
-      </h3>
+      </h3> */}
       <div className="grid grid-cols-3 gap-4">
         {isLoading ? (
           // Loading Skeletons
@@ -153,14 +153,12 @@ export default function DashboardPageContent({ serverSideUser }: { serverSideUse
           </>
         )}
       </div>
-      <div className="">
+      <div className="h-[calc(100vh-15.83rem)]">
         {/* Loading State */}
         {isLoading && (
           <div className="space-y-8">
             {/* Skeleton for Courses Section Header */}
             <div>
-
-
               {/* Skeleton for Course Cards */}
               <div className="grid grid-cols-4 gap-4">
                 {[...Array(4)].map((_, i) => (
@@ -195,7 +193,7 @@ export default function DashboardPageContent({ serverSideUser }: { serverSideUse
 
         {/* Empty State */}
         {!isLoading && (!courses || courses.length === 0) && (
-          <Empty className="border-2">
+          <Empty className="border-2 h-full">
             <EmptyHeader>
               <EmptyMedia variant="icon">
                 <BookOpen className="h-6 w-6" />
@@ -214,7 +212,7 @@ export default function DashboardPageContent({ serverSideUser }: { serverSideUse
 
         {/* Courses Section */}
         {!isLoading && courses && courses?.length > 0 && (
-          <div className="space-y-8 ">
+          <div className="space-y-8">
             {/* Courses Horizontal Scroll */}
             <section>
               <div className="flex items-center justify-between mb-1">

@@ -77,7 +77,7 @@ export function AppSidebar({ user, ...props }: React.ComponentProps<typeof Sideb
   };
 
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar className="border-primary" collapsible="icon" {...props}>
       <SidebarHeader>
         <NavUser
           onLogout={handleSignOut}
@@ -93,7 +93,6 @@ export function AppSidebar({ user, ...props }: React.ComponentProps<typeof Sideb
       </SidebarContent>
       <SidebarFooter>
       </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
   )
 }
