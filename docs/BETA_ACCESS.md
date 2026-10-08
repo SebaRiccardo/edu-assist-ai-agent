@@ -9,25 +9,9 @@ The beta access feature protects the entire application behind a 6-digit access 
 ## How It Works
 
 1. **Beta Access Page**: All users are redirected to `/beta-access` if they don't have a valid beta access token
-2. **Code Verification**: Users enter a 6-digit code which is validated against a predefined list
+2. **Code Verification**: Users enter a 6-digit code which is validated against `BETA_ACCESS_CODES`
 3. **JWT Token**: Upon successful verification, a JWT token is created and stored in an HTTP-only cookie
 4. **Middleware Protection**: The middleware checks for a valid token on every request
-
-## Valid Beta Codes
-
-The following codes are currently valid (defined in `src/lib/beta-access.ts`):
-
-- `789012`
-- `345678`
-- `901234`
-- `567890`
-- `246813`
-- `135792`
-- `864209`
-- `975310`
-- `108642`
-
-**Note**: Update these codes in production to your actual beta access codes.
 
 ## Configuration
 
@@ -36,10 +20,11 @@ The following codes are currently valid (defined in `src/lib/beta-access.ts`):
 Add the following to your `.env.local` file:
 
 ```env
-BETA_ACCESS_SECRET='your-super-secret-key-change-in-production-min-32-chars'
+BETA_ACCESS_CODES='123456,654321'
+BETA_ACCESS_SECRET='replace-with-a-random-secret-at-least-32-bytes-long'
 ```
 
-**Important**: Change this to a strong, random secret in production (minimum 32 characters recommended).
+`BETA_ACCESS_CODES` is a comma-separated list of 6-digit codes. Set it in your local environment and deployment secret manager; do not commit actual access codes. `BETA_ACCESS_SECRET` must be set and contain at least 32 bytes. There is no built-in code or signing-secret fallback; beta verification fails closed when these settings are missing or invalid.
 
 ### Token Expiration
 
@@ -61,18 +46,9 @@ src/
 
 ## Usage
 
-### Adding New Beta Codes
+### Rotating Beta Codes
 
-Edit `src/lib/beta-access.ts` and add codes to the `VALID_BETA_CODES` array:
-
-```typescript
-export const VALID_BETA_CODES = [
-  '123456',
-  '789012',
-  // Add your new codes here
-  '111111',
-];
-```
+Change `BETA_ACCESS_CODES` in the environment or deployment secret manager. Existing access cookies remain valid until they expire (30 days) or until `BETA_ACCESS_SECRET` is rotated. Rotating the signing secret immediately invalidates existing beta cookies.
 
 ### Customizing Token Expiration
 
@@ -94,10 +70,10 @@ To temporarily disable beta access protection, comment out the beta access check
 
 ## Security Considerations
 
-1. **Secret Key**: Always use a strong, random secret for `BETA_ACCESS_SECRET` in production
+1. **Signing Secret**: Set a unique, randomly generated `BETA_ACCESS_SECRET` of at least 32 bytes in every environment
 2. **HTTPS Only**: In production, cookies are set with `secure: true`, requiring HTTPS
 3. **HTTP-Only Cookies**: The JWT token is stored in an HTTP-only cookie to prevent XSS attacks
-4. **Code Rotation**: Regularly rotate beta codes and remove old ones
+4. **Access Codes**: Keep `BETA_ACCESS_CODES` private and rotate it when access should change
 5. **Token Validation**: Tokens are cryptographically signed and verified on each request
 
 ## Internationalization
@@ -147,6 +123,6 @@ Example structure:
 
 ### Code Not Working
 
-- Verify the code is in the `VALID_BETA_CODES` array
+- Verify `BETA_ACCESS_CODES` is set to a comma-separated list of 6-digit codes
 - Ensure the code is exactly 6 digits
 - Check server logs for any verification errors

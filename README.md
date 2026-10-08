@@ -1,193 +1,140 @@
-# EduAssist AI Email Agent
+# EduAssist
 
-An intelligent AI-powered email management system for university professors to automatically categorize and organize student emails by course.
+**An AI powered email workspace for university instructors.** EduAssist connects course context with an instructor's email inbox to help organize student messages, assess urgency, find relevant course material, and prepare replies.
 
-## Features
+> This repository contains an actively developed application. Connecting a real inbox can expose email content to configured AI and integration providers. Review generated classifications and drafts before acting on them; the reply workflow can send email.
 
-- 🤖 **AI-Powered Email Analysis**: Uses Google's Gemini 2.5 Flash to intelligently analyze email content
-- 📧 **Gmail Integration**: Connects to Gmail via Composio for seamless email access
-- 🏷️ **Smart Categorization**: Automatically labels emails by course and type (student question, professor inquiry, etc.)
-- 📊 **Course Context**: Uses professor-defined course descriptions for accurate categorization
-- 🎯 **Confidence Scoring**: Provides confidence levels for each categorization
-- 💳 **Beautiful UI**: Modern, responsive interface built with shadcn/ui components
+## What it does
 
-## Email Types Detected
+- Connects Gmail and Outlook accounts through Composio.
+- Organizes courses and course context in Supabase.
+- Analyzes inbox messages for course relevance and category, with reasoning and priority estimates.
+- Generates response drafts and supports sending replies.
+- Offers a chat experience with course and email tools, plus retrieval features based on course embeddings.
+- Includes account, inbox, course, subscription, and administrative screens.
+- Supports English and Spanish, with Spanish as the default locale.
 
-- **Student Question** 🎓: Questions about course material, assignments, or grades
-- **Professor Inquiry** 👨‍🏫: Emails from academic colleagues about the course
-- **Administrative** 📋: Course logistics, schedules, and administrative updates
-- **General** 📧: Other course-related communications
+## Built with
 
-## Tech Stack
+- [Next.js 15](https://nextjs.org/) App Router and React 19
+- TypeScript, Tailwind CSS 4, and Radix UI based components
+- [Vercel AI SDK](https://ai-sdk.dev/) and Google's Generative AI provider
+- [Supabase](https://supabase.com/) for authentication and application data
+- [Composio](https://composio.dev/) for Gmail and Outlook connections and tools
+- Mercado Pago for subscription and payment workflows
+- TanStack Query, React Hook Form, Zod, and next-intl
 
-- **Framework**: Next.js 15 (App Router)
-- **AI/ML**:
-  - Vercel AI SDK
-  - Google Gemini 2.5 Flash (via @ai-sdk/google)
-  - Composio for Gmail integration
-- **UI**:
-  - React 19
-  - Tailwind CSS
-  - shadcn/ui components
-  - Lucide React icons
-- **Language**: TypeScript
+## How the application is organized
 
-## Getting Started
+```text
+src/
+├── actions/       Server actions for inbox, subscriptions, and plans
+├── agents/        AI workflows for analysis, prioritization, drafting, and labeling
+├── app/           Next.js routes, pages, and API handlers
+├── auth/          Authentication helpers
+├── components/    Shared UI, dashboard, landing, and admin components
+├── hooks/         Client queries and mutations
+├── lib/           Supabase, Composio, Mercado Pago, AI, and utilities
+├── subscriptions/ Subscription configuration and plan logic
+└── types/         Shared application types
 
-### Prerequisites
+messages/          English and Spanish translations
+docs/              Feature notes and implementation guides
+```
 
-- Node.js 18+
-- Google AI API key (get from [Google AI Studio](https://ai.google.dev/))
-- Composio API key (get from [Composio Dashboard](https://app.composio.dev))
+The browser UI uses Supabase's publishable/anon key with Supabase Auth. Server actions and route handlers validate the signed-in user before running protected operations. Composio connects a user's email account; AI workflows then use course details and email content to produce categorizations, priority suggestions, or response text.
 
-### Installation
+## Run locally
 
-1. Install dependencies:
+### Requirements
+
+- Node.js 20 or later
+- npm
+- A Supabase project
+- Google AI API access for Gemini powered features
+- A Composio account and configured Gmail or Outlook auth connections
+
+Mercado Pago credentials are needed only to exercise payment and subscription flows. Some features also depend on the Supabase schema and provider-side configuration described in the project documentation; this repository does not automatically provision those services.
+
+### Install
 
 ```bash
-npm install --legacy-peer-deps
+git clone https://github.com/SebaRiccardo/edu-assist-ai-agent.git
+cd edu-assist-ai-agent
+npm ci
 ```
 
-2. Set up environment variables:
+Create `.env.local` in the project root. It is ignored by Git; use your own values and never commit credentials:
 
-```bash
-cp .env.local.example .env.local
+```dotenv
+# Supabase project settings
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY=
+
+# AI and email integrations
+GOOGLE_GENERATIVE_AI_API_KEY=
+COMPOSIO_API_KEY=
+GMAIL_AUTH_CONFIG_ID=
+OUTLOOK_AUTH_CONFIG_ID=
+
+# Public app URL and beta-access token signing
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+BETA_ACCESS_CODES=
+BETA_ACCESS_SECRET=
+
+# Optional: Google OAuth redirect URL, if configured by your auth setup
+NEXT_PUBLIC_GOOGLE_OAUTH_REDIRECT_URL=
+
+# Optional: Mercado Pago billing
+MERCADOPAGO_ACCESS_TOKEN=
+MERCADOPAGO_WEBHOOK_SECRET=
+MERCADOPAGO_BASIC_PLAN_ID=
+MERCADOPAGO_PRO_PLAN_ID=
+MERCADOPAGO_PRO_PLUS_PLAN_ID=
 ```
 
-Edit `.env.local` and add your API keys:
+`NEXT_PUBLIC_*` values are included in browser bundles and must never contain private credentials. The Supabase publishable/anon key is designed for client use when the project has appropriate Row Level Security policies. Keep provider secrets and signing keys server-side.
 
-```env
-GOOGLE_GENERATIVE_AI_API_KEY=your_google_api_key_here
-COMPOSIO_API_KEY=your_composio_api_key_here
-```
-
-3. Run the development server:
+Start the development server:
 
 ```bash
 npm run dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
+Open [http://localhost:3000](http://localhost:3000). Sign-in, connected inboxes, AI calls, and billing require correctly configured provider projects; the app is not a self-contained mock demo.
 
-## How It Works
+## Useful commands
 
-### 1. Course Selection
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start Next.js in development mode |
+| `npm run build` | Build the production application |
+| `npm run start` | Serve a production build |
+| `npm run type-check` | Run the TypeScript compiler without emitting files |
+| `npm run format:check` | Check formatting with Prettier |
 
-Professors select one of their courses from the dashboard. Each course has a context/description that helps the AI understand what topics are relevant.
+## Provider and data setup
 
-### 2. Email Analysis
+1. Create a Supabase project and configure its authentication providers, redirect URLs, and database schema for this application. Generated database types live under `src/lib/supabase/types/`.
+2. Create a Composio project, set up Gmail and/or Outlook auth configurations, and provide their IDs through `GMAIL_AUTH_CONFIG_ID` and `OUTLOOK_AUTH_CONFIG_ID`.
+3. Add a Google AI API key for Gemini analysis, embeddings, and response generation.
+4. For subscription flows, configure Mercado Pago credentials, plans, webhook delivery, and the public app URL.
+5. Set a strong, unique `BETA_ACCESS_SECRET` in every deployed environment where beta access is enabled.
 
-When checking emails, the system:
+See [`docs/`](docs/) for feature-specific notes, including [subscription flows](docs/SUBSCRIPTION_FLOW.md), [beta access](docs/BETA_ACCESS.md), [email labeling](docs/EMAIL_LABELING.md), and [RAG/course embeddings](docs/RAG_AGENT_GUIDE.md). Provider dashboards and Supabase policies must be configured separately.
 
-- Fetches unread emails from Gmail
-- Analyzes each email's subject and content
-- Compares against the selected course context
-- Determines if the email is course-related
-- Categorizes the email type
-- Assigns confidence scores
+## Security and privacy
 
-### 3. Intelligent Categorization
+- Never commit `.env.local`, API tokens, OAuth credentials, webhook secrets, or production data. The repository ignores `.env.local`.
+- If a credential has ever appeared in Git history, revoke or rotate it. Removing a file from a later commit does not erase earlier copies; see [GitHub's guide to removing sensitive data](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository).
+- Email content is sent to the AI and integration providers configured for the deployment. Review their data handling terms and avoid using sensitive real inboxes during development.
+- Configure Supabase Row Level Security and OAuth redirect URLs for your deployment. Do not treat client-side visibility or UI checks as access control.
+- Generated labels, priorities, and replies may be incorrect. Review them before modifying or sending messages.
 
-The AI agent considers:
+## Contributing
 
-- Course-specific keywords
-- Email sender information (.edu domains, etc.)
-- Question patterns indicating student queries
-- Context clues from course descriptions
-- Administrative language patterns
+Issues and pull requests are welcome. For a change, include a short description of the user-facing behavior and the checks you ran. Do not include secrets, personal email data, or production database exports in issues, commits, or screenshots.
 
-### 4. Email Management
+## License
 
-For categorized emails, professors can:
-
-- View all course-related emails in one place
-- See confidence scores for each categorization
-- Mark emails as read
-- Archive emails
-- Delete emails
-- Open emails directly in Gmail
-
-## Project Structure
-
-```
-src/
-├── app/
-│   ├── api/
-│   │   └── check-emails/
-│   │       └── route.ts          # API endpoint for email analysis
-│   ├── page.tsx                   # Main UI page
-│   ├── layout.tsx
-│   └── globals.css
-├── components/
-│   ├── email-card.tsx             # Email display component
-│   └── ui/                        # shadcn/ui components
-│       ├── card.tsx
-│       ├── badge.tsx
-│       ├── button.tsx
-│       └── dropdown-menu.tsx
-├── lib/
-│   ├── mock-data.ts               # Mock courses and professor data
-│   └── utils.ts                   # Utility functions
-└── types/
-    └── index.ts                   # TypeScript type definitions
-```
-
-## Mock Data
-
-Currently, the application uses mock data for:
-
-- Professor authentication (Dr. Sarah Johnson)
-- Course data (Algebra I, Calculus II, Linear Algebra)
-- Email fetching (6 sample unread emails)
-
-### Future Integration
-
-When ready for production:
-
-1. Replace mock professor data with Supabase Auth
-2. Store courses in Supabase database
-3. Use real Gmail API calls via Composio
-4. Add label creation/management in Gmail
-
-## API Endpoints
-
-### POST /api/check-emails
-
-Analyzes unread emails for a specific course.
-
-**Request Body:**
-
-```json
-{
-  "courseId": "course-1",
-  "userId": "prof-123"
-}
-```
-
-**Response:**
-
-```json
-{
-  "success": true,
-  "course": {
-    "id": "course-1",
-    "name": "Algebra I"
-  },
-  "emails": [...],
-  "totalAnalyzed": 6,
-  "totalCategorized": 4
-}
-```
-
-## Development
-
-### Adding a New Course
-
-Edit `src/lib/mock-data.ts` to add new courses to the mock data.
-
-## Environment Variables
-
-| Variable                       | Description                            | Required |
-| ------------------------------ | -------------------------------------- | -------- |
-| `GOOGLE_GENERATIVE_AI_API_KEY` | Google AI API key for Gemini           | Yes      |
-| `COMPOSIO_API_KEY`             | Composio API key for Gmail integration | Yes      |
+No license file is currently provided. Until a license is added, the source is publicly viewable but reuse, modification, and redistribution are not granted by this repository. Add a license that matches the maintainer's intent before inviting external reuse.

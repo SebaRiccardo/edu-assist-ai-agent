@@ -1,11 +1,25 @@
 import { SignJWT, jwtVerify } from 'jose';
 
-// List of valid beta access codes
-export const VALID_BETA_CODES = ['789012'];
-
-const JWT_SECRET = new TextEncoder().encode(process.env.BETA_ACCESS_SECRET || 'your-secret-key-change-this-in-production');
-
 const COOKIE_NAME = 'beta_access_token';
+const BETA_CODE_LENGTH = 6;
+const MIN_JWT_SECRET_BYTES = 32;
+
+function getBetaAccessCodes(): string[] {
+  return (process.env.BETA_ACCESS_CODES ?? '')
+    .split(',')
+    .map(code => code.trim())
+    .filter(code => new RegExp(`^\\d{${BETA_CODE_LENGTH}}$`).test(code));
+}
+
+function getJwtSecret(): Uint8Array {
+  const secret = process.env.BETA_ACCESS_SECRET;
+
+  if (!secret || new TextEncoder().encode(secret).byteLength < MIN_JWT_SECRET_BYTES) {
+    throw new Error(`BETA_ACCESS_SECRET must be set to at least ${MIN_JWT_SECRET_BYTES} bytes`);
+  }
+
+  return new TextEncoder().encode(secret);
+}
 
 export interface BetaAccessPayload {
   code: string;
@@ -16,7 +30,11 @@ export interface BetaAccessPayload {
  * Verifies if the provided code is a valid beta access code
  */
 export function isValidBetaCode(code: string): boolean {
-  return VALID_BETA_CODES.includes(code);
+  if (!new RegExp(`^\\d{${BETA_CODE_LENGTH}}$`).test(code)) {
+    return false;
+  }
+
+  return getBetaAccessCodes().includes(code);
 }
 
 /**
@@ -27,7 +45,7 @@ export async function createBetaAccessToken(code: string): Promise<string> {
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('30d') // Token expires in 30 days
-    .sign(JWT_SECRET);
+    .sign(getJwtSecret());
 
   return token;
 }
@@ -37,7 +55,7 @@ export async function createBetaAccessToken(code: string): Promise<string> {
  */
 export async function verifyBetaAccessToken(token: string): Promise<BetaAccessPayload | null> {
   try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const { payload } = await jwtVerify(token, getJwtSecret());
 
     if (payload && typeof payload.code === 'string' && typeof payload.accessedAt === 'number') {
       return {

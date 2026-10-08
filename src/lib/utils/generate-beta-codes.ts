@@ -1,3 +1,5 @@
+import { randomInt } from 'node:crypto';
+
 /**
  * Beta Code Generator Utility
  *
@@ -6,7 +8,7 @@
  */
 
 function generateBetaCode(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  return randomInt(100000, 1_000_000).toString();
 }
 
 function generateUniqueBetaCodes(count: number): string[] {
@@ -28,10 +30,6 @@ codes.forEach((code, index) => {
   console.log(`${index + 1}. ${code}`);
 });
 
-console.log('\nCopy to src/lib/beta-access.ts:');
-console.log('============================');
-console.log('export const VALID_BETA_CODES = [');
-codes.forEach(code => {
-  console.log(`  '${code}',`);
-});
-console.log('];');
+console.log('\nAdd to your untracked .env.local or deployment secret manager:');
+console.log('==============================================================');
+console.log(`BETA_ACCESS_CODES='${codes.join(',')}'`);

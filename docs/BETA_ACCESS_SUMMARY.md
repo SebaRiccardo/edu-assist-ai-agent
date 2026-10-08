@@ -43,20 +43,9 @@ A complete beta access code protection system has been successfully implemented 
 - Usage instructions
 - Troubleshooting tips
 
-## 🔑 Valid Beta Codes
+## 🔑 Configure Beta Codes
 
-Use any of these codes to test:
-
-- `123456`
-- `789012`
-- `345678`
-- `901234`
-- `567890`
-- `246813`
-- `135792`
-- `864209`
-- `975310`
-- `108642`
+Set `BETA_ACCESS_CODES` to a comma-separated list of 6-digit codes in your local environment or deployment secret manager. Do not commit real access codes.
 
 ## 🚀 How to Test
 
@@ -80,15 +69,16 @@ Use any of these codes to test:
 Add to your `.env.local`:
 
 ```env
-BETA_ACCESS_SECRET='your-super-secret-key-change-in-production-min-32-chars'
+BETA_ACCESS_CODES='123456,654321'
+BETA_ACCESS_SECRET='replace-with-a-random-secret-at-least-32-bytes-long'
 ```
 
-**Important**: Change the secret to a strong random string in production!
+`BETA_ACCESS_SECRET` is required and must be at least 32 bytes. There is no built-in access code or signing-secret fallback.
 
 ## 📝 Next Steps
 
-1. **Update Beta Codes**: Replace the sample codes with your actual beta codes in `src/lib/beta-access.ts`
-2. **Set Secret**: Add a strong `BETA_ACCESS_SECRET` to your production environment
+1. **Set Beta Codes**: Configure private 6-digit codes with `BETA_ACCESS_CODES`
+2. **Set Secret**: Add a strong `BETA_ACCESS_SECRET` to your environment
 3. **Test Flow**: Test the complete flow from beta access to authenticated dashboard
 4. **Customize UI**: Adjust colors, text, or layout in `src/app/beta-access/page.tsx` if needed
 
